@@ -136,10 +136,19 @@ body::before{
 .quiz-ico{font-size:20px;flex-shrink:0;}
 .quiz-card-title{font-family:var(--font-d);font-size:13px;font-weight:600;color:var(--gold);letter-spacing:.04em;flex:1;}
 .quiz-card-meta{font-family:var(--font-m);font-size:10px;color:var(--mist);display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
-.quiz-card-footer{display:flex;align-items:center;justify-content:space-between;}
+.quiz-card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .quiz-score-badge{font-family:var(--font-m);font-size:10px;padding:3px 9px;border-radius:2px;border:1px solid var(--iron);color:var(--mist);background:transparent;}
 .quiz-score-badge.done-pass{border-color:var(--serpent);color:var(--emerald);background:rgba(26,107,48,0.08);}
 .quiz-score-badge.done-fail{border-color:var(--blood);color:var(--crimson);background:rgba(139,28,28,0.08);}
+
+/* Show-answer toggle button */
+.quiz-reveal-toggle{width:28px;height:28px;border-radius:50%;border:1px solid var(--iron);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;flex-shrink:0;position:relative;title:'';}
+.quiz-reveal-toggle:hover{border-color:var(--gold-dim);}
+.quiz-reveal-toggle.active{border-color:var(--gold-dim);background:var(--gold-glow);box-shadow:0 0 7px var(--gold-glow);}
+.quiz-reveal-toggle .toggle-tooltip{position:absolute;bottom:calc(100% + 6px);right:0;background:var(--bone);color:var(--void);font-family:var(--font-m);font-size:9px;padding:4px 8px;border-radius:2px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;letter-spacing:.04em;}
+.quiz-reveal-toggle:hover .toggle-tooltip{opacity:1;}
+
+.quiz-footer-right{display:flex;align-items:center;gap:6px;}
 .quiz-start-btn{font-family:var(--font-m);font-size:9px;font-weight:500;padding:4px 11px;border-radius:2px;border:1px solid var(--amethyst);background:transparent;color:var(--violet);cursor:pointer;transition:all .12s;letter-spacing:.04em;}
 .quiz-start-btn:hover{background:rgba(90,56,128,0.12);box-shadow:0 0 7px rgba(90,56,128,0.3);}
 .quiz-prog{height:2px;background:var(--iron);overflow:hidden;border-radius:2px;margin-top:8px;}
@@ -155,6 +164,10 @@ body::before{
 #quiz-title-bar{font-family:var(--font-d);font-size:13px;font-weight:600;color:var(--gold);letter-spacing:.04em;flex:1;}
 #quiz-progress-text{font-family:var(--font-m);font-size:11px;color:var(--mist);}
 
+/* Exit button in quiz topbar */
+#quiz-exit-btn{font-family:var(--font-m);font-size:10px;font-weight:500;padding:6px 14px;border-radius:2px;border:1px solid var(--blood);background:transparent;color:var(--crimson);cursor:pointer;letter-spacing:.05em;transition:all .15s;flex-shrink:0;display:flex;align-items:center;gap:6px;}
+#quiz-exit-btn:hover{background:rgba(139,28,28,0.1);box-shadow:0 0 8px rgba(139,28,28,0.2);}
+
 /* Progress bar */
 #quiz-prog-bar{height:3px;background:var(--iron);flex-shrink:0;}
 #quiz-prog-fill{height:100%;background:linear-gradient(90deg,var(--amethyst),var(--violet));transition:width .4s ease;box-shadow:0 0 6px rgba(90,56,128,0.4);}
@@ -168,7 +181,6 @@ body::before{
 .q-card.answered-correct{border-color:var(--serpent);box-shadow:0 0 16px rgba(26,107,48,0.12);}
 .q-card.answered-wrong{border-color:var(--blood);box-shadow:0 0 16px rgba(139,28,28,0.1);}
 
-/* Card entrance animation */
 @keyframes qin{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
 @keyframes qout{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(-14px);}}
 .q-card.entering{animation:qin .22s ease forwards;}
@@ -219,27 +231,30 @@ body::before{
 .q-feedback.no{color:var(--crimson);background:rgba(139,28,28,0.07);}
 .fb-ans{font-weight:700;margin-left:4px;}
 
-/* Next / confirm button row */
+/* Next button row */
 #quiz-action-row{display:flex;justify-content:flex-end;gap:10px;}
 #quiz-next-btn{font-family:var(--font-d);font-size:11px;font-weight:600;padding:11px 28px;border-radius:3px;border:1px solid var(--amethyst);background:transparent;color:var(--violet);cursor:pointer;letter-spacing:.08em;transition:all .15s;display:none;}
 #quiz-next-btn.show{display:block;}
 #quiz-next-btn:hover{background:rgba(90,56,128,0.12);box-shadow:0 0 12px rgba(90,56,128,0.3);}
 
-/* Results screen (replaces stage) */
-#quiz-results{display:none;flex:1;align-items:center;justify-content:center;padding:32px 20px;}
-#quiz-results.show{display:flex;}
-.res-inner{background:var(--dungeon);border:1px solid var(--gold-dim);border-radius:4px;padding:32px 36px;text-align:center;max-width:480px;width:100%;box-shadow:0 0 32px var(--gold-glow);}
-.res-sigil{font-size:44px;margin-bottom:12px;}
-.res-title{font-family:var(--font-d);font-size:22px;font-weight:700;letter-spacing:.06em;margin-bottom:6px;}
+/* ===================== RESULTS SCREEN ===================== */
+/* Results replaces the entire quiz view content — scrollable */
+#quiz-results{display:none;flex:1;overflow-y:auto;padding:20px;}
+#quiz-results.show{display:block;}
+
+.res-outer{display:flex;align-items:flex-start;justify-content:center;min-height:100%;padding-bottom:20px;}
+.res-inner{background:var(--dungeon);border:1px solid var(--gold-dim);border-radius:4px;padding:28px 32px;text-align:center;max-width:480px;width:100%;box-shadow:0 0 32px var(--gold-glow);margin:auto;}
+.res-sigil{font-size:40px;margin-bottom:10px;}
+.res-title{font-family:var(--font-d);font-size:20px;font-weight:700;letter-spacing:.06em;margin-bottom:6px;}
 .res-title.pass{color:var(--emerald);}
 .res-title.fail{color:var(--crimson);}
-.res-score{font-family:var(--font-m);font-size:32px;font-weight:500;color:var(--gold);margin-bottom:4px;}
-.res-sub{font-family:var(--font-b);font-style:italic;font-size:13px;color:var(--mist);margin-bottom:22px;}
-.res-breakdown{display:flex;justify-content:center;gap:28px;margin-bottom:24px;padding:16px 0;border-top:1px solid var(--iron);border-bottom:1px solid var(--iron);}
+.res-score{font-family:var(--font-m);font-size:30px;font-weight:500;color:var(--gold);margin-bottom:4px;}
+.res-sub{font-family:var(--font-b);font-style:italic;font-size:13px;color:var(--mist);margin-bottom:18px;}
+.res-breakdown{display:flex;justify-content:center;gap:28px;margin-bottom:18px;padding:14px 0;border-top:1px solid var(--iron);border-bottom:1px solid var(--iron);}
 .res-stat{text-align:center;}
-.res-stat-n{font-family:var(--font-m);font-size:22px;color:var(--parchment);margin-bottom:2px;}
+.res-stat-n{font-family:var(--font-m);font-size:20px;color:var(--parchment);margin-bottom:2px;}
 .res-stat-l{font-family:var(--font-m);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mist);}
-.res-actions{display:flex;justify-content:center;gap:10px;}
+.res-actions{display:flex;justify-content:center;gap:10px;margin-bottom:18px;}
 .res-btn{font-family:var(--font-m);font-size:10px;font-weight:500;padding:9px 20px;border-radius:2px;cursor:pointer;transition:all .12s;letter-spacing:.05em;}
 .res-btn-retry{border:1px solid var(--amethyst);color:var(--violet);background:transparent;}
 .res-btn-retry:hover{background:rgba(90,56,128,0.12);}
@@ -247,7 +262,7 @@ body::before{
 .res-btn-back:hover{background:var(--stone);}
 
 /* Review list in results */
-.res-review{margin-top:20px;text-align:left;display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;}
+.res-review{text-align:left;display:flex;flex-direction:column;gap:5px;border-top:1px solid var(--iron);padding-top:14px;}
 .rev-row{display:flex;align-items:flex-start;gap:10px;padding:7px 10px;border-radius:3px;font-family:var(--font-m);font-size:11px;}
 .rev-row.ok{background:rgba(26,107,48,0.07);border:1px solid var(--serpent);color:var(--emerald);}
 .rev-row.no{background:rgba(139,28,28,0.07);border:1px solid var(--blood);color:var(--crimson);}
@@ -456,8 +471,6 @@ body::before{
   <div class="dash-body">
     <div class="sec-label">Assigned Tomes</div>
     <div id="lab-list"></div>
-
-    <!-- PRACTICE QUIZ SECTION -->
     <div class="sec-label" style="margin-top:8px;">Practice Quizzes</div>
     <div id="quiz-list" class="quiz-grid"></div>
   </div>
@@ -468,6 +481,7 @@ body::before{
   <div id="quiz-topbar">
     <div id="quiz-title-bar">Quiz</div>
     <div id="quiz-progress-text"></div>
+    <button id="quiz-exit-btn" onclick="confirmLeaveQuiz()">✕ Exit Quiz</button>
   </div>
   <div id="quiz-prog-bar"><div id="quiz-prog-fill" style="width:0%"></div></div>
   <!-- Single question stage -->
@@ -479,9 +493,11 @@ body::before{
       </div>
     </div>
   </div>
-  <!-- Results (hidden until done) -->
+  <!-- Results (scrollable, replaces stage) -->
   <div id="quiz-results">
-    <div class="res-inner" id="quiz-res-inner"></div>
+    <div class="res-outer">
+      <div class="res-inner" id="quiz-res-inner"></div>
+    </div>
   </div>
 </div>
 
@@ -558,6 +574,11 @@ body::before{
 /* ===== CORE STATE ===== */
 let DATA=null,QUIZDATA=null,pyodide=null,cm=null,activeProblem=null,activeQuiz=null;
 const state={},quizState={};
+// Per-quiz reveal preference: quizRevealPrefs[quizId] = true/false (default true)
+const quizRevealPrefs={};
+// Current quiz reveal mode (set when quiz starts)
+let quizRevealMode=true;
+
 const $=id=>document.getElementById(id);
 const gs=id=>{if(!state[id])state[id]={code:'',tcResults:null,submitted:false};return state[id];};
 
@@ -654,7 +675,7 @@ function renderDash(){
   renderQuizDash();
 }
 
-/* ===== LAB / TOME LOGIC (unchanged) ===== */
+/* ===== LAB / TOME LOGIC ===== */
 function labStats(lab){
   let solved=0,subCount=0,pts=0;
   const maxPts=lab.problems.reduce((a,p)=>a+p.points,0);
@@ -781,13 +802,40 @@ function makeQuizCard(quiz){
   const typeTags=[...typeSet].map(t=>`<span class="glyph gp">${typeLabels[t]||t}</span>`).join('');
   let badgeCls='quiz-score-badge',badgeTxt='Not attempted';
   if(done){badgeCls='quiz-score-badge '+(pct>=70?'done-pass':'done-fail');badgeTxt=`${qs.score}/${total} · ${pct}%`;}
+
+  // Reveal pref: default true if not set
+  if(quizRevealPrefs[quiz.id]===undefined) quizRevealPrefs[quiz.id]=true;
+  const revealOn=quizRevealPrefs[quiz.id];
+
   const card=document.createElement('div');
   card.className='quiz-card';
   card.innerHTML=`
     <div class="quiz-card-top"><span class="quiz-ico">${quiz.icon||'📝'}</span><span class="quiz-card-title">${quiz.title}</span></div>
     <div class="quiz-card-meta"><span>${total} questions</span><span>${quiz.topic}</span><span style="display:flex;gap:4px">${typeTags}</span></div>
-    <div class="quiz-card-footer"><span class="${badgeCls}">${badgeTxt}</span><button class="quiz-start-btn">${done?'Retake →':'Start →'}</button></div>
+    <div class="quiz-card-footer">
+      <span class="${badgeCls}">${badgeTxt}</span>
+      <div class="quiz-footer-right">
+        <div class="quiz-reveal-toggle ${revealOn?'active':''}" id="rt-${quiz.id}" title="">
+          👁
+          <span class="toggle-tooltip">${revealOn?'Showing answers per question — click to hide':'Hiding answers until results — click to show'}</span>
+        </div>
+        <button class="quiz-start-btn">${done?'Retake →':'Start →'}</button>
+      </div>
+    </div>
     <div class="quiz-prog"><div class="quiz-prog-fill" style="width:${pct}%"></div></div>`;
+
+  // Toggle button — stop propagation so card click doesn't fire
+  const toggleBtn=card.querySelector(`#rt-${quiz.id}`);
+  toggleBtn.addEventListener('click',e=>{
+    e.stopPropagation();
+    quizRevealPrefs[quiz.id]=!quizRevealPrefs[quiz.id];
+    const on=quizRevealPrefs[quiz.id];
+    toggleBtn.classList.toggle('active',on);
+    toggleBtn.querySelector('.toggle-tooltip').textContent=on
+      ?'Showing answers per question — click to hide'
+      :'Hiding answers until results — click to show';
+  });
+
   card.addEventListener('click',()=>openQuiz(quiz));
   return card;
 }
@@ -802,6 +850,9 @@ function openQuiz(quiz){
   activeQuiz=quiz;
   qzIdx=0;qzResults=[];
   quizState[quiz.id]={answers:{},submitted:false};
+
+  // Grab reveal preference at quiz start
+  quizRevealMode = quizRevealPrefs[quiz.id] !== false;
 
   $('view-dashboard').classList.remove('active');
   $('view-editor').classList.remove('active');
@@ -825,11 +876,12 @@ function openQuiz(quiz){
 function confirmLeaveQuiz(){
   if(!activeQuiz)return showDash();
   const qs=quizState[activeQuiz.id];
-  if(qs.submitted||qzIdx===0){showDash();return;}
-  if(confirm('Leave this quiz? Your progress will be lost.'))showDash();
+  if(qs&&qs.submitted){showDash();return;}
+  if(qzIdx===0&&qzResults.length===0){showDash();return;}
+  if(confirm('Exit this quiz? Your current progress will be lost.'))showDash();
 }
 
-function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 function showQuestion(idx){
   const quiz=activeQuiz;
@@ -837,17 +889,14 @@ function showQuestion(idx){
   const q=quiz.questions[idx];
   const isLast=idx===total-1;
 
-  // Progress
   $('quiz-prog-fill').style.width=((idx)/total*100)+'%';
   $('quiz-progress-text').textContent=`${idx+1} / ${total}`;
-  $('quiz-next-btn').className=''; // hide next btn
+  $('quiz-next-btn').className=''; // hide
 
-  // Parse question + code
   let qText=q.question,qCode='';
   const cm=q.question.match(/^([\s\S]*?)```([\s\S]*)```([\s\S]*)$/);
   if(cm){qText=(cm[1]+cm[3]).trim();qCode=cm[2].trim();}
 
-  // Build card HTML
   const card=document.createElement('div');
   card.className='q-card entering';
   card.innerHTML=`
@@ -866,7 +915,6 @@ function showQuestion(idx){
   const body=card.querySelector('#qqbody');
   const fb=card.querySelector('#qqfb');
 
-  // Render input
   if(q.type==='multiple_choice'||q.type==='code_output'||q.type==='true_false'){
     const choices=q.type==='true_false'?['True','False']:q.choices;
     const div=document.createElement('div');div.className='choices';
@@ -904,36 +952,46 @@ function lockAndReveal(q,userAns,choicesDiv,fb,isLast,fillInp=null){
   const correctAns=q.answer.toString().trim();
   const isCorrect=userAns.toLowerCase()===correctAns.toLowerCase();
 
-  // Record result
   qzResults.push({qid:q.id,correct:isCorrect,userAns,correctAns});
   quizState[activeQuiz.id].answers[q.id]=userAns;
 
-  // Style choices
+  // Always lock the UI so user can't change answer
   if(choicesDiv){
     choicesDiv.querySelectorAll('.choice').forEach(c=>{
       c.classList.add('locked');
-      if(c.dataset.val.toLowerCase()===correctAns.toLowerCase())c.classList.add('correct');
-      else if(c.dataset.val===userAns&&!isCorrect)c.classList.add('wrong');
+      // Only show correct/wrong highlighting if reveal mode is ON
+      if(quizRevealMode){
+        if(c.dataset.val.toLowerCase()===correctAns.toLowerCase())c.classList.add('correct');
+        else if(c.dataset.val===userAns&&!isCorrect)c.classList.add('wrong');
+      } else {
+        // Just mark the selected choice visually without revealing correct/wrong
+        if(c.dataset.val===userAns)c.classList.add('selected');
+      }
     });
   }
-  // Style fill
-  if(fillInp)fillInp.classList.add(isCorrect?'correct':'wrong');
+  if(fillInp){
+    if(quizRevealMode) fillInp.classList.add(isCorrect?'correct':'wrong');
+    // else just leave it locked/neutral
+  }
 
-  // Style card border
+  // Card border only in reveal mode
   const card=$('quiz-q-slot').querySelector('.q-card');
-  if(card)card.classList.add(isCorrect?'answered-correct':'answered-wrong');
+  if(card&&quizRevealMode){
+    card.classList.add(isCorrect?'answered-correct':'answered-wrong');
+  }
 
-  // Feedback
-  fb.className='q-feedback show '+(isCorrect?'ok':'no');
-  fb.innerHTML=isCorrect
-    ?'✦ Correct!'
-    :`✗ Wrong — correct answer: <span class="fb-ans">${escHtml(correctAns)}</span>`;
+  // Feedback banner only in reveal mode
+  if(quizRevealMode){
+    fb.className='q-feedback show '+(isCorrect?'ok':'no');
+    fb.innerHTML=isCorrect
+      ?'✦ Correct!'
+      :`✗ Wrong — correct answer: <span class="fb-ans">${escHtml(correctAns)}</span>`;
+  }
 
   // Show next / finish button
   const btn=$('quiz-next-btn');
   btn.className='show';
   btn.textContent=isLast?'✦ See Results':'Next →';
-  // Remove old listener by replacing node
   const fresh=btn.cloneNode(true);
   btn.parentNode.replaceChild(fresh,btn);
   fresh.addEventListener('click',()=>{
@@ -944,7 +1002,6 @@ function lockAndReveal(q,userAns,choicesDiv,fb,isLast,fillInp=null){
 
 function advanceQuestion(){
   qzIdx++;
-  // Animate out current card
   const card=$('quiz-q-slot').querySelector('.q-card');
   if(card){
     card.classList.remove('entering');
@@ -965,17 +1022,16 @@ function finishQuiz(){
   quizState[quiz.id].submitted=true;
   quizState[quiz.id].score=correct;
 
-  // Progress bar full
   $('quiz-prog-fill').style.width='100%';
   $('quiz-progress-text').textContent=`${total} / ${total}`;
 
-  // Hide stage, show results
+  // Hide stage, show results (scrollable)
   $('quiz-stage').style.display='none';
   const resEl=$('quiz-results');
-  resEl.style.display='flex';
+  resEl.style.display='block';
   resEl.className='show';
 
-  // Build review rows
+  // Build review rows — always show answers here regardless of reveal mode
   const reviewRows=qzResults.map((r,i)=>`
     <div class="rev-row ${r.correct?'ok':'no'}">
       <span class="rev-num">${i+1}</span>
@@ -996,14 +1052,14 @@ function finishQuiz(){
       <div class="res-stat"><div class="res-stat-n" style="color:var(--crimson)">${total-correct}</div><div class="res-stat-l">Wrong</div></div>
       <div class="res-stat"><div class="res-stat-n" style="color:var(--gold)">${pct}%</div><div class="res-stat-l">Score</div></div>
     </div>
-    <div class="res-review">${reviewRows}</div>
-    <div class="res-actions" style="margin-top:20px">
+    <div class="res-actions">
       <button class="res-btn res-btn-retry" onclick="openQuiz(activeQuiz)">↺ Retake</button>
       <button class="res-btn res-btn-back" onclick="showDash()">← Back to Hall</button>
-    </div>`;
+    </div>
+    <div class="res-review">${reviewRows}</div>`;
 }
 
-/* ===== EDITOR LOGIC (unchanged) ===== */
+/* ===== EDITOR LOGIC ===== */
 function renderTrials(){
   if(!activeProblem)return;
   const p=activeProblem,s=gs(p.id),res=s.tcResults,sub=s.submitted;
