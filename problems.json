@@ -8,363 +8,320 @@
   "labs": [
 
     {
-      "id": "lab-lists",
-      "title": "LO1 - Lists",
-      "description": "Introduction to Python Lists",
-      "dueDate": "2025-04-01",
-      "passingPercent": 75,
-      "problems": [
-        {
-          "id": "lists-1",
-          "title": "List Operations",
-          "difficulty": "easy",
-          "points": 10,
-          "passingPercent": 75,
-          "inputFormat": "Line 1: Space-separated integers",
-          "outputFormat": "Sum: <value>\nMax: <value>\nMin: <value>\nSorted: [n1, n2, ...]",
-          "hint": "nums = list(map(int, input().split()))\nprint('Sum:', sum(nums))\nprint('Max:', max(nums))\nprint('Min:', min(nums))\nprint('Sorted:', sorted(nums))",
-          "steps": [
-            { "text": "Read the input line and split it into individual string tokens." },
-            { "text": "Convert each token to an integer using map(int, ...) and wrap in list()." },
-            { "text": "Use built-in functions sum(), max(), min() to compute the values." },
-            { "text": "Use sorted() to get an ascending list and print all four lines." }
-          ],
-          "testCases": [
-            {
-              "label": "Case #1",
-              "inputs": ["5 3 8 1 9 2"],
-              "expected": ["Sum: 28", "Max: 9", "Min: 1", "Sorted: [1, 2, 3, 5, 8, 9]"]
-            },
-            {
-              "label": "Case #2",
-              "inputs": ["10 20 30"],
-              "expected": ["Sum: 60", "Max: 30", "Min: 10", "Sorted: [10, 20, 30]"]
-            },
-            {
-              "label": "Case #3",
-              "inputs": ["7"],
-              "expected": ["Sum: 7", "Max: 7", "Min: 7", "Sorted: [7]"]
-            }
-          ]
-        },
-        {
-          "id": "lists-2",
-          "title": "List Slicing & Reversal",
-          "difficulty": "easy",
-          "points": 10,
-          "passingPercent": 75,
-          "inputFormat": "Line 1: Space-separated integers\nLine 2: Slice start index\nLine 3: Slice end index",
-          "outputFormat": "Original: [n1, n2, ...]\nReversed: [n1, n2, ...]\nSlice: [n1, n2, ...]",
-          "hint": "nums = list(map(int, input().split()))\nstart = int(input())\nend = int(input())\nprint('Original:', nums)\nprint('Reversed:', nums[::-1])\nprint('Slice:', nums[start:end])",
-          "steps": [
-            { "text": "Read the list of integers from line 1." },
-            { "text": "Read start and end indices from lines 2 and 3." },
-            { "text": "Use nums[::-1] to reverse the list." },
-            { "text": "Use nums[start:end] for the slice and print all three lines." }
-          ],
-          "testCases": [
-            {
-              "label": "Case #1",
-              "inputs": ["1 2 3 4 5", "1", "4"],
-              "expected": ["Original: [1, 2, 3, 4, 5]", "Reversed: [5, 4, 3, 2, 1]", "Slice: [2, 3, 4]"]
-            },
-            {
-              "label": "Case #2",
-              "inputs": ["10 20 30 40 50", "0", "3"],
-              "expected": ["Original: [10, 20, 30, 40, 50]", "Reversed: [50, 40, 30, 20, 10]", "Slice: [10, 20, 30]"]
-            },
-            {
-              "label": "Case #3",
-              "inputs": ["7 14 21", "1", "3"],
-              "expected": ["Original: [7, 14, 21]", "Reversed: [21, 14, 7]", "Slice: [14, 21]"]
-            }
-          ]
-        },
-        {
-          "id": "lists-3",
-          "title": "List Comprehension Filter",
-          "difficulty": "medium",
-          "points": 10,
-          "passingPercent": 75,
-          "inputFormat": "Line 1: Space-separated integers\nLine 2: A threshold number",
-          "outputFormat": "Even numbers: [n1, n2, ...]\nAbove threshold: [n1, n2, ...]\nSquares of evens: [n1, n2, ...]",
-          "hint": "nums = list(map(int, input().split()))\nthreshold = int(input())\nevens = [x for x in nums if x % 2 == 0]\nabove = [x for x in nums if x > threshold]\nsquares = [x**2 for x in evens]",
-          "steps": [
-            { "text": "Read the list and the threshold value." },
-            { "text": "Use a list comprehension to filter even numbers." },
-            { "text": "Use another comprehension to find numbers above the threshold." },
-            { "text": "Square each even number with x**2 in a third comprehension." }
-          ],
-          "testCases": [
-            {
-              "label": "Case #1",
-              "inputs": ["1 2 3 4 5 6 7 8", "4"],
-              "expected": ["Even numbers: [2, 4, 6, 8]", "Above threshold: [5, 6, 7, 8]", "Squares of evens: [4, 16, 36, 64]"]
-            },
-            {
-              "label": "Case #2",
-              "inputs": ["10 15 20 25 30", "15"],
-              "expected": ["Even numbers: [10, 20, 30]", "Above threshold: [20, 25, 30]", "Squares of evens: [100, 400, 900]"]
-            },
-            {
-              "label": "Case #3",
-              "inputs": ["2 4 6 8", "5"],
-              "expected": ["Even numbers: [2, 4, 6, 8]", "Above threshold: [6, 8]", "Squares of evens: [4, 16, 36, 64]"]
-            }
-          ]
-        }
-      ]
-    },
-
-    {
-      "id": "lab-tuples",
-      "title": "LO2 - Tuples",
-      "description": "Working with Python Tuples",
-      "dueDate": "2025-04-08",
-      "passingPercent": 75,
-      "problems": [
-        {
-          "id": "tuples-1",
-          "title": "Tuple Operations",
-          "difficulty": "easy",
-          "points": 10,
-          "passingPercent": 75,
-          "inputFormat": "Line 1: Comma-separated values for tuple",
-          "outputFormat": "Tuple: (v1, v2, ...)\nLength: <n>\nFirst: <v>\nLast: <v>",
-          "hint": "vals = tuple(input().split(','))\nprint('Tuple:', vals)\nprint('Length:', len(vals))\nprint('First:', vals[0])\nprint('Last:', vals[-1])",
-          "steps": [
-            { "text": "Read the input, split by comma, and convert to a tuple." },
-            { "text": "Print the tuple as-is using print()." },
-            { "text": "Use len() to get the length." },
-            { "text": "Access first element with index 0 and last with index -1." }
-          ],
-          "testCases": [
-            {
-              "label": "Case #1",
-              "inputs": ["apple,banana,cherry"],
-              "expected": ["Tuple: ('apple', 'banana', 'cherry')", "Length: 3", "First: apple", "Last: cherry"]
-            },
-            {
-              "label": "Case #2",
-              "inputs": ["100,200,300,400"],
-              "expected": ["Tuple: ('100', '200', '300', '400')", "Length: 4", "First: 100", "Last: 400"]
-            },
-            {
-              "label": "Case #3",
-              "inputs": ["hello,world"],
-              "expected": ["Tuple: ('hello', 'world')", "Length: 2", "First: hello", "Last: world"]
-            }
-          ]
-        },
-        {
-          "id": "tuples-2",
-          "title": "Tuple Unpacking and Methods",
-          "difficulty": "medium",
-          "points": 10,
-          "passingPercent": 75,
-          "inputFormat": "Line 1: Comma-separated integers\nLine 2: A value to search for",
-          "outputFormat": "Count of <value>: <n>\nIndex of <value>: <n>\nMax: <n>\nMin: <n>",
-          "hint": "nums = tuple(map(int, input().split(',')))\nval = int(input())\nprint(f'Count of {val}:', nums.count(val))\nprint(f'Index of {val}:', nums.index(val))\nprint('Max:', max(nums))\nprint('Min:', min(nums))",
-          "steps": [
-            { "text": "Read and convert the input into a tuple of integers." },
-            { "text": "Read the search value from line 2." },
-            { "text": "Use .count() to count occurrences and .index() to find the position." },
-            { "text": "Use max() and min() on the tuple and print all four lines." }
-          ],
-          "testCases": [
-            {
-              "label": "Case #1",
-              "inputs": ["3,1,4,1,5,9,2,6,1", "1"],
-              "expected": ["Count of 1: 3", "Index of 1: 1", "Max: 9", "Min: 1"]
-            },
-            {
-              "label": "Case #2",
-              "inputs": ["10,20,30,20,40", "20"],
-              "expected": ["Count of 20: 2", "Index of 20: 1", "Max: 40", "Min: 10"]
-            },
-            {
-              "label": "Case #3",
-              "inputs": ["5,5,5,5", "5"],
-              "expected": ["Count of 5: 4", "Index of 5: 0", "Max: 5", "Min: 5"]
-            }
-          ]
-        },
-        {
-          "id": "tuples-3",
-          "title": "Student Records with Tuples",
-          "difficulty": "hard",
-          "points": 10,
-          "passingPercent": 75,
-          "inputFormat": "Line 1: Number of students (n)\nNext n lines: name,grade",
-          "outputFormat": "Highest: <name> (<grade>)\nLowest: <name> (<grade>)\nAverage: <grade>",
-          "hint": "n = int(input())\nstudents = []\nfor _ in range(n):\n    name, grade = input().split(',')\n    students.append((name, int(grade)))\nhighest = max(students, key=lambda x: x[1])\nlowest = min(students, key=lambda x: x[1])\navg = sum(g for _,g in students) // n",
-          "steps": [
-            { "text": "Read n and then loop n times, splitting each line into (name, grade) tuples." },
-            { "text": "Store tuples in a list." },
-            { "text": "Use max() and min() with a lambda key to find highest and lowest grades." },
-            { "text": "Calculate average with integer division and print all three lines." }
-          ],
-          "testCases": [
-            {
-              "label": "Case #1",
-              "inputs": ["3", "Alice,90", "Bob,75", "Carol,88"],
-              "expected": ["Highest: Alice (90)", "Lowest: Bob (75)", "Average: 84"]
-            },
-            {
-              "label": "Case #2",
-              "inputs": ["4", "Dan,60", "Eve,95", "Frank,80", "Grace,70"],
-              "expected": ["Highest: Eve (95)", "Lowest: Dan (60)", "Average: 76"]
-            },
-            {
-              "label": "Case #3",
-              "inputs": ["2", "Harry,100", "Ivy,100"],
-              "expected": ["Highest: Harry (100)", "Lowest: Harry (100)", "Average: 100"]
-            }
-          ]
-        }
-      ]
-    },
-
-    {
       "id": "lab-sets",
-      "title": "LO3 - Sets",
-      "description": "Working with Python Sets",
-      "dueDate": "2025-04-15",
+      "title": "Sets",
+      "description": "Assignment",
+      "dueDate": "2026-03-06",
       "passingPercent": 75,
+
       "problems": [
+
         {
           "id": "sets-1",
           "title": "Team Skills Analyzer",
           "difficulty": "easy",
           "points": 10,
           "passingPercent": 75,
-          "inputFormat": "Line 1: Comma-separated skills for Team A\nLine 2: Comma-separated skills for Team B",
-          "outputFormat": "All skills: {skill1, skill2, ...}\nShared skills: {skill1, ...}\nOnly in A: {skill1, ...}\nOnly in B: {skill1, ...}",
-          "hint": "team_a = set(input().split(','))\nteam_b = set(input().split(','))\n# Use |, &, - for set ops\n# sorted() to alphabetize\n# ', '.join(...) to format",
-          "steps": [
-            { "text": "Read both input lines and split each by comma — you'll have two lists of skills." },
-            { "text": "Convert each list to a set. Sets ignore duplicates and unlock set math operations." },
-            { "text": "Compute four things: union (|) for all skills, intersection (&) for shared, and difference (-) twice for each team's unique skills." },
-            { "text": "Sort each result with sorted() so the output is alphabetical and consistent." },
-            { "text": "Format and print each line, wrapping the sorted values in curly braces { }." }
+
+          "description": "You are managing two project teams and need to analyze their combined skill sets. Given two sets of skills (one for each team), your program should:\n1. Print the combined (union) skills of both teams — all unique skills across both teams.\n2. Print the common (intersection) skills — skills that both teams share.\n3. Print the skills unique to Team A — skills that only Team A has.\n4. Print the skills unique to Team B — skills that only Team B has.\n\nEach result should be printed as a sorted list (alphabetically) on a separate line.",
+
+          "constraints": [
+            "Each team has between 1 and 10 skills.",
+            "Skill names are single words (no spaces), all lowercase.",
+            "Skills within each team are unique."
           ],
+
+          "inputFormat": "Line 1: Skills of Team A separated by spaces.\nLine 2: Skills of Team B separated by spaces.",
+
+          "outputFormat": "Line 1: Combined: followed by sorted combined skills, separated by commas and a space.\nLine 2: Common: followed by sorted common skills. If none, print Common: none\nLine 3: Only Team A: followed by sorted unique Team A skills. If none, print Only Team A: none\nLine 4: Only Team B: followed by sorted unique Team B skills. If none, print Only Team B: none",
+
+          "hint": "team_a = set(input().split())\nteam_b = set(input().split())\ncombined = sorted(team_a | team_b)\ncommon   = sorted(team_a & team_b)\nonly_a   = sorted(team_a - team_b)\nonly_b   = sorted(team_b - team_a)\nprint('Combined:', ', '.join(combined) if combined else 'none')\nprint('Common:',   ', '.join(common)   if common   else 'none')\nprint('Only Team A:', ', '.join(only_a) if only_a else 'none')\nprint('Only Team B:', ', '.join(only_b) if only_b else 'none')",
+
+          "steps": [
+            { "text": "Read line 1 and convert to a set for Team A using set(input().split())." },
+            { "text": "Read line 2 and convert to a set for Team B." },
+            { "text": "Use | for union (combined), & for intersection (common), - for difference (unique to each)." },
+            { "text": "Sort each result using sorted() for alphabetical order." },
+            { "text": "Join with ', '.join() and print each line. If a result is empty, print 'none' instead." }
+          ],
+
           "testCases": [
             {
-              "label": "Case #1",
-              "inputs": ["python,java,sql", "java,sql,react"],
-              "expected": ["All skills: {java, python, react, sql}", "Shared skills: {java, sql}", "Only in A: {python}", "Only in B: {react}"]
+              "label": "Example 1",
+              "hidden": false,
+              "inputs": ["python sql excel", "java sql powerbi"],
+              "expected": [
+                "Combined: excel, java, powerbi, python, sql",
+                "Common: sql",
+                "Only Team A: excel, python",
+                "Only Team B: java, powerbi"
+              ]
             },
             {
-              "label": "Case #2",
-              "inputs": ["html,css,js", "js,react,vue"],
-              "expected": ["All skills: {css, html, js, react, vue}", "Shared skills: {js}", "Only in A: {css, html}", "Only in B: {react, vue}"]
+              "label": "Example 2",
+              "hidden": false,
+              "inputs": ["html css javascript", "html css javascript"],
+              "expected": [
+                "Combined: css, html, javascript",
+                "Common: css, html, javascript",
+                "Only Team A: none",
+                "Only Team B: none"
+              ]
             },
             {
-              "label": "Case #3",
-              "inputs": ["python,django,sql,docker", "python,flask,sql,aws"],
-              "expected": ["All skills: {aws, django, docker, flask, python, sql}", "Shared skills: {python, sql}", "Only in A: {django, docker}", "Only in B: {aws, flask}"]
+              "label": "No overlap",
+              "hidden": false,
+              "inputs": ["python java go", "rust swift kotlin"],
+              "expected": [
+                "Combined: go, java, kotlin, python, rust, swift",
+                "Common: none",
+                "Only Team A: go, java, python",
+                "Only Team B: kotlin, rust, swift"
+              ]
             },
             {
-              "label": "Case #4",
-              "inputs": ["excel,word,powerpoint", "excel,word,powerpoint"],
-              "expected": ["All skills: {excel, powerpoint, word}", "Shared skills: {excel, powerpoint, word}", "Only in A: {}", "Only in B: {}"]
+              "label": "Hidden: Single skill each",
+              "hidden": true,
+              "inputs": ["python", "python"],
+              "expected": [
+                "Combined: python",
+                "Common: python",
+                "Only Team A: none",
+                "Only Team B: none"
+              ]
             },
             {
-              "label": "Case #5",
-              "inputs": ["rust,go,cpp", "java,kotlin,swift"],
-              "expected": ["All skills: {cpp, go, java, kotlin, rust, swift}", "Shared skills: {}", "Only in A: {cpp, go, rust}", "Only in B: {java, kotlin, swift}"]
+              "label": "Hidden: Single skill no overlap",
+              "hidden": true,
+              "inputs": ["python", "java"],
+              "expected": [
+                "Combined: java, python",
+                "Common: none",
+                "Only Team A: python",
+                "Only Team B: java"
+              ]
+            },
+            {
+              "label": "Hidden: Many skills large overlap",
+              "hidden": true,
+              "inputs": ["python java sql html css react node django flask", "python java sql html css vue angular spring boot"],
+              "expected": [
+                "Combined: angular, boot, css, django, flask, html, java, node, python, react, sql, spring, vue",
+                "Common: css, html, java, python, sql",
+                "Only Team A: django, flask, node, react",
+                "Only Team B: angular, boot, spring, vue"
+              ]
+            },
+            {
+              "label": "Hidden: Edge — Team A has all of Team B",
+              "hidden": true,
+              "inputs": ["python java sql react node", "python java"],
+              "expected": [
+                "Combined: java, node, python, react, sql",
+                "Common: java, python",
+                "Only Team A: node, react, sql",
+                "Only Team B: none"
+              ]
             }
           ]
         },
+
         {
           "id": "sets-2",
-          "title": "Duplicate Remover & Set Builder",
+          "title": "Duplicate Remover and Set Builder",
           "difficulty": "easy",
           "points": 10,
-          "passingPercent": 60,
-          "inputFormat": "Line 1: Comma-separated student IDs (may have duplicates)\nLine 2: A single student ID to search for",
-          "outputFormat": "Unique students: <count>\nDuplicates removed: <count>\nDuplicate IDs: {id1, id2, ...}\nEnrolled: Yes / No",
-          "hint": "ids = input().split(',')\nsearch = input().strip()\nunique = set(ids)\n# dupes_removed = len(ids) - len(unique)\n# track seen set for duplicate IDs",
-          "steps": [
-            { "text": "Read the first line and split by comma — keep the original list, its length matters for counting duplicates." },
-            { "text": "Convert the list to a set to get unique values. Size difference between list and set = duplicates removed." },
-            { "text": "Find which IDs appeared more than once by iterating through the original list while tracking what you've already seen." },
-            { "text": "Read the second input as the search ID, then use 'in' on the unique set to check enrollment." },
-            { "text": "Print all four output lines, sorting the duplicate IDs set before formatting." }
+          "passingPercent": 75,
+
+          "description": "You are building a student attendance tracker. Your program will:\n1. Read a list of student names (which may contain duplicates).\n2. Convert the list to a set to remove duplicates.\n3. Print the number of unique students.\n4. Read a name to add to the set.\n5. Read a name to discard from the set (should not raise an error if not found).\n6. Print the final sorted set of student names.",
+
+          "constraints": [
+            "The initial list has between 1 and 20 names.",
+            "Names are single words, starting with an uppercase letter.",
+            "The name to add may or may not already be in the set.",
+            "The name to discard may or may not be in the set."
           ],
+
+          "inputFormat": "Line 1: Student names separated by spaces (may contain duplicates).\nLine 2: A single name to add to the set.\nLine 3: A single name to discard from the set.",
+
+          "outputFormat": "Line 1: Unique count: followed by the number of unique students (after removing duplicates, before add/discard).\nLine 2: Final list: followed by the sorted final student names, separated by commas and a space.",
+
+          "hint": "names = input().split()\nadd_name     = input().strip()\ndiscard_name = input().strip()\nunique = set(names)\nprint('Unique count:', len(unique))\nunique.add(add_name)\nunique.discard(discard_name)  # discard won't raise error if not found\nprint('Final list:', ', '.join(sorted(unique)))",
+
+          "steps": [
+            { "text": "Read line 1, split by spaces — you get a list that may have duplicates." },
+            { "text": "Convert to a set immediately to remove duplicates." },
+            { "text": "Print 'Unique count:' with the size of the set NOW (before add/discard)." },
+            { "text": "Read the name to add and use .add() on the set." },
+            { "text": "Read the name to discard and use .discard() — this is safe even if the name isn't in the set." },
+            { "text": "Sort and join the final set with ', '.join(sorted(unique)) and print." }
+          ],
+
           "testCases": [
             {
-              "label": "Case #1",
-              "inputs": ["S001,S002,S001,S003,S002,S004", "S001"],
-              "expected": ["Unique students: 4", "Duplicates removed: 2", "Duplicate IDs: {S001, S002}", "Enrolled: Yes"]
+              "label": "Example 1",
+              "hidden": false,
+              "inputs": ["Alice Bob Alice Charlie Bob Alice", "Diana", "Alice"],
+              "expected": [
+                "Unique count: 3",
+                "Final list: Bob, Charlie, Diana"
+              ]
             },
             {
-              "label": "Case #2",
-              "inputs": ["A1,B2,C3,A1,B2,B2", "D4"],
-              "expected": ["Unique students: 3", "Duplicates removed: 3", "Duplicate IDs: {A1, B2}", "Enrolled: No"]
+              "label": "Example 2",
+              "hidden": false,
+              "inputs": ["Juan Maria Pedro Juan Maria", "Ana", "Carlos"],
+              "expected": [
+                "Unique count: 3",
+                "Final list: Ana, Juan, Maria, Pedro"
+              ]
             },
             {
-              "label": "Case #3",
-              "inputs": ["X10,X20,X30,X40,X50", "X30"],
-              "expected": ["Unique students: 5", "Duplicates removed: 0", "Duplicate IDs: {}", "Enrolled: Yes"]
+              "label": "Add already exists",
+              "hidden": false,
+              "inputs": ["Alice Bob Charlie", "Alice", "Bob"],
+              "expected": [
+                "Unique count: 3",
+                "Final list: Alice, Charlie"
+              ]
             },
             {
-              "label": "Case #4",
-              "inputs": ["101,102,101,103,101,102", "103"],
-              "expected": ["Unique students: 3", "Duplicates removed: 3", "Duplicate IDs: {101, 102}", "Enrolled: Yes"]
+              "label": "Hidden: Discard not in set",
+              "hidden": true,
+              "inputs": ["Alice Bob Charlie", "Diana", "Zara"],
+              "expected": [
+                "Unique count: 3",
+                "Final list: Alice, Bob, Charlie, Diana"
+              ]
             },
             {
-              "label": "Case #5",
-              "inputs": ["P1,P2,P3,P1,P4,P2,P5,P3", "P6"],
-              "expected": ["Unique students: 5", "Duplicates removed: 3", "Duplicate IDs: {P1, P2, P3}", "Enrolled: No"]
+              "label": "Hidden: All duplicates single name",
+              "hidden": true,
+              "inputs": ["Alice Alice Alice Alice", "Bob", "Alice"],
+              "expected": [
+                "Unique count: 1",
+                "Final list: Bob"
+              ]
+            },
+            {
+              "label": "Hidden: Single name, add new, discard it",
+              "hidden": true,
+              "inputs": ["Alice", "Bob", "Bob"],
+              "expected": [
+                "Unique count: 1",
+                "Final list: Alice"
+              ]
+            },
+            {
+              "label": "Hidden: Large list with many duplicates",
+              "hidden": true,
+              "inputs": ["Ana Ana Bob Bob Carlos Carlos Diana Diana Eve Eve", "Frank", "Diana"],
+              "expected": [
+                "Unique count: 5",
+                "Final list: Ana, Bob, Carlos, Eve, Frank"
+              ]
             }
           ]
         },
+
         {
           "id": "sets-3",
           "title": "Course Prerequisite Checker",
           "difficulty": "medium",
           "points": 10,
           "passingPercent": 75,
-          "inputFormat": "Line 1: Comma-separated prerequisite courses required\nLine 2: Comma-separated courses the student completed",
-          "outputFormat": "Can enroll: Yes / No\nMissing: {course1, ...}\nExtra: {course1, ...}\nCompletion: X%",
-          "hint": "required  = set(input().split(','))\ncompleted = set(input().split(','))\nmissing = required - completed\nextra   = completed - required\n# Completion = int(len(completed & required) / len(required) * 100)",
-          "steps": [
-            { "text": "Read both lines and convert each to a set — one for required prerequisites, one for completed courses." },
-            { "text": "Use set difference (required - completed) to find what the student is still missing." },
-            { "text": "Use the reverse difference (completed - required) to find extra courses taken beyond prerequisites." },
-            { "text": "If the missing set is empty the student can enroll — otherwise they cannot." },
-            { "text": "Completion % = required courses the student completed ÷ total required × 100. Round down with int()." },
-            { "text": "Print all four lines, sorting missing and extra sets before formatting in curly braces." }
+
+          "description": "A university system needs to check if a student has completed all the prerequisite courses for enrollment in an advanced program. Your program should:\n1. Read the required courses (prerequisites).\n2. Read the completed courses by the student.\n3. Check if the student has completed all prerequisites (i.e., if the required courses are a subset of the completed courses).\n4. If yes, print a success message.\n5. If no, print the missing courses (sorted alphabetically).\n6. Finally, print the symmetric difference — courses that are in one set but not the other (missing prerequisites + extra courses the student took). Print them sorted.",
+
+          "constraints": [
+            "Each set has between 1 and 10 course names.",
+            "Course names are single words (no spaces), all lowercase."
           ],
+
+          "inputFormat": "Line 1: Required courses separated by spaces.\nLine 2: Completed courses separated by spaces.",
+
+          "outputFormat": "Line 1: Eligible: yes if all prerequisites are met, otherwise Eligible: no\nLine 2 (only if not eligible): Missing: followed by the sorted missing courses, separated by commas and a space.\nLast line: Non-overlapping: followed by the sorted symmetric difference. If none, print Non-overlapping: none",
+
+          "hint": "required  = set(input().split())\ncompleted = set(input().split())\neligible  = required.issubset(completed)\nprint('Eligible: yes' if eligible else 'Eligible: no')\nif not eligible:\n    missing = sorted(required - completed)\n    print('Missing:', ', '.join(missing))\nsym_diff = sorted(required.symmetric_difference(completed))\nprint('Non-overlapping:', ', '.join(sym_diff) if sym_diff else 'none')",
+
+          "steps": [
+            { "text": "Read both lines and convert each to a set." },
+            { "text": "Use required.issubset(completed) to check if all prerequisites are done." },
+            { "text": "Print 'Eligible: yes' or 'Eligible: no' based on the check." },
+            { "text": "If not eligible, compute required - completed to find missing courses and print them sorted." },
+            { "text": "Use .symmetric_difference() to get courses in one set but not both — print sorted, or 'none' if empty." }
+          ],
+
           "testCases": [
             {
-              "label": "Case #1",
-              "inputs": ["math,physics,cs101", "math,physics,cs101,english"],
-              "expected": ["Can enroll: Yes", "Missing: {}", "Extra: {english}", "Completion: 100%"]
+              "label": "Example 1 — Eligible",
+              "hidden": false,
+              "inputs": ["math101 cs101 english101", "math101 cs101 english101 history101 pe101"],
+              "expected": [
+                "Eligible: yes",
+                "Non-overlapping: history101, pe101"
+              ]
             },
             {
-              "label": "Case #2",
-              "inputs": ["math,physics,cs101,algorithms", "math,cs101"],
-              "expected": ["Can enroll: No", "Missing: {algorithms, physics}", "Extra: {}", "Completion: 50%"]
+              "label": "Example 2 — Not eligible",
+              "hidden": false,
+              "inputs": ["math101 cs101 english101 physics101", "math101 english101 history101"],
+              "expected": [
+                "Eligible: no",
+                "Missing: cs101, physics101",
+                "Non-overlapping: cs101, history101, physics101"
+              ]
             },
             {
-              "label": "Case #3",
-              "inputs": ["python,data_structures,math", "python,math,statistics,english"],
-              "expected": ["Can enroll: No", "Missing: {data_structures}", "Extra: {english, statistics}", "Completion: 67%"]
+              "label": "Exact match — no extras",
+              "hidden": false,
+              "inputs": ["math101 cs101", "math101 cs101"],
+              "expected": [
+                "Eligible: yes",
+                "Non-overlapping: none"
+              ]
             },
             {
-              "label": "Case #4",
-              "inputs": ["html,css,javascript", "javascript,css,html,react,node"],
-              "expected": ["Can enroll: Yes", "Missing: {}", "Extra: {node, react}", "Completion: 100%"]
+              "label": "Hidden: All missing",
+              "hidden": true,
+              "inputs": ["math101 cs101 physics101", "english101 history101"],
+              "expected": [
+                "Eligible: no",
+                "Missing: cs101, math101, physics101",
+                "Non-overlapping: cs101, english101, history101, math101, physics101"
+              ]
             },
             {
-              "label": "Case #5",
-              "inputs": ["bio101,chem101,phys101,math101", "bio101,chem101"],
-              "expected": ["Can enroll: No", "Missing: {math101, phys101}", "Extra: {}", "Completion: 50%"]
+              "label": "Hidden: Single required, completed",
+              "hidden": true,
+              "inputs": ["math101", "math101"],
+              "expected": [
+                "Eligible: yes",
+                "Non-overlapping: none"
+              ]
+            },
+            {
+              "label": "Hidden: Single required, missing",
+              "hidden": true,
+              "inputs": ["math101", "cs101"],
+              "expected": [
+                "Eligible: no",
+                "Missing: math101",
+                "Non-overlapping: cs101, math101"
+              ]
+            },
+            {
+              "label": "Hidden: Many completed, all required met",
+              "hidden": true,
+              "inputs": ["math101 cs101", "math101 cs101 physics101 english101 history101 pe101"],
+              "expected": [
+                "Eligible: yes",
+                "Non-overlapping: english101, history101, pe101, physics101"
+              ]
             }
           ]
         }
+
       ]
     }
 
