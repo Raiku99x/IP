@@ -319,93 +319,101 @@
     },
     {
       "id": "tuples-4",
-      "title": "Tuple Sequence Analyzer",
+      "title": "Zigzag Cipher Engine",
       "difficulty": "very hard",
       "points": 40,
       "passingPercent": 75,
-      "description": "You are building an advanced sequence analysis tool that processes a series of integers using **run-length encoding**, **frequency ranking**, **pair extraction**, and **tuple reconstruction** — all using tuple operations.\n\nYour program should:\n1. Read a **comma-separated sequence of integers** and store as a tuple.\n2. Perform **run-length encoding (RLE)**: compress consecutive equal values into a tuple of `(value, count)` pairs.\n3. Build a **frequency ranking**: a tuple of `(value, frequency)` sorted by frequency **descending**, then by value **ascending** as a tiebreaker.\n4. Print the **most frequent value** (first in the frequency ranking).\n5. **Decode** the RLE back to a tuple and verify it matches the original (print `True` or `False`).\n6. Extract **adjacent pairs** using `zip(nums[::2], nums[1::2])` — pairing index 0&1, 2&3, etc.\n7. Print the **pair sums** sorted in **descending** order as a tuple.",
+      "description": "You are implementing a **Zigzag Caesar Cipher** — a cipher where the shift direction alternates based on character position.\n\nYour program should:\n1. Read a **text string** and a **keyword** on separate lines.\n2. Compute the **shift value**: sum of `ord()` of every character in the keyword, modulo `26`.\n3. Encode the text using zigzag rules:\n   - **Even-indexed positions** (0, 2, 4, …): shift **forward** by `shift`\n   - **Odd-indexed positions** (1, 3, 5, …): shift **backward** by `shift`\n   - **Letters**: shift within their case (`a–z` or `A–Z`), wrapping with `% 26`\n   - **Digits**: shift within `0–9`, wrapping with `% 10`\n   - **Spaces**: preserved as-is, but **still count** as index positions\n4. Print the `Shift` value.\n5. Print the `Encoded` string.\n6. Print all `(original, encoded)` character `Pairs` as a tuple (spaces included).\n7. Build a `Frequency` tuple of `(encoded_char, count)` for **alpha chars only**, sorted by count **descending**, then by `char.lower()` **ascending**, then **uppercase before lowercase** as final tiebreaker.\n8. Build an `Encoding table` — for each **unique original character** in sorted ASCII order: a tuple of `(original, encoded, shift_applied)` where `shift_applied` is the signed integer applied (`+shift`, `-shift`, or `0` for spaces).\n9. Decode the encoded string back and print `Decoded match: True` or `False`.",
       "constraints": [
-        "Input contains at least 4 integers.",
-        "All values are positive integers.",
-        "If two values have the same frequency, sort by value ascending as tiebreaker."
+        "Text contains only letters (mixed case), digits, and spaces.",
+        "Keyword contains only lowercase letters.",
+        "Shift = `sum(ord(c) for c in keyword) % 26`.",
+        "Spaces preserve their value but still advance the index counter.",
+        "Digits shift within `0–9` using `% 10`.",
+        "Encoding table: unique original chars sorted by ASCII value (digits < uppercase < lowercase)."
       ],
-      "inputFormat": "A single comma-separated line of integers (e.g., `3,3,1,2,2,2,1,3`).",
-      "outputFormat": "Line 1: `RLE: <tuple of (value,count) tuples>`\nLine 2: `Frequency: <tuple of (value,freq) tuples sorted by freq DESC, value ASC>`\nLine 3: `Most frequent: <value>`\nLine 4: `Decoded match: True` or `Decoded match: False`\nLine 5: `Pairs: <tuple of (a,b) pairs>`\nLine 6: `Pair sums: <tuple of sums, descending>`",
-      "hint": "nums = tuple(map(int, input().split(',')))\n# RLE\nrle = []\ni = 0\nwhile i < len(nums):\n    val, count = nums[i], 0\n    while i < len(nums) and nums[i] == val:\n        count += 1; i += 1\n    rle.append((val, count))\nrle = tuple(rle)\n# Frequency\nfreq = {}\nfor n in nums: freq[n] = freq.get(n, 0) + 1\nfreq_tuple = tuple(sorted(freq.items(), key=lambda x: (-x[1], x[0])))\n# Decode\ndecoded = tuple(v for val, cnt in rle for v in (val,)*cnt)\n# Pairs & sums\npairs = tuple(zip(nums[::2], nums[1::2]))\npair_sums = tuple(sorted((a+b for a,b in pairs), reverse=True))\nprint('RLE:', rle)\nprint('Frequency:', freq_tuple)\nprint('Most frequent:', freq_tuple[0][0])\nprint('Decoded match:', decoded == nums)\nprint('Pairs:', pairs)\nprint('Pair sums:', pair_sums)",
+      "inputFormat": "Line 1: The text to encode.\nLine 2: The keyword (lowercase letters only).",
+      "outputFormat": "Line 1: `Shift: <n>`\nLine 2: `Encoded: <string>`\nLine 3: `Pairs: <tuple of (char, encoded_char) for every position>`\nLine 4: `Frequency: <tuple of (char, count) — alpha only, DESC count, ASC char.lower(), uppercase first on ties>`\nLine 5: `Encoding table: <tuple of (original, encoded, shift_applied) for unique chars in ASCII order>`\nLine 6: `Decoded match: True` or `Decoded match: False`",
+      "hint": "text = input()\nkeyword = input()\nshift = sum(ord(c) for c in keyword) % 26\n\ndef enc(c, idx):\n    d = 1 if idx % 2 == 0 else -1\n    if c.isalpha():\n        b = ord('A') if c.isupper() else ord('a')\n        return chr((ord(c) - b + d * shift) % 26 + b)\n    elif c.isdigit():\n        return str((int(c) + d * shift) % 10)\n    return c\n\nencoded = tuple(enc(c, i) for i, c in enumerate(text))\nencoded_str = ''.join(encoded)\npairs = tuple(zip(text, encoded))\n\nfreq = {}\nfor c in encoded:\n    if c.isalpha(): freq[c] = freq.get(c, 0) + 1\nfreq_tuple = tuple(sorted(freq.items(),\n    key=lambda x: (-x[1], x[0].lower(), 0 if x[0].isupper() else 1)))\n\nseen = {}\nfor i, c in enumerate(text):\n    if c not in seen:\n        d = 1 if i % 2 == 0 else -1\n        applied = d * shift if (c.isalpha() or c.isdigit()) else 0\n        seen[c] = (c, encoded[i], applied)\nencoding_table = tuple(seen[c] for c in sorted(seen.keys()))\n\ndef dec(c, idx):\n    d = 1 if idx % 2 == 0 else -1\n    if c.isalpha():\n        b = ord('A') if c.isupper() else ord('a')\n        return chr((ord(c) - b - d * shift) % 26 + b)\n    elif c.isdigit():\n        return str((int(c) - d * shift) % 10)\n    return c\n\ndecoded = ''.join(dec(c, i) for i, c in enumerate(encoded))\nprint('Shift:', shift)\nprint('Encoded:', encoded_str)\nprint('Pairs:', pairs)\nprint('Frequency:', freq_tuple)\nprint('Encoding table:', encoding_table)\nprint('Decoded match:', decoded == text)",
       "testCases": [
         {
-          "label": "Example 1",
+          "label": "Example 1 — Hello World, key=dog",
           "hidden": false,
           "inputs": [
-            "3,3,1,2,2,2,1,3"
+            "Hello World",
+            "dog"
           ],
           "expected": [
-            "RLE: ((3, 2), (1, 1), (2, 3), (1, 1), (3, 1))",
-            "Frequency: ((2, 3), (3, 3), (1, 2))",
-            "Most frequent: 2",
-            "Decoded match: True",
-            "Pairs: ((3, 3), (1, 2), (2, 2), (1, 3))",
-            "Pair sums: (6, 4, 4, 3)"
+            "Shift: 2",
+            "Encoded: Jcnjq Ymtjf",
+            "Pairs: (('H', 'J'), ('e', 'c'), ('l', 'n'), ('l', 'j'), ('o', 'q'), (' ', ' '), ('W', 'Y'), ('o', 'm'), ('r', 't'), ('l', 'j'), ('d', 'f'))",
+            "Frequency: (('j', 2), ('c', 1), ('f', 1), ('J', 1), ('m', 1), ('n', 1), ('q', 1), ('t', 1), ('Y', 1))",
+            "Encoding table: ((' ', ' ', 0), ('H', 'J', 2), ('W', 'Y', 2), ('d', 'f', 2), ('e', 'c', -2), ('l', 'n', 2), ('o', 'q', 2), ('r', 't', 2))",
+            "Decoded match: True"
           ]
         },
         {
-          "label": "Example 2",
+          "label": "Example 2 — Attack at Dawn, key=key",
           "hidden": false,
           "inputs": [
-            "5,5,5,1,1,2,2,2,2,3"
+            "Attack at Dawn",
+            "key"
           ],
           "expected": [
-            "RLE: ((5, 3), (1, 2), (2, 4), (3, 1))",
-            "Frequency: ((2, 4), (5, 3), (1, 2), (3, 1))",
-            "Most frequent: 2",
-            "Decoded match: True",
-            "Pairs: ((5, 5), (5, 1), (1, 2), (2, 2), (2, 3))",
-            "Pair sums: (10, 6, 5, 4, 3)"
+            "Shift: 17",
+            "Encoded: Rckjtt jk Ujnw",
+            "Pairs: (('A', 'R'), ('t', 'c'), ('t', 'k'), ('a', 'j'), ('c', 't'), ('k', 't'), (' ', ' '), ('a', 'j'), ('t', 'k'), (' ', ' '), ('D', 'U'), ('a', 'j'), ('w', 'n'), ('n', 'w'))",
+            "Frequency: (('j', 3), ('k', 2), ('t', 2), ('c', 1), ('n', 1), ('R', 1), ('U', 1), ('w', 1))",
+            "Encoding table: ((' ', ' ', 0), ('A', 'R', 17), ('D', 'U', 17), ('a', 'j', -17), ('c', 't', 17), ('k', 't', -17), ('n', 'w', -17), ('t', 'c', -17), ('w', 'n', 17))",
+            "Decoded match: True"
           ]
         },
         {
-          "label": "Example 3",
+          "label": "Example 3 — Python 3 Rules, key=code",
           "hidden": false,
           "inputs": [
-            "7,7,4,4,4,7,1,1"
+            "Python 3 Rules",
+            "code"
           ],
           "expected": [
-            "RLE: ((7, 2), (4, 3), (7, 1), (1, 2))",
-            "Frequency: ((4, 3), (7, 3), (1, 2))",
-            "Most frequent: 4",
-            "Decoded match: True",
-            "Pairs: ((7, 7), (4, 4), (4, 7), (1, 1))",
-            "Pair sums: (14, 11, 8, 2)"
+            "Shift: 21",
+            "Encoded: Kdomjs 2 Wpqzx",
+            "Pairs: (('P', 'K'), ('y', 'd'), ('t', 'o'), ('h', 'm'), ('o', 'j'), ('n', 's'), (' ', ' '), ('3', '2'), (' ', ' '), ('R', 'W'), ('u', 'p'), ('l', 'q'), ('e', 'z'), ('s', 'x'))",
+            "Frequency: (('d', 1), ('j', 1), ('K', 1), ('m', 1), ('o', 1), ('p', 1), ('q', 1), ('s', 1), ('W', 1), ('x', 1), ('z', 1))",
+            "Encoding table: ((' ', ' ', 0), ('3', '2', -21), ('P', 'K', 21), ('R', 'W', -21), ('e', 'z', 21), ('h', 'm', -21), ('l', 'q', -21), ('n', 's', -21), ('o', 'j', 21), ('s', 'x', -21), ('t', 'o', 21), ('u', 'p', 21), ('y', 'd', -21))",
+            "Decoded match: True"
           ]
         },
         {
-          "label": "Hidden: Alternating values",
+          "label": "Hidden: Mixed case, digits, spaces shift index, key=abc",
           "hidden": true,
           "inputs": [
-            "1,2,1,2,1,2"
+            "AB cd 12",
+            "abc"
           ],
           "expected": [
-            "RLE: ((1, 1), (2, 1), (1, 1), (2, 1), (1, 1), (2, 1))",
-            "Frequency: ((1, 3), (2, 3))",
-            "Most frequent: 1",
-            "Decoded match: True",
-            "Pairs: ((1, 2), (1, 2), (1, 2))",
-            "Pair sums: (3, 3, 3)"
+            "Shift: 8",
+            "Encoded: IT ul 94",
+            "Pairs: (('A', 'I'), ('B', 'T'), (' ', ' '), ('c', 'u'), ('d', 'l'), (' ', ' '), ('1', '9'), ('2', '4'))",
+            "Frequency: (('I', 1), ('l', 1), ('T', 1), ('u', 1))",
+            "Encoding table: ((' ', ' ', 0), ('1', '9', 8), ('2', '4', -8), ('A', 'I', 8), ('B', 'T', -8), ('c', 'u', -8), ('d', 'l', 8))",
+            "Decoded match: True"
           ]
         },
         {
-          "label": "Hidden: One dominant value",
+          "label": "Hidden: Wrap-around, repeated chars, key=zz",
           "hidden": true,
           "inputs": [
-            "9,9,9,9,5,5,1"
+            "Zip Zap Zoo",
+            "zz"
           ],
           "expected": [
-            "RLE: ((9, 4), (5, 2), (1, 1))",
-            "Frequency: ((9, 4), (5, 2), (1, 1))",
-            "Most frequent: 9",
-            "Decoded match: True",
-            "Pairs: ((9, 9), (9, 9), (5, 5))",
-            "Pair sums: (18, 18, 10)"
+            "Shift: 10",
+            "Encoded: Jyz Jqz Jey",
+            "Pairs: (('Z', 'J'), ('i', 'y'), ('p', 'z'), (' ', ' '), ('Z', 'J'), ('a', 'q'), ('p', 'z'), (' ', ' '), ('Z', 'J'), ('o', 'e'), ('o', 'y'))",
+            "Frequency: (('J', 3), ('y', 2), ('z', 2), ('e', 1), ('q', 1))",
+            "Encoding table: ((' ', ' ', 0), ('Z', 'J', 10), ('a', 'q', -10), ('i', 'y', -10), ('o', 'e', -10), ('p', 'z', 10))",
+            "Decoded match: True"
           ]
         }
       ]
