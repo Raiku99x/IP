@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PyQuiz — Sets in Python</title>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0a0a0a;--surface:#111;--surface2:#1a1a1a;--surface3:#222;
+  --border:#2a2a2a;--border2:#333;--text:#e0e0e0;--muted:#666;--muted2:#444;
+  --accent:#58a6ff;--green:#3fb950;--green-bg:#0d2a10;--green-bd:#238636;
+  --red:#f85149;--red-bg:#2a0d0d;--red-bd:#da3633;
+  --yellow:#e3b341;--purple:#a371f7;--easy:#238636;--medium:#d29922;
+}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+
+/* TOPBAR */
+#topbar{background:#0d0d0d;border-bottom:1px solid var(--border);height:46px;display:flex;align-items:center;padding:0 18px;gap:14px;flex-shrink:0;}
+.logo{color:var(--accent);font-weight:700;font-size:15px;font-family:'JetBrains Mono',monospace;letter-spacing:.05em;}
+.top-badge{font-size:11px;padding:2px 10px;border-radius:20px;font-weight:600;background:#1a1a2e;color:#79c0ff;border:1px solid #30369a;}
+.spacer{flex:1;}
+.score-wrap{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);}
+.pts{color:var(--yellow);font-weight:700;}
+.sol{color:var(--green);}
+
+/* LOADING OVERLAY */
+#loading-overlay{position:fixed;inset:0;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;}
+#loading-overlay.hidden{display:none;}
+.loading-logo{color:var(--accent);font-weight:700;font-size:24px;font-family:'JetBrains Mono',monospace;margin-bottom:20px;}
+.loading-bar-wrap{width:260px;height:4px;background:#1a1a1a;border-radius:2px;overflow:hidden;}
+.loading-bar{height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width .3s;}
+.loading-text{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-top:12px;}
+
+/* MAIN */
+#main{display:grid;grid-template-columns:260px 1fr 265px;flex:1;overflow:hidden;}
+
+/* LEFT */
+#left-panel{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;background:var(--surface);}
+#problem-list{flex-shrink:0;border-bottom:1px solid var(--border);}
+.prob-item{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;cursor:pointer;transition:background .12s;border-left:3px solid transparent;border-bottom:1px solid var(--border);}
+.prob-item:last-child{border-bottom:none;}
+.prob-item:hover{background:var(--surface2);}
+.prob-item.active{background:#111c2a;border-left-color:var(--accent);}
+.prob-left{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0;}
+.prob-title{font-size:13px;font-weight:600;line-height:1.3;}
+.prob-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.tag{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.tag-easy{background:var(--easy);color:#fff;}
+.tag-medium{background:var(--medium);color:#fff;}
+.tag-pts{background:var(--surface3);color:var(--muted);border:1px solid var(--border2);}
+.tag-pass{color:var(--muted);font-size:10px;}
+.prob-status{font-size:11px;color:var(--muted);margin-top:2px;}
+.prob-status.attempted{color:var(--yellow);}
+.prob-status.solved{color:var(--green);}
+.prob-check{font-size:16px;flex-shrink:0;margin-top:2px;}
+#desc-panel{flex:1;overflow-y:auto;padding:16px 14px;}
+.ds{margin-bottom:14px;}
+.ds h4{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;font-family:'JetBrains Mono',monospace;}
+.ds p{font-size:12px;line-height:1.75;color:#aaa;}
+.cb{background:#0d0d0d;border:1px solid var(--border);border-radius:5px;padding:9px 11px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#79c0ff;white-space:pre-wrap;line-height:1.6;}
+.hb{background:#1a1500;border:1px solid #3a2e00;border-left:3px solid var(--yellow);border-radius:5px;padding:9px 11px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--yellow);white-space:pre-wrap;line-height:1.6;}
+.topic-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid #30369a;background:#1a1a2e;color:#79c0ff;font-family:'JetBrains Mono',monospace;margin-bottom:10px;}
+
+/* CENTER */
+#center-panel{display:flex;flex-direction:column;overflow:hidden;background:#000;border-right:1px solid var(--border);}
+#editor-bar{background:#0d0d0d;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 12px;height:40px;gap:8px;flex-shrink:0;}
+.filename{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);flex:1;}
+.btn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:5px 14px;border-radius:5px;border:none;cursor:pointer;transition:all .13s;letter-spacing:.03em;}
+.btn:active{transform:scale(.95);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+#btn-run{background:#1a3a1a;color:var(--green);border:1px solid var(--green-bd);}
+#btn-run:hover:not(:disabled){background:var(--green-bd);color:#fff;}
+#btn-test{background:#1a1a30;color:var(--accent);border:1px solid #30369a;}
+#btn-test:hover:not(:disabled){background:#30369a;color:#fff;}
+#btn-submit{background:#2a1a4a;color:var(--purple);border:1px solid #5a30a0;}
+#btn-submit:hover:not(:disabled){background:#5a30a0;color:#fff;}
+
+/* EDITOR */
+#editor-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+#editor-container{flex:1;display:flex;overflow:hidden;background:#000;}
+#line-nums{padding:14px 8px 14px 0;text-align:right;color:#2a2a2a;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:21.45px;background:#000;border-right:1px solid #1a1a1a;width:44px;overflow:hidden;flex-shrink:0;user-select:none;}
+#code-editor{flex:1;background:transparent;color:#e0e0e0;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:21.45px;border:none;outline:none;resize:none;padding:14px;tab-size:4;caret-color:var(--accent);overflow:auto;white-space:pre;}
+#code-editor::placeholder{color:#2a2a2a;font-style:italic;}
+#code-editor::selection{background:#1e3a5f;}
+
+/* ERR */
+#err-banner{display:none;background:#1a0000;border-top:1px solid var(--red-bd);padding:5px 14px;flex-shrink:0;}
+#err-banner.show{display:block;}
+#err-text{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--red);white-space:pre-wrap;}
+
+/* IO ROW */
+#io-row{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border);flex-shrink:0;background:#0d0d0d;height:115px;}
+.io-pane{display:flex;flex-direction:column;padding:8px 12px;overflow:hidden;}
+.io-pane:first-child{border-right:1px solid var(--border);}
+.io-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;flex-shrink:0;display:flex;justify-content:space-between;align-items:center;}
+.io-hint{font-size:9px;color:var(--muted2);text-transform:none;letter-spacing:0;}
+#custom-in{flex:1;background:#0a0a0a;border:1px solid var(--border2);border-radius:4px;color:#ccc;font-family:'JetBrains Mono',monospace;font-size:12px;padding:5px 9px;outline:none;resize:none;line-height:1.5;transition:border-color .2s;}
+#custom-in:focus{border-color:var(--accent);}
+#custom-in::placeholder{color:#2a2a2a;}
+#out-box{flex:1;background:#0a0a0a;border:1px solid var(--border2);border-radius:4px;padding:5px 9px;overflow-y:auto;}
+#out-text{font-family:'JetBrains Mono',monospace;font-size:12px;white-space:pre-wrap;line-height:1.5;color:#444;}
+
+/* RIGHT */
+#right-panel{display:flex;flex-direction:column;overflow:hidden;background:var(--surface);}
+#tc-header{background:#0d0d0d;border-bottom:1px solid var(--border);height:40px;display:flex;align-items:center;padding:0 14px;flex-shrink:0;}
+#tc-header .tc-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+#tc-score{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;}
+#tc-list{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px;}
+.tc-card{background:var(--surface2);border:1px solid var(--border);border-radius:7px;overflow:hidden;transition:border-color .2s,background .2s;cursor:pointer;}
+.tc-card.pass{border-color:var(--green-bd);background:var(--green-bg);}
+.tc-card.fail{border-color:var(--red-bd);background:var(--red-bg);}
+.tc-top{display:flex;align-items:center;gap:8px;padding:9px 12px;}
+.tc-num{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);width:18px;}
+.tc-lbl{font-size:12px;font-weight:600;flex:1;}
+.tc-card.pass .tc-lbl{color:var(--green);}
+.tc-card.fail .tc-lbl{color:var(--red);}
+.tc-card:not(.pass):not(.fail) .tc-lbl{color:var(--muted);}
+.tc-badge{font-size:10px;font-family:'JetBrains Mono',monospace;padding:2px 7px;border-radius:3px;}
+.tc-card.pass .tc-badge{background:#0d2a10;color:var(--green);border:1px solid var(--green-bd);}
+.tc-card.fail .tc-badge{background:#2a0d0d;color:var(--red);border:1px solid var(--red-bd);}
+.tc-card:not(.pass):not(.fail) .tc-badge{background:var(--surface3);color:var(--muted);border:1px solid var(--border2);}
+.tc-body{display:none;padding:0 12px 10px;border-top:1px solid var(--border);}
+.tc-body.open{display:block;}
+.tc-row{margin-top:8px;}
+.tc-row-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-family:'JetBrains Mono',monospace;margin-bottom:3px;}
+.tc-val{font-family:'JetBrains Mono',monospace;font-size:11px;background:#0a0a0a;border:1px solid var(--border);border-radius:4px;padding:5px 8px;white-space:pre-wrap;line-height:1.5;}
+.tc-val.inp{color:#777;}
+.tc-val.exp{color:#79c0ff;}
+.tc-val.got-ok{color:var(--green);}
+.tc-val.got-err{color:var(--red);}
+
+/* SUBMIT */
+#submit-result{display:none;background:#0d0d0d;border-top:1px solid var(--border);padding:12px 14px;flex-shrink:0;text-align:center;}
+#submit-result.show{display:block;}
+.sr-text{font-size:14px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.sr-text.ok{color:var(--green);}
+.sr-text.no{color:var(--red);}
+.sr-pts{font-size:12px;color:var(--yellow);margin-top:4px;font-family:'JetBrains Mono',monospace;}
+.sr-sub{font-size:11px;color:var(--muted);margin-top:3px;}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#2a2a2a;border-radius:3px;}
+@keyframes fg{0%,100%{box-shadow:none;}50%{box-shadow:0 0 0 2px var(--green);}}
+@keyframes fp{0%,100%{box-shadow:none;}50%{box-shadow:0 0 0 2px var(--purple);}}
+.fg{animation:fg .35s ease;}
+.fp{animation:fp .4s ease;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.spinner{width:20px;height:20px;border:2px solid #222;border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:16px;}
+</style>
+</head>
+<body>
+
+<!-- LOADING OVERLAY -->
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-logo">🐍 PyQuiz</div>
+  <div class="loading-bar-wrap"><div class="loading-bar" id="load-bar"></div></div>
+  <div class="loading-text" id="load-text">Loading Python runtime...</div>
+</div>
+
+<div id="topbar">
+  <span class="logo">🐍 PyQuiz</span>
+  <span class="top-badge">Sets in Python</span>
+  <span class="spacer"></span>
+  <div class="score-wrap">Score: <span class="pts" id="tot-pts">0</span> pts &nbsp;|&nbsp; Solved: <span class="sol" id="tot-sol">0</span>/3</div>
+</div>
+<div id="main">
+  <div id="left-panel">
+    <div id="problem-list"></div>
+    <div id="desc-panel">
+      <div class="topic-pill">🔷 <span id="d-topic"></span></div>
+      <div class="ds"><h4>Problem</h4><p id="d-desc"></p></div>
+      <div class="ds"><h4>Input Format</h4><div class="cb" id="d-in"></div></div>
+      <div class="ds"><h4>Output Format</h4><div class="cb" id="d-out"></div></div>
+      <div class="ds"><h4>💡 Hint</h4><div class="hb" id="d-hint"></div></div>
+    </div>
+  </div>
+  <div id="center-panel">
+    <div id="editor-bar">
+      <span class="filename" id="ed-fname">solution.py</span>
+      <button class="btn" id="btn-run" disabled>▶ RUN</button>
+      <button class="btn" id="btn-test" disabled>⚡ TEST</button>
+      <button class="btn" id="btn-submit" disabled>✔ SUBMIT</button>
+    </div>
+    <div id="editor-wrap">
+      <div id="editor-container">
+        <div id="line-nums"></div>
+        <textarea id="code-editor" spellcheck="false" autocomplete="off"
+          placeholder="# Write your Python solution here...&#10;# Use input() to read and print() to output"></textarea>
+      </div>
+      <div id="err-banner"><div id="err-text"></div></div>
+      <div id="io-row">
+        <div class="io-pane">
+          <div class="io-label">Custom Input <span class="io-hint">← click a test case to load</span></div>
+          <textarea id="custom-in" placeholder="Enter input line by line..."></textarea>
+        </div>
+        <div class="io-pane">
+          <div class="io-label">Output</div>
+          <div id="out-box"><div id="out-text">// Output appears here after RUN</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="right-panel">
+    <div id="tc-header">
+      <span class="tc-title">Test Cases</span>
+      <span id="tc-score"></span>
+    </div>
+    <div id="tc-list"></div>
+    <div id="submit-result">
+      <div class="sr-text" id="sr-text"></div>
+      <div class="sr-pts" id="sr-pts"></div>
+      <div class="sr-sub" id="sr-sub"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+//  PYODIDE — Real CPython in the browser
+// ═══════════════════════════════════════════════════════════════════
+let pyodide = null;
+
+async function initPyodide() {
+  const bar = document.getElementById("load-bar");
+  const txt = document.getElementById("load-text");
+
+  bar.style.width = "20%";
+  txt.textContent = "Downloading Python runtime...";
+
+  pyodide = await loadPyodide({
+    indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.0/full/",
+  });
+
+  bar.style.width = "80%";
+  txt.textContent = "Setting up environment...";
+
+  // Pre-run setup code once
+  await pyodide.runPythonAsync(`
+import sys
+import io
+import builtins
+`);
+
+  bar.style.width = "100%";
+  txt.textContent = "Ready!";
+
+  setTimeout(() => {
+    document.getElementById("loading-overlay").classList.add("hidden");
+    document.getElementById("btn-run").disabled = false;
+    document.getElementById("btn-test").disabled = false;
+    document.getElementById("btn-submit").disabled = false;
+  }, 400);
+}
+
+// Run user Python code with given input lines
+// Returns { ok: true, lines: [...] } or { ok: false, error: "..." }
+async function runPython(code, inputLines) {
+  if (!pyodide) return { ok: false, error: "Python is still loading, please wait." };
+  if (!code.trim()) return { ok: false, error: "Editor is empty! Write your Python solution." };
+
+  try {
+    // Pass input lines to Python as a JS object
+    pyodide.globals.set("_js_input_lines", inputLines);
+
+    const setupCode = `
+import sys, io, builtins
+
+_input_lines = list(_js_input_lines)
+_input_idx = 0
+
+def _custom_input(prompt=""):
+    global _input_idx
+    if _input_idx < len(_input_lines):
+        val = _input_lines[_input_idx]
+        _input_idx += 1
+        return str(val)
+    return ""
+
+builtins.input = _custom_input
+sys.stdout = io.StringIO()
+sys.stderr = io.StringIO()
+`;
+
+    await pyodide.runPythonAsync(setupCode);
+    await pyodide.runPythonAsync(code);
+
+    const raw = pyodide.runPython("sys.stdout.getvalue()");
+    const lines = raw.split("\n");
+    // Remove trailing empty string from final newline
+    if (lines.length > 0 && lines[lines.length - 1] === "") lines.pop();
+    return { ok: true, lines };
+
+  } catch (e) {
+    // Clean up the traceback a bit for readability
+    let msg = e.message || String(e);
+    // Extract just the relevant error line
+    const lines = msg.split("\n").filter(l => l.trim());
+    const errLine = lines[lines.length - 1] || msg;
+    return { ok: false, error: errLine };
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  PROBLEMS
+// ═══════════════════════════════════════════════════════════════════
+const PROBLEMS = [
+  {
+    id:0, title:"Team Skills Analyzer", difficulty:"easy", points:10, passPercent:75,
+    topic:"Sets — Union, Intersection & Difference",
+    desc:"You are building a skill-matching tool. Given two teams' skill sets, find which skills are shared, unique to each team, and all skills combined. Use Python set operations.",
+    inputFmt:"Line 1: Comma-separated skills for Team A\nLine 2: Comma-separated skills for Team B",
+    outputFmt:"All skills: {skill1, skill2, ...}\nShared skills: {skill1, ...}\nOnly in A: {skill1, ...}\nOnly in B: {skill1, ...}",
+    hint:"team_a = set(input().split(\",\"))\nteam_b = set(input().split(\",\"))\n# | = union   & = intersection\n# - = difference\n# sorted() then ', '.join()\n# f\"{{{', '.join(sorted(...))}}}\"",
+    testCases:[
+      {label:"Case #1",inputs:["python,java,sql","java,sql,react"],
+       expected:["All skills: {java, python, react, sql}","Shared skills: {java, sql}","Only in A: {python}","Only in B: {react}"]},
+      {label:"Case #2",inputs:["html,css,js","js,react,vue"],
+       expected:["All skills: {css, html, js, react, vue}","Shared skills: {js}","Only in A: {css, html}","Only in B: {react, vue}"]},
+      {label:"Case #3",inputs:["python,django,sql,docker","python,flask,sql,aws"],
+       expected:["All skills: {aws, django, docker, flask, python, sql}","Shared skills: {python, sql}","Only in A: {django, docker}","Only in B: {aws, flask}"]},
+      {label:"Case #4",inputs:["excel,word,powerpoint","excel,word,powerpoint"],
+       expected:["All skills: {excel, powerpoint, word}","Shared skills: {excel, powerpoint, word}","Only in A: {}","Only in B: {}"]},
+      {label:"Case #5",inputs:["rust,go,cpp","java,kotlin,swift"],
+       expected:["All skills: {cpp, go, java, kotlin, rust, swift}","Shared skills: {}","Only in A: {cpp, go, rust}","Only in B: {java, kotlin, swift}"]},
+    ]
+  },
+  {
+    id:1, title:"Duplicate Remover and Set Builder", difficulty:"easy", points:10, passPercent:60,
+    topic:"Sets — Deduplication & Membership",
+    desc:"Given a list of student IDs (some duplicated), use a set to remove duplicates, count how many were removed, identify which IDs appeared more than once, and check if a given ID is enrolled.",
+    inputFmt:"Line 1: Comma-separated student IDs (may have duplicates)\nLine 2: A single student ID to search for",
+    outputFmt:"Unique students: <count>\nDuplicates removed: <count>\nDuplicate IDs: {id1, id2, ...}\nEnrolled: Yes / No",
+    hint:"ids = input().split(\",\")\nsearch = input().strip()\nunique = set(ids)\n# Track with a seen set\n# dupes_removed = len(ids) - len(unique)\n# use 'in' to check enrollment",
+    testCases:[
+      {label:"Case #1",inputs:["S001,S002,S001,S003,S002,S004","S001"],
+       expected:["Unique students: 4","Duplicates removed: 2","Duplicate IDs: {S001, S002}","Enrolled: Yes"]},
+      {label:"Case #2",inputs:["A1,B2,C3,A1,B2,B2","D4"],
+       expected:["Unique students: 3","Duplicates removed: 3","Duplicate IDs: {A1, B2}","Enrolled: No"]},
+      {label:"Case #3",inputs:["X10,X20,X30,X40,X50","X30"],
+       expected:["Unique students: 5","Duplicates removed: 0","Duplicate IDs: {}","Enrolled: Yes"]},
+      {label:"Case #4",inputs:["101,102,101,103,101,102","103"],
+       expected:["Unique students: 3","Duplicates removed: 3","Duplicate IDs: {101, 102}","Enrolled: Yes"]},
+      {label:"Case #5",inputs:["P1,P2,P3,P1,P4,P2,P5,P3","P6"],
+       expected:["Unique students: 5","Duplicates removed: 3","Duplicate IDs: {P1, P2, P3}","Enrolled: No"]},
+    ]
+  },
+  {
+    id:2, title:"Course Prerequisite Checker", difficulty:"medium", points:10, passPercent:75,
+    topic:"Sets — Subset & Superset Checks",
+    desc:"A student wants to enroll in a course. Check if they meet all prerequisites by comparing completed courses against required ones. Report missing prerequisites, extra courses, and completion percentage.",
+    inputFmt:"Line 1: Comma-separated prerequisite courses required\nLine 2: Comma-separated courses the student completed",
+    outputFmt:"Can enroll: Yes / No\nMissing: {course1, ...}\nExtra: {course1, ...}\nCompletion: X%",
+    hint:"required  = set(input().split(\",\"))\ncompleted = set(input().split(\",\"))\nmissing = required - completed\nextra   = completed - required\n# Can enroll if missing is empty\n# Completion = int(len(completed & required)\n#              / len(required) * 100)",
+    testCases:[
+      {label:"Case #1",inputs:["math,physics,cs101","math,physics,cs101,english"],
+       expected:["Can enroll: Yes","Missing: {}","Extra: {english}","Completion: 100%"]},
+      {label:"Case #2",inputs:["math,physics,cs101,algorithms","math,cs101"],
+       expected:["Can enroll: No","Missing: {algorithms, physics}","Extra: {}","Completion: 50%"]},
+      {label:"Case #3",inputs:["python,data_structures,math","python,math,statistics,english"],
+       expected:["Can enroll: No","Missing: {data_structures}","Extra: {english, statistics}","Completion: 67%"]},
+      {label:"Case #4",inputs:["html,css,javascript","javascript,css,html,react,node"],
+       expected:["Can enroll: Yes","Missing: {}","Extra: {node, react}","Completion: 100%"]},
+      {label:"Case #5",inputs:["bio101,chem101,phys101,math101","bio101,chem101"],
+       expected:["Can enroll: No","Missing: {math101, phys101}","Extra: {}","Completion: 50%"]},
+    ]
+  }
+];
+
+// ═══════════════════════════════════════════════════════════════════
+//  STATE & DOM
+// ═══════════════════════════════════════════════════════════════════
+let cur = 0;
+const userCodes  = PROBLEMS.map(() => "");
+const tcResults  = PROBLEMS.map(() => null);
+const submitted  = new Set();
+const earnedPts  = {};
+
+const $ = id => document.getElementById(id);
+const codeEditor = $("code-editor"), lineNums = $("line-nums"), customIn = $("custom-in");
+const outText = $("out-text"), tcList = $("tc-list"), tcScore = $("tc-score");
+const errBanner = $("err-banner"), errTextEl = $("err-text");
+const submitRes = $("submit-result"), srText = $("sr-text"), srPts = $("sr-pts"), srSub = $("sr-sub");
+
+// Line numbers
+function updateLineNums() {
+  const n = Math.max(codeEditor.value.split("\n").length, 12);
+  lineNums.innerHTML = Array.from({length:n}, (_,i) => `<div>${i+1}</div>`).join("");
+}
+codeEditor.addEventListener("scroll", () => lineNums.scrollTop = codeEditor.scrollTop);
+codeEditor.addEventListener("input", () => { userCodes[cur] = codeEditor.value; updateLineNums(); hideErr(); });
+codeEditor.addEventListener("keydown", e => {
+  if (e.key === "Tab") {
+    e.preventDefault();
+    const s = codeEditor.selectionStart, end = codeEditor.selectionEnd;
+    codeEditor.value = codeEditor.value.slice(0, s) + "    " + codeEditor.value.slice(end);
+    codeEditor.selectionStart = codeEditor.selectionEnd = s + 4;
+    updateLineNums();
+  }
+});
+
+function hideErr() { errBanner.style.display = "none"; errBanner.className = ""; }
+function showErr(msg) { errBanner.style.display = "block"; errBanner.className = "show"; errTextEl.textContent = "⚠ " + msg; }
+
+function setBusy(busy) {
+  $("btn-run").disabled    = busy;
+  $("btn-test").disabled   = busy;
+  $("btn-submit").disabled = busy;
+  if (busy) {
+    $("btn-run").textContent  = "⏳ Running...";
+  } else {
+    $("btn-run").textContent  = "▶ RUN";
+  }
+}
+
+// Problem list
+function buildProbList() {
+  $("problem-list").innerHTML = "";
+  PROBLEMS.forEach((p, i) => {
+    const res = tcResults[i], isSub = submitted.has(i);
+    const pc = res ? res.filter(r => r.pass).length : 0;
+    const meets = res && (pc / p.testCases.length) >= p.passPercent / 100;
+    let st = "Not attempted", sc = "";
+    if (res && !isSub) { st = `Tested: ${pc}/${p.testCases.length}`; sc = "attempted"; }
+    if (isSub && meets)  { st = `Passed (${pc}/${p.testCases.length}) ✓`; sc = "solved"; }
+    if (isSub && !meets && res) { st = `Failed (${pc}/${p.testCases.length})`; sc = "attempted"; }
+    const div = document.createElement("div");
+    div.className = "prob-item" + (i === cur ? " active" : "");
+    div.innerHTML = `<div class="prob-left">
+      <div class="prob-title">${p.title}</div>
+      <div class="prob-meta">
+        <span class="tag tag-${p.difficulty}">${p.difficulty[0].toUpperCase()+p.difficulty.slice(1)}</span>
+        <span class="tag tag-pts">${p.points} pts</span>
+        <span class="tag-pass">(${p.passPercent}% to pass)</span>
+      </div>
+      <div class="prob-status ${sc}">${st}</div>
+    </div>
+    <div class="prob-check">${isSub ? (meets ? "✅" : "❌") : ""}</div>`;
+    div.addEventListener("click", () => switchProblem(i));
+    $("problem-list").appendChild(div);
+  });
+}
+
+function switchProblem(idx) { userCodes[cur] = codeEditor.value; cur = idx; loadProblem(); }
+
+function loadProblem() {
+  const p = PROBLEMS[cur];
+  $("d-topic").textContent = p.topic;
+  $("d-desc").textContent  = p.desc;
+  $("d-in").textContent    = p.inputFmt;
+  $("d-out").textContent   = p.outputFmt;
+  $("d-hint").textContent  = p.hint;
+  $("ed-fname").textContent = p.title.toLowerCase().replace(/[^a-z0-9]+/g, "_") + ".py";
+  codeEditor.value = userCodes[cur];
+  updateLineNums();
+  customIn.value = "";
+  outText.textContent = "// Output appears here after RUN";
+  outText.style.color = "#444";
+  hideErr();
+  renderTCs();
+  renderSubmit();
+  buildProbList();
+}
+
+// Run all test cases
+async function execAllTCs() {
+  const p = PROBLEMS[cur], code = codeEditor.value;
+  if (!code.trim()) { showErr("Editor is empty!"); return null; }
+
+  const results = [];
+  for (const tc of p.testCases) {
+    const r = await runPython(code, tc.inputs);
+    if (!r.ok) {
+      results.push({ pass: false, got: "Error: " + r.error, expected: tc.expected.join("\n") });
+    } else {
+      const gotStr = r.lines.join("\n").trim();
+      const expStr = tc.expected.join("\n").trim();
+      results.push({ pass: gotStr === expStr, got: gotStr, expected: expStr });
+    }
+  }
+  tcResults[cur] = results;
+  return results;
+}
+
+function renderTCs() {
+  const p = PROBLEMS[cur], results = tcResults[cur];
+  tcList.innerHTML = "";
+  let pc = 0;
+  p.testCases.forEach((tc, i) => {
+    const res = results ? results[i] : null;
+    if (res?.pass) pc++;
+    const lbl = res ? (res.pass ? "✓ PASS" : "✗ FAIL") : "PENDING";
+    const card = document.createElement("div");
+    card.className = "tc-card" + (res ? (res.pass ? " pass" : " fail") : "");
+    card.innerHTML = `<div class="tc-top">
+      <span class="tc-num">${i+1}</span>
+      <span class="tc-lbl">${tc.label}</span>
+      <span class="tc-badge">${lbl}</span>
+    </div>
+    <div class="tc-body">
+      <div class="tc-row"><div class="tc-row-lbl">Input</div><div class="tc-val inp">${tc.inputs.join("\n")}</div></div>
+      <div class="tc-row"><div class="tc-row-lbl">Expected Output</div><div class="tc-val exp">${tc.expected.join("\n")}</div></div>
+      ${res ? `<div class="tc-row"><div class="tc-row-lbl">Your Output</div><div class="tc-val ${res.pass?"got-ok":"got-err"}">${res.got || (res.pass ? "✓" : "(no output)")}</div></div>` : ""}
+    </div>`;
+    card.querySelector(".tc-top").addEventListener("click", () => {
+      card.querySelector(".tc-body").classList.toggle("open");
+      customIn.value = tc.inputs.join("\n");
+    });
+    tcList.appendChild(card);
+  });
+  if (results) {
+    tcScore.textContent = `${pc}/${p.testCases.length}`;
+    tcScore.style.color = pc === p.testCases.length ? "var(--green)" : pc > 0 ? "var(--yellow)" : "var(--red)";
+  } else {
+    tcScore.textContent = `0/${p.testCases.length}`;
+    tcScore.style.color = "var(--muted)";
+  }
+}
+
+function renderSubmit() {
+  if (!submitted.has(cur) || !tcResults[cur]) { submitRes.className = ""; submitRes.style.display = "none"; return; }
+  const p = PROBLEMS[cur], res = tcResults[cur];
+  const pc  = res.filter(r => r.pass).length;
+  const pct = Math.round(pc / res.length * 100);
+  const meets = pct >= p.passPercent;
+  earnedPts[cur] = meets ? p.points : 0;
+  submitRes.style.display = "block"; submitRes.className = "show";
+  srText.className = "sr-text " + (meets ? "ok" : "no");
+  srText.textContent = meets ? "✅ Passed!" : "❌ Not passed";
+  srPts.textContent  = `${earnedPts[cur]}/${p.points} pts — ${pc}/${res.length} cases (need ${p.passPercent}%)`;
+  srSub.textContent  = meets ? "Great work! Try the next problem." : "Keep trying — you can resubmit anytime.";
+  const tot = Object.values(earnedPts).reduce((a, b) => a + b, 0);
+  const sol = PROBLEMS.filter((_, i) => {
+    if (!submitted.has(i) || !tcResults[i]) return false;
+    const r = tcResults[i];
+    return (r.filter(x => x.pass).length / r.length * 100) >= PROBLEMS[i].passPercent;
+  }).length;
+  $("tot-pts").textContent = tot;
+  $("tot-sol").textContent = sol;
+}
+
+function flash(cls) { const cp = $("center-panel"); cp.classList.add(cls); setTimeout(() => cp.classList.remove(cls), 400); }
+
+// ── BUTTONS ───────────────────────────────────────────────────────
+$("btn-run").addEventListener("click", async () => {
+  userCodes[cur] = codeEditor.value;
+  setBusy(true);
+  hideErr();
+
+  const results = await execAllTCs();
+  if (!results) { setBusy(false); return; }
+  renderTCs();
+
+  // Run with custom input for the output box
+  const inputText = customIn.value.trim() || PROBLEMS[cur].testCases[0].inputs.join("\n");
+  customIn.value = inputText;
+  const r = await runPython(codeEditor.value, inputText.split("\n"));
+  if (r.ok) {
+    outText.textContent = r.lines.length ? r.lines.join("\n") : "(no output — did you use print()?)";
+    outText.style.color = r.lines.length ? "#b3f0c0" : "var(--yellow)";
+  } else {
+    outText.textContent = "Error: " + r.error;
+    outText.style.color = "var(--red)";
+    showErr(r.error);
+  }
+
+  setBusy(false);
+  flash("fg");
+});
+
+$("btn-test").addEventListener("click", async () => {
+  userCodes[cur] = codeEditor.value;
+  setBusy(true);
+  hideErr();
+  const results = await execAllTCs();
+  if (results) { renderTCs(); flash("fg"); }
+  setBusy(false);
+});
+
+$("btn-submit").addEventListener("click", async () => {
+  userCodes[cur] = codeEditor.value;
+  setBusy(true);
+  hideErr();
+  const results = await execAllTCs();
+  if (!results) { setBusy(false); return; }
+  submitted.add(cur);
+  renderTCs(); renderSubmit(); buildProbList();
+  setBusy(false);
+  flash("fp");
+});
+
+// ── INIT ──────────────────────────────────────────────────────────
+loadProblem();
+initPyodide();
+</script>
+</body>
+</html>
