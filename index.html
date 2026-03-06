@@ -6,6 +6,13 @@
 <title>Slytherin Classroom — Sets in Python</title>
 <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<!-- CodeMirror 5 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/display/placeholder.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -22,8 +29,6 @@
 }
 html,body{height:100%;overflow:hidden;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;}
-
-/* ══ S-SNAKE SVG (reusable via inline) ══ */
 
 /* ══ LOADING ══ */
 #loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;}
@@ -99,11 +104,82 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 #btn-submit:hover:not(:disabled){background:#4a2e7a;}
 
 #editor-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
-#editor-container{flex:1;display:flex;overflow:hidden;}
-#line-nums{padding:14px 8px 14px 0;text-align:right;color:var(--muted2);font-family:'DM Mono',monospace;font-size:13px;line-height:21.45px;background:var(--code-bg);border-right:1px solid var(--border);width:44px;overflow:hidden;flex-shrink:0;user-select:none;}
-#code-editor{flex:1;background:transparent;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;line-height:21.45px;border:none;outline:none;resize:none;padding:14px;tab-size:4;caret-color:var(--green);overflow:auto;white-space:pre;}
-#code-editor::placeholder{color:var(--muted2);font-style:italic;}
-#code-editor::selection{background:#c8dfc8;}
+#editor-container{flex:1;overflow:hidden;position:relative;}
+
+/* ── CodeMirror Slytherin Theme ── */
+.cm-s-slytherin.CodeMirror{
+  background:var(--code-bg);
+  color:var(--text);
+  font-family:'DM Mono',monospace;
+  font-size:13px;
+  line-height:21.45px;
+  height:100%;
+  border:none;
+}
+.cm-s-slytherin .CodeMirror-scroll{height:100%;}
+.cm-s-slytherin .CodeMirror-cursor{border-left:2px solid var(--green);}
+.cm-s-slytherin .CodeMirror-selected{background:#c8dfc8;}
+.cm-s-slytherin.CodeMirror-focused .CodeMirror-selected{background:#b8d8b8;}
+.cm-s-slytherin .CodeMirror-gutters{
+  background:var(--code-bg);
+  border-right:1px solid var(--border);
+  padding-right:4px;
+}
+.cm-s-slytherin .CodeMirror-linenumber{
+  color:var(--muted2);
+  font-family:'DM Mono',monospace;
+  font-size:12px;
+  padding:0 8px 0 6px;
+  min-width:28px;
+}
+.cm-s-slytherin .CodeMirror-activeline-background{background:rgba(30,110,50,.045);}
+.cm-s-slytherin .CodeMirror-matchingbracket{
+  background:#c8dfc8;
+  color:var(--green)!important;
+  font-weight:700;
+  outline:1px solid var(--green-mid);
+}
+
+/* ── Python Syntax Colors ── */
+/* Keywords: for/if/while/def/class/import/return/etc */
+.cm-s-slytherin .cm-keyword{color:#6d3eb7;font-weight:500;}
+/* Built-ins: print, len, range, set, input, etc */
+.cm-s-slytherin .cm-builtin{color:#b07800;}
+/* Strings */
+.cm-s-slytherin .cm-string{color:#1e6e32;}
+.cm-s-slytherin .cm-string-2{color:#1a6030;}
+/* Comments */
+.cm-s-slytherin .cm-comment{color:#8a8a82;font-style:italic;}
+/* Numbers */
+.cm-s-slytherin .cm-number{color:#c0392b;}
+/* Operators: =, +, -, *, etc */
+.cm-s-slytherin .cm-operator{color:#2a5a8a;}
+/* Function/class def names */
+.cm-s-slytherin .cm-def{color:#c47d00;font-weight:600;}
+/* True / False / None */
+.cm-s-slytherin .cm-atom{color:#c0392b;}
+/* Variables */
+.cm-s-slytherin .cm-variable{color:var(--text);}
+.cm-s-slytherin .cm-variable-2{color:#2a5a8a;}
+/* Decorators */
+.cm-s-slytherin .cm-meta{color:#6d3eb7;}
+/* Brackets/braces/parens */
+.cm-s-slytherin .cm-bracket{color:#555548;}
+/* Error */
+.cm-s-slytherin .cm-error{color:var(--red);background:var(--red-light);}
+
+/* Placeholder text */
+.cm-s-slytherin .CodeMirror-placeholder{
+  color:var(--muted2)!important;
+  font-style:italic;
+}
+
+/* Make CodeMirror fill the container absolutely */
+#cm-editor{position:absolute;inset:0;}
+#cm-editor .CodeMirror{
+  position:absolute;inset:0;height:100%;
+}
+#cm-editor .CodeMirror-scroll{height:100%;}
 
 #err-banner{display:none;background:var(--red-light);border-top:1px solid var(--red-mid);padding:6px 12px;flex-shrink:0;}
 #err-banner.show{display:block;}
@@ -209,12 +285,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
   .top-badge{display:none;}
   .score-wrap{font-size:11px;}
 
-  /* Editor mobile tweaks */
   #io-row{height:auto;grid-template-columns:1fr;height:200px;}
   .io-pane:first-child{border-right:none;border-bottom:1px solid var(--border);}
   #io-row{height:220px;}
 
-  /* Bigger tap targets */
   .prob-box-header{padding:13px 14px;}
   .tc-card .tc-top{padding:12px 14px;}
   .btn{padding:7px 12px;}
@@ -230,28 +304,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 
 <!-- LOADING -->
 <div id="loading-overlay">
-  <!-- S-shape snake SVG for loading -->
   <svg class="l-snake" width="90" height="110" viewBox="0 0 90 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- S-curve body: top curve goes right, bottom curve goes left -->
     <path d="M 65 18 C 75 18, 80 28, 72 35 C 64 42, 30 42, 22 50 C 14 58, 18 70, 28 72 C 38 74, 58 74, 62 82"
           stroke="#1e6e32" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-    <!-- Head at top-right, facing right -->
     <ellipse cx="60" cy="14" rx="11" ry="9" fill="#1e6e32" transform="rotate(-20 60 14)"/>
     <ellipse cx="62" cy="16" rx="7" ry="5" fill="#186028" transform="rotate(-20 62 16)"/>
-    <!-- Eyes -->
     <circle cx="66" cy="9" r="3" fill="#f4f4f0"/>
     <circle cx="67" cy="9.8" r="1.5" fill="#060e06"/>
     <circle cx="66.3" cy="9" r=".55" fill="white"/>
     <circle cx="57" cy="8" r="2.5" fill="#f4f4f0"/>
     <circle cx="57.8" cy="8.6" r="1.2" fill="#060e06"/>
-    <!-- Nostril -->
     <circle cx="69" cy="13" r=".9" fill="#0f3d1a"/>
-    <!-- Tongue -->
     <path d="M71 17 L76 18 M76 18 L79 15 M76 18 L79 21" stroke="#b83232" stroke-width="1.5" stroke-linecap="round"/>
-    <!-- Tail at bottom, curled -->
     <path d="M62 82 C66 90, 60 98, 52 96 C 46 94, 46 88, 50 88"
           stroke="#1e6e32" stroke-width="8" stroke-linecap="round" fill="none"/>
-    <!-- Scale dots on S-body -->
     <circle cx="58" cy="28" r="2.2" fill="#186028" opacity=".45"/>
     <circle cx="44" cy="42" r="2.2" fill="#186028" opacity=".45"/>
     <circle cx="30" cy="56" r="2.2" fill="#186028" opacity=".45"/>
@@ -266,7 +332,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 <!-- TOPBAR -->
 <div id="topbar">
   <div class="logo">
-    <!-- S-shape snake small logo -->
     <svg width="28" height="34" viewBox="0 0 90 110" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M 65 18 C 75 18, 80 28, 72 35 C 64 42, 30 42, 22 50 C 14 58, 18 70, 28 72 C 38 74, 58 74, 62 82"
             stroke="#1e6e32" stroke-width="9" stroke-linecap="round" fill="none"/>
@@ -289,7 +354,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
   </div>
 </div>
 
-<!-- MAIN (desktop 3-col, mobile 1-col) -->
+<!-- MAIN -->
 <div id="main">
   <!-- LEFT -->
   <div id="left-panel"></div>
@@ -303,10 +368,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
       <button class="btn" id="btn-submit" disabled>✔ Submit</button>
     </div>
     <div id="editor-wrap">
+      <!-- CodeMirror mounts here -->
       <div id="editor-container">
-        <div id="line-nums"></div>
-        <textarea id="code-editor" spellcheck="false" autocomplete="off"
-          placeholder="# Write your Python solution here..."></textarea>
+        <div id="cm-editor"></div>
       </div>
       <div id="err-banner"><div id="err-text"></div></div>
       <div id="io-row">
@@ -493,13 +557,47 @@ const userCodes=PROBLEMS.map(()=>"");
 const tcResults=PROBLEMS.map(()=>null);
 const submitted=new Set();
 const earnedPts={};
-let mobTab="problems"; // mobile active tab
+let mobTab="problems";
 
 const $=id=>document.getElementById(id);
-const codeEditor=$("code-editor"),lineNums=$("line-nums"),customIn=$("custom-in");
+const customIn=$("custom-in");
 const outText=$("out-text"),tcList=$("tc-list"),tcScore=$("tc-score");
 const errBanner=$("err-banner"),errTextEl=$("err-text");
 const submitRes=$("submit-result"),srText=$("sr-text"),srPts=$("sr-pts"),srSub=$("sr-sub");
+
+// ══ CODEMIRROR INIT ══════════════════════════
+const cmEditor = CodeMirror(document.getElementById('cm-editor'), {
+  mode: 'python',
+  theme: 'slytherin',
+  lineNumbers: true,
+  indentUnit: 4,
+  tabSize: 4,
+  indentWithTabs: false,
+  autoCloseBrackets: true,
+  matchBrackets: true,
+  lineWrapping: false,
+  autofocus: false,
+  placeholder: '# Write your Python solution here...',
+  extraKeys: {
+    "Tab": function(cm){
+      // Insert 4 spaces instead of a tab character
+      if(cm.somethingSelected()){
+        cm.indentSelection("add");
+      } else {
+        cm.replaceSelection("    ","end","*");
+      }
+    },
+    "Shift-Tab": function(cm){ cm.indentSelection("subtract"); },
+    "Ctrl-Enter": function(){ document.getElementById("btn-run").click(); },
+    "Cmd-Enter":  function(){ document.getElementById("btn-run").click(); }
+  }
+});
+
+// Sync code to userCodes on every change
+cmEditor.on("change", function(){
+  userCodes[cur] = cmEditor.getValue();
+  hideErr();
+});
 
 // ── Mobile tabs ──
 function isMobile(){return window.innerWidth<=768;}
@@ -508,7 +606,12 @@ function switchTab(tab){
   ["left-panel","center-panel","right-panel"].forEach(id=>$(id).classList.remove("mob-active"));
   ["tab-problems","tab-editor","tab-tests"].forEach(id=>$(id).classList.remove("active"));
   if(tab==="problems"){$("left-panel").classList.add("mob-active");$("tab-problems").classList.add("active");}
-  else if(tab==="editor"){$("center-panel").classList.add("mob-active");$("tab-editor").classList.add("active");}
+  else if(tab==="editor"){
+    $("center-panel").classList.add("mob-active");
+    $("tab-editor").classList.add("active");
+    // Refresh CodeMirror after it becomes visible
+    setTimeout(()=>cmEditor.refresh(), 10);
+  }
   else if(tab==="tests"){$("right-panel").classList.add("mob-active");$("tab-tests").classList.add("active");}
 }
 function initMobileState(){
@@ -516,26 +619,11 @@ function initMobileState(){
     switchTab(mobTab);
   } else {
     ["left-panel","center-panel","right-panel"].forEach(id=>$(id).classList.remove("mob-active"));
+    setTimeout(()=>cmEditor.refresh(), 10);
   }
 }
 window.addEventListener("resize",initMobileState);
 
-// ── Line numbers ──
-function updateLineNums(){
-  const n=Math.max(codeEditor.value.split("\n").length,12);
-  lineNums.innerHTML=Array.from({length:n},(_,i)=>`<div>${i+1}</div>`).join("");
-}
-codeEditor.addEventListener("scroll",()=>lineNums.scrollTop=codeEditor.scrollTop);
-codeEditor.addEventListener("input",()=>{userCodes[cur]=codeEditor.value;updateLineNums();hideErr();});
-codeEditor.addEventListener("keydown",e=>{
-  if(e.key==="Tab"){
-    e.preventDefault();
-    const s=codeEditor.selectionStart,end=codeEditor.selectionEnd;
-    codeEditor.value=codeEditor.value.slice(0,s)+"    "+codeEditor.value.slice(end);
-    codeEditor.selectionStart=codeEditor.selectionEnd=s+4;
-    updateLineNums();
-  }
-});
 function hideErr(){errBanner.style.display="none";errBanner.className="";}
 function showErr(msg){errBanner.style.display="block";errBanner.className="show";errTextEl.textContent="⚠ "+msg;}
 function setBusy(b){
@@ -611,10 +699,9 @@ function buildLeftPanel(){
 
     box.querySelector(".prob-box-header").addEventListener("click",()=>{
       if(i!==cur){
-        userCodes[cur]=codeEditor.value;
+        userCodes[cur]=cmEditor.getValue();
         cur=i;
         loadProblem();
-        // On mobile, switch to editor after selecting problem
         if(isMobile())switchTab("editor");
         return;
       }
@@ -641,8 +728,8 @@ function toggleHint(btn){
 function loadProblem(){
   const p=PROBLEMS[cur];
   $("ed-fname").textContent=p.title.toLowerCase().replace(/[^a-z0-9]+/g,"_")+".py";
-  codeEditor.value=userCodes[cur];
-  updateLineNums();
+  cmEditor.setValue(userCodes[cur]);
+  cmEditor.clearHistory(); // fresh undo stack per problem
   customIn.value="";
   outText.textContent="// Output appears here after Run";
   outText.style.color="var(--muted2)";
@@ -651,6 +738,7 @@ function loadProblem(){
   renderTCs();
   renderSubmit();
   initMobileState();
+  setTimeout(()=>cmEditor.refresh(), 20);
 }
 
 // ── Test cases ──
@@ -677,7 +765,6 @@ function renderTCs(){
   if(results){
     tcScore.textContent=`${pc}/${p.testCases.length}`;
     tcScore.style.color=pc===p.testCases.length?"var(--green)":pc>0?"var(--yellow)":"var(--red)";
-    // Update mobile badge
     const fails=results.filter(r=>!r.pass).length;
     const badge=$("tab-tests-badge");
     if(fails>0){badge.textContent=fails;badge.classList.add("show");}
@@ -711,7 +798,7 @@ function renderSubmit(){
 }
 
 async function execAllTCs(){
-  const p=PROBLEMS[cur],code=codeEditor.value;
+  const p=PROBLEMS[cur],code=cmEditor.getValue();
   if(!code.trim()){showErr("Editor is empty!");return null;}
   const results=[];
   for(const tc of p.testCases){
@@ -731,13 +818,13 @@ function flash(cls){const cp=$("center-panel");cp.classList.add(cls);setTimeout(
 
 // ── Buttons ──
 $("btn-run").addEventListener("click",async()=>{
-  userCodes[cur]=codeEditor.value;setBusy(true);hideErr();
+  userCodes[cur]=cmEditor.getValue();setBusy(true);hideErr();
   const results=await execAllTCs();
   if(!results){setBusy(false);return;}
   renderTCs();
   const inputText=customIn.value.trim()||PROBLEMS[cur].testCases[0].inputs.join("\n");
   customIn.value=inputText;
-  const r=await runPython(codeEditor.value,inputText.split("\n"));
+  const r=await runPython(cmEditor.getValue(),inputText.split("\n"));
   if(r.ok){
     outText.textContent=r.lines.length?r.lines.join("\n"):"(no output — did you use print()?)";
     outText.style.color=r.lines.length?"var(--green)":"var(--yellow)";
@@ -747,12 +834,11 @@ $("btn-run").addEventListener("click",async()=>{
     showErr(r.error);
   }
   setBusy(false);flash("fg");
-  // On mobile, show tests tab after run
   if(isMobile())switchTab("tests");
 });
 
 $("btn-test").addEventListener("click",async()=>{
-  userCodes[cur]=codeEditor.value;setBusy(true);hideErr();
+  userCodes[cur]=cmEditor.getValue();setBusy(true);hideErr();
   const results=await execAllTCs();
   if(results){renderTCs();flash("fg");}
   setBusy(false);
@@ -760,7 +846,7 @@ $("btn-test").addEventListener("click",async()=>{
 });
 
 $("btn-submit").addEventListener("click",async()=>{
-  userCodes[cur]=codeEditor.value;setBusy(true);hideErr();
+  userCodes[cur]=cmEditor.getValue();setBusy(true);hideErr();
   const results=await execAllTCs();
   if(!results){setBusy(false);return;}
   submitted.add(cur);
