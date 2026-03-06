@@ -1,0 +1,103 @@
+{
+  "_note": "Self-study practice for Python Lists II. Inspired by BSCS 1B coursework — not an official platform.",
+
+  "id": "lab-list0",
+  "title": "Lists II",
+  "description": "Self-study practice",
+  "dueDate": "2026-12-31",
+  "passingPercent": 75,
+
+  "problems": [
+
+    {
+      "id": "list2-1",
+      "title": "Grocery Bag Sorter",
+      "difficulty": "hard",
+      "points": 50,
+      "passingPercent": 75,
+
+      "description": "You are writing a grocery bag management tool. The program starts with a pre-loaded bag of items and performs several list operations on it.\n\nYour program should:\n1. Start with this grocery bag: `['milk', 'bread', 'eggs', 'butter', 'milk', 'cheese']`\n2. Read an item and check if it exists in the **original** bag using the **`in`** operator.\n3. Create a **copy** of the bag using `copy()` and **sort** it alphabetically.\n4. **Reverse** the original bag using `reverse()`.\n5. Read a comma-separated list of extra items and **join** it with the sorted copy using `+`.\n6. **Count** how many times `'milk'` appears in the combined list using `count()`.\n7. Find the **index** of `'eggs'` in the reversed bag using `index()`.\n8. Display all results in order.",
+
+      "constraints": [
+        "The grocery bag always starts as `['milk', 'bread', 'eggs', 'butter', 'milk', 'cheese']`.",
+        "Extra items are provided as a comma-separated string with no extra spaces around commas.",
+        "`'eggs'` will always be present in the reversed list."
+      ],
+
+      "inputFormat": "Line 1: A single item name to search for in the original bag.\nLine 2: A comma-separated string of extra items to join with the sorted copy (e.g., `apple,orange,grape`).",
+
+      "outputFormat": "Line 1: `Milk count: <n>` — how many times `'milk'` appears in the combined list.\nLine 2: `Index of eggs: <n>` — position of `'eggs'` in the reversed bag.\nLine 3: `Found` if the searched item exists in the original, otherwise `Not found`.\nLine 4: The **reversed** original bag (comma-separated, no brackets).\nLine 5: The **sorted copy** (comma-separated, no brackets).\nLine 6: The **combined list** — sorted copy joined with extra items (comma-separated, no brackets).",
+
+      "hint": "bag = ['milk', 'bread', 'eggs', 'butter', 'milk', 'cheese']\nsearch = input()\nextra = input().split(',')\nfound = 'Found' if search in bag else 'Not found'\ncopy = bag.copy()\ncopy.sort()\nbag.reverse()\ncombined = copy + extra\nmilk_count = combined.count('milk')\neggs_index = bag.index('eggs')\nprint('Milk count:', milk_count)\nprint('Index of eggs:', eggs_index)\nprint(found)\nprint(', '.join(bag))\nprint(', '.join(copy))\nprint(', '.join(combined))",
+
+      "testCases": [
+        {
+          "label": "Example 1 — search found",
+          "hidden": false,
+          "inputs": ["eggs", "apple,orange,grape"],
+          "expected": [
+            "Milk count: 2",
+            "Index of eggs: 3",
+            "Found",
+            "cheese, milk, butter, eggs, bread, milk",
+            "bread, butter, cheese, eggs, milk, milk",
+            "bread, butter, cheese, eggs, milk, milk, apple, orange, grape"
+          ]
+        },
+        {
+          "label": "Example 2 — search found, different extras",
+          "hidden": false,
+          "inputs": ["butter", "mango,kiwi"],
+          "expected": [
+            "Milk count: 2",
+            "Index of eggs: 3",
+            "Found",
+            "cheese, milk, butter, eggs, bread, milk",
+            "bread, butter, cheese, eggs, milk, milk",
+            "bread, butter, cheese, eggs, milk, milk, mango, kiwi"
+          ]
+        },
+        {
+          "label": "Example 3 — search not found",
+          "hidden": false,
+          "inputs": ["pizza", "carrot,lettuce,onion"],
+          "expected": [
+            "Milk count: 2",
+            "Index of eggs: 3",
+            "Not found",
+            "cheese, milk, butter, eggs, bread, milk",
+            "bread, butter, cheese, eggs, milk, milk",
+            "bread, butter, cheese, eggs, milk, milk, carrot, lettuce, onion"
+          ]
+        },
+        {
+          "label": "Hidden: Search a duplicate item",
+          "hidden": true,
+          "inputs": ["milk", "berry,melon"],
+          "expected": [
+            "Milk count: 2",
+            "Index of eggs: 3",
+            "Found",
+            "cheese, milk, butter, eggs, bread, milk",
+            "bread, butter, cheese, eggs, milk, milk",
+            "bread, butter, cheese, eggs, milk, milk, berry, melon"
+          ]
+        },
+        {
+          "label": "Hidden: Search last item, single extra",
+          "hidden": true,
+          "inputs": ["cheese", "corn"],
+          "expected": [
+            "Milk count: 2",
+            "Index of eggs: 3",
+            "Found",
+            "cheese, milk, butter, eggs, bread, milk",
+            "bread, butter, cheese, eggs, milk, milk",
+            "bread, butter, cheese, eggs, milk, milk, corn"
+          ]
+        }
+      ]
+    }
+
+  ]
+}
