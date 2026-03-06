@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Python Classroom</title>
+<title>Slytherin Classroom</title>
 <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
@@ -15,451 +15,414 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#f4f4f0;--surface:#fff;--surface2:#f0f0ec;
-  --border:#e2e2da;--border2:#d0d0c6;
-  --text:#181814;--muted:#82827a;--muted2:#bbbbb0;
-  --green:#1e6e32;--green-light:#eaf4ec;--green-mid:#b8ddbf;
-  --red:#b83232;--red-light:#fdf0f0;--red-mid:#f0c0c0;
-  --yellow:#9a6e00;--yellow-light:#fdf6e8;--yellow-mid:#e8d090;
-  --purple:#5a3e8a;--code-bg:#f8f8f4;
-  --shadow:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.05);
-  --shadow-lg:0 8px 32px rgba(0,0,0,.13),0 2px 8px rgba(0,0,0,.08);
-  --radius:10px;
+  --void:#060a06;--dungeon:#0a0f0a;--stone:#111611;--moss:#161e16;
+  --slate:#1c261c;--iron:#243024;--mist:#2e3e2e;--fog:#3a4e3a;
+  --gold:#c9a84c;--gold-bright:#e8c76a;--gold-dim:#8a6e28;--gold-glow:#c9a84c33;
+  --venom:#2a7a3a;--serpent:#3a9a4e;--emerald:#4cbb64;--glow:#4cbb6466;--glow2:#4cbb6422;
+  --ash:#8a9e8a;--parchment:#c8b896;--bone:#e8dcc8;
+  --blood:#7a1e1e;--crimson:#c03030;
+  --amethyst:#5a3e8a;--violet:#8060b8;
+  --font-d:'Cinzel',serif;--font-b:'Crimson Pro',serif;--font-m:'JetBrains Mono',monospace;
 }
-html,body{height:100%;overflow:hidden;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;}
+html,body{height:100%;overflow:hidden;background:var(--void);}
+body{font-family:var(--font-b);color:var(--parchment);display:flex;flex-direction:column;}
 
 /* LOADING */
-#loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .3s;}
+#loading-overlay{position:fixed;inset:0;background:var(--void);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .6s ease;}
 #loading-overlay.hidden{opacity:0;pointer-events:none;}
-@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
-.l-snake{animation:float 2.2s ease-in-out infinite;margin-bottom:20px;}
-.l-title{font-weight:700;font-size:22px;color:var(--green);letter-spacing:-.03em;margin-bottom:4px;}
-.l-sub{font-size:13px;color:var(--muted);margin-bottom:22px;}
-.l-bar-wrap{width:200px;height:4px;background:var(--border);border-radius:99px;overflow:hidden;}
-.l-bar{height:100%;width:0%;background:var(--green);border-radius:99px;transition:width .4s ease;}
-.l-status{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:10px;}
+.lc{width:130px;height:130px;border:1px solid var(--gold-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:28px;position:relative;animation:breathe 3s ease-in-out infinite;}
+.lc::before{content:'';position:absolute;inset:-10px;border-radius:50%;border:1px solid var(--fog);animation:breathe 3s ease-in-out infinite reverse;}
+.lc::after{content:'';position:absolute;inset:-20px;border-radius:50%;border:1px solid var(--iron);animation:breathe 3s ease-in-out infinite 1s;}
+@keyframes breathe{0%,100%{box-shadow:0 0 24px var(--glow),inset 0 0 24px var(--gold-glow);}50%{box-shadow:0 0 48px var(--glow),0 0 96px var(--glow2),inset 0 0 36px var(--gold-glow);}}
+.lt{font-family:var(--font-d);font-size:30px;font-weight:700;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
+.ls{font-style:italic;color:var(--ash);font-size:14px;letter-spacing:.06em;margin-bottom:32px;}
+.lb{width:240px;height:2px;background:var(--iron);overflow:hidden;}
+.lbf{height:100%;width:0%;background:linear-gradient(90deg,var(--venom),var(--emerald));transition:width .4s ease;box-shadow:0 0 8px var(--glow);}
+.lst{font-family:var(--font-m);font-size:10px;color:var(--fog);margin-top:10px;letter-spacing:.05em;}
 
-/* TOPNAV */
-#topnav{background:var(--surface);border-bottom:1px solid var(--border);height:50px;display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;box-shadow:var(--shadow);z-index:100;}
-.nav-logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;color:var(--green);letter-spacing:-.02em;cursor:pointer;}
-.nav-breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);}
-.crumb{color:var(--muted);cursor:pointer;transition:color .12s;}
-.crumb:hover{color:var(--green);}
-.crumb.active{color:var(--text);font-weight:600;cursor:default;}
-.crumb-sep{color:var(--muted2);}
-.nav-spacer{flex:1;}
-.nav-user{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;display:flex;align-items:center;gap:6px;}
-.nav-avatar{width:28px;height:28px;border-radius:50%;background:var(--green-light);border:1px solid var(--green-mid);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--green);}
-
-/* VIEWS */
-#view-dashboard{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
-#view-editor{flex:1;overflow:hidden;display:none;flex-direction:column;}
+/* TOPBAR */
+#topbar{height:56px;background:var(--dungeon);border-bottom:1px solid var(--gold-dim);display:flex;align-items:center;padding:0 28px;gap:16px;flex-shrink:0;position:relative;box-shadow:0 4px 32px rgba(0,0,0,.7);z-index:100;}
+#topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.4;}
+.top-logo{display:flex;align-items:center;gap:10px;font-family:var(--font-d);font-size:15px;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:color .15s;}
+.top-logo:hover{color:var(--gold-bright);}
+.tdiv{width:1px;height:26px;background:var(--iron);}
+.top-bc{display:flex;align-items:center;gap:8px;font-family:var(--font-m);font-size:11px;color:var(--fog);}
+.bc-i{cursor:pointer;transition:color .15s;}.bc-i:hover{color:var(--emerald);}.bc-i.active{color:var(--parchment);cursor:default;}
+.bc-s{color:var(--iron);}
+.top-sp{flex:1;}
+.top-u{display:flex;align-items:center;gap:10px;font-family:var(--font-m);font-size:11px;color:var(--ash);}
+.top-av{width:32px;height:32px;border-radius:50%;background:var(--stone);border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:11px;font-weight:700;color:var(--gold);}
 
 /* DASHBOARD */
-#dash-header{padding:24px 32px 0;}
-.dh-title{font-size:22px;font-weight:700;letter-spacing:-.03em;margin-bottom:4px;}
-.dh-meta{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px;}
-#dash-body{padding:20px 32px 32px;}
-.section-row{display:flex;align-items:center;margin-bottom:14px;}
-.section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+#view-dashboard{flex:1;overflow-y:auto;display:none;flex-direction:column;}
+#view-dashboard.active{display:flex;}
+.dash-hero{padding:52px 52px 36px;background:linear-gradient(160deg,var(--dungeon) 60%,var(--stone));border-bottom:1px solid var(--iron);position:relative;overflow:hidden;}
+.dash-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 120% at 90% 40%,var(--gold-glow),transparent);pointer-events:none;}
+.dash-hero::after{content:'⬡';position:absolute;right:60px;top:50%;transform:translateY(-50%);font-size:180px;color:var(--iron);line-height:1;pointer-events:none;opacity:.3;}
+.hero-tag{font-family:var(--font-m);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--emerald);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.hero-tag::before{content:'';width:28px;height:1px;background:var(--emerald);}
+.hero-title{font-family:var(--font-d);font-size:38px;font-weight:900;color:var(--bone);letter-spacing:.04em;line-height:1.1;margin-bottom:10px;}
+.hero-sub{font-style:italic;color:var(--ash);font-size:16px;}
+.dash-body{padding:36px 52px 52px;display:flex;flex-direction:column;gap:20px;}
+.sec-label{font-family:var(--font-d);font-size:10px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.sec-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--iron),transparent);}
 
-/* Lab Card */
-.lab-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden;}
-.lab-hd{display:flex;align-items:center;gap:10px;padding:14px 18px;cursor:pointer;user-select:none;transition:background .12s;border-bottom:1px solid transparent;}
-.lab-hd:hover{background:var(--surface2);}
-.lab-card.open .lab-hd{background:var(--green-light);border-bottom-color:var(--border);}
-.lab-icon{font-size:14px;flex-shrink:0;}
-.lab-title{font-size:13px;font-weight:700;flex:1;}
-.lab-card.open .lab-title{color:var(--green);}
-.lc-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.status-badge{font-size:10px;font-weight:700;font-family:'DM Mono',monospace;padding:3px 10px;border-radius:99px;}
-.status-badge.passed{background:var(--green-light);color:var(--green);border:1px solid var(--green-mid);}
-.status-badge.failed{background:var(--red-light);color:var(--red);border:1px solid var(--red-mid);}
-.status-badge.pending{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
-.score-pill{font-size:12px;font-weight:800;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;border:3px solid;flex-shrink:0;}
-.sp-green{color:var(--green);border-color:var(--green-mid);background:var(--green-light);}
-.sp-yellow{color:var(--yellow);border-color:var(--yellow-mid);background:var(--yellow-light);}
-.sp-red{color:var(--red);border-color:var(--red-mid);background:var(--red-light);}
-.sp-gray{color:var(--muted);border-color:var(--border);background:var(--surface2);}
-.lc-chevron{font-size:10px;color:var(--muted2);transition:transform .2s;}
-.lab-card.open .lc-chevron{transform:rotate(180deg);}
+/* Tome (lab card) */
+.tome{background:var(--dungeon);border:1px solid var(--iron);border-radius:3px;overflow:hidden;transition:border-color .2s,box-shadow .2s;position:relative;}
+.tome::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--fog);transition:background .2s,box-shadow .2s;}
+.tome.open::before{background:var(--emerald);box-shadow:0 0 10px var(--glow);}
+.tome:hover{border-color:var(--fog);box-shadow:0 8px 40px rgba(0,0,0,.6);}
+.tome-hd{display:flex;align-items:center;gap:16px;padding:20px 22px 20px 26px;cursor:pointer;user-select:none;transition:background .15s;}
+.tome-hd:hover{background:var(--stone);}
+.tome.open .tome-hd{background:var(--stone);}
+.tome-ico{font-size:20px;flex-shrink:0;}
+.tome-inf{flex:1;min-width:0;}
+.tome-nm{font-family:var(--font-d);font-size:15px;font-weight:600;color:var(--bone);letter-spacing:.06em;margin-bottom:4px;}
+.tome.open .tome-nm{color:var(--gold);}
+.tome-mt{font-family:var(--font-m);font-size:10px;color:var(--fog);display:flex;gap:14px;flex-wrap:wrap;}
+.tome-rt{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.seal{width:54px;height:54px;border-radius:50%;border:2px solid;display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:11px;font-weight:700;flex-shrink:0;}
+.sg{border-color:var(--serpent);color:var(--emerald);background:var(--glow2);box-shadow:0 0 12px var(--glow);}
+.sy{border-color:var(--gold-dim);color:var(--gold);background:var(--gold-glow);}
+.sr{border-color:var(--blood);color:var(--crimson);background:#7a1e1e22;}
+.sd{border-color:var(--iron);color:var(--fog);background:transparent;}
+.rbadge{font-family:var(--font-m);font-size:10px;padding:3px 10px;border-radius:2px;border:1px solid;letter-spacing:.05em;}
+.rp{border-color:var(--serpent);color:var(--emerald);background:#4cbb6412;}
+.rf{border-color:var(--blood);color:var(--crimson);background:#c0303012;}
+.rn{border-color:var(--iron);color:var(--fog);background:transparent;}
+.chv{font-size:10px;color:var(--fog);transition:transform .25s;}
+.tome.open .chv{transform:rotate(180deg);color:var(--emerald);}
+.tome-prog{height:2px;background:var(--iron);overflow:hidden;}
+.tome-prog-fill{height:100%;background:linear-gradient(90deg,var(--venom),var(--emerald));transition:width .6s ease;box-shadow:0 0 6px var(--glow);}
+.tome-bd{display:none;border-top:1px solid var(--iron);}
+.tome.open .tome-bd{display:block;}
 
-.lab-meta{padding:9px 18px;background:var(--bg);display:flex;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--border);}
-.lm-item{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
+/* Spell row */
+.spell{display:flex;align-items:center;gap:14px;padding:14px 22px 14px 26px;border-bottom:1px solid var(--stone);cursor:pointer;transition:background .12s;}
+.spell:last-child{border-bottom:none;}
+.spell:hover{background:var(--moss);}
+.sp-orb{width:22px;height:22px;border-radius:50%;border:1px solid;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;transition:all .2s;}
+.od{border-color:var(--serpent);color:var(--emerald);background:var(--glow2);box-shadow:0 0 6px var(--glow);}
+.of{border-color:var(--blood);color:var(--crimson);background:#7a1e1e22;}
+.oi{border-color:var(--iron);color:var(--fog);background:transparent;}
+.sp-nm{font-family:var(--font-b);font-size:14px;font-weight:600;color:var(--parchment);flex:1;}
+.spell:hover .sp-nm{color:var(--bone);}
+.sp-tags{display:flex;gap:6px;align-items:center;flex-shrink:0;}
+.glyph{font-family:var(--font-m);font-size:9px;padding:2px 8px;border-radius:2px;font-weight:500;letter-spacing:.05em;}
+.ge{background:#4cbb6415;color:var(--emerald);border:1px solid var(--venom);}
+.gm{background:#c9a84c15;color:var(--gold);border:1px solid var(--gold-dim);}
+.gh{background:#c0303015;color:var(--crimson);border:1px solid var(--blood);}
+.gvh{background:#8060b815;color:var(--violet);border:1px solid var(--amethyst);}
+.gxt{background:#ff444415;color:#ff6666;border:1px solid #aa2222;animation:xpulse 2s ease-in-out infinite;}
+@keyframes xpulse{0%,100%{box-shadow:0 0 4px #aa222266;}50%{box-shadow:0 0 10px #cc0000cc;}}
+.gp{background:var(--stone);color:var(--ash);border:1px solid var(--iron);}
+.gpct{background:none;color:var(--fog);border:none;font-size:9px;}
+.sp-st{font-family:var(--font-m);font-size:9px;padding:2px 8px;border-radius:2px;flex-shrink:0;}
+.ssp{background:#4cbb6420;color:var(--emerald);border:1px solid var(--serpent);}
+.ssf{background:#c0303020;color:var(--crimson);border:1px solid var(--blood);}
+.ssi{background:var(--stone);color:var(--fog);border:1px solid var(--iron);}
+.sp-cast{font-family:var(--font-m);font-size:9px;font-weight:500;padding:4px 12px;border-radius:2px;border:1px solid var(--venom);background:transparent;color:var(--emerald);cursor:pointer;white-space:nowrap;transition:all .15s;letter-spacing:.05em;}
+.sp-cast:hover{background:var(--glow2);box-shadow:0 0 8px var(--glow);}
 
-.lab-prog-wrap{padding:8px 18px;background:var(--bg);border-bottom:1px solid var(--border);}
-.lab-prog-label{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px;}
-.lab-prog-bar{height:5px;background:var(--border);border-radius:99px;overflow:hidden;}
-.lab-prog-fill{height:100%;border-radius:99px;transition:width .5s;background:var(--green);}
-.lab-prog-fill.y{background:var(--yellow);}
-.lab-prog-fill.r{background:var(--red);}
+/* EDITOR */
+#view-editor{flex:1;overflow:hidden;display:none;}
+#view-editor.active{display:grid;grid-template-columns:300px 1fr 280px;}
 
-.lab-probs{display:none;}
-.lab-card.open .lab-probs{display:block;}
-
-.prob-row{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;}
-.prob-row:last-child{border-bottom:none;}
-.prob-row:hover{background:var(--surface2);}
-.pr-check{width:18px;height:18px;border-radius:4px;border:1px solid var(--border2);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;color:var(--muted);}
-.pr-check.done{background:var(--green-light);border-color:var(--green-mid);color:var(--green);}
-.pr-check.fail{background:var(--red-light);border-color:var(--red-mid);color:var(--red);}
-.pr-name{font-size:12px;font-weight:600;flex:1;}
-.pr-tags{display:flex;gap:5px;align-items:center;flex-shrink:0;}
-.tag{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:700;font-family:'DM Mono',monospace;}
-.tag-easy{background:var(--green-light);color:var(--green);border:1px solid var(--green-mid);}
-.tag-medium{background:var(--yellow-light);color:var(--yellow);border:1px solid var(--yellow-mid);}
-.tag-hard{background:var(--red-light);color:var(--red);border:1px solid var(--red-mid);}
-.tag-very-hard{background:#2d1b4e;color:#c8a8f0;border:1px solid #7a4db0;}
-.tag-extreme{background:#1a0a0a;color:#ff4444;border:2px solid #cc0000;animation:extreme-pulse 1.5s ease-in-out infinite;}
-@keyframes extreme-pulse{0%,100%{box-shadow:0 0 4px #cc000066;}50%{box-shadow:0 0 10px #cc0000cc;}}
-.tag-pts{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
-.tag-pct{font-size:9px;color:var(--muted2);font-weight:400;background:none;border:none;padding:0;}
-.pr-status{font-size:10px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:4px;flex-shrink:0;}
-.pr-status.pass{background:var(--green-mid);color:var(--green);}
-.pr-status.fail{background:var(--red-mid);color:var(--red);}
-.pr-status.pending{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
-.pr-btn{font-size:10px;font-family:'DM Mono',monospace;font-weight:600;padding:4px 10px;border-radius:6px;border:1px solid var(--green-mid);background:var(--green-light);color:var(--green);cursor:pointer;flex-shrink:0;white-space:nowrap;transition:background .12s;}
-.pr-btn:hover{background:var(--green-mid);}
-
-/* EDITOR VIEW */
-#editor-inner{display:grid;grid-template-columns:272px 1fr 272px;flex:1;overflow:hidden;min-height:0;}
-
-/* Editor Left */
-#ed-left{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;background:var(--surface);}
-.el-header{padding:14px;border-bottom:1px solid var(--border);}
-.el-back{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green);cursor:pointer;font-weight:600;margin-bottom:10px;font-family:'DM Mono',monospace;}
-.el-back:hover{text-decoration:underline;}
-.el-tags{display:flex;gap:6px;margin-bottom:8px;}
-.el-title{font-size:14px;font-weight:700;letter-spacing:-.02em;margin-bottom:3px;}
-.el-meta{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
-.el-section{padding:12px 14px;border-bottom:1px solid var(--border);}
-.el-h2{font-size:14px;font-weight:700;letter-spacing:-.01em;color:var(--text);margin-bottom:8px;}
-.el-desc{font-size:12px;line-height:1.75;color:#44443e;white-space:pre-wrap;}
-.el-desc strong{font-weight:700;color:var(--text);}
-.el-list{padding-left:16px;display:flex;flex-direction:column;gap:5px;}
-.el-list li{font-size:12px;line-height:1.65;color:#44443e;}
-.el-list li strong{font-weight:700;color:var(--text);}
-.el-list li code{font-family:"DM Mono",monospace;font-size:11px;background:var(--code-bg);border:1px solid var(--border);border-radius:3px;padding:1px 4px;color:#2a5a8a;}
-.ex-block{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:10px;}
-.ex-block:last-child{margin-bottom:0;}
-.ex-title{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;font-family:"DM Mono",monospace;}
-.ex-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.ex-col-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted2);font-family:"DM Mono",monospace;margin-bottom:3px;}
-.ex-col-val{font-family:"DM Mono",monospace;font-size:11px;color:var(--text);white-space:pre-wrap;line-height:1.6;}
-.ex-col-val.out{color:var(--green);}
-.el-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:7px;}
-.step-list{display:flex;flex-direction:column;gap:8px;}
-.step-item{display:flex;gap:8px;align-items:flex-start;}
-.step-num{width:20px;height:20px;border-radius:50%;background:var(--green-light);color:var(--green);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--green-mid);font-family:'DM Mono',monospace;margin-top:1px;}
-.step-txt{font-size:12px;line-height:1.65;color:#44443e;}
-.codeblock{background:var(--code-bg);border:1px solid var(--border);border-radius:5px;padding:8px 10px;font-family:'DM Mono',monospace;font-size:11px;color:#2a5a8a;white-space:pre-wrap;line-height:1.65;}
-.hint-btn{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;padding:5px 12px;border-radius:6px;border:1px solid var(--yellow-mid);background:var(--yellow-light);color:var(--yellow);cursor:pointer;}
-.hint-btn:hover{background:#f5e8b0;}
-.hint-box{display:none;margin-top:8px;background:var(--yellow-light);border:1px solid var(--yellow-mid);border-left:3px solid var(--yellow);border-radius:5px;padding:8px 10px;font-family:'DM Mono',monospace;font-size:11px;color:#7a5500;white-space:pre-wrap;line-height:1.65;}
+/* Grimoire (left) */
+#grimoire{background:var(--dungeon);border-right:1px solid var(--iron);display:flex;flex-direction:column;overflow-y:auto;height:100%;}
+.grm-hd{padding:20px;border-bottom:1px solid var(--iron);background:var(--stone);flex-shrink:0;}
+.grm-back{display:flex;align-items:center;gap:6px;font-family:var(--font-m);font-size:10px;color:var(--serpent);cursor:pointer;letter-spacing:.08em;margin-bottom:14px;transition:color .15s;width:fit-content;}
+.grm-back:hover{color:var(--emerald);}
+.grm-glyphs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+.grm-title{font-family:var(--font-d);font-size:17px;font-weight:700;color:var(--bone);letter-spacing:.04em;line-height:1.3;margin-bottom:4px;}
+.grm-meta{font-family:var(--font-m);font-size:10px;color:var(--fog);}
+.grm-sec{padding:16px 20px;border-bottom:1px solid var(--stone);}
+.grm-sec-t{font-family:var(--font-d);font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.grm-sec-t::after{content:'';flex:1;height:1px;background:var(--iron);}
+.grm-desc{font-family:var(--font-b);font-size:13px;line-height:1.85;color:var(--ash);white-space:pre-wrap;}
+.grm-desc strong{color:var(--parchment);font-weight:600;}
+.grm-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.grm-list li{font-family:var(--font-b);font-size:13px;line-height:1.65;color:var(--ash);display:flex;gap:8px;align-items:flex-start;}
+.grm-list li::before{content:'◆';color:var(--venom);font-size:7px;margin-top:5px;flex-shrink:0;}
+.grm-list li strong{color:var(--parchment);}
+.grm-list li code{font-family:var(--font-m);font-size:11px;background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:1px 5px;color:var(--emerald);}
+.ex-card{background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:12px;margin-bottom:10px;}
+.ex-card:last-child{margin-bottom:0;}
+.ex-lbl{font-family:var(--font-m);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:10px;}
+.ex-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ex-col-h{font-family:var(--font-m);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--fog);margin-bottom:4px;}
+.ex-col-v{font-family:var(--font-m);font-size:11px;color:var(--parchment);white-space:pre-wrap;line-height:1.65;}
+.ex-col-v.out{color:var(--emerald);}
+.hint-btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-m);font-size:10px;letter-spacing:.08em;padding:6px 14px;border-radius:2px;border:1px solid var(--gold-dim);background:transparent;color:var(--gold);cursor:pointer;transition:all .15s;}
+.hint-btn:hover{background:var(--gold-glow);box-shadow:0 0 10px var(--gold-glow);}
+.hint-box{display:none;margin-top:10px;background:var(--stone);border:1px solid var(--gold-dim);border-left:2px solid var(--gold);border-radius:2px;padding:12px;font-family:var(--font-m);font-size:11px;color:var(--gold-bright);white-space:pre-wrap;line-height:1.7;}
 .hint-box.visible{display:block;}
 
-/* Editor Center */
-#ed-center{display:flex;flex-direction:column;overflow:hidden;background:var(--code-bg);border-right:1px solid var(--border);}
-#editor-bar{background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 12px;height:46px;gap:7px;flex-shrink:0;}
-.filename{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.btn{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;padding:6px 12px;border-radius:6px;border:none;cursor:pointer;transition:all .12s;box-shadow:var(--shadow);white-space:nowrap;}
-.btn:active{transform:scale(.96);}
-.btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;}
-#btn-run{background:var(--green);color:#fff;}
-#btn-run:hover:not(:disabled){background:#186028;}
-#btn-test{background:var(--surface);color:var(--text);border:1px solid var(--border2);}
-#btn-test:hover:not(:disabled){background:var(--surface2);}
-#btn-submit{background:var(--purple);color:#fff;}
-#btn-submit:hover:not(:disabled){background:#4a2e7a;}
+/* Editor center */
+#ed-center{display:flex;flex-direction:column;overflow:hidden;background:var(--void);border-right:1px solid var(--iron);}
+#spell-bar{height:48px;background:var(--dungeon);border-bottom:1px solid var(--iron);display:flex;align-items:center;padding:0 16px;gap:8px;flex-shrink:0;}
+.sf{font-family:var(--font-m);font-size:11px;color:var(--fog);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cbtn{font-family:var(--font-m);font-size:10px;font-weight:500;padding:7px 16px;border-radius:2px;border:1px solid;cursor:pointer;transition:all .15s;letter-spacing:.06em;white-space:nowrap;}
+.cbtn:disabled{opacity:.3;cursor:not-allowed;}
+.cbtn:active:not(:disabled){transform:scale(.96);}
+#btn-run{border-color:var(--venom);color:var(--emerald);background:transparent;}
+#btn-run:hover:not(:disabled){background:var(--glow2);box-shadow:0 0 10px var(--glow);}
+#btn-test{border-color:var(--iron);color:var(--ash);background:transparent;}
+#btn-test:hover:not(:disabled){background:var(--stone);}
+#btn-submit{border-color:var(--amethyst);color:var(--violet);background:transparent;}
+#btn-submit:hover:not(:disabled){background:#8060b822;box-shadow:0 0 10px #8060b855;}
 #ed-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
 #ed-container{flex:1;overflow:hidden;position:relative;}
 #cm-mount{position:absolute;inset:0;}
 #cm-mount .CodeMirror{position:absolute;inset:0;height:100%;}
 #cm-mount .CodeMirror-scroll{height:100%;}
 
-/* CM Slytherin theme */
-.cm-s-slytherin.CodeMirror{background:var(--code-bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;line-height:21.45px;height:100%;border:none;}
-.cm-s-slytherin .CodeMirror-cursor{border-left:2px solid var(--green);}
-.cm-s-slytherin .CodeMirror-selected{background:#c8dfc8;}
-.cm-s-slytherin.CodeMirror-focused .CodeMirror-selected{background:#b8d8b8;}
-.cm-s-slytherin .CodeMirror-gutters{background:var(--code-bg);border-right:1px solid var(--border);}
-.cm-s-slytherin .CodeMirror-linenumber{color:var(--muted2);font-family:'DM Mono',monospace;font-size:12px;padding:0 8px 0 6px;min-width:28px;}
-.cm-s-slytherin .CodeMirror-activeline-background{background:rgba(30,110,50,.045);}
-.cm-s-slytherin .CodeMirror-matchingbracket{background:#c8dfc8;color:var(--green)!important;font-weight:700;outline:1px solid var(--green-mid);}
-.cm-s-slytherin .cm-keyword{color:#6d3eb7;font-weight:500;}
-.cm-s-slytherin .cm-builtin{color:#b07800;}
-.cm-s-slytherin .cm-string,.cm-s-slytherin .cm-string-2{color:#1e6e32;}
-.cm-s-slytherin .cm-comment{color:#8a8a82;font-style:italic;}
-.cm-s-slytherin .cm-number{color:#c0392b;}
-.cm-s-slytherin .cm-operator{color:#2a5a8a;}
-.cm-s-slytherin .cm-def{color:#c47d00;font-weight:600;}
-.cm-s-slytherin .cm-atom{color:#c0392b;}
-.cm-s-slytherin .cm-variable{color:var(--text);}
-.cm-s-slytherin .cm-variable-2{color:#2a5a8a;}
-.cm-s-slytherin .cm-error{color:var(--red);background:var(--red-light);}
-.cm-s-slytherin .CodeMirror-placeholder{color:var(--muted2)!important;font-style:italic;}
+/* Dark Slytherin CM theme */
+.cm-s-sly.CodeMirror{background:#060a06;color:#c8b896;font-family:var(--font-m);font-size:13px;line-height:1.65;height:100%;border:none;}
+.cm-s-sly .CodeMirror-cursor{border-left:2px solid #4cbb64;}
+.cm-s-sly .CodeMirror-selected{background:#2a7a3a33;}
+.cm-s-sly.CodeMirror-focused .CodeMirror-selected{background:#2a7a3a55;}
+.cm-s-sly .CodeMirror-gutters{background:#0a0f0a;border-right:1px solid #243024;}
+.cm-s-sly .CodeMirror-linenumber{color:#3a4e3a;font-size:11px;padding:0 10px 0 6px;}
+.cm-s-sly .CodeMirror-activeline-background{background:#2a7a3a0a;}
+.cm-s-sly .CodeMirror-matchingbracket{background:#4cbb6433;color:#4cbb64 !important;outline:1px solid #4cbb6466;}
+.cm-s-sly .cm-keyword{color:#c9a84c;font-weight:500;}
+.cm-s-sly .cm-builtin{color:#8060b8;}
+.cm-s-sly .cm-string,.cm-s-sly .cm-string-2{color:#4cbb64;}
+.cm-s-sly .cm-comment{color:#3a4e3a;font-style:italic;}
+.cm-s-sly .cm-number{color:#c03030;}
+.cm-s-sly .cm-operator{color:#c9a84c;}
+.cm-s-sly .cm-def{color:#e8c76a;font-weight:600;}
+.cm-s-sly .cm-atom{color:#c03030;}
+.cm-s-sly .cm-variable{color:#c8b896;}
+.cm-s-sly .cm-variable-2{color:#8a9e8a;}
+.cm-s-sly .cm-error{color:#c03030;background:#7a1e1e33;}
+.cm-s-sly .CodeMirror-placeholder{color:#3a4e3a !important;font-style:italic;}
 
-#err-banner{display:none;background:var(--red-light);border-top:1px solid var(--red-mid);padding:6px 12px;flex-shrink:0;}
+#err-banner{display:none;background:#7a1e1e22;border-top:1px solid var(--blood);padding:8px 16px;flex-shrink:0;}
 #err-banner.show{display:block;}
-#err-text{font-family:'DM Mono',monospace;font-size:11px;color:var(--red);white-space:pre-wrap;}
-#io-row{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border);flex-shrink:0;background:var(--surface);height:116px;}
-.io-pane{display:flex;flex-direction:column;padding:7px 10px;overflow:hidden;}
-.io-pane:first-child{border-right:1px solid var(--border);}
-.io-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;flex-shrink:0;}
-#custom-in{flex:1;background:var(--code-bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:4px 8px;outline:none;resize:none;line-height:1.5;}
-#custom-in:focus{border-color:var(--green);}
-#custom-in::placeholder{color:var(--muted2);}
-#out-box{flex:1;background:var(--code-bg);border:1px solid var(--border);border-radius:5px;padding:4px 8px;overflow-y:auto;}
-#out-text{font-family:'DM Mono',monospace;font-size:12px;white-space:pre-wrap;line-height:1.5;color:var(--muted2);}
+#err-text{font-family:var(--font-m);font-size:11px;color:var(--crimson);white-space:pre-wrap;}
+#io-row{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--iron);flex-shrink:0;background:var(--dungeon);height:120px;}
+.io-pane{display:flex;flex-direction:column;padding:8px 12px;overflow:hidden;}
+.io-pane:first-child{border-right:1px solid var(--iron);}
+.io-lbl{font-family:var(--font-m);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--fog);margin-bottom:5px;flex-shrink:0;}
+#custom-in{flex:1;background:var(--stone);border:1px solid var(--iron);border-radius:2px;color:var(--parchment);font-family:var(--font-m);font-size:12px;padding:5px 8px;outline:none;resize:none;line-height:1.5;}
+#custom-in:focus{border-color:var(--venom);}
+#custom-in::placeholder{color:var(--iron);}
+#out-box{flex:1;background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:5px 8px;overflow-y:auto;}
+#out-text{font-family:var(--font-m);font-size:12px;white-space:pre-wrap;line-height:1.5;color:var(--fog);}
 
-/* Editor Right */
-#ed-right{display:flex;flex-direction:column;overflow:hidden;background:var(--surface);}
-#tc-header{height:46px;display:flex;align-items:center;padding:0 14px;border-bottom:1px solid var(--border);flex-shrink:0;}
-.tc-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
-#tc-score{margin-left:auto;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;}
-#tc-list{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:7px;background:var(--bg);}
-.tc-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;box-shadow:var(--shadow);transition:border-color .12s,transform .1s;}
-.tc-card:hover{border-color:var(--border2);transform:translateY(-1px);}
-.tc-card.pass{border-color:var(--green-mid);background:var(--green-light);}
-.tc-card.fail{border-color:var(--red-mid);background:var(--red-light);}
+/* Trials panel (right) */
+#trials-panel{display:flex;flex-direction:column;overflow:hidden;background:var(--dungeon);}
+#trials-hd{height:48px;display:flex;align-items:center;padding:0 16px;border-bottom:1px solid var(--iron);flex-shrink:0;gap:10px;}
+.trials-t{font-family:var(--font-d);font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dim);}
+#trials-score{margin-left:auto;font-family:var(--font-m);font-size:13px;font-weight:500;}
+#trials-list{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px;background:var(--void);}
+.tc-card{background:var(--dungeon);border:1px solid var(--iron);border-radius:2px;cursor:pointer;transition:all .15s;}
+.tc-card:hover{border-color:var(--fog);transform:translateX(2px);}
+.tc-card.pass{border-color:var(--venom);background:#4cbb640a;}
+.tc-card.fail{border-color:var(--blood);background:#c030300a;}
+.tc-card.htc{border-style:dashed;border-color:var(--iron);}
 .tc-top{display:flex;align-items:center;gap:8px;padding:10px 12px;}
-.tc-num{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);width:16px;}
-.tc-lbl{font-size:12px;font-weight:600;flex:1;}
-.tc-card.pass .tc-lbl{color:var(--green);}
-.tc-card.fail .tc-lbl{color:var(--red);}
-.tc-card:not(.pass):not(.fail) .tc-lbl{color:var(--muted);}
-.tc-badge{font-size:10px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:4px;}
-.tc-card.hidden-tc{border-style:dashed;border-color:var(--border2);background:var(--surface2);}
-.tc-card.hidden-tc .tc-lbl{color:var(--muted);}
-.tc-hidden-icon{font-size:11px;margin-right:2px;}
-.tc-card.pass .tc-badge{background:var(--green-mid);color:var(--green);}
-.tc-card.fail .tc-badge{background:var(--red-mid);color:var(--red);}
-.tc-card:not(.pass):not(.fail) .tc-badge{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
-.tc-sub{font-size:10px;color:var(--muted2);padding:0 12px 8px;font-family:'DM Mono',monospace;}
-#submit-result{display:none;background:var(--surface);border-top:1px solid var(--border);padding:12px 14px;text-align:center;flex-shrink:0;}
-#submit-result.show{display:block;}
-.sr-text{font-size:14px;font-weight:700;}.sr-text.ok{color:var(--green);}.sr-text.no{color:var(--red);}
-.sr-pts{font-size:12px;color:var(--yellow);margin-top:4px;font-family:'DM Mono',monospace;}
-.sr-sub{font-size:11px;color:var(--muted);margin-top:3px;}
+.tc-num{font-family:var(--font-m);font-size:9px;color:var(--fog);width:14px;}
+.tc-lbl{font-family:var(--font-b);font-size:13px;font-weight:600;flex:1;color:var(--ash);}
+.tc-card.pass .tc-lbl{color:var(--emerald);}
+.tc-card.fail .tc-lbl{color:var(--crimson);}
+.tc-badge{font-family:var(--font-m);font-size:9px;padding:2px 8px;border-radius:2px;}
+.tc-card.pass .tc-badge{background:#4cbb6420;color:var(--emerald);border:1px solid var(--venom);}
+.tc-card.fail .tc-badge{background:#c0303020;color:var(--crimson);border:1px solid var(--blood);}
+.tc-card:not(.pass):not(.fail) .tc-badge{background:var(--stone);color:var(--fog);border:1px solid var(--iron);}
+.tc-sub{font-size:10px;color:var(--iron);padding:0 12px 8px;font-family:var(--font-m);}
+#verdict-area{display:none;background:var(--dungeon);border-top:1px solid var(--iron);padding:16px;text-align:center;flex-shrink:0;}
+#verdict-area.show{display:block;}
+.vd-t{font-family:var(--font-d);font-size:15px;font-weight:700;letter-spacing:.06em;margin-bottom:6px;}
+.vd-t.ok{color:var(--emerald);text-shadow:0 0 24px var(--glow);}
+.vd-t.no{color:var(--crimson);}
+.vd-pts{font-family:var(--font-m);font-size:11px;color:var(--gold);margin-bottom:4px;}
+.vd-sub{font-family:var(--font-b);font-style:italic;font-size:12px;color:var(--fog);}
 
 /* Modal */
-#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.32);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(2px);padding:16px;}
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:16px;}
 #modal-overlay.open{display:flex;}
-#modal{background:var(--surface);border-radius:12px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--border);animation:min-in .18s ease;}
-@keyframes min-in{from{opacity:0;transform:scale(.95) translateY(8px);}to{opacity:1;transform:none;}}
-#modal-header{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0;gap:10px;}
-#modal-title{font-size:14px;font-weight:700;flex:1;}
-#modal-badge{font-family:'DM Mono',monospace;font-size:11px;padding:3px 10px;border-radius:5px;}
-#modal-badge.pass{background:var(--green-mid);color:var(--green);}
-#modal-badge.fail{background:var(--red-mid);color:var(--red);}
-#modal-badge.pending{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
-#modal-close{width:28px;height:28px;border-radius:6px;border:none;background:var(--surface2);color:var(--muted);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
-#modal-close:hover{background:var(--border);}
-#modal-body{overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:12px;}
-.m-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:5px;}
-.m-val{font-family:'DM Mono',monospace;font-size:12px;background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;white-space:pre-wrap;line-height:1.65;}
-.m-val.inp{color:var(--muted);}.m-val.exp{color:#2a5a8a;}
-.m-val.ok{color:var(--green);border-color:var(--green-mid);background:var(--green-light);}
-.m-val.err{color:var(--red);border-color:var(--red-mid);background:var(--red-light);}
-.m-val.none{color:var(--muted2);font-style:italic;}
+#modal{background:var(--dungeon);border:1px solid var(--gold-dim);border-radius:3px;width:500px;max-width:100%;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.9),0 0 40px var(--gold-glow);animation:ma .2s ease;}
+@keyframes ma{from{opacity:0;transform:scale(.95) translateY(8px);}to{opacity:1;transform:none;}}
+#modal-hd{display:flex;align-items:center;padding:16px 18px;border-bottom:1px solid var(--iron);flex-shrink:0;gap:12px;background:var(--stone);}
+#modal-title{font-family:var(--font-d);font-size:14px;font-weight:600;color:var(--bone);flex:1;letter-spacing:.04em;}
+#modal-badge{font-family:var(--font-m);font-size:10px;padding:3px 10px;border-radius:2px;border:1px solid;}
+#modal-badge.pass{border-color:var(--serpent);color:var(--emerald);background:#4cbb6412;}
+#modal-badge.fail{border-color:var(--blood);color:var(--crimson);background:#c0303012;}
+#modal-badge.pending{border-color:var(--iron);color:var(--fog);background:transparent;}
+#modal-close{width:28px;height:28px;border-radius:2px;border:1px solid var(--iron);background:transparent;color:var(--fog);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+#modal-close:hover{border-color:var(--blood);color:var(--crimson);}
+#modal-body{overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:14px;}
+.m-lbl{font-family:var(--font-m);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:5px;}
+.m-val{font-family:var(--font-m);font-size:12px;background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:10px 12px;white-space:pre-wrap;line-height:1.65;}
+.m-val.inp{color:var(--fog);}.m-val.exp{color:var(--parchment);}
+.m-val.ok{color:var(--emerald);border-color:var(--venom);background:#4cbb6408;}
+.m-val.err{color:var(--crimson);border-color:var(--blood);background:#c0303008;}
+.m-val.none{color:var(--iron);font-style:italic;}
 
 ::-webkit-scrollbar{width:4px;height:4px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px;}
-@keyframes pg{0%,100%{box-shadow:none;}50%{box-shadow:0 0 0 3px var(--green-mid);}}
-@keyframes pp{0%,100%{box-shadow:none;}50%{box-shadow:0 0 0 3px #d0c0f0;}}
-.fg{animation:pg .4s ease;}.fp{animation:pp .4s ease;}
+::-webkit-scrollbar-track{background:var(--void);}
+::-webkit-scrollbar-thumb{background:var(--iron);border-radius:0;}
+::-webkit-scrollbar-thumb:hover{background:var(--fog);}
+@keyframes fg{0%,100%{box-shadow:none;}50%{box-shadow:inset 0 0 0 1px var(--venom),0 0 20px var(--glow);}}
+@keyframes fp{0%,100%{box-shadow:none;}50%{box-shadow:inset 0 0 0 1px var(--amethyst),0 0 20px #8060b855;}}
+.fg{animation:fg .4s ease;}.fp{animation:fp .4s ease;}
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
 <div id="loading-overlay">
-  <svg class="l-snake" width="90" height="110" viewBox="0 0 90 110" fill="none">
-    <path d="M 65 18 C 75 18,80 28,72 35 C 64 42,30 42,22 50 C 14 58,18 70,28 72 C 38 74,58 74,62 82" stroke="#1e6e32" stroke-width="9" stroke-linecap="round" fill="none"/>
-    <ellipse cx="60" cy="14" rx="11" ry="9" fill="#1e6e32" transform="rotate(-20 60 14)"/>
-    <ellipse cx="62" cy="16" rx="7" ry="5" fill="#186028" transform="rotate(-20 62 16)"/>
-    <circle cx="66" cy="9" r="3" fill="#f4f4f0"/><circle cx="67" cy="9.8" r="1.5" fill="#060e06"/>
-    <circle cx="57" cy="8" r="2.5" fill="#f4f4f0"/><circle cx="57.8" cy="8.6" r="1.2" fill="#060e06"/>
-    <path d="M71 17 L76 18 M76 18 L79 15 M76 18 L79 21" stroke="#b83232" stroke-width="1.5" stroke-linecap="round"/>
-    <path d="M62 82 C66 90,60 98,52 96 C 46 94,46 88,50 88" stroke="#1e6e32" stroke-width="8" stroke-linecap="round" fill="none"/>
-  </svg>
-  <div class="l-title">Python Classroom</div>
-  <div class="l-sub" id="l-course">Loading...</div>
-  <div class="l-bar-wrap"><div class="l-bar" id="load-bar"></div></div>
-  <div class="l-status" id="load-txt">Loading problems...</div>
-</div>
-
-<!-- TOPNAV -->
-<div id="topnav">
-  <div class="nav-logo" onclick="showDash()">
-    <svg width="24" height="30" viewBox="0 0 90 110" fill="none">
-      <path d="M 65 18 C 75 18,80 28,72 35 C 64 42,30 42,22 50 C 14 58,18 70,28 72 C 38 74,58 74,62 82" stroke="#1e6e32" stroke-width="9" stroke-linecap="round" fill="none"/>
-      <ellipse cx="60" cy="14" rx="11" ry="9" fill="#1e6e32" transform="rotate(-20 60 14)"/>
-      <ellipse cx="62" cy="16" rx="7" ry="5" fill="#186028" transform="rotate(-20 62 16)"/>
-      <circle cx="66" cy="9" r="3" fill="#f4f4f0"/><circle cx="67" cy="9.8" r="1.5" fill="#060e06"/>
-      <circle cx="57" cy="8" r="2.5" fill="#f4f4f0"/><circle cx="57.8" cy="8.6" r="1.2" fill="#060e06"/>
-      <path d="M71 17 L76 18 M76 18 L79 15 M76 18 L79 21" stroke="#b83232" stroke-width="1.5" stroke-linecap="round"/>
-      <path d="M62 82 C66 90,60 98,52 96 C 46 94,46 88,50 88" stroke="#1e6e32" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <div class="lc">
+    <svg width="80" height="80" viewBox="0 0 100 100" fill="none">
+      <path d="M70 22C82 22,88 34,78 42C68 50,34 50,24 60C16 68,20 82,32 84C44 86,64 84,68 94" stroke="#c9a84c" stroke-width="6" stroke-linecap="round" fill="none"/>
+      <ellipse cx="65" cy="17" rx="12" ry="9" fill="#2a7a3a" transform="rotate(-20 65 17)"/>
+      <ellipse cx="67" cy="18" rx="8" ry="6" fill="#1a5a2a" transform="rotate(-20 67 18)"/>
+      <circle cx="72" cy="12" r="3.5" fill="#e8dcc8"/><circle cx="73" cy="13" r="1.8" fill="#060a06"/>
+      <circle cx="61" cy="11" r="3" fill="#e8dcc8"/><circle cx="62" cy="12" r="1.5" fill="#060a06"/>
+      <path d="M77 21 L83 22 M83 22 L87 18 M83 22 L87 26" stroke="#c03030" stroke-width="1.8" stroke-linecap="round"/>
     </svg>
-    Python Classroom
   </div>
-  <div class="nav-breadcrumb" id="breadcrumb"></div>
-  <div class="nav-spacer"></div>
-  <div class="nav-user">
-    <div class="nav-avatar">S</div>
-    <span id="nav-inst">...</span>
+  <div class="lt">Slytherin Classroom</div>
+  <div class="ls" id="l-course">Preparing the dungeon…</div>
+  <div class="lb"><div class="lbf" id="load-bar"></div></div>
+  <div class="lst" id="load-txt">Summoning Python runtime…</div>
+</div>
+
+<div id="topbar">
+  <div class="top-logo" onclick="showDash()">
+    <svg width="22" height="28" viewBox="0 0 100 100" fill="none">
+      <path d="M70 22C82 22,88 34,78 42C68 50,34 50,24 60C16 68,20 82,32 84C44 86,64 84,68 94" stroke="#c9a84c" stroke-width="6" stroke-linecap="round" fill="none"/>
+      <ellipse cx="65" cy="17" rx="12" ry="9" fill="#2a7a3a" transform="rotate(-20 65 17)"/>
+      <ellipse cx="67" cy="18" rx="8" ry="6" fill="#1a5a2a" transform="rotate(-20 67 18)"/>
+      <circle cx="72" cy="12" r="3.5" fill="#e8dcc8"/><circle cx="73" cy="13" r="1.8" fill="#060a06"/>
+      <circle cx="61" cy="11" r="3" fill="#e8dcc8"/><circle cx="62" cy="12" r="1.5" fill="#060a06"/>
+      <path d="M77 21 L83 22 M83 22 L87 18 M83 22 L87 26" stroke="#c03030" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    Slytherin Classroom
+  </div>
+  <div class="tdiv"></div>
+  <div class="top-bc" id="breadcrumb"></div>
+  <div class="top-sp"></div>
+  <div class="top-u">
+    <span id="nav-inst">…</span>
+    <div class="top-av">S</div>
   </div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="view-dashboard">
-  <div id="dash-header">
-    <div class="dh-title" id="dh-name">...</div>
-    <div class="dh-meta" id="dh-inst">...</div>
+  <div class="dash-hero">
+    <div class="hero-tag">Active Term</div>
+    <div class="hero-title" id="dh-name">…</div>
+    <div class="hero-sub" id="dh-inst">…</div>
   </div>
-  <div id="dash-body">
-    <div class="section-row"><span class="section-title">📋 Tasks</span></div>
+  <div class="dash-body">
+    <div class="sec-label">Assigned Tomes</div>
     <div id="lab-list"></div>
   </div>
 </div>
 
-<!-- EDITOR -->
 <div id="view-editor">
-  <div id="editor-inner">
-    <div id="ed-left">
-      <div class="el-header">
-        <div class="el-back" onclick="showDash()">← Back to Dashboard</div>
-        <div class="el-tags">
-          <span class="tag" id="el-diff"></span>
-          <span class="tag tag-pts" id="el-pts"></span>
-        </div>
-        <div class="el-title" id="el-title"></div>
-        <div class="el-meta" id="el-meta"></div>
+  <div id="grimoire">
+    <div class="grm-hd">
+      <div class="grm-back" onclick="showDash()">← Return to Hall</div>
+      <div class="grm-glyphs">
+        <span class="glyph" id="el-diff"></span>
+        <span class="glyph gp" id="el-pts"></span>
       </div>
-      <div class="el-section">
-        <div class="el-desc" id="el-desc"></div>
-      </div>
-      <div class="el-section">
-        <div class="el-h2">Constraints</div>
-        <ul class="el-list" id="el-constraints"></ul>
-      </div>
-      <div class="el-section">
-        <div class="el-h2">Input Format</div>
-        <ul class="el-list" id="el-infmt"></ul>
-      </div>
-      <div class="el-section">
-        <div class="el-h2">Output Format</div>
-        <ul class="el-list" id="el-outfmt"></ul>
-      </div>
-      <div class="el-section">
-        <div class="el-h2">Examples</div>
-        <div id="el-examples"></div>
-      </div>
-      <div class="el-section">
-        <button class="hint-btn" onclick="toggleHint(this)">💡 Show Hint</button>
-        <div class="hint-box" id="el-hint"></div>
+      <div class="grm-title" id="el-title"></div>
+      <div class="grm-meta" id="el-meta"></div>
+    </div>
+    <div class="grm-sec"><div class="grm-sec-t">The Task</div><div class="grm-desc" id="el-desc"></div></div>
+    <div class="grm-sec"><div class="grm-sec-t">Constraints</div><ul class="grm-list" id="el-constraints"></ul></div>
+    <div class="grm-sec"><div class="grm-sec-t">Input Ritual</div><ul class="grm-list" id="el-infmt"></ul></div>
+    <div class="grm-sec"><div class="grm-sec-t">Expected Incantation</div><ul class="grm-list" id="el-outfmt"></ul></div>
+    <div class="grm-sec"><div class="grm-sec-t">Demonstrations</div><div id="el-examples"></div></div>
+    <div class="grm-sec">
+      <button class="hint-btn" onclick="toggleHint(this)">⟡ Reveal Scroll</button>
+      <div class="hint-box" id="el-hint"></div>
+    </div>
+  </div>
+
+  <div id="ed-center">
+    <div id="spell-bar">
+      <span class="sf" id="ed-fname">incantation.py</span>
+      <button class="cbtn" id="btn-run" disabled>▶ Cast</button>
+      <button class="cbtn" id="btn-test" disabled>⚡ Trial</button>
+      <button class="cbtn" id="btn-submit" disabled>✦ Inscribe</button>
+    </div>
+    <div id="ed-wrap">
+      <div id="ed-container"><div id="cm-mount"></div></div>
+      <div id="err-banner"><div id="err-text"></div></div>
+      <div id="io-row">
+        <div class="io-pane"><div class="io-lbl">Custom Input</div><textarea id="custom-in" placeholder="Enter incantation lines…"></textarea></div>
+        <div class="io-pane"><div class="io-lbl">Output</div><div id="out-box"><div id="out-text">— Awaiting cast —</div></div></div>
       </div>
     </div>
+  </div>
 
-    <div id="ed-center">
-      <div id="editor-bar">
-        <span class="filename" id="ed-fname">solution.py</span>
-        <button class="btn" id="btn-run" disabled>▶ Run</button>
-        <button class="btn" id="btn-test" disabled>⚡ Test</button>
-        <button class="btn" id="btn-submit" disabled>✔ Submit</button>
-      </div>
-      <div id="ed-wrap">
-        <div id="ed-container"><div id="cm-mount"></div></div>
-        <div id="err-banner"><div id="err-text"></div></div>
-        <div id="io-row">
-          <div class="io-pane">
-            <div class="io-label">Custom Input</div>
-            <textarea id="custom-in" placeholder="Enter input line by line..."></textarea>
-          </div>
-          <div class="io-pane">
-            <div class="io-label">Output</div>
-            <div id="out-box"><div id="out-text">// Output appears here after Run</div></div>
-          </div>
-        </div>
-      </div>
+  <div id="trials-panel">
+    <div id="trials-hd">
+      <span class="trials-t">Trials</span>
+      <span id="trials-score"></span>
     </div>
-
-    <div id="ed-right">
-      <div id="tc-header">
-        <span class="tc-title">Test Cases</span>
-        <span id="tc-score"></span>
-      </div>
-      <div id="tc-list"></div>
-      <div id="submit-result">
-        <div class="sr-text" id="sr-text"></div>
-        <div class="sr-pts" id="sr-pts"></div>
-        <div class="sr-sub" id="sr-sub"></div>
-      </div>
+    <div id="trials-list"></div>
+    <div id="verdict-area">
+      <div class="vd-t" id="vd-text"></div>
+      <div class="vd-pts" id="vd-pts"></div>
+      <div class="vd-sub" id="vd-sub"></div>
     </div>
   </div>
 </div>
 
-<!-- MODAL -->
 <div id="modal-overlay">
   <div id="modal">
-    <div id="modal-header">
-      <div id="modal-title">Case #1</div>
+    <div id="modal-hd">
+      <div id="modal-title">Trial #1</div>
       <div id="modal-badge" class="pending">Pending</div>
       <button id="modal-close">✕</button>
     </div>
     <div id="modal-body">
-      <div><div class="m-label">Input</div><div class="m-val inp" id="m-inp"></div></div>
-      <div><div class="m-label">Expected Output</div><div class="m-val exp" id="m-exp"></div></div>
-      <div><div class="m-label">Your Output</div><div class="m-val none" id="m-got">Not run yet.</div></div>
+      <div><div class="m-lbl">Input</div><div class="m-val inp" id="m-inp"></div></div>
+      <div><div class="m-lbl">Expected Output</div><div class="m-val exp" id="m-exp"></div></div>
+      <div><div class="m-lbl">Your Output</div><div class="m-val none" id="m-got">Not yet cast.</div></div>
     </div>
   </div>
 </div>
 
 <script>
-// ─── GLOBALS ───────────────────────────────────
-let DATA = null, pyodide = null, cm = null;
-let activeProblem = null;
-const state = {};
-const $ = id => document.getElementById(id);
-const gs = id => { if (!state[id]) state[id] = { code:'', tcResults:null, submitted:false }; return state[id]; };
+let DATA=null,pyodide=null,cm=null,activeProblem=null;
+const state={};
+const $=id=>document.getElementById(id);
+const gs=id=>{if(!state[id])state[id]={code:'',tcResults:null,submitted:false};return state[id];};
 
-// ─── LOAD FROM config.json ─────────────────────
-async function loadJSON() {
-  try {
-    const cfgRes = await fetch('config.json');
-    if (!cfgRes.ok) throw new Error('Could not load config.json (HTTP ' + cfgRes.status + ')');
-    const cfg = await cfgRes.json();
-    const labFiles = cfg.labs || [];
-    const loadedLabs = [];
-    for (const filename of labFiles) {
-      try {
-        const res = await fetch(filename);
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const lab = await res.json();
-        loadedLabs.push(lab);
-      } catch(e) { console.warn('Skipping ' + filename + ':', e.message); }
+async function loadJSON(){
+  try{
+    const cfgRes=await fetch('config.json');
+    if(!cfgRes.ok)throw new Error('Could not load config.json (HTTP '+cfgRes.status+')');
+    const cfg=await cfgRes.json();
+    const labs=[];
+    for(const f of(cfg.labs||[])){
+      try{const r=await fetch(f);if(!r.ok)throw new Error('HTTP '+r.status);labs.push(await r.json());}
+      catch(e){console.warn('Skip '+f+':',e.message);}
     }
-    DATA = { course: cfg.course, labs: loadedLabs };
-  } catch(e) {
-    alert('Could not load config.json.\nMake sure config.json is in the same folder as index.html.\n\n' + e.message);
-  }
+    DATA={course:cfg.course,labs};
+  }catch(e){alert('Could not load config.json.\n\n'+e.message);}
 }
 
-// ─── PYODIDE ───────────────────────────────────
-async function initPy() {
-  $('load-bar').style.width='20%'; $('load-txt').textContent='Downloading Python runtime...';
-  pyodide = await loadPyodide({ indexURL:'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/' });
-  $('load-bar').style.width='80%'; $('load-txt').textContent='Setting up environment...';
+async function initPy(){
+  $('load-bar').style.width='20%';$('load-txt').textContent='Summoning Python runtime…';
+  pyodide=await loadPyodide({indexURL:'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/'});
+  $('load-bar').style.width='80%';$('load-txt').textContent='Binding spells…';
   await pyodide.runPythonAsync('import sys,io,builtins');
 }
 
-async function runPy(code, inputLines) {
-  if (!pyodide) return { ok:false, error:'Python not ready.' };
-  if (!code.trim()) return { ok:false, error:'Editor is empty!' };
-  try {
-    pyodide.globals.set('_il', inputLines);
+async function runPy(code,inputLines){
+  if(!pyodide)return{ok:false,error:'Python not ready.'};
+  if(!code.trim())return{ok:false,error:'The scroll is empty!'};
+  try{
+    pyodide.globals.set('_il',inputLines);
     await pyodide.runPythonAsync(`
 import sys,io,builtins
 _lines=list(_il);_idx=0
@@ -471,408 +434,261 @@ builtins.input=_inp
 sys.stdout=io.StringIO();sys.stderr=io.StringIO()
 `);
     await pyodide.runPythonAsync(code);
-    const raw = pyodide.runPython('sys.stdout.getvalue()');
-    const lines = raw.split('\n');
-    if (lines.length && lines[lines.length-1]==='') lines.pop();
-    return { ok:true, lines };
-  } catch(e) {
-    const parts = (e.message||String(e)).split('\n').filter(l=>l.trim());
-    return { ok:false, error:parts[parts.length-1]||String(e) };
+    const raw=pyodide.runPython('sys.stdout.getvalue()');
+    const lines=raw.split('\n');
+    if(lines.length&&lines[lines.length-1]==='')lines.pop();
+    return{ok:true,lines};
+  }catch(e){
+    const parts=(e.message||String(e)).split('\n').filter(l=>l.trim());
+    return{ok:false,error:parts[parts.length-1]||String(e)};
   }
 }
 
-// ─── CODEMIRROR ────────────────────────────────
-function initCM() {
-  cm = CodeMirror($('cm-mount'), {
-    mode:'python', theme:'slytherin', lineNumbers:true,
-    indentUnit:4, tabSize:4, indentWithTabs:false,
-    autoCloseBrackets:true, matchBrackets:true,
-    placeholder:'# Write your Python solution here...',
+function initCM(){
+  cm=CodeMirror($('cm-mount'),{
+    mode:'python',theme:'sly',lineNumbers:true,
+    indentUnit:4,tabSize:4,indentWithTabs:false,
+    autoCloseBrackets:true,matchBrackets:true,
+    placeholder:'# Write your Python incantation here…',
     extraKeys:{
-      'Tab': c => { if(c.somethingSelected()) c.indentSelection('add'); else c.replaceSelection('    ','end','*'); },
-      'Shift-Tab': c => c.indentSelection('subtract'),
-      'Ctrl-Enter': () => $('btn-run').click(),
-      'Cmd-Enter':  () => $('btn-run').click(),
+      'Tab':c=>{if(c.somethingSelected())c.indentSelection('add');else c.replaceSelection('    ','end','*');},
+      'Shift-Tab':c=>c.indentSelection('subtract'),
+      'Ctrl-Enter':()=>$('btn-run').click(),
+      'Cmd-Enter':()=>$('btn-run').click(),
     }
   });
-  cm.on('change', () => { if(activeProblem) gs(activeProblem.id).code = cm.getValue(); hideErr(); });
+  cm.on('change',()=>{if(activeProblem)gs(activeProblem.id).code=cm.getValue();hideErr();});
 }
 
-// ─── DASHBOARD ─────────────────────────────────
-function showDash() {
-  activeProblem = null;
-  $('view-dashboard').style.display = 'flex';
-  $('view-editor').style.display = 'none';
-  setBc(null, null);
-  renderDash();
+function showDash(){
+  activeProblem=null;
+  $('view-dashboard').classList.add('active');
+  $('view-editor').classList.remove('active');
+  setBc(null,null);renderDash();
 }
 
-function renderDash() {
-  if (!DATA) return;
-  const c = DATA.course;
-  $('dh-name').textContent = c.name;
-  $('dh-inst').textContent = '👤 Instructor: ' + c.instructor;
-  $('nav-inst').textContent = c.instructor;
-  $('l-course').textContent = c.name;
-  const ll = $('lab-list'); ll.innerHTML = '';
-  DATA.labs.forEach(lab => ll.appendChild(makeLabCard(lab)));
+function renderDash(){
+  if(!DATA)return;
+  const c=DATA.course;
+  $('dh-name').textContent=c.name;
+  $('dh-inst').textContent='✦ Instructor: '+c.instructor;
+  $('nav-inst').textContent=c.instructor;
+  $('l-course').textContent=c.name;
+  const ll=$('lab-list');ll.innerHTML='';
+  DATA.labs.forEach(lab=>ll.appendChild(makeLabCard(lab)));
 }
 
-function labStats(lab) {
-  let solved=0, subCount=0, pts=0;
-  const maxPts = lab.problems.reduce((a,p)=>a+p.points,0);
-  lab.problems.forEach(p => {
-    const s = gs(p.id);
-    if (!s.submitted) return;
-    subCount++;
-    if (s.tcResults) {
-      const pc = s.tcResults.filter(r=>r.pass).length;
-      pts += Math.round(pc / s.tcResults.length * p.points);
-      if (pc/s.tcResults.length >= p.passingPercent/100) solved++;
-    }
+function labStats(lab){
+  let solved=0,subCount=0,pts=0;
+  const maxPts=lab.problems.reduce((a,p)=>a+p.points,0);
+  lab.problems.forEach(p=>{
+    const s=gs(p.id);if(!s.submitted)return;subCount++;
+    if(s.tcResults){const pc=s.tcResults.filter(r=>r.pass).length;pts+=Math.round(pc/s.tcResults.length*p.points);if(pc/s.tcResults.length>=p.passingPercent/100)solved++;}
   });
-  const pct = subCount>0 ? Math.round(pts/maxPts*100) : 0;
-  return { solved, subCount, pts, maxPts, pct };
+  return{solved,subCount,pts,maxPts,pct:subCount>0?Math.round(pts/maxPts*100):0};
 }
 
-function makeLabCard(lab) {
-  const st = labStats(lab);
-  const status = st.subCount===0 ? 'pending' : st.pct >= lab.passingPercent ? 'passed' : 'failed';
-  const statusTxt = status==='passed' ? '✓ PASSED' : status==='failed' ? '✗ NOT PASSED' : 'Pending';
-  const spClass = st.pct>=80 ? 'sp-green' : st.pct>=50 ? 'sp-yellow' : st.pct>0 ? 'sp-red' : 'sp-gray';
-  const scoreDisplay = st.subCount>0 ? st.pct+'%' : '--';
-  const fillClass = st.pct>=80 ? '' : st.pct>=50 ? ' y' : st.pct>0 ? ' r' : '';
+const DM={easy:{cls:'ge',lbl:'Easy'},medium:{cls:'gm',lbl:'Medium'},hard:{cls:'gh',lbl:'Hard'},'very hard':{cls:'gvh',lbl:'Very Hard'},extreme:{cls:'gxt',lbl:'Extreme'}};
 
-  const card = document.createElement('div');
-  card.className = 'lab-card';
-  card.innerHTML = `
-    <div class="lab-hd">
-      <span class="lab-icon">📁</span>
-      <span class="lab-title">${lab.title}</span>
-      <div class="lc-right">
-        <span class="status-badge ${status}">${statusTxt}</span>
-        <div class="score-pill ${spClass}">${scoreDisplay}</div>
-        <span class="lc-chevron">▼</span>
+function makeLabCard(lab){
+  const st=labStats(lab);
+  const status=st.subCount===0?'pending':st.pct>=lab.passingPercent?'passed':'failed';
+  const stTxt=status==='passed'?'✦ PASSED':status==='failed'?'✗ FAILED':'Pending';
+  const rbCls=status==='passed'?'rp':status==='failed'?'rf':'rn';
+  const sCls=st.pct>=80?'sg':st.pct>=50?'sy':st.pct>0?'sr':'sd';
+  const sDisp=st.subCount>0?st.pct+'%':'—';
+  const card=document.createElement('div');
+  card.className='tome';
+  card.innerHTML=`
+    <div class="tome-hd">
+      <span class="tome-ico">📜</span>
+      <div class="tome-inf">
+        <div class="tome-nm">${lab.title}</div>
+        <div class="tome-mt"><span>Due: ${lab.dueDate}</span><span>Passing: ${lab.passingPercent}%</span><span>${st.solved}/${lab.problems.length} solved · ${st.pts}/${st.maxPts} pts</span></div>
+      </div>
+      <div class="tome-rt">
+        <span class="rbadge ${rbCls}">${stTxt}</span>
+        <div class="seal ${sCls}">${sDisp}</div>
+        <span class="chv">▾</span>
       </div>
     </div>
-    <div class="lab-meta">
-      <span class="lm-item">📅 Due: ${lab.dueDate}</span>
-      <span class="lm-item">Passing: ${lab.passingPercent}%</span>
-      <span class="lm-item">${st.solved}/${lab.problems.length} solved · ${st.pts}/${st.maxPts} pts</span>
-    </div>
-    <div class="lab-prog-wrap">
-      <div class="lab-prog-label"><span>${st.solved} of ${lab.problems.length} problems solved</span><span>${st.subCount>0?st.pct+'%':'0%'}</span></div>
-      <div class="lab-prog-bar"><div class="lab-prog-fill${fillClass}" style="width:${st.subCount>0?st.pct:0}%"></div></div>
-    </div>
-    <div class="lab-probs" id="lp-${lab.id}"></div>`;
-
-  const probs = card.querySelector(`#lp-${lab.id}`);
-  lab.problems.forEach(p => probs.appendChild(makeProbRow(p, lab)));
-  card.querySelector('.lab-hd').addEventListener('click', () => {
-    const isOpen = card.classList.contains('open');
-    document.querySelectorAll('.lab-card').forEach(c => c.classList.remove('open'));
-    if (!isOpen) card.classList.add('open');
+    <div class="tome-prog"><div class="tome-prog-fill" style="width:${st.subCount>0?st.pct:0}%"></div></div>
+    <div class="tome-bd" id="tb-${lab.id}"></div>`;
+  const tbody=card.querySelector(`#tb-${lab.id}`);
+  lab.problems.forEach(p=>tbody.appendChild(makeSpellRow(p,lab)));
+  card.querySelector('.tome-hd').addEventListener('click',()=>{
+    const o=card.classList.contains('open');
+    document.querySelectorAll('.tome').forEach(c=>c.classList.remove('open'));
+    if(!o)card.classList.add('open');
   });
   return card;
 }
 
-function makeProbRow(prob, lab) {
-  const s = gs(prob.id);
-  const passed = s.submitted && s.tcResults &&
-    s.tcResults.filter(r=>r.pass).length/s.tcResults.length >= prob.passingPercent/100;
-  const failed = s.submitted && !passed;
-  const diffMap = { easy:'tag-easy', medium:'tag-medium', hard:'tag-hard', 'very hard':'tag-very-hard', extreme:'tag-extreme' };
-  const diffLabel = prob.difficulty.split(' ').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
-
-  const row = document.createElement('div');
-  row.className = 'prob-row';
-  row.innerHTML = `
-    <div class="pr-check ${passed?'done':failed?'fail':''}">${passed?'✓':failed?'✗':'○'}</div>
-    <span class="pr-name">${prob.title}</span>
-    <div class="pr-tags">
-      <span class="tag ${diffMap[prob.difficulty]||'tag-easy'}">${diffLabel}</span>
-      <span class="tag tag-pts">${prob.points}pts</span>
-      <span class="tag tag-pct">${prob.passingPercent}% to pass</span>
+function makeSpellRow(prob,lab){
+  const s=gs(prob.id);
+  const passed=s.submitted&&s.tcResults&&s.tcResults.filter(r=>r.pass).length/s.tcResults.length>=prob.passingPercent/100;
+  const failed=s.submitted&&!passed;
+  const d=DM[prob.difficulty]||{cls:'ge',lbl:prob.difficulty};
+  const row=document.createElement('div');
+  row.className='spell';
+  row.innerHTML=`
+    <div class="sp-orb ${passed?'od':failed?'of':'oi'}">${passed?'✦':failed?'✗':'○'}</div>
+    <span class="sp-nm">${prob.title}</span>
+    <div class="sp-tags">
+      <span class="glyph ${d.cls}">${d.lbl}</span>
+      <span class="glyph gp">${prob.points}pts</span>
+      <span class="glyph gpct">${prob.passingPercent}% pass</span>
     </div>
-    <span class="pr-status ${passed?'pass':failed?'fail':'pending'}">${passed?'Passed':failed?'Failed':'Pending'}</span>
-    <button class="pr-btn">Open →</button>`;
-  row.addEventListener('click', () => openProb(prob, lab));
+    <span class="sp-st ${passed?'ssp':failed?'ssf':'ssi'}">${passed?'Passed':failed?'Failed':'Uncast'}</span>
+    <button class="sp-cast">Cast →</button>`;
+  row.addEventListener('click',()=>openProb(prob,lab));
   return row;
 }
 
-// ─── EDITOR ────────────────────────────────────
-function openProb(prob, lab) {
-  activeProblem = prob;
-  const s = gs(prob.id);
-
-  $('view-dashboard').style.display = 'none';
-  $('view-editor').style.display = 'flex';
-  setBc(lab, prob);
-
-  $('ed-fname').textContent = prob.title.toLowerCase().replace(/[^a-z0-9]+/g,'_') + '.py';
-  const dm = { easy:'tag-easy', medium:'tag-medium', hard:'tag-hard', 'very hard':'tag-very-hard', extreme:'tag-extreme' };
-  const diffLabel = prob.difficulty.split(' ').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
-  const de = $('el-diff'); de.className = 'tag ' + (dm[prob.difficulty]||'tag-easy');
-  de.textContent = diffLabel;
-  $('el-pts').textContent = prob.points + ' pts';
-  $('el-title').textContent = prob.title;
-  $('el-meta').textContent = `${prob.passingPercent}% to pass · ${lab.title}`;
-
-  const descLines = (prob.description||'').split('\n');
-  $('el-desc').innerHTML = descLines.map(line =>
-    line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-  ).join('\n');
-
-  $('el-constraints').innerHTML = (prob.constraints||[])
-    .map(c => `<li>${c.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`(.*?)`/g,'<code>$1</code>')}</li>`)
-    .join('');
-
-  $('el-infmt').innerHTML = (prob.inputFormat||'').split('\n')
-    .filter(l=>l.trim())
-    .map(l => `<li>${l.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`(.*?)`/g,'<code>$1</code>')}</li>`)
-    .join('');
-
-  $('el-outfmt').innerHTML = (prob.outputFormat||'').split('\n')
-    .filter(l=>l.trim())
-    .map(l => `<li>${l.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`(.*?)`/g,'<code>$1</code>')}</li>`)
-    .join('');
-
-  const visibleTCs = (prob.testCases||[]).filter(tc => !tc.hidden);
-  $('el-examples').innerHTML = visibleTCs.map((tc, i) => `
-    <div class="ex-block">
-      <div class="ex-title">Example ${i+1}:</div>
-      <div class="ex-row">
-        <div>
-          <div class="ex-col-label">Input</div>
-          <div class="ex-col-val">${tc.inputs.join('\n')}</div>
-        </div>
-        <div>
-          <div class="ex-col-label">Output</div>
-          <div class="ex-col-val out">${tc.expected.join('\n')}</div>
-        </div>
-      </div>
-    </div>`).join('');
-
-  $('el-hint').textContent = prob.hint;
-  $('el-hint').classList.remove('visible');
-  const hb = document.querySelector('.hint-btn');
-  if (hb) hb.textContent = '💡 Show Hint';
-
-  setTimeout(() => { cm.setValue(s.code||''); cm.clearHistory(); cm.refresh(); }, 20);
-
-  $('custom-in').value = '';
-  $('out-text').textContent = '// Output appears here after Run';
-  $('out-text').style.color = 'var(--muted2)';
-  hideErr();
-
-  ['btn-run','btn-test','btn-submit'].forEach(id => $(id).disabled = !pyodide);
-  renderTCs();
-  renderSub();
+function openProb(prob,lab){
+  activeProblem=prob;const s=gs(prob.id);
+  $('view-dashboard').classList.remove('active');
+  $('view-editor').classList.add('active');
+  setBc(lab,prob);
+  $('ed-fname').textContent=prob.title.toLowerCase().replace(/[^a-z0-9]+/g,'_')+'.py';
+  const d=DM[prob.difficulty]||{cls:'ge',lbl:prob.difficulty};
+  const de=$('el-diff');de.className='glyph '+d.cls;de.textContent=d.lbl;
+  $('el-pts').textContent=prob.points+' pts';
+  $('el-title').textContent=prob.title;
+  $('el-meta').textContent=`${prob.passingPercent}% to pass · ${lab.title}`;
+  $('el-desc').innerHTML=(prob.description||'').split('\n').map(l=>l.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')).join('\n');
+  $('el-constraints').innerHTML=(prob.constraints||[]).map(c=>`<li>${c.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`(.*?)`/g,'<code>$1</code>')}</li>`).join('');
+  $('el-infmt').innerHTML=(prob.inputFormat||'').split('\n').filter(l=>l.trim()).map(l=>`<li>${l.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`(.*?)`/g,'<code>$1</code>')}</li>`).join('');
+  $('el-outfmt').innerHTML=(prob.outputFormat||'').split('\n').filter(l=>l.trim()).map(l=>`<li>${l.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`(.*?)`/g,'<code>$1</code>')}</li>`).join('');
+  $('el-examples').innerHTML=(prob.testCases||[]).filter(tc=>!tc.hidden).map((tc,i)=>`
+    <div class="ex-card"><div class="ex-lbl">Example ${i+1}</div>
+    <div class="ex-cols">
+      <div><div class="ex-col-h">Input</div><div class="ex-col-v">${tc.inputs.join('\n')}</div></div>
+      <div><div class="ex-col-h">Output</div><div class="ex-col-v out">${tc.expected.join('\n')}</div></div>
+    </div></div>`).join('');
+  $('el-hint').textContent=prob.hint;$('el-hint').classList.remove('visible');
+  const hb=document.querySelector('.hint-btn');if(hb)hb.textContent='⟡ Reveal Scroll';
+  setTimeout(()=>{cm.setValue(s.code||'');cm.clearHistory();cm.refresh();},20);
+  $('custom-in').value='';$('out-text').textContent='— Awaiting cast —';$('out-text').style.color='var(--fog)';
+  hideErr();['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=!pyodide);
+  renderTrials();renderVerdict();
 }
 
-function setBc(lab, prob) {
-  const bc = $('breadcrumb'); bc.innerHTML = '';
-  const mkCrumb = (txt, fn, active=false) => {
-    const s = document.createElement('span');
-    s.className = 'crumb' + (active ? ' active' : '');
-    s.textContent = txt;
-    if (fn) s.onclick = fn;
-    return s;
-  };
-  const sep = () => { const s=document.createElement('span'); s.className='crumb-sep'; s.textContent='/'; return s; };
-  bc.appendChild(mkCrumb('Dashboard', showDash, !lab));
-  if (lab) { bc.appendChild(sep()); bc.appendChild(mkCrumb(lab.title, prob?showDash:null, !prob)); }
-  if (prob) { bc.appendChild(sep()); bc.appendChild(mkCrumb(prob.title, null, true)); }
+function setBc(lab,prob){
+  const bc=$('breadcrumb');bc.innerHTML='';
+  const mk=(t,fn,a=false)=>{const s=document.createElement('span');s.className='bc-i'+(a?' active':'');s.textContent=t;if(fn)s.onclick=fn;return s;};
+  const sep=()=>{const s=document.createElement('span');s.className='bc-s';s.textContent='›';return s;};
+  bc.appendChild(mk('Hall',showDash,!lab));
+  if(lab){bc.appendChild(sep());bc.appendChild(mk(lab.title,prob?showDash:null,!prob));}
+  if(prob){bc.appendChild(sep());bc.appendChild(mk(prob.title,null,true));}
 }
 
-function toggleHint(btn) {
-  const b = btn.nextElementSibling;
-  b.classList.toggle('visible');
-  btn.textContent = b.classList.contains('visible') ? '🙈 Hide Hint' : '💡 Show Hint';
+function toggleHint(btn){
+  const b=btn.nextElementSibling;b.classList.toggle('visible');
+  btn.textContent=b.classList.contains('visible')?'⟡ Conceal Scroll':'⟡ Reveal Scroll';
 }
 
-// ─── TEST CASES ────────────────────────────────
-function renderTCs() {
-  if (!activeProblem) return;
-  const p = activeProblem, s = gs(p.id), res = s.tcResults;
-  const submitted = s.submitted;
-  $('tc-list').innerHTML = '';
-  let pc = 0, total = 0;
-
-  p.testCases.forEach((tc, i) => {
-    const r = res?.[i];
-    const isHidden = tc.hidden === true;
-    const revealResult = !isHidden || submitted;
-    if (r?.pass && revealResult) pc++;
-    total++;
-
-    const card = document.createElement('div');
-    let cardClass = 'tc-card';
-    if (r && revealResult) cardClass += r.pass ? ' pass' : ' fail';
-    else if (isHidden && !submitted) cardClass += ' hidden-tc';
-    card.className = cardClass;
-
-    let badgeTxt = isHidden && !submitted ? '🔒 Hidden' : r ? (r.pass ? '✓ Pass' : '✗ Fail') : 'Pending';
-
-    card.innerHTML = `
-      <div class="tc-top">
-        <span class="tc-num">${i+1}</span>
-        <span class="tc-lbl">${tc.label}</span>
-        ${isHidden && !submitted ? '<span class="tc-hidden-icon">🔒</span>' : ''}
-        <span class="tc-badge">${badgeTxt}</span>
-      </div>
-      <div class="tc-sub">${isHidden && !submitted ? 'Revealed after submission' : 'Click to view details →'}</div>`;
-    card.addEventListener('click', () => openModal(i));
-    $('tc-list').appendChild(card);
+function renderTrials(){
+  if(!activeProblem)return;
+  const p=activeProblem,s=gs(p.id),res=s.tcResults,sub=s.submitted;
+  $('trials-list').innerHTML='';let pc=0,total=0;
+  p.testCases.forEach((tc,i)=>{
+    const r=res?.[i],isH=tc.hidden===true,rev=!isH||sub;
+    if(r?.pass&&rev)pc++;total++;
+    const card=document.createElement('div');
+    let cls='tc-card';
+    if(r&&rev)cls+=r.pass?' pass':' fail';
+    else if(isH&&!sub)cls+=' htc';
+    card.className=cls;
+    const bt=isH&&!sub?'🔒 Sealed':r?(r.pass?'✦ Pass':'✗ Fail'):'Pending';
+    card.innerHTML=`<div class="tc-top"><span class="tc-num">${i+1}</span><span class="tc-lbl">${tc.label}</span><span class="tc-badge">${bt}</span></div><div class="tc-sub">${isH&&!sub?'Revealed upon inscription':'Click to examine →'}</div>`;
+    card.addEventListener('click',()=>openModal(i));
+    $('trials-list').appendChild(card);
   });
-
-  const scEl = $('tc-score');
-  if (res) {
-    scEl.textContent = `${pc}/${total}`;
-    scEl.style.color = pc===total?'var(--green)':pc>0?'var(--yellow)':'var(--red)';
-  } else { scEl.textContent = `0/${total}`; scEl.style.color='var(--muted)'; }
+  const sc=$('trials-score');
+  if(res){sc.textContent=`${pc}/${total}`;sc.style.color=pc===total?'var(--emerald)':pc>0?'var(--gold)':'var(--crimson)';}
+  else{sc.textContent=`0/${total}`;sc.style.color='var(--fog)';}
 }
 
-function renderSub() {
-  if (!activeProblem) return;
-  const p = activeProblem, s = gs(p.id), sr = $('submit-result');
-  if (!s.submitted||!s.tcResults) { sr.className=''; sr.style.display='none'; return; }
-  const pc = s.tcResults.filter(r=>r.pass).length;
-  const total = s.tcResults.length;
-  const meets = pc/total*100 >= p.passingPercent;
-  const pts = Math.round(pc/total*p.points);
-  sr.style.display='block'; sr.className='show';
-  $('sr-text').className='sr-text '+(meets?'ok':'no');
-  $('sr-text').textContent = meets?'✅ Passed!':'❌ Not passed';
-  $('sr-pts').textContent = `${pts}/${p.points} pts — ${pc}/${total} cases (need ${p.passingPercent}%)`;
-  $('sr-sub').textContent = meets?'Great work! Try the next problem.':'Keep trying — you can resubmit anytime.';
+function renderVerdict(){
+  if(!activeProblem)return;
+  const p=activeProblem,s=gs(p.id),va=$('verdict-area');
+  if(!s.submitted||!s.tcResults){va.className='';va.style.display='none';return;}
+  const pc=s.tcResults.filter(r=>r.pass).length,total=s.tcResults.length;
+  const meets=pc/total*100>=p.passingPercent,pts=Math.round(pc/total*p.points);
+  va.style.display='block';va.className='show';
+  $('vd-text').className='vd-t '+(meets?'ok':'no');
+  $('vd-text').textContent=meets?'✦ Inscription Accepted':'✗ Inscription Rejected';
+  $('vd-pts').textContent=`${pts}/${p.points} pts — ${pc}/${total} trials passed`;
+  $('vd-sub').textContent=meets?'The grimoire accepts your spell.':'Refine your incantation and try again.';
 }
 
-async function runVisibleTCs() {
-  const p = activeProblem, code = cm.getValue();
-  if (!code.trim()) { showErr('Editor is empty!'); return null; }
-  const s = gs(p.id);
-  const prevResults = s.tcResults ? [...s.tcResults] : new Array(p.testCases.length).fill(null);
-  const results = [];
-  for (let i = 0; i < p.testCases.length; i++) {
-    const tc = p.testCases[i];
-    if (tc.hidden) { results.push(prevResults[i] || null); }
-    else {
-      const r = await runPy(code, tc.inputs);
-      if (!r.ok) results.push({ pass:false, got:'Error: '+r.error });
-      else { const got = r.lines.join('\n').trim(); results.push({ pass: got===tc.expected.join('\n').trim(), got }); }
-    }
+async function runVisibleTCs(){
+  const p=activeProblem,code=cm.getValue();
+  if(!code.trim()){showErr('The scroll is empty!');return null;}
+  const s=gs(p.id),prev=s.tcResults?[...s.tcResults]:new Array(p.testCases.length).fill(null),results=[];
+  for(let i=0;i<p.testCases.length;i++){
+    const tc=p.testCases[i];
+    if(tc.hidden){results.push(prev[i]||null);}
+    else{const r=await runPy(code,tc.inputs);if(!r.ok)results.push({pass:false,got:'Error: '+r.error});else{const g=r.lines.join('\n').trim();results.push({pass:g===tc.expected.join('\n').trim(),got:g});}}
   }
-  gs(p.id).tcResults = results;
-  return results;
+  gs(p.id).tcResults=results;return results;
 }
 
-async function runAllTCs() {
-  const p = activeProblem, code = cm.getValue();
-  if (!code.trim()) { showErr('Editor is empty!'); return null; }
-  const results = [];
-  for (const tc of p.testCases) {
-    const r = await runPy(code, tc.inputs);
-    if (!r.ok) results.push({ pass:false, got:'Error: '+r.error });
-    else { const got = r.lines.join('\n').trim(); results.push({ pass: got===tc.expected.join('\n').trim(), got }); }
-  }
-  gs(p.id).tcResults = results;
-  return results;
+async function runAllTCs(){
+  const p=activeProblem,code=cm.getValue();
+  if(!code.trim()){showErr('The scroll is empty!');return null;}
+  const results=[];
+  for(const tc of p.testCases){const r=await runPy(code,tc.inputs);if(!r.ok)results.push({pass:false,got:'Error: '+r.error});else{const g=r.lines.join('\n').trim();results.push({pass:g===tc.expected.join('\n').trim(),got:g});}}
+  gs(p.id).tcResults=results;return results;
 }
 
-// ─── MODAL ─────────────────────────────────────
-function openModal(i) {
-  const tc = activeProblem.testCases[i];
-  const s = gs(activeProblem.id);
-  const res = s.tcResults?.[i];
-  const isHidden = tc.hidden === true;
-  const submitted = s.submitted;
-
-  $('modal-title').textContent = tc.label + (isHidden ? ' 🔒' : '');
-
-  if (isHidden && !submitted) {
-    $('m-inp').textContent = '🔒 Hidden — input revealed after submission';
-    $('m-inp').style.fontStyle = 'italic';
-  } else {
-    $('m-inp').textContent = tc.inputs.join('\n');
-    $('m-inp').style.fontStyle = '';
-    $('custom-in').value = tc.inputs.join('\n');
-  }
-
-  const expEl = $('m-exp');
-  if (isHidden && !submitted) {
-    expEl.textContent = '🔒 Expected output hidden until after submission';
-    expEl.style.fontStyle = 'italic';
-    expEl.className = 'm-val none';
-  } else {
-    expEl.textContent = tc.expected.join('\n');
-    expEl.style.fontStyle = '';
-    expEl.className = 'm-val exp';
-  }
-
-  const [badge, got] = [$('modal-badge'), $('m-got')];
-  if (!res) {
-    badge.className='pending'; badge.textContent= isHidden && !submitted ? '🔒 Hidden' : 'Pending';
-    got.className='m-val none'; got.textContent= isHidden && !submitted ? 'Runs automatically on Submit.' : 'Not run yet.';
-  } else if (res.pass) {
-    badge.className='pass'; badge.textContent='✓ Pass';
-    got.className='m-val ok'; got.textContent=res.got||'✓ (correct)';
-  } else {
-    badge.className='fail'; badge.textContent='✗ Fail';
-    got.className='m-val err'; got.textContent=res.got||'(no output)';
-  }
+function openModal(i){
+  const tc=activeProblem.testCases[i],s=gs(activeProblem.id),res=s.tcResults?.[i];
+  const isH=tc.hidden===true,sub=s.submitted;
+  $('modal-title').textContent=tc.label+(isH?' 🔒':'');
+  if(isH&&!sub){$('m-inp').textContent='🔒 Sealed — revealed upon inscription';$('m-inp').style.fontStyle='italic';}
+  else{$('m-inp').textContent=tc.inputs.join('\n');$('m-inp').style.fontStyle='';$('custom-in').value=tc.inputs.join('\n');}
+  const expEl=$('m-exp');
+  if(isH&&!sub){expEl.textContent='🔒 Expected output concealed until inscription';expEl.style.fontStyle='italic';expEl.className='m-val none';}
+  else{expEl.textContent=tc.expected.join('\n');expEl.style.fontStyle='';expEl.className='m-val exp';}
+  const[badge,got]=[$('modal-badge'),$('m-got')];
+  if(!res){badge.className='pending';badge.textContent=isH&&!sub?'🔒 Sealed':'Pending';got.className='m-val none';got.textContent=isH&&!sub?'Runs on inscription.':'Not yet cast.';}
+  else if(res.pass){badge.className='pass';badge.textContent='✦ Pass';got.className='m-val ok';got.textContent=res.got||'✦ (correct)';}
+  else{badge.className='fail';badge.textContent='✗ Fail';got.className='m-val err';got.textContent=res.got||'(no output)';}
   $('modal-overlay').classList.add('open');
 }
-$('modal-close').addEventListener('click', () => $('modal-overlay').classList.remove('open'));
-$('modal-overlay').addEventListener('click', e => { if(e.target===$('modal-overlay')) $('modal-overlay').classList.remove('open'); });
+$('modal-close').addEventListener('click',()=>$('modal-overlay').classList.remove('open'));
+$('modal-overlay').addEventListener('click',e=>{if(e.target===$('modal-overlay'))$('modal-overlay').classList.remove('open');});
 
-// ─── BUTTONS ───────────────────────────────────
-function hideErr() { $('err-banner').style.display='none'; $('err-banner').className=''; }
-function showErr(m) { $('err-banner').style.display='block'; $('err-banner').className='show'; $('err-text').textContent='⚠ '+m; }
-function setBusy(b) { ['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=b); $('btn-run').textContent=b?'⏳ Running...':'▶ Run'; }
-function flash(cls) { $('ed-center').classList.add(cls); setTimeout(()=>$('ed-center').classList.remove(cls),400); }
+function hideErr(){$('err-banner').style.display='none';$('err-banner').className='';}
+function showErr(m){$('err-banner').style.display='block';$('err-banner').className='show';$('err-text').textContent='⚠ '+m;}
+function setBusy(b){['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=b);$('btn-run').textContent=b?'⏳ Casting…':'▶ Cast';}
+function flash(cls){$('ed-center').classList.add(cls);setTimeout(()=>$('ed-center').classList.remove(cls),400);}
 
-$('btn-run').addEventListener('click', async () => {
-  setBusy(true); hideErr();
-  const res = await runAllTCs();
-  if (!res) { setBusy(false); return; }
-  renderTCs();
-  const inp = $('custom-in').value.trim() || activeProblem.testCases[0].inputs.join('\n');
-  $('custom-in').value = inp;
-  const r = await runPy(cm.getValue(), inp.split('\n'));
-  if (r.ok) { $('out-text').textContent=r.lines.length?r.lines.join('\n'):'(no output)'; $('out-text').style.color=r.lines.length?'var(--green)':'var(--yellow)'; }
-  else { $('out-text').textContent='Error: '+r.error; $('out-text').style.color='var(--red)'; showErr(r.error); }
-  setBusy(false); flash('fg');
+$('btn-run').addEventListener('click',async()=>{
+  setBusy(true);hideErr();
+  const res=await runAllTCs();if(!res){setBusy(false);return;}renderTrials();
+  const inp=$('custom-in').value.trim()||activeProblem.testCases[0].inputs.join('\n');
+  $('custom-in').value=inp;
+  const r=await runPy(cm.getValue(),inp.split('\n'));
+  if(r.ok){$('out-text').textContent=r.lines.length?r.lines.join('\n'):'(no output)';$('out-text').style.color=r.lines.length?'var(--emerald)':'var(--gold)';}
+  else{$('out-text').textContent='Error: '+r.error;$('out-text').style.color='var(--crimson)';showErr(r.error);}
+  setBusy(false);flash('fg');
 });
+$('btn-test').addEventListener('click',async()=>{setBusy(true);hideErr();const res=await runVisibleTCs();if(res){renderTrials();flash('fg');}setBusy(false);});
+$('btn-submit').addEventListener('click',async()=>{setBusy(true);hideErr();const res=await runAllTCs();if(!res){setBusy(false);return;}gs(activeProblem.id).submitted=true;renderTrials();renderVerdict();setBusy(false);flash('fp');});
 
-$('btn-test').addEventListener('click', async () => {
-  setBusy(true); hideErr();
-  const res = await runVisibleTCs();
-  if (res) { renderTCs(); flash('fg'); }
-  setBusy(false);
-});
-
-$('btn-submit').addEventListener('click', async () => {
-  setBusy(true); hideErr();
-  const res = await runAllTCs();
-  if (!res) { setBusy(false); return; }
-  gs(activeProblem.id).submitted = true;
-  renderTCs(); renderSub();
-  setBusy(false); flash('fp');
-});
-
-// ─── BOOT ──────────────────────────────────────
-(async () => {
-  $('load-bar').style.width='10%'; $('load-txt').textContent='Loading config.json...';
+(async()=>{
+  $('load-bar').style.width='10%';$('load-txt').textContent='Loading tomes…';
   await loadJSON();
-  if (DATA) { $('l-course').textContent = DATA.course.name; console.log('Loaded', DATA.labs.length, 'labs'); }
-  $('load-bar').style.width='30%';
-  initCM();
-  $('load-bar').style.width='40%'; $('load-txt').textContent='Setting up editor...';
+  if(DATA){$('l-course').textContent=DATA.course.name;console.log('Loaded',DATA.labs.length,'labs');}
+  $('load-bar').style.width='30%';initCM();
+  $('load-bar').style.width='40%';$('load-txt').textContent='Binding Python spells…';
   await initPy();
   ['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=false);
-  $('load-bar').style.width='100%'; $('load-txt').textContent='Ready!';
-  setTimeout(() => { $('loading-overlay').classList.add('hidden'); showDash(); }, 350);
+  $('load-bar').style.width='100%';$('load-txt').textContent='The dungeon is ready.';
+  setTimeout(()=>{$('loading-overlay').classList.add('hidden');showDash();},400);
 })();
 </script>
 </body>
