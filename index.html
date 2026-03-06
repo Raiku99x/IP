@@ -110,6 +110,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .tag-easy{background:var(--green-light);color:var(--green);border:1px solid var(--green-mid);}
 .tag-medium{background:var(--yellow-light);color:var(--yellow);border:1px solid var(--yellow-mid);}
 .tag-hard{background:var(--red-light);color:var(--red);border:1px solid var(--red-mid);}
+.tag-very-hard{background:#2d1b4e;color:#c8a8f0;border:1px solid #7a4db0;}
+.tag-extreme{background:#1a0a0a;color:#ff4444;border:2px solid #cc0000;animation:extreme-pulse 1.5s ease-in-out infinite;}
+@keyframes extreme-pulse{0%,100%{box-shadow:0 0 4px #cc000066;}50%{box-shadow:0 0 10px #cc0000cc;}}
 .tag-pts{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
 .tag-pct{font-size:9px;color:var(--muted2);font-weight:400;background:none;border:none;padding:0;}
 .pr-status{font-size:10px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:4px;flex-shrink:0;}
@@ -418,21 +421,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 // ─── GLOBALS ───────────────────────────────────
 let DATA = null, pyodide = null, cm = null;
 let activeProblem = null;
-const state = {}; // keyed by problem.id → { code, tcResults, submitted }
+const state = {};
 const $ = id => document.getElementById(id);
 const gs = id => { if (!state[id]) state[id] = { code:'', tcResults:null, submitted:false }; return state[id]; };
 
 // ─── LOAD FROM config.json ─────────────────────
-// config.json lists all lab JSON filenames.
-// To add a new lab: create a new JSON file and add its filename to config.json "labs" array.
 async function loadJSON() {
   try {
-    // Step 1: load config.json
     const cfgRes = await fetch('config.json');
     if (!cfgRes.ok) throw new Error('Could not load config.json (HTTP ' + cfgRes.status + ')');
     const cfg = await cfgRes.json();
-
-    // Step 2: fetch each lab JSON file listed in config
     const labFiles = cfg.labs || [];
     const loadedLabs = [];
     for (const filename of labFiles) {
@@ -441,17 +439,9 @@ async function loadJSON() {
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const lab = await res.json();
         loadedLabs.push(lab);
-      } catch(e) {
-        console.warn('Skipping ' + filename + ':', e.message);
-      }
+      } catch(e) { console.warn('Skipping ' + filename + ':', e.message); }
     }
-
-    // Step 3: assemble into DATA
-    DATA = {
-      course: cfg.course,
-      labs: loadedLabs
-    };
-
+    DATA = { course: cfg.course, labs: loadedLabs };
   } catch(e) {
     alert('Could not load config.json.\nMake sure config.json is in the same folder as index.html.\n\n' + e.message);
   }
@@ -547,8 +537,7 @@ function labStats(lab) {
 
 function makeLabCard(lab) {
   const st = labStats(lab);
-  const status = st.subCount===0 ? 'pending'
-    : st.pct >= lab.passingPercent ? 'passed' : 'failed';
+  const status = st.subCount===0 ? 'pending' : st.pct >= lab.passingPercent ? 'passed' : 'failed';
   const statusTxt = status==='passed' ? '✓ PASSED' : status==='failed' ? '✗ NOT PASSED' : 'Pending';
   const spClass = st.pct>=80 ? 'sp-green' : st.pct>=50 ? 'sp-yellow' : st.pct>0 ? 'sp-red' : 'sp-gray';
   const scoreDisplay = st.subCount>0 ? st.pct+'%' : '--';
@@ -579,13 +568,11 @@ function makeLabCard(lab) {
 
   const probs = card.querySelector(`#lp-${lab.id}`);
   lab.problems.forEach(p => probs.appendChild(makeProbRow(p, lab)));
-
   card.querySelector('.lab-hd').addEventListener('click', () => {
     const isOpen = card.classList.contains('open');
     document.querySelectorAll('.lab-card').forEach(c => c.classList.remove('open'));
     if (!isOpen) card.classList.add('open');
   });
-
   return card;
 }
 
@@ -594,7 +581,8 @@ function makeProbRow(prob, lab) {
   const passed = s.submitted && s.tcResults &&
     s.tcResults.filter(r=>r.pass).length/s.tcResults.length >= prob.passingPercent/100;
   const failed = s.submitted && !passed;
-  const diffMap = { easy:'tag-easy', medium:'tag-medium', hard:'tag-hard' };
+  const diffMap = { easy:'tag-easy', medium:'tag-medium', hard:'tag-hard', 'very hard':'tag-very-hard', extreme:'tag-extreme' };
+  const diffLabel = prob.difficulty.split(' ').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
 
   const row = document.createElement('div');
   row.className = 'prob-row';
@@ -602,7 +590,7 @@ function makeProbRow(prob, lab) {
     <div class="pr-check ${passed?'done':failed?'fail':''}">${passed?'✓':failed?'✗':'○'}</div>
     <span class="pr-name">${prob.title}</span>
     <div class="pr-tags">
-      <span class="tag ${diffMap[prob.difficulty]||'tag-easy'}">${prob.difficulty[0].toUpperCase()+prob.difficulty.slice(1)}</span>
+      <span class="tag ${diffMap[prob.difficulty]||'tag-easy'}">${diffLabel}</span>
       <span class="tag tag-pts">${prob.points}pts</span>
       <span class="tag tag-pct">${prob.passingPercent}% to pass</span>
     </div>
@@ -621,39 +609,34 @@ function openProb(prob, lab) {
   $('view-editor').style.display = 'flex';
   setBc(lab, prob);
 
-  // Left panel
   $('ed-fname').textContent = prob.title.toLowerCase().replace(/[^a-z0-9]+/g,'_') + '.py';
-  const dm = { easy:'tag-easy', medium:'tag-medium', hard:'tag-hard' };
+  const dm = { easy:'tag-easy', medium:'tag-medium', hard:'tag-hard', 'very hard':'tag-very-hard', extreme:'tag-extreme' };
+  const diffLabel = prob.difficulty.split(' ').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
   const de = $('el-diff'); de.className = 'tag ' + (dm[prob.difficulty]||'tag-easy');
-  de.textContent = prob.difficulty[0].toUpperCase()+prob.difficulty.slice(1);
+  de.textContent = diffLabel;
   $('el-pts').textContent = prob.points + ' pts';
   $('el-title').textContent = prob.title;
   $('el-meta').textContent = `${prob.passingPercent}% to pass · ${lab.title}`;
-  // Description — render numbered list items as HTML
-  const descLines = (prob.description||'').split('\n');
-  $('el-desc').innerHTML = descLines.map(line => {
-    // Bold anything wrapped in ** or numbered steps
-    return line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  }).join('\n');
 
-  // Constraints
+  const descLines = (prob.description||'').split('\n');
+  $('el-desc').innerHTML = descLines.map(line =>
+    line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+  ).join('\n');
+
   $('el-constraints').innerHTML = (prob.constraints||[])
     .map(c => `<li>${c.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`(.*?)`/g,'<code>$1</code>')}</li>`)
     .join('');
 
-  // Input Format — split by newline into list items
   $('el-infmt').innerHTML = (prob.inputFormat||'').split('\n')
     .filter(l=>l.trim())
     .map(l => `<li>${l.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`(.*?)`/g,'<code>$1</code>')}</li>`)
     .join('');
 
-  // Output Format
   $('el-outfmt').innerHTML = (prob.outputFormat||'').split('\n')
     .filter(l=>l.trim())
     .map(l => `<li>${l.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`(.*?)`/g,'<code>$1</code>')}</li>`)
     .join('');
 
-  // Examples — only visible test cases
   const visibleTCs = (prob.testCases||[]).filter(tc => !tc.hidden);
   $('el-examples').innerHTML = visibleTCs.map((tc, i) => `
     <div class="ex-block">
@@ -675,10 +658,8 @@ function openProb(prob, lab) {
   const hb = document.querySelector('.hint-btn');
   if (hb) hb.textContent = '💡 Show Hint';
 
-  // CodeMirror
   setTimeout(() => { cm.setValue(s.code||''); cm.clearHistory(); cm.refresh(); }, 20);
 
-  // Reset output
   $('custom-in').value = '';
   $('out-text').textContent = '// Output appears here after Run';
   $('out-text').style.color = 'var(--muted2)';
@@ -721,9 +702,7 @@ function renderTCs() {
   p.testCases.forEach((tc, i) => {
     const r = res?.[i];
     const isHidden = tc.hidden === true;
-    // Hidden test cases only reveal result after submit
     const revealResult = !isHidden || submitted;
-
     if (r?.pass && revealResult) pc++;
     total++;
 
@@ -733,22 +712,12 @@ function renderTCs() {
     else if (isHidden && !submitted) cardClass += ' hidden-tc';
     card.className = cardClass;
 
-    let badgeTxt, labelTxt;
-    if (isHidden && !submitted) {
-      badgeTxt = '🔒 Hidden';
-      labelTxt = tc.label;
-    } else if (r) {
-      badgeTxt = r.pass ? '✓ Pass' : '✗ Fail';
-      labelTxt = tc.label;
-    } else {
-      badgeTxt = 'Pending';
-      labelTxt = tc.label;
-    }
+    let badgeTxt = isHidden && !submitted ? '🔒 Hidden' : r ? (r.pass ? '✓ Pass' : '✗ Fail') : 'Pending';
 
     card.innerHTML = `
       <div class="tc-top">
         <span class="tc-num">${i+1}</span>
-        <span class="tc-lbl">${labelTxt}</span>
+        <span class="tc-lbl">${tc.label}</span>
         ${isHidden && !submitted ? '<span class="tc-hidden-icon">🔒</span>' : ''}
         <span class="tc-badge">${badgeTxt}</span>
       </div>
@@ -779,33 +748,25 @@ function renderSub() {
   $('sr-sub').textContent = meets?'Great work! Try the next problem.':'Keep trying — you can resubmit anytime.';
 }
 
-// Test button: only runs visible test cases
 async function runVisibleTCs() {
   const p = activeProblem, code = cm.getValue();
   if (!code.trim()) { showErr('Editor is empty!'); return null; }
   const s = gs(p.id);
-  // Keep existing hidden results if already submitted, otherwise null them
   const prevResults = s.tcResults ? [...s.tcResults] : new Array(p.testCases.length).fill(null);
   const results = [];
   for (let i = 0; i < p.testCases.length; i++) {
     const tc = p.testCases[i];
-    if (tc.hidden) {
-      // Keep previous result for hidden TCs, or null if never run
-      results.push(prevResults[i] || null);
-    } else {
+    if (tc.hidden) { results.push(prevResults[i] || null); }
+    else {
       const r = await runPy(code, tc.inputs);
       if (!r.ok) results.push({ pass:false, got:'Error: '+r.error });
-      else {
-        const got = r.lines.join('\n').trim();
-        results.push({ pass: got===tc.expected.join('\n').trim(), got });
-      }
+      else { const got = r.lines.join('\n').trim(); results.push({ pass: got===tc.expected.join('\n').trim(), got }); }
     }
   }
   gs(p.id).tcResults = results;
   return results;
 }
 
-// Submit: runs ALL test cases including hidden
 async function runAllTCs() {
   const p = activeProblem, code = cm.getValue();
   if (!code.trim()) { showErr('Editor is empty!'); return null; }
@@ -813,10 +774,7 @@ async function runAllTCs() {
   for (const tc of p.testCases) {
     const r = await runPy(code, tc.inputs);
     if (!r.ok) results.push({ pass:false, got:'Error: '+r.error });
-    else {
-      const got = r.lines.join('\n').trim();
-      results.push({ pass: got===tc.expected.join('\n').trim(), got });
-    }
+    else { const got = r.lines.join('\n').trim(); results.push({ pass: got===tc.expected.join('\n').trim(), got }); }
   }
   gs(p.id).tcResults = results;
   return results;
@@ -832,7 +790,6 @@ function openModal(i) {
 
   $('modal-title').textContent = tc.label + (isHidden ? ' 🔒' : '');
 
-  // Input: always shown for visible, shown for hidden only after submit
   if (isHidden && !submitted) {
     $('m-inp').textContent = '🔒 Hidden — input revealed after submission';
     $('m-inp').style.fontStyle = 'italic';
@@ -842,7 +799,6 @@ function openModal(i) {
     $('custom-in').value = tc.inputs.join('\n');
   }
 
-  // Expected output: always hidden for hidden TCs before submit
   const expEl = $('m-exp');
   if (isHidden && !submitted) {
     expEl.textContent = '🔒 Expected output hidden until after submission';
@@ -911,18 +867,12 @@ $('btn-submit').addEventListener('click', async () => {
   await loadJSON();
   if (DATA) { $('l-course').textContent = DATA.course.name; console.log('Loaded', DATA.labs.length, 'labs'); }
   $('load-bar').style.width='30%';
-
   initCM();
   $('load-bar').style.width='40%'; $('load-txt').textContent='Setting up editor...';
-
   await initPy();
   ['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=false);
   $('load-bar').style.width='100%'; $('load-txt').textContent='Ready!';
-
-  setTimeout(() => {
-    $('loading-overlay').classList.add('hidden');
-    showDash();
-  }, 350);
+  setTimeout(() => { $('loading-overlay').classList.add('hidden'); showDash(); }, 350);
 })();
 </script>
 </body>
