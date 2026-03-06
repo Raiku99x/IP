@@ -131,6 +131,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .el-title{font-size:14px;font-weight:700;letter-spacing:-.02em;margin-bottom:3px;}
 .el-meta{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
 .el-section{padding:12px 14px;border-bottom:1px solid var(--border);}
+.el-h2{font-size:14px;font-weight:700;letter-spacing:-.01em;color:var(--text);margin-bottom:8px;}
+.el-desc{font-size:12px;line-height:1.75;color:#44443e;white-space:pre-wrap;}
+.el-desc strong{font-weight:700;color:var(--text);}
+.el-list{padding-left:16px;display:flex;flex-direction:column;gap:5px;}
+.el-list li{font-size:12px;line-height:1.65;color:#44443e;}
+.el-list li strong{font-weight:700;color:var(--text);}
+.el-list li code{font-family:"DM Mono",monospace;font-size:11px;background:var(--code-bg);border:1px solid var(--border);border-radius:3px;padding:1px 4px;color:#2a5a8a;}
+.ex-block{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:10px;}
+.ex-block:last-child{margin-bottom:0;}
+.ex-title{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;font-family:"DM Mono",monospace;}
+.ex-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.ex-col-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted2);font-family:"DM Mono",monospace;margin-bottom:3px;}
+.ex-col-val{font-family:"DM Mono",monospace;font-size:11px;color:var(--text);white-space:pre-wrap;line-height:1.6;}
+.ex-col-val.out{color:var(--green);}
 .el-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:7px;}
 .step-list{display:flex;flex-direction:column;gap:8px;}
 .step-item{display:flex;gap:8px;align-items:flex-start;}
@@ -322,16 +336,23 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
         <div class="el-meta" id="el-meta"></div>
       </div>
       <div class="el-section">
-        <div class="el-label">How to solve</div>
-        <div class="step-list" id="el-steps"></div>
+        <div class="el-desc" id="el-desc"></div>
       </div>
       <div class="el-section">
-        <div class="el-label">Input Format</div>
-        <div class="codeblock" id="el-infmt"></div>
+        <div class="el-h2">Constraints</div>
+        <ul class="el-list" id="el-constraints"></ul>
       </div>
       <div class="el-section">
-        <div class="el-label">Output Format</div>
-        <div class="codeblock" id="el-outfmt"></div>
+        <div class="el-h2">Input Format</div>
+        <ul class="el-list" id="el-infmt"></ul>
+      </div>
+      <div class="el-section">
+        <div class="el-h2">Output Format</div>
+        <ul class="el-list" id="el-outfmt"></ul>
+      </div>
+      <div class="el-section">
+        <div class="el-h2">Examples</div>
+        <div id="el-examples"></div>
       </div>
       <div class="el-section">
         <button class="hint-btn" onclick="toggleHint(this)">💡 Show Hint</button>
@@ -584,13 +605,47 @@ function openProb(prob, lab) {
   $('el-pts').textContent = prob.points + ' pts';
   $('el-title').textContent = prob.title;
   $('el-meta').textContent = `${prob.passingPercent}% to pass · ${lab.title}`;
-  $('el-steps').innerHTML = prob.steps.map((st,i)=>`
-    <div class="step-item">
-      <div class="step-num">${i+1}</div>
-      <div class="step-txt">${st.text}</div>
+  // Description — render numbered list items as HTML
+  const descLines = (prob.description||'').split('\n');
+  $('el-desc').innerHTML = descLines.map(line => {
+    // Bold anything wrapped in ** or numbered steps
+    return line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  }).join('\n');
+
+  // Constraints
+  $('el-constraints').innerHTML = (prob.constraints||[])
+    .map(c => `<li>${c.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`(.*?)`/g,'<code>$1</code>')}</li>`)
+    .join('');
+
+  // Input Format — split by newline into list items
+  $('el-infmt').innerHTML = (prob.inputFormat||'').split('\n')
+    .filter(l=>l.trim())
+    .map(l => `<li>${l.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`(.*?)`/g,'<code>$1</code>')}</li>`)
+    .join('');
+
+  // Output Format
+  $('el-outfmt').innerHTML = (prob.outputFormat||'').split('\n')
+    .filter(l=>l.trim())
+    .map(l => `<li>${l.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/`(.*?)`/g,'<code>$1</code>')}</li>`)
+    .join('');
+
+  // Examples — only visible test cases
+  const visibleTCs = (prob.testCases||[]).filter(tc => !tc.hidden);
+  $('el-examples').innerHTML = visibleTCs.map((tc, i) => `
+    <div class="ex-block">
+      <div class="ex-title">Example ${i+1}:</div>
+      <div class="ex-row">
+        <div>
+          <div class="ex-col-label">Input</div>
+          <div class="ex-col-val">${tc.inputs.join('\n')}</div>
+        </div>
+        <div>
+          <div class="ex-col-label">Output</div>
+          <div class="ex-col-val out">${tc.expected.join('\n')}</div>
+        </div>
+      </div>
     </div>`).join('');
-  $('el-infmt').textContent = prob.inputFormat;
-  $('el-outfmt').textContent = prob.outputFormat;
+
   $('el-hint').textContent = prob.hint;
   $('el-hint').classList.remove('visible');
   const hb = document.querySelector('.hint-btn');
