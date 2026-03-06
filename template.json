@@ -1,0 +1,58 @@
+{
+  "_instructions": [
+    "1. Copy this file and rename it (e.g. lists.json, strings.json)",
+    "2. Fill in the lab details and problems below",
+    "3. Add the filename to config.json under 'labs'",
+    "4. Refresh the app — your lab will appear automatically"
+  ],
+
+  "id": "lab-yourlab",
+  "title": "YOUR LAB TITLE",
+  "description": "Short description shown on the dashboard",
+  "dueDate": "2026-12-31",
+  "passingPercent": 75,
+
+  "problems": [
+    {
+      "id": "yourlab-1",
+      "title": "Problem Title Here",
+      "difficulty": "easy",
+      "points": 10,
+      "passingPercent": 75,
+
+      "description": "Write your problem description here.\nUse **bold** for emphasis.\nNumbered steps:\n1. Step one\n2. Step two",
+
+      "constraints": [
+        "Constraint one goes here.",
+        "Constraint two goes here."
+      ],
+
+      "inputFormat": "Line 1: Description of first input line.\nLine 2: Description of second input line.",
+
+      "outputFormat": "Line 1: `Label:` followed by the output value.\nLine 2: `Label2:` followed by another value.",
+
+      "hint": "# Your hint code here\nx = input()\nprint('Label:', x)",
+
+      "testCases": [
+        {
+          "label": "Example 1",
+          "hidden": false,
+          "inputs": ["your input line 1", "your input line 2"],
+          "expected": ["Expected output line 1", "Expected output line 2"]
+        },
+        {
+          "label": "Example 2",
+          "hidden": false,
+          "inputs": ["another input"],
+          "expected": ["another expected output"]
+        },
+        {
+          "label": "Hidden: edge case",
+          "hidden": true,
+          "inputs": ["hidden test input"],
+          "expected": ["hidden test expected output"]
+        }
+      ]
+    }
+  ]
+}
