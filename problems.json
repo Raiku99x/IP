@@ -6,7 +6,6 @@
   },
 
   "labs": [
-
     {
       "id": "lab-sets",
       "title": "Sets",
@@ -23,7 +22,7 @@
           "points": 10,
           "passingPercent": 75,
 
-          "description": "You are managing two project teams and need to analyze their combined skill sets. Given two sets of skills (one for each team), your program should:\n1. Print the combined (union) skills of both teams — all unique skills across both teams.\n2. Print the common (intersection) skills — skills that both teams share.\n3. Print the skills unique to Team A — skills that only Team A has.\n4. Print the skills unique to Team B — skills that only Team B has.\n\nEach result should be printed as a sorted list (alphabetically) on a separate line.",
+          "description": "You are managing two project teams and need to analyze their combined skill sets. Given two sets of skills (one for each team), your program should:\n1. Print the **combined (union)** skills of both teams — all unique skills across both teams.\n2. Print the **common (intersection)** skills — skills that both teams share.\n3. Print the skills **unique to Team A** — skills that only Team A has.\n4. Print the skills **unique to Team B** — skills that only Team B has.\n\nEach result should be printed as a **sorted list** (alphabetically) on a separate line.",
 
           "constraints": [
             "Each team has between 1 and 10 skills.",
@@ -31,19 +30,11 @@
             "Skills within each team are unique."
           ],
 
-          "inputFormat": "Line 1: Skills of Team A separated by spaces.\nLine 2: Skills of Team B separated by spaces.",
+          "inputFormat": "Line 1: The skills of **Team A**, separated by spaces.\nLine 2: The skills of **Team B**, separated by spaces.",
 
-          "outputFormat": "Line 1: Combined: followed by sorted combined skills, separated by commas and a space.\nLine 2: Common: followed by sorted common skills. If none, print Common: none\nLine 3: Only Team A: followed by sorted unique Team A skills. If none, print Only Team A: none\nLine 4: Only Team B: followed by sorted unique Team B skills. If none, print Only Team B: none",
+          "outputFormat": "Line 1: `Combined:` followed by the sorted combined skills, separated by commas and a space.\nLine 2: `Common:` followed by the sorted common skills. If none, print `Common: none`.\nLine 3: `Only Team A:` followed by the sorted unique Team A skills. If none, print `Only Team A: none`.\nLine 4: `Only Team B:` followed by the sorted unique Team B skills. If none, print `Only Team B: none`.",
 
           "hint": "team_a = set(input().split())\nteam_b = set(input().split())\ncombined = sorted(team_a | team_b)\ncommon   = sorted(team_a & team_b)\nonly_a   = sorted(team_a - team_b)\nonly_b   = sorted(team_b - team_a)\nprint('Combined:', ', '.join(combined))\nprint('Common:',   ', '.join(common)   if common   else 'none')\nprint('Only Team A:', ', '.join(only_a) if only_a else 'none')\nprint('Only Team B:', ', '.join(only_b) if only_b else 'none')",
-
-          "steps": [
-            { "text": "Read line 1 and convert to a set for Team A using set(input().split())." },
-            { "text": "Read line 2 and convert to a set for Team B." },
-            { "text": "Use | for union (combined), & for intersection (common), - for difference (unique to each)." },
-            { "text": "Sort each result using sorted() for alphabetical order." },
-            { "text": "Join with ', '.join() and print each line. If a result is empty, print 'none' instead." }
-          ],
 
           "testCases": [
             {
@@ -113,7 +104,7 @@
               ]
             },
             {
-              "label": "Hidden: More skills, partial overlap",
+              "label": "Hidden: Partial overlap, more skills",
               "hidden": true,
               "inputs": ["python java sql html css", "java sql react vue angular"],
               "expected": [
@@ -133,7 +124,7 @@
           "points": 10,
           "passingPercent": 75,
 
-          "description": "You are building a student attendance tracker. Your program will:\n1. Read a list of student names (which may contain duplicates).\n2. Convert the list to a set to remove duplicates.\n3. Print the number of unique students.\n4. Read a name to add to the set.\n5. Read a name to discard from the set (should not raise an error if not found).\n6. Print the final sorted set of student names.",
+          "description": "You are building a student attendance tracker. Your program will:\n1. Read a list of student names (which may contain duplicates).\n2. Convert the list to a **set** to remove duplicates.\n3. Print the number of **unique students**.\n4. Read a name to **add** to the set.\n5. Read a name to **discard** from the set (should not raise an error if not found).\n6. Print the **final sorted** set of student names.",
 
           "constraints": [
             "The initial list has between 1 and 20 names.",
@@ -142,20 +133,11 @@
             "The name to discard may or may not be in the set."
           ],
 
-          "inputFormat": "Line 1: Student names separated by spaces (may contain duplicates).\nLine 2: A single name to add to the set.\nLine 3: A single name to discard from the set.",
+          "inputFormat": "Line 1: Student names separated by spaces (may contain duplicates).\nLine 2: A single name to **add** to the set.\nLine 3: A single name to **discard** from the set.",
 
-          "outputFormat": "Line 1: Unique count: followed by the number of unique students (after removing duplicates, before add/discard).\nLine 2: Final list: followed by the sorted final student names, separated by commas and a space.",
+          "outputFormat": "Line 1: `Unique count:` followed by the number of unique students (after removing duplicates, before add/discard).\nLine 2: `Final list:` followed by the sorted final student names, separated by commas and a space.",
 
-          "hint": "names = input().split()\nadd_name     = input().strip()\ndiscard_name = input().strip()\nunique = set(names)\nprint('Unique count:', len(unique))\nunique.add(add_name)\nunique.discard(discard_name)  # discard won't raise error if not found\nprint('Final list:', ', '.join(sorted(unique)))",
-
-          "steps": [
-            { "text": "Read line 1, split by spaces — you get a list that may have duplicates." },
-            { "text": "Convert to a set immediately to remove duplicates." },
-            { "text": "Print 'Unique count:' with the size of the set NOW (before add/discard)." },
-            { "text": "Read the name to add and use .add() on the set." },
-            { "text": "Read the name to discard and use .discard() — this is safe even if the name isn't in the set." },
-            { "text": "Sort and join the final set with ', '.join(sorted(unique)) and print." }
-          ],
+          "hint": "names = input().split()\nadd_name     = input().strip()\ndiscard_name = input().strip()\nunique = set(names)\nprint('Unique count:', len(unique))\nunique.add(add_name)\nunique.discard(discard_name)\nprint('Final list:', ', '.join(sorted(unique)))",
 
           "testCases": [
             {
@@ -231,7 +213,7 @@
           "points": 10,
           "passingPercent": 75,
 
-          "description": "A university system needs to check if a student has completed all the prerequisite courses for enrollment in an advanced program. Your program should:\n1. Read the required courses (prerequisites).\n2. Read the completed courses by the student.\n3. Check if the student has completed all prerequisites (i.e., if the required courses are a subset of the completed courses).\n4. If yes, print a success message.\n5. If no, print the missing courses (sorted alphabetically).\n6. Finally, print the symmetric difference — courses that are in one set but not the other. Print them sorted.",
+          "description": "A university system needs to check if a student has completed all the prerequisite courses for enrollment in an advanced program. Your program should:\n1. Read the **required** courses (prerequisites).\n2. Read the **completed** courses by the student.\n3. Check if the student has completed **all prerequisites** (i.e., if the required courses are a **subset** of the completed courses).\n4. If yes, print a success message.\n5. If no, print the **missing courses** (sorted alphabetically).\n6. Finally, print the **symmetric difference** — courses that are in one set but not the other (i.e., missing prerequisites + extra courses the student took). Print them sorted.",
 
           "constraints": [
             "Each set has between 1 and 10 course names.",
@@ -240,17 +222,9 @@
 
           "inputFormat": "Line 1: Required courses separated by spaces.\nLine 2: Completed courses separated by spaces.",
 
-          "outputFormat": "Line 1: Eligible: yes if all prerequisites are met, otherwise Eligible: no\nLine 2 (only if not eligible): Missing: followed by the sorted missing courses, separated by commas and a space.\nLast line: Non-overlapping: followed by the sorted symmetric difference. If none, print Non-overlapping: none",
+          "outputFormat": "Line 1: `Eligible: yes` if all prerequisites are met, otherwise `Eligible: no`.\nLine 2 (only if not eligible): `Missing:` followed by the sorted missing courses, separated by commas and a space.\nLast line: `Non-overlapping:` followed by the sorted symmetric difference. If none, print `Non-overlapping: none`.",
 
           "hint": "required  = set(input().split())\ncompleted = set(input().split())\neligible  = required.issubset(completed)\nprint('Eligible: yes' if eligible else 'Eligible: no')\nif not eligible:\n    missing = sorted(required - completed)\n    print('Missing:', ', '.join(missing))\nsym_diff = sorted(required.symmetric_difference(completed))\nprint('Non-overlapping:', ', '.join(sym_diff) if sym_diff else 'none')",
-
-          "steps": [
-            { "text": "Read both lines and convert each to a set." },
-            { "text": "Use required.issubset(completed) to check if all prerequisites are done." },
-            { "text": "Print 'Eligible: yes' or 'Eligible: no' based on the check." },
-            { "text": "If not eligible, compute required - completed to find missing courses and print them sorted." },
-            { "text": "Use .symmetric_difference() to get courses in one set but not both — print sorted, or 'none' if empty." }
-          ],
 
           "testCases": [
             {
@@ -311,7 +285,7 @@
               ]
             },
             {
-              "label": "Hidden: All required completed, no extras",
+              "label": "Hidden: Exact match, no extras",
               "hidden": true,
               "inputs": ["bio101 chem101 phys101", "bio101 chem101 phys101"],
               "expected": [
@@ -324,6 +298,5 @@
 
       ]
     }
-
   ]
 }
