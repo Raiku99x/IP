@@ -1,14 +1,13 @@
 {
   "_note": "Add the filename of any new lab JSON file here and the app will load it automatically.",
-
   "course": {
-    "name": "BSCS 1B — Python Practice",
+    "name": "BSCS 1B \u2014 Python Practice",
     "description": "Python Self-Study",
     "instructor": "Self-Study"
   },
-
   "labs": [
     "tuples.json",
-    "sets.json"
+    "sets.json",
+    "list1.json"
   ]
 }
