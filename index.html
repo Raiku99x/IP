@@ -213,6 +213,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .tc-card.fail .tc-lbl{color:var(--red);}
 .tc-card:not(.pass):not(.fail) .tc-lbl{color:var(--muted);}
 .tc-badge{font-size:10px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:4px;}
+.tc-card.hidden-tc{border-style:dashed;border-color:var(--border2);background:var(--surface2);}
+.tc-card.hidden-tc .tc-lbl{color:var(--muted);}
+.tc-hidden-icon{font-size:11px;margin-right:2px;}
 .tc-card.pass .tc-badge{background:var(--green-mid);color:var(--green);}
 .tc-card.fail .tc-badge{background:var(--red-mid);color:var(--red);}
 .tc-card:not(.pass):not(.fail) .tc-badge{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
@@ -632,22 +635,54 @@ function toggleHint(btn) {
 function renderTCs() {
   if (!activeProblem) return;
   const p = activeProblem, s = gs(p.id), res = s.tcResults;
+  const submitted = s.submitted;
   $('tc-list').innerHTML = '';
-  let pc = 0;
-  p.testCases.forEach((tc,i) => {
+  let pc = 0, total = 0;
+
+  p.testCases.forEach((tc, i) => {
     const r = res?.[i];
-    if (r?.pass) pc++;
+    const isHidden = tc.hidden === true;
+    // Hidden test cases only reveal result after submit
+    const revealResult = !isHidden || submitted;
+
+    if (r?.pass && revealResult) pc++;
+    total++;
+
     const card = document.createElement('div');
-    card.className = 'tc-card' + (r?(r.pass?' pass':' fail'):'');
-    card.innerHTML = `<div class="tc-top"><span class="tc-num">${i+1}</span><span class="tc-lbl">${tc.label}</span><span class="tc-badge">${r?(r.pass?'✓ Pass':'✗ Fail'):'Pending'}</span></div><div class="tc-sub">Click to view details →</div>`;
+    let cardClass = 'tc-card';
+    if (r && revealResult) cardClass += r.pass ? ' pass' : ' fail';
+    else if (isHidden && !submitted) cardClass += ' hidden-tc';
+    card.className = cardClass;
+
+    let badgeTxt, labelTxt;
+    if (isHidden && !submitted) {
+      badgeTxt = '🔒 Hidden';
+      labelTxt = tc.label;
+    } else if (r) {
+      badgeTxt = r.pass ? '✓ Pass' : '✗ Fail';
+      labelTxt = tc.label;
+    } else {
+      badgeTxt = 'Pending';
+      labelTxt = tc.label;
+    }
+
+    card.innerHTML = `
+      <div class="tc-top">
+        <span class="tc-num">${i+1}</span>
+        <span class="tc-lbl">${labelTxt}</span>
+        ${isHidden && !submitted ? '<span class="tc-hidden-icon">🔒</span>' : ''}
+        <span class="tc-badge">${badgeTxt}</span>
+      </div>
+      <div class="tc-sub">${isHidden && !submitted ? 'Revealed after submission' : 'Click to view details →'}</div>`;
     card.addEventListener('click', () => openModal(i));
     $('tc-list').appendChild(card);
   });
+
   const scEl = $('tc-score');
   if (res) {
-    scEl.textContent = `${pc}/${p.testCases.length}`;
-    scEl.style.color = pc===p.testCases.length?'var(--green)':pc>0?'var(--yellow)':'var(--red)';
-  } else { scEl.textContent = `0/${p.testCases.length}`; scEl.style.color='var(--muted)'; }
+    scEl.textContent = `${pc}/${total}`;
+    scEl.style.color = pc===total?'var(--green)':pc>0?'var(--yellow)':'var(--red)';
+  } else { scEl.textContent = `0/${total}`; scEl.style.color='var(--muted)'; }
 }
 
 function renderSub() {
@@ -655,15 +690,43 @@ function renderSub() {
   const p = activeProblem, s = gs(p.id), sr = $('submit-result');
   if (!s.submitted||!s.tcResults) { sr.className=''; sr.style.display='none'; return; }
   const pc = s.tcResults.filter(r=>r.pass).length;
-  const meets = pc/s.tcResults.length*100 >= p.passingPercent;
-  const pts = Math.round(pc/s.tcResults.length*p.points);
+  const total = s.tcResults.length;
+  const meets = pc/total*100 >= p.passingPercent;
+  const pts = Math.round(pc/total*p.points);
   sr.style.display='block'; sr.className='show';
   $('sr-text').className='sr-text '+(meets?'ok':'no');
   $('sr-text').textContent = meets?'✅ Passed!':'❌ Not passed';
-  $('sr-pts').textContent = `${pts}/${p.points} pts — ${pc}/${s.tcResults.length} cases (need ${p.passingPercent}%)`;
+  $('sr-pts').textContent = `${pts}/${p.points} pts — ${pc}/${total} cases (need ${p.passingPercent}%)`;
   $('sr-sub').textContent = meets?'Great work! Try the next problem.':'Keep trying — you can resubmit anytime.';
 }
 
+// Test button: only runs visible test cases
+async function runVisibleTCs() {
+  const p = activeProblem, code = cm.getValue();
+  if (!code.trim()) { showErr('Editor is empty!'); return null; }
+  const s = gs(p.id);
+  // Keep existing hidden results if already submitted, otherwise null them
+  const prevResults = s.tcResults ? [...s.tcResults] : new Array(p.testCases.length).fill(null);
+  const results = [];
+  for (let i = 0; i < p.testCases.length; i++) {
+    const tc = p.testCases[i];
+    if (tc.hidden) {
+      // Keep previous result for hidden TCs, or null if never run
+      results.push(prevResults[i] || null);
+    } else {
+      const r = await runPy(code, tc.inputs);
+      if (!r.ok) results.push({ pass:false, got:'Error: '+r.error });
+      else {
+        const got = r.lines.join('\n').trim();
+        results.push({ pass: got===tc.expected.join('\n').trim(), got });
+      }
+    }
+  }
+  gs(p.id).tcResults = results;
+  return results;
+}
+
+// Submit: runs ALL test cases including hidden
 async function runAllTCs() {
   const p = activeProblem, code = cm.getValue();
   if (!code.trim()) { showErr('Editor is empty!'); return null; }
@@ -683,15 +746,46 @@ async function runAllTCs() {
 // ─── MODAL ─────────────────────────────────────
 function openModal(i) {
   const tc = activeProblem.testCases[i];
-  const res = gs(activeProblem.id).tcResults?.[i];
-  $('modal-title').textContent = tc.label;
-  $('m-inp').textContent = tc.inputs.join('\n');
-  $('m-exp').textContent = tc.expected.join('\n');
+  const s = gs(activeProblem.id);
+  const res = s.tcResults?.[i];
+  const isHidden = tc.hidden === true;
+  const submitted = s.submitted;
+
+  $('modal-title').textContent = tc.label + (isHidden ? ' 🔒' : '');
+
+  // Input: always shown for visible, shown for hidden only after submit
+  if (isHidden && !submitted) {
+    $('m-inp').textContent = '🔒 Hidden — input revealed after submission';
+    $('m-inp').style.fontStyle = 'italic';
+  } else {
+    $('m-inp').textContent = tc.inputs.join('\n');
+    $('m-inp').style.fontStyle = '';
+    $('custom-in').value = tc.inputs.join('\n');
+  }
+
+  // Expected output: always hidden for hidden TCs before submit
+  const expEl = $('m-exp');
+  if (isHidden && !submitted) {
+    expEl.textContent = '🔒 Expected output hidden until after submission';
+    expEl.style.fontStyle = 'italic';
+    expEl.className = 'm-val none';
+  } else {
+    expEl.textContent = tc.expected.join('\n');
+    expEl.style.fontStyle = '';
+    expEl.className = 'm-val exp';
+  }
+
   const [badge, got] = [$('modal-badge'), $('m-got')];
-  if (!res) { badge.className='pending'; badge.textContent='Pending'; got.className='m-val none'; got.textContent='Not run yet.'; }
-  else if (res.pass) { badge.className='pass'; badge.textContent='✓ Pass'; got.className='m-val ok'; got.textContent=res.got||'✓ (correct)'; }
-  else { badge.className='fail'; badge.textContent='✗ Fail'; got.className='m-val err'; got.textContent=res.got||'(no output)'; }
-  $('custom-in').value = tc.inputs.join('\n');
+  if (!res) {
+    badge.className='pending'; badge.textContent= isHidden && !submitted ? '🔒 Hidden' : 'Pending';
+    got.className='m-val none'; got.textContent= isHidden && !submitted ? 'Runs automatically on Submit.' : 'Not run yet.';
+  } else if (res.pass) {
+    badge.className='pass'; badge.textContent='✓ Pass';
+    got.className='m-val ok'; got.textContent=res.got||'✓ (correct)';
+  } else {
+    badge.className='fail'; badge.textContent='✗ Fail';
+    got.className='m-val err'; got.textContent=res.got||'(no output)';
+  }
   $('modal-overlay').classList.add('open');
 }
 $('modal-close').addEventListener('click', () => $('modal-overlay').classList.remove('open'));
@@ -718,7 +812,7 @@ $('btn-run').addEventListener('click', async () => {
 
 $('btn-test').addEventListener('click', async () => {
   setBusy(true); hideErr();
-  const res = await runAllTCs();
+  const res = await runVisibleTCs();
   if (res) { renderTCs(); flash('fg'); }
   setBusy(false);
 });
