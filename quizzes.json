@@ -1,0 +1,173 @@
+{
+  "_note": "Add quiz sets here. Each set has an id, title, topic, and questions array.",
+  "quizzes": [
+    {
+      "id": "quiz-tuples-1",
+      "title": "Tuples Fundamentals",
+      "topic": "Tuples",
+      "icon": "🔒",
+      "questions": [
+        {
+          "id": "q1",
+          "type": "multiple_choice",
+          "question": "Which of the following correctly creates a tuple with a single element?",
+          "choices": ["(42)", "(42,)", "[42]", "tuple{42}"],
+          "answer": "(42,)"
+        },
+        {
+          "id": "q2",
+          "type": "true_false",
+          "question": "Tuples are mutable — you can change their elements after creation.",
+          "answer": "False"
+        },
+        {
+          "id": "q3",
+          "type": "code_output",
+          "question": "What is the output of:\n```\nt = (10, 20, 30, 40, 50)\nprint(t[1:4])\n```",
+          "choices": ["(10, 20, 30)", "(20, 30, 40)", "(20, 30, 40, 50)", "(10, 20, 30, 40)"],
+          "answer": "(20, 30, 40)"
+        },
+        {
+          "id": "q4",
+          "type": "fill_blank",
+          "question": "Complete the code to unpack only the first two elements and collect the rest:\n```\na, b, ___rest = (1, 2, 3, 4, 5)\n```",
+          "answer": "*"
+        },
+        {
+          "id": "q5",
+          "type": "multiple_choice",
+          "question": "Which method returns the number of times a value appears in a tuple?",
+          "choices": ["index()", "count()", "find()", "search()"],
+          "answer": "count()"
+        },
+        {
+          "id": "q6",
+          "type": "code_output",
+          "question": "What does this print?\n```\nt = (5, 3, 8, 1)\nprint(sorted(t))\n```",
+          "choices": ["(1, 3, 5, 8)", "[1, 3, 5, 8]", "(8, 5, 3, 1)", "[8, 5, 3, 1]"],
+          "answer": "[1, 3, 5, 8]"
+        },
+        {
+          "id": "q7",
+          "type": "true_false",
+          "question": "You can use a tuple as a dictionary key in Python.",
+          "answer": "True"
+        },
+        {
+          "id": "q8",
+          "type": "fill_blank",
+          "question": "What function converts a list into a tuple?\n```\nmy_list = [1, 2, 3]\nmy_tuple = ___(my_list)\n```",
+          "answer": "tuple"
+        }
+      ]
+    },
+    {
+      "id": "quiz-sets-1",
+      "title": "Sets Operations",
+      "topic": "Sets",
+      "icon": "⬡",
+      "questions": [
+        {
+          "id": "q1",
+          "type": "multiple_choice",
+          "question": "Which operator gives you the intersection of two sets?",
+          "choices": ["|", "&", "-", "^"],
+          "answer": "&"
+        },
+        {
+          "id": "q2",
+          "type": "code_output",
+          "question": "What is the output?\n```\na = {1, 2, 3}\nb = {2, 3, 4}\nprint(a | b)\n```",
+          "choices": ["{2, 3}", "{1, 4}", "{1, 2, 3, 4}", "{1, 2, 3, 4, 2, 3}"],
+          "answer": "{1, 2, 3, 4}"
+        },
+        {
+          "id": "q3",
+          "type": "true_false",
+          "question": "Sets can contain duplicate elements.",
+          "answer": "False"
+        },
+        {
+          "id": "q4",
+          "type": "multiple_choice",
+          "question": "Which method removes an element from a set without raising an error if it doesn't exist?",
+          "choices": ["remove()", "pop()", "discard()", "delete()"],
+          "answer": "discard()"
+        },
+        {
+          "id": "q5",
+          "type": "fill_blank",
+          "question": "Complete the code to check if set A is a subset of set B:\n```\na = {1, 2}\nb = {1, 2, 3}\nprint(a.___(b))\n```",
+          "answer": "issubset"
+        },
+        {
+          "id": "q6",
+          "type": "code_output",
+          "question": "What does this print?\n```\na = {1, 2, 3, 4}\nb = {3, 4, 5, 6}\nprint(a ^ b)\n```",
+          "choices": ["{3, 4}", "{1, 2, 5, 6}", "{1, 2, 3, 4, 5, 6}", "{5, 6}"],
+          "answer": "{1, 2, 5, 6}"
+        }
+      ]
+    },
+    {
+      "id": "quiz-lists-1",
+      "title": "Lists Essentials",
+      "topic": "Lists",
+      "icon": "📋",
+      "questions": [
+        {
+          "id": "q1",
+          "type": "multiple_choice",
+          "question": "Which method adds an element to the end of a list?",
+          "choices": ["insert()", "append()", "extend()", "push()"],
+          "answer": "append()"
+        },
+        {
+          "id": "q2",
+          "type": "code_output",
+          "question": "What is the output?\n```\nnums = [3, 1, 4, 1, 5]\nnums.sort()\nprint(nums)\n```",
+          "choices": ["[3, 1, 4, 1, 5]", "[5, 4, 3, 1, 1]", "[1, 1, 3, 4, 5]", "[1, 3, 1, 4, 5]"],
+          "answer": "[1, 1, 3, 4, 5]"
+        },
+        {
+          "id": "q3",
+          "type": "true_false",
+          "question": "The `pop()` method with no arguments removes the last element of a list.",
+          "answer": "True"
+        },
+        {
+          "id": "q4",
+          "type": "fill_blank",
+          "question": "Complete the list comprehension to get even numbers from 1–10:\n```\nevens = [x for x in range(1, 11) if x % 2 ___ 0]\n```",
+          "answer": "=="
+        },
+        {
+          "id": "q5",
+          "type": "multiple_choice",
+          "question": "What does `list.copy()` return?",
+          "choices": ["A reference to the same list", "A shallow copy of the list", "A deep copy of the list", "A tuple version of the list"],
+          "answer": "A shallow copy of the list"
+        },
+        {
+          "id": "q6",
+          "type": "code_output",
+          "question": "What is the output?\n```\na = [1, 2, 3]\nb = a\nb.append(4)\nprint(a)\n```",
+          "choices": ["[1, 2, 3]", "[1, 2, 3, 4]", "[4, 1, 2, 3]", "Error"],
+          "answer": "[1, 2, 3, 4]"
+        },
+        {
+          "id": "q7",
+          "type": "true_false",
+          "question": "`reverse()` returns a new reversed list.",
+          "answer": "False"
+        },
+        {
+          "id": "q8",
+          "type": "fill_blank",
+          "question": "What method finds the position of an element in a list?\n```\nfruits = ['apple', 'banana', 'cherry']\nprint(fruits.___('banana'))\n```",
+          "answer": "index"
+        }
+      ]
+    }
+  ]
+}
