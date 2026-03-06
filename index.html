@@ -422,14 +422,38 @@ const state = {}; // keyed by problem.id → { code, tcResults, submitted }
 const $ = id => document.getElementById(id);
 const gs = id => { if (!state[id]) state[id] = { code:'', tcResults:null, submitted:false }; return state[id]; };
 
-// ─── LOAD JSON ─────────────────────────────────
+// ─── LOAD FROM config.json ─────────────────────
+// config.json lists all lab JSON filenames.
+// To add a new lab: create a new JSON file and add its filename to config.json "labs" array.
 async function loadJSON() {
   try {
-    const r = await fetch('problems.json');
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    DATA = await r.json();
+    // Step 1: load config.json
+    const cfgRes = await fetch('config.json');
+    if (!cfgRes.ok) throw new Error('Could not load config.json (HTTP ' + cfgRes.status + ')');
+    const cfg = await cfgRes.json();
+
+    // Step 2: fetch each lab JSON file listed in config
+    const labFiles = cfg.labs || [];
+    const loadedLabs = [];
+    for (const filename of labFiles) {
+      try {
+        const res = await fetch(filename);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const lab = await res.json();
+        loadedLabs.push(lab);
+      } catch(e) {
+        console.warn('Skipping ' + filename + ':', e.message);
+      }
+    }
+
+    // Step 3: assemble into DATA
+    DATA = {
+      course: cfg.course,
+      labs: loadedLabs
+    };
+
   } catch(e) {
-    alert('Could not load problems.json.\nMake sure both files are in the same folder.\n\n' + e.message);
+    alert('Could not load config.json.\nMake sure config.json is in the same folder as index.html.\n\n' + e.message);
   }
 }
 
@@ -883,9 +907,9 @@ $('btn-submit').addEventListener('click', async () => {
 
 // ─── BOOT ──────────────────────────────────────
 (async () => {
-  $('load-bar').style.width='10%'; $('load-txt').textContent='Loading problems.json...';
+  $('load-bar').style.width='10%'; $('load-txt').textContent='Loading config.json...';
   await loadJSON();
-  if (DATA) $('l-course').textContent = DATA.course.name;
+  if (DATA) { $('l-course').textContent = DATA.course.name; console.log('Loaded', DATA.labs.length, 'labs'); }
   $('load-bar').style.width='30%';
 
   initCM();
