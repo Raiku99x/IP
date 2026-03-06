@@ -6,15 +6,17 @@
     "instructor": "Self-Study"
   },
   "labs": [
-    "tuples.json",
     "sets.json",
+    "tuples.json",
     "list1.json",
     "list0.json",
     "string.json"
   ],
   "quizzes": [
-    "sets-quiz.json",
+    "python-basics-quiz.json",
+    "control-flow-quiz.json",
     "list-quiz.json",
-    "tuples-quiz.json"
+    "tuples-quiz.json",
+    "sets-quiz.json"
   ]
 }
