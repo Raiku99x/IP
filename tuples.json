@@ -7,7 +7,7 @@
   "problems": [
     {
       "id": "tuples-1",
-      "title": "Number Tuple Explorer",
+      "title": "[SSBD] Number Tuple Explorer",
       "difficulty": "easy",
       "points": 20,
       "passingPercent": 75,
