@@ -7,7 +7,7 @@
   "problems": [
     {
       "id": "tuples-1",
-      "title": "[SSBD] Number Tuple Explorer",
+      "title": "Number Tuple Explorer",
       "difficulty": "easy",
       "points": 20,
       "passingPercent": 75,
@@ -57,7 +57,7 @@
           ]
         },
         {
-          "label": "Example 3 \u2014 negative numbers",
+          "label": "Example 3 — negative numbers",
           "hidden": false,
           "inputs": [
             "7, -2, 15, 3, -8"
@@ -144,7 +144,7 @@
           ]
         },
         {
-          "label": "Example 2 \u2014 with zero",
+          "label": "Example 2 — with zero",
           "hidden": false,
           "inputs": [
             "5, 3, 5",
@@ -160,7 +160,7 @@
           ]
         },
         {
-          "label": "Example 3 \u2014 repeated first element",
+          "label": "Example 3 — repeated first element",
           "hidden": false,
           "inputs": [
             "2, 4, 6",
@@ -263,7 +263,7 @@
           ]
         },
         {
-          "label": "Example 3 \u2014 all pass",
+          "label": "Example 3 — all pass",
           "hidden": false,
           "inputs": [
             "Leo, Mia, Kai",
@@ -313,6 +313,222 @@
             "Bonus: (85, 85)",
             "Passed: ('Sam', 'Jay')",
             "Average: 75.0, Highest: 75, Lowest: 75"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tuples-4",
+      "title": "Tuple Sequence Analyzer",
+      "difficulty": "very hard",
+      "points": 40,
+      "passingPercent": 75,
+      "description": "You are building an advanced sequence analysis tool that processes a series of integers using **run-length encoding**, **frequency ranking**, **pair extraction**, and **tuple reconstruction** — all using tuple operations.\n\nYour program should:\n1. Read a **comma-separated sequence of integers** and store as a tuple.\n2. Perform **run-length encoding (RLE)**: compress consecutive equal values into a tuple of `(value, count)` pairs.\n3. Build a **frequency ranking**: a tuple of `(value, frequency)` sorted by frequency **descending**, then by value **ascending** as a tiebreaker.\n4. Print the **most frequent value** (first in the frequency ranking).\n5. **Decode** the RLE back to a tuple and verify it matches the original (print `True` or `False`).\n6. Extract **adjacent pairs** using `zip(nums[::2], nums[1::2])` — pairing index 0&1, 2&3, etc.\n7. Print the **pair sums** sorted in **descending** order as a tuple.",
+      "constraints": [
+        "Input contains at least 4 integers.",
+        "All values are positive integers.",
+        "If two values have the same frequency, sort by value ascending as tiebreaker."
+      ],
+      "inputFormat": "A single comma-separated line of integers (e.g., `3,3,1,2,2,2,1,3`).",
+      "outputFormat": "Line 1: `RLE: <tuple of (value,count) tuples>`\nLine 2: `Frequency: <tuple of (value,freq) tuples sorted by freq DESC, value ASC>`\nLine 3: `Most frequent: <value>`\nLine 4: `Decoded match: True` or `Decoded match: False`\nLine 5: `Pairs: <tuple of (a,b) pairs>`\nLine 6: `Pair sums: <tuple of sums, descending>`",
+      "hint": "nums = tuple(map(int, input().split(',')))\n# RLE\nrle = []\ni = 0\nwhile i < len(nums):\n    val, count = nums[i], 0\n    while i < len(nums) and nums[i] == val:\n        count += 1; i += 1\n    rle.append((val, count))\nrle = tuple(rle)\n# Frequency\nfreq = {}\nfor n in nums: freq[n] = freq.get(n, 0) + 1\nfreq_tuple = tuple(sorted(freq.items(), key=lambda x: (-x[1], x[0])))\n# Decode\ndecoded = tuple(v for val, cnt in rle for v in (val,)*cnt)\n# Pairs & sums\npairs = tuple(zip(nums[::2], nums[1::2]))\npair_sums = tuple(sorted((a+b for a,b in pairs), reverse=True))\nprint('RLE:', rle)\nprint('Frequency:', freq_tuple)\nprint('Most frequent:', freq_tuple[0][0])\nprint('Decoded match:', decoded == nums)\nprint('Pairs:', pairs)\nprint('Pair sums:', pair_sums)",
+      "testCases": [
+        {
+          "label": "Example 1",
+          "hidden": false,
+          "inputs": [
+            "3,3,1,2,2,2,1,3"
+          ],
+          "expected": [
+            "RLE: ((3, 2), (1, 1), (2, 3), (1, 1), (3, 1))",
+            "Frequency: ((2, 3), (3, 3), (1, 2))",
+            "Most frequent: 2",
+            "Decoded match: True",
+            "Pairs: ((3, 3), (1, 2), (2, 2), (1, 3))",
+            "Pair sums: (6, 4, 4, 3)"
+          ]
+        },
+        {
+          "label": "Example 2",
+          "hidden": false,
+          "inputs": [
+            "5,5,5,1,1,2,2,2,2,3"
+          ],
+          "expected": [
+            "RLE: ((5, 3), (1, 2), (2, 4), (3, 1))",
+            "Frequency: ((2, 4), (5, 3), (1, 2), (3, 1))",
+            "Most frequent: 2",
+            "Decoded match: True",
+            "Pairs: ((5, 5), (5, 1), (1, 2), (2, 2), (2, 3))",
+            "Pair sums: (10, 6, 5, 4, 3)"
+          ]
+        },
+        {
+          "label": "Example 3",
+          "hidden": false,
+          "inputs": [
+            "7,7,4,4,4,7,1,1"
+          ],
+          "expected": [
+            "RLE: ((7, 2), (4, 3), (7, 1), (1, 2))",
+            "Frequency: ((4, 3), (7, 3), (1, 2))",
+            "Most frequent: 4",
+            "Decoded match: True",
+            "Pairs: ((7, 7), (4, 4), (4, 7), (1, 1))",
+            "Pair sums: (14, 11, 8, 2)"
+          ]
+        },
+        {
+          "label": "Hidden: Alternating values",
+          "hidden": true,
+          "inputs": [
+            "1,2,1,2,1,2"
+          ],
+          "expected": [
+            "RLE: ((1, 1), (2, 1), (1, 1), (2, 1), (1, 1), (2, 1))",
+            "Frequency: ((1, 3), (2, 3))",
+            "Most frequent: 1",
+            "Decoded match: True",
+            "Pairs: ((1, 2), (1, 2), (1, 2))",
+            "Pair sums: (3, 3, 3)"
+          ]
+        },
+        {
+          "label": "Hidden: One dominant value",
+          "hidden": true,
+          "inputs": [
+            "9,9,9,9,5,5,1"
+          ],
+          "expected": [
+            "RLE: ((9, 4), (5, 2), (1, 1))",
+            "Frequency: ((9, 4), (5, 2), (1, 1))",
+            "Most frequent: 9",
+            "Decoded match: True",
+            "Pairs: ((9, 9), (9, 9), (5, 5))",
+            "Pair sums: (18, 18, 10)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tuples-5",
+      "title": "Transaction Ledger Engine",
+      "difficulty": "extreme",
+      "points": 80,
+      "passingPercent": 75,
+      "description": "You are building a financial transaction ledger engine using **only tuple operations**. Each transaction is a `name:amount` entry where positive amounts are credits and negative amounts are debits.\n\nYour program must:\n1. Read a **comma-separated string** of `name:amount` entries and parse them into a **tuple of (name, int) tuples**.\n2. Extract all **unique names** as a sorted tuple.\n3. Compute each person's **final balance** as a tuple of `(name, balance)` sorted by name.\n4. Compute each person's **running balance** — a tuple of cumulative sums in transaction order — printed as `Running <name>: <tuple>` for each person alphabetically.\n5. Separate into **debtors** (balance < 0) and **creditors** (balance > 0), each as sorted tuples of `(name, balance)`. If none exist, print empty tuple `()`.\n6. Read a **threshold integer**. Print all transactions with amount **strictly above** the threshold as `(name, amount)` tuples sorted by amount **descending**.\n7. Print **total volume** — sum of all absolute transaction values.\n8. Print a summary line: `credits=<n>, debits=<n>, net=<n>`.",
+      "constraints": [
+        "Between 2 and 6 unique people, 4 to 10 total transactions.",
+        "Amounts are non-zero integers (positive or negative).",
+        "Names start with uppercase, are single words.",
+        "Threshold is a positive integer."
+      ],
+      "inputFormat": "Line 1: Comma-separated `name:amount` entries (e.g., `Alice:200,Bob:-50,Alice:-80`).\nLine 2: An integer threshold.",
+      "outputFormat": "Line 1: `Transactions: <tuple of (name,amount) tuples>`\nLine 2: `Names: <sorted tuple of names>`\nLine 3: `Balances: <tuple of (name,balance) sorted by name>`\nLines 4+: `Running <name>: <tuple of running totals>` — one per person, alphabetical order\nNext: `Debtors: <tuple>` — (name,balance) with balance<0, sorted by name; `()` if none\nNext: `Creditors: <tuple>` — (name,balance) with balance>0, sorted by name; `()` if none\nNext: `Above threshold: <tuple of (name,amt) sorted by amt DESC>`\nNext: `Total volume: <n>`\nLast: `Summary: credits=<n>, debits=<n>, net=<n>`",
+      "hint": "entries_str = input()\nthreshold = int(input())\nraw = tuple(tuple(e.split(':')) for e in entries_str.split(','))\ntransactions = tuple((name, int(amt)) for name, amt in raw)\nnames = tuple(sorted(set(name for name, _ in transactions)))\nbalances = tuple((name, sum(amt for n,amt in transactions if n==name)) for name in names)\nrunning = []\nfor name in names:\n    person_txns = tuple(amt for n,amt in transactions if n==name)\n    rb, total = [], 0\n    for amt in person_txns:\n        total += amt; rb.append(total)\n    running.append((name, tuple(rb)))\nrunning = tuple(running)\ndebtors = tuple(sorted(((n,b) for n,b in balances if b<0), key=lambda x:x[0]))\ncreditors = tuple(sorted(((n,b) for n,b in balances if b>0), key=lambda x:x[0]))\nabove = tuple(sorted(((n,a) for n,a in transactions if a>threshold), key=lambda x:-x[1]))\ntotal_volume = sum(abs(a) for _,a in transactions)\ntotal_credits = sum(b for _,b in balances if b>0)\ntotal_debits = sum(b for _,b in balances if b<0)\nnet = total_credits + total_debits\nprint('Transactions:', transactions)\nprint('Names:', names)\nprint('Balances:', balances)\nfor name, rb in running:\n    print(f'Running {name}:', rb)\nprint('Debtors:', debtors)\nprint('Creditors:', creditors)\nprint('Above threshold:', above)\nprint('Total volume:', total_volume)\nprint(f'Summary: credits={total_credits}, debits={total_debits}, net={net}')",
+      "testCases": [
+        {
+          "label": "Example 1",
+          "hidden": false,
+          "inputs": [
+            "Alice:200,Bob:-50,Alice:-80,Carol:100,Bob:30,Carol:-40",
+            "50"
+          ],
+          "expected": [
+            "Transactions: (('Alice', 200), ('Bob', -50), ('Alice', -80), ('Carol', 100), ('Bob', 30), ('Carol', -40))",
+            "Names: ('Alice', 'Bob', 'Carol')",
+            "Balances: (('Alice', 120), ('Bob', -20), ('Carol', 60))",
+            "Running Alice: (200, 120)",
+            "Running Bob: (-50, -20)",
+            "Running Carol: (100, 60)",
+            "Debtors: (('Bob', -20),)",
+            "Creditors: (('Alice', 120), ('Carol', 60))",
+            "Above threshold: (('Alice', 200), ('Carol', 100))",
+            "Total volume: 500",
+            "Summary: credits=180, debits=-20, net=160"
+          ]
+        },
+        {
+          "label": "Example 2",
+          "hidden": false,
+          "inputs": [
+            "Dan:500,Eve:-200,Dan:-100,Eve:50,Frank:300,Frank:-150",
+            "100"
+          ],
+          "expected": [
+            "Transactions: (('Dan', 500), ('Eve', -200), ('Dan', -100), ('Eve', 50), ('Frank', 300), ('Frank', -150))",
+            "Names: ('Dan', 'Eve', 'Frank')",
+            "Balances: (('Dan', 400), ('Eve', -150), ('Frank', 150))",
+            "Running Dan: (500, 400)",
+            "Running Eve: (-200, -150)",
+            "Running Frank: (300, 150)",
+            "Debtors: (('Eve', -150),)",
+            "Creditors: (('Dan', 400), ('Frank', 150))",
+            "Above threshold: (('Dan', 500), ('Frank', 300))",
+            "Total volume: 1300",
+            "Summary: credits=550, debits=-150, net=400"
+          ]
+        },
+        {
+          "label": "Example 3",
+          "hidden": false,
+          "inputs": [
+            "Mia:100,Leo:-30,Mia:-20,Leo:80,Kai:50,Kai:-90",
+            "40"
+          ],
+          "expected": [
+            "Transactions: (('Mia', 100), ('Leo', -30), ('Mia', -20), ('Leo', 80), ('Kai', 50), ('Kai', -90))",
+            "Names: ('Kai', 'Leo', 'Mia')",
+            "Balances: (('Kai', -40), ('Leo', 50), ('Mia', 80))",
+            "Running Kai: (50, -40)",
+            "Running Leo: (-30, 50)",
+            "Running Mia: (100, 80)",
+            "Debtors: (('Kai', -40),)",
+            "Creditors: (('Leo', 50), ('Mia', 80))",
+            "Above threshold: (('Mia', 100), ('Leo', 80), ('Kai', 50))",
+            "Total volume: 370",
+            "Summary: credits=130, debits=-40, net=90"
+          ]
+        },
+        {
+          "label": "Hidden: No debtors, all in credit",
+          "hidden": true,
+          "inputs": [
+            "Ana:150,Ben:-150,Ana:-50,Ben:200,Ana:100",
+            "100"
+          ],
+          "expected": [
+            "Transactions: (('Ana', 150), ('Ben', -150), ('Ana', -50), ('Ben', 200), ('Ana', 100))",
+            "Names: ('Ana', 'Ben')",
+            "Balances: (('Ana', 200), ('Ben', 50))",
+            "Running Ana: (150, 100, 200)",
+            "Running Ben: (-150, 50)",
+            "Debtors: ()",
+            "Creditors: (('Ana', 200), ('Ben', 50))",
+            "Above threshold: (('Ben', 200), ('Ana', 150))",
+            "Total volume: 650",
+            "Summary: credits=250, debits=0, net=250"
+          ]
+        },
+        {
+          "label": "Hidden: Zero-balance person present",
+          "hidden": true,
+          "inputs": [
+            "Rex:400,Sam:-100,Rex:-300,Sam:50,Tia:200,Tia:-200",
+            "150"
+          ],
+          "expected": [
+            "Transactions: (('Rex', 400), ('Sam', -100), ('Rex', -300), ('Sam', 50), ('Tia', 200), ('Tia', -200))",
+            "Names: ('Rex', 'Sam', 'Tia')",
+            "Balances: (('Rex', 100), ('Sam', -50), ('Tia', 0))",
+            "Running Rex: (400, 100)",
+            "Running Sam: (-100, -50)",
+            "Running Tia: (200, 0)",
+            "Debtors: (('Sam', -50),)",
+            "Creditors: (('Rex', 100),)",
+            "Above threshold: (('Rex', 400), ('Tia', 200))",
+            "Total volume: 1250",
+            "Summary: credits=100, debits=-50, net=50"
           ]
         }
       ]
