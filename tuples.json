@@ -1,0 +1,321 @@
+{
+  "id": "lab-tuples",
+  "title": "Tuples",
+  "description": "Self-study practice",
+  "dueDate": "2026-12-31",
+  "passingPercent": 75,
+  "problems": [
+    {
+      "id": "tuples-1",
+      "title": "Number Tuple Explorer",
+      "difficulty": "easy",
+      "points": 20,
+      "passingPercent": 75,
+      "description": "You are building a simple number inspector tool. A user provides a sequence of numbers and your program should report various facts about them using **tuple operations**.\n\nYour program should:\n1. Accept a series of **comma-separated integers** from the user and store them in a **tuple**.\n2. Print the **entire tuple**.\n3. Print the **first** and **last** elements using indexing.\n4. Print a **slice** of the tuple from index `1` to index `3` (exclusive of index 3).\n5. Print the **length** of the tuple.\n6. Print the **maximum** and **minimum** values.\n7. Print the **sum** of all elements.\n8. Print the elements in **reverse** order as a tuple.",
+      "constraints": [
+        "The input will contain at least **2** integers.",
+        "All inputs are valid integers separated by commas."
+      ],
+      "inputFormat": "A single line containing comma-separated integers (e.g., `10, 20, 30, 40, 50`).",
+      "outputFormat": "The output should follow this exact format (each on its own line):\n`Tuple: <values>`\n`First: <value>`\n`Last: <value>`\n`Slice(1:3): <values>`\n`Length: <value>`\n`Max: <value>`\n`Min: <value>`\n`Sum: <value>`\n`Reversed: <values>`",
+      "hint": "nums = tuple(map(int, input().split(',')))\nprint('Tuple:', nums)\nprint('First:', nums[0])\nprint('Last:', nums[-1])\nprint('Slice(1:3):', nums[1:3])\nprint('Length:', len(nums))\nprint('Max:', max(nums))\nprint('Min:', min(nums))\nprint('Sum:', sum(nums))\nprint('Reversed:', nums[::-1])",
+      "testCases": [
+        {
+          "label": "Example 1",
+          "hidden": false,
+          "inputs": [
+            "10, 20, 30, 40, 50"
+          ],
+          "expected": [
+            "Tuple: (10, 20, 30, 40, 50)",
+            "First: 10",
+            "Last: 50",
+            "Slice(1:3): (20, 30)",
+            "Length: 5",
+            "Max: 50",
+            "Min: 10",
+            "Sum: 150",
+            "Reversed: (50, 40, 30, 20, 10)"
+          ]
+        },
+        {
+          "label": "Example 2",
+          "hidden": false,
+          "inputs": [
+            "5, 3, 8, 1"
+          ],
+          "expected": [
+            "Tuple: (5, 3, 8, 1)",
+            "First: 5",
+            "Last: 1",
+            "Slice(1:3): (3, 8)",
+            "Length: 4",
+            "Max: 8",
+            "Min: 1",
+            "Sum: 17",
+            "Reversed: (1, 8, 3, 5)"
+          ]
+        },
+        {
+          "label": "Example 3 \u2014 negative numbers",
+          "hidden": false,
+          "inputs": [
+            "7, -2, 15, 3, -8"
+          ],
+          "expected": [
+            "Tuple: (7, -2, 15, 3, -8)",
+            "First: 7",
+            "Last: -8",
+            "Slice(1:3): (-2, 15)",
+            "Length: 5",
+            "Max: 15",
+            "Min: -8",
+            "Sum: 15",
+            "Reversed: (-8, 3, 15, -2, 7)"
+          ]
+        },
+        {
+          "label": "Hidden: Two elements only",
+          "hidden": true,
+          "inputs": [
+            "4, 9"
+          ],
+          "expected": [
+            "Tuple: (4, 9)",
+            "First: 4",
+            "Last: 9",
+            "Slice(1:3): (9,)",
+            "Length: 2",
+            "Max: 9",
+            "Min: 4",
+            "Sum: 13",
+            "Reversed: (9, 4)"
+          ]
+        },
+        {
+          "label": "Hidden: All same values",
+          "hidden": true,
+          "inputs": [
+            "6, 6, 6, 6"
+          ],
+          "expected": [
+            "Tuple: (6, 6, 6, 6)",
+            "First: 6",
+            "Last: 6",
+            "Slice(1:3): (6, 6)",
+            "Length: 4",
+            "Max: 6",
+            "Min: 6",
+            "Sum: 24",
+            "Reversed: (6, 6, 6, 6)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tuples-2",
+      "title": "Tuple Toolkit",
+      "difficulty": "medium",
+      "points": 20,
+      "passingPercent": 75,
+      "description": "You are writing a utility that works with **two tuples** and demonstrates several tuple operations including **joining**, **unpacking**, **membership testing**, and **list conversion**.\n\nYour program should:\n1. Accept **two lines** of comma-separated integers and store each as a **tuple**.\n2. **Join** the two tuples into one called `combined` and print it.\n3. Print how many times the **first element of tuple 1** appears in `combined` using `count()`.\n4. Print the **index** of the **last element of tuple 2** in `combined` using `index()`.\n5. **Unpack** the first three elements of `combined` into variables `a`, `b`, `c` and capture the rest into `rest`. Print `a`, `b`, `c`, and `rest`.\n6. Check if the number `0` is in `combined` and print the result.\n7. **Convert** `combined` to a list, **replace** the first element with `999`, convert it **back** to a tuple, and print the modified tuple.",
+      "constraints": [
+        "Each input line will contain at least **2** integers.",
+        "All inputs are valid integers separated by commas."
+      ],
+      "inputFormat": "Line 1: comma-separated integers for tuple 1.\nLine 2: comma-separated integers for tuple 2.",
+      "outputFormat": "The output should follow this exact format (each on its own line):\n`Combined: <values>`\n`Count of <value>: <count>`\n`Index of <value>: <index>`\n`a=<value>, b=<value>, c=<value>, rest=<list>`\n`0 in combined: <True/False>`\n`Modified: <values>`",
+      "hint": "t1 = tuple(map(int, input().split(',')))\nt2 = tuple(map(int, input().split(',')))\ncombined = t1 + t2\nprint('Combined:', combined)\nprint(f'Count of {t1[0]}:', combined.count(t1[0]))\nprint(f'Index of {t2[-1]}:', combined.index(t2[-1]))\na, b, c, *rest = combined\nprint(f'a={a}, b={b}, c={c}, rest={rest}')\nprint('0 in combined:', 0 in combined)\nlst = list(combined); lst[0] = 999\nprint('Modified:', tuple(lst))",
+      "testCases": [
+        {
+          "label": "Example 1",
+          "hidden": false,
+          "inputs": [
+            "10, 20, 30",
+            "40, 50, 60"
+          ],
+          "expected": [
+            "Combined: (10, 20, 30, 40, 50, 60)",
+            "Count of 10: 1",
+            "Index of 60: 5",
+            "a=10, b=20, c=30, rest=[40, 50, 60]",
+            "0 in combined: False",
+            "Modified: (999, 20, 30, 40, 50, 60)"
+          ]
+        },
+        {
+          "label": "Example 2 \u2014 with zero",
+          "hidden": false,
+          "inputs": [
+            "5, 3, 5",
+            "8, 5, 0"
+          ],
+          "expected": [
+            "Combined: (5, 3, 5, 8, 5, 0)",
+            "Count of 5: 3",
+            "Index of 0: 5",
+            "a=5, b=3, c=5, rest=[8, 5, 0]",
+            "0 in combined: True",
+            "Modified: (999, 3, 5, 8, 5, 0)"
+          ]
+        },
+        {
+          "label": "Example 3 \u2014 repeated first element",
+          "hidden": false,
+          "inputs": [
+            "2, 4, 6",
+            "2, 8, 2"
+          ],
+          "expected": [
+            "Combined: (2, 4, 6, 2, 8, 2)",
+            "Count of 2: 3",
+            "Index of 2: 0",
+            "a=2, b=4, c=6, rest=[2, 8, 2]",
+            "0 in combined: False",
+            "Modified: (999, 4, 6, 2, 8, 2)"
+          ]
+        },
+        {
+          "label": "Hidden: Negatives, zero in tuple 1",
+          "hidden": true,
+          "inputs": [
+            "0, -1, 7",
+            "3, 5, 9"
+          ],
+          "expected": [
+            "Combined: (0, -1, 7, 3, 5, 9)",
+            "Count of 0: 1",
+            "Index of 9: 5",
+            "a=0, b=-1, c=7, rest=[3, 5, 9]",
+            "0 in combined: True",
+            "Modified: (999, -1, 7, 3, 5, 9)"
+          ]
+        },
+        {
+          "label": "Hidden: Last element of t2 appears multiple times",
+          "hidden": true,
+          "inputs": [
+            "1, 2, 3",
+            "4, 5, 1"
+          ],
+          "expected": [
+            "Combined: (1, 2, 3, 4, 5, 1)",
+            "Count of 1: 2",
+            "Index of 1: 0",
+            "a=1, b=2, c=3, rest=[4, 5, 1]",
+            "0 in combined: False",
+            "Modified: (999, 2, 3, 4, 5, 1)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tuples-3",
+      "title": "Scoreboard Analyzer",
+      "difficulty": "hard",
+      "points": 20,
+      "passingPercent": 75,
+      "description": "You are building a scoreboard tool for a competition. Given a list of player names and their scores, your program should process and display the data using advanced tuple operations.\n\nYour program should:\n1. Accept a line of **comma-separated player names** and store them in a tuple.\n2. Accept a line of **comma-separated integer scores** and store them in a tuple.\n3. Use `zip()` to combine names and scores into a **tuple of tuples** called `records` and print it.\n4. Use `enumerate()` to print each record with its **index** in the format `#<index>: <name> - <score>`.\n5. Use `sorted()` to sort the records by **score in descending order** and print the sorted tuple of tuples.\n6. Use `map()` to create a tuple of scores with **10 bonus points** added to each and print it.\n7. Use `filter()` to create a tuple of names of players who scored **75 or above** and print it.\n8. Compute and print the **average** (rounded to 1 decimal place), **highest**, and **lowest** scores.",
+      "constraints": [
+        "Both input lines will contain the **same number** of items.",
+        "There will be at least **2** players.",
+        "All scores are integers between **0** and **100**."
+      ],
+      "inputFormat": "Line 1: comma-separated player names.\nLine 2: comma-separated integer scores.",
+      "outputFormat": "The output should follow this exact format:\n`Records: <tuples>`\n`#0: <name> - <score>`\n`#1: <name> - <score>`\n`...`\n`Sorted: <tuples>`\n`Bonus: <values>`\n`Passed: <names>`\n`Average: <value>, Highest: <value>, Lowest: <value>`",
+      "hint": "names  = tuple(n.strip() for n in input().split(','))\nscores = tuple(map(int, input().split(',')))\nrecords = tuple(zip(names, scores))\nprint('Records:', records)\nfor i, (n, s) in enumerate(records):\n    print(f'#{i}: {n} - {s}')\nsorted_r = tuple(sorted(records, key=lambda x: x[1], reverse=True))\nprint('Sorted:', sorted_r)\nbonus = tuple(map(lambda s: s+10, scores))\nprint('Bonus:', bonus)\npassed = tuple(filter(lambda n: dict(records)[n] >= 75, names))\nprint('Passed:', passed)\navg = round(sum(scores)/len(scores), 1)\nprint(f'Average: {avg}, Highest: {max(scores)}, Lowest: {min(scores)}')",
+      "testCases": [
+        {
+          "label": "Example 1",
+          "hidden": false,
+          "inputs": [
+            "Alice, Bob, Charlie",
+            "85, 70, 92"
+          ],
+          "expected": [
+            "Records: (('Alice', 85), ('Bob', 70), ('Charlie', 92))",
+            "#0: Alice - 85",
+            "#1: Bob - 70",
+            "#2: Charlie - 92",
+            "Sorted: (('Charlie', 92), ('Alice', 85), ('Bob', 70))",
+            "Bonus: (95, 80, 102)",
+            "Passed: ('Alice', 'Charlie')",
+            "Average: 82.3, Highest: 92, Lowest: 70"
+          ]
+        },
+        {
+          "label": "Example 2",
+          "hidden": false,
+          "inputs": [
+            "Juan, Maria, Pedro, Ana",
+            "90, 60, 75, 88"
+          ],
+          "expected": [
+            "Records: (('Juan', 90), ('Maria', 60), ('Pedro', 75), ('Ana', 88))",
+            "#0: Juan - 90",
+            "#1: Maria - 60",
+            "#2: Pedro - 75",
+            "#3: Ana - 88",
+            "Sorted: (('Juan', 90), ('Ana', 88), ('Pedro', 75), ('Maria', 60))",
+            "Bonus: (100, 70, 85, 98)",
+            "Passed: ('Juan', 'Pedro', 'Ana')",
+            "Average: 78.2, Highest: 90, Lowest: 60"
+          ]
+        },
+        {
+          "label": "Example 3 \u2014 all pass",
+          "hidden": false,
+          "inputs": [
+            "Leo, Mia, Kai",
+            "80, 95, 78"
+          ],
+          "expected": [
+            "Records: (('Leo', 80), ('Mia', 95), ('Kai', 78))",
+            "#0: Leo - 80",
+            "#1: Mia - 95",
+            "#2: Kai - 78",
+            "Sorted: (('Mia', 95), ('Leo', 80), ('Kai', 78))",
+            "Bonus: (90, 105, 88)",
+            "Passed: ('Leo', 'Mia', 'Kai')",
+            "Average: 84.3, Highest: 95, Lowest: 78"
+          ]
+        },
+        {
+          "label": "Hidden: None pass (all below 75)",
+          "hidden": true,
+          "inputs": [
+            "Dan, Eve, Frank",
+            "50, 60, 40"
+          ],
+          "expected": [
+            "Records: (('Dan', 50), ('Eve', 60), ('Frank', 40))",
+            "#0: Dan - 50",
+            "#1: Eve - 60",
+            "#2: Frank - 40",
+            "Sorted: (('Eve', 60), ('Dan', 50), ('Frank', 40))",
+            "Bonus: (60, 70, 50)",
+            "Passed: ()",
+            "Average: 50.0, Highest: 60, Lowest: 40"
+          ]
+        },
+        {
+          "label": "Hidden: Two players, tied score",
+          "hidden": true,
+          "inputs": [
+            "Sam, Jay",
+            "75, 75"
+          ],
+          "expected": [
+            "Records: (('Sam', 75), ('Jay', 75))",
+            "#0: Sam - 75",
+            "#1: Jay - 75",
+            "Sorted: (('Sam', 75), ('Jay', 75))",
+            "Bonus: (85, 85)",
+            "Passed: ('Sam', 'Jay')",
+            "Average: 75.0, Highest: 75, Lowest: 75"
+          ]
+        }
+      ]
+    }
+  ]
+}
