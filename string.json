@@ -1,0 +1,252 @@
+{
+  "_note": "Self-study practice for Python Strings & Arithmetic. Inspired by BSCS 1B coursework — not an official platform.",
+
+  "id": "lab-string",
+  "title": "LT Review",
+  "description": "Self-study practice",
+  "dueDate": "2026-12-31",
+  "passingPercent": 75,
+
+  "problems": [
+
+    {
+      "id": "string-1",
+      "title": "Text Inspector",
+      "difficulty": "easy",
+      "points": 25,
+      "passingPercent": 75,
+
+      "description": "You are building a simple text inspection tool. A user types in a line of text and your program reports several facts about it using **string methods and slicing**.\n\nYour program should:\n1. Read a **single line of text** from the user.\n2. Print the **total number of characters** (including spaces) using `len()`.\n3. Print the text converted to **uppercase** using `upper()`.\n4. Print the text converted to **lowercase** using `lower()`.\n5. Print the text **reversed** using slicing.",
+
+      "constraints": [
+        "The input can contain letters, digits, and spaces.",
+        "The input will be at least 1 character long."
+      ],
+
+      "inputFormat": "A single line of text (may contain letters, numbers, and spaces).",
+
+      "outputFormat": "Line 1: `Length: <n>` — total number of characters.\nLine 2: `Upper: <text>` — the text in all uppercase.\nLine 3: `Lower: <text>` — the text in all lowercase.\nLine 4: `Reversed: <text>` — the text reversed.",
+
+      "hint": "text = input()\nprint('Length:', len(text))\nprint('Upper:', text.upper())\nprint('Lower:', text.lower())\nprint('Reversed:', text[::-1])",
+
+      "testCases": [
+        {
+          "label": "Example 1",
+          "hidden": false,
+          "inputs": ["Hello World"],
+          "expected": [
+            "Length: 11",
+            "Upper: HELLO WORLD",
+            "Lower: hello world",
+            "Reversed: dlroW olleH"
+          ]
+        },
+        {
+          "label": "Example 2 — with numbers",
+          "hidden": false,
+          "inputs": ["Python 101"],
+          "expected": [
+            "Length: 10",
+            "Upper: PYTHON 101",
+            "Lower: python 101",
+            "Reversed: 101 nohtyP"
+          ]
+        },
+        {
+          "label": "Example 3 — two words",
+          "hidden": false,
+          "inputs": ["Good Morning"],
+          "expected": [
+            "Length: 12",
+            "Upper: GOOD MORNING",
+            "Lower: good morning",
+            "Reversed: gninroM dooG"
+          ]
+        },
+        {
+          "label": "Hidden: Short input",
+          "hidden": true,
+          "inputs": ["abc"],
+          "expected": [
+            "Length: 3",
+            "Upper: ABC",
+            "Lower: abc",
+            "Reversed: cba"
+          ]
+        },
+        {
+          "label": "Hidden: Letters and numbers",
+          "hidden": true,
+          "inputs": ["OpenAI 2024"],
+          "expected": [
+            "Length: 11",
+            "Upper: OPENAI 2024",
+            "Lower: openai 2024",
+            "Reversed: 4202 IAnepO"
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "string-2",
+      "title": "Number Statistics Calculator",
+      "difficulty": "hard",
+      "points": 50,
+      "passingPercent": 75,
+
+      "description": "You are writing a batch statistics tool. A user provides a count and then a series of numbers, and your program calculates key statistics using Python's **built-in functions**.\n\nYour program should:\n1. Read an integer **n** — the count of numbers to process.\n2. Read **n integers** separated by spaces on the next line.\n3. Calculate and display the **sum**, **minimum**, **maximum**, and **average** (rounded to 2 decimal places).",
+
+      "constraints": [
+        "n is at least 1.",
+        "All values are valid integers.",
+        "Average is rounded to 2 decimal places."
+      ],
+
+      "inputFormat": "Line 1: An integer `n` — how many numbers to read.\nLine 2: `n` integers separated by spaces.",
+
+      "outputFormat": "Line 1: `Sum: <n>`\nLine 2: `Min: <n>`\nLine 3: `Max: <n>`\nLine 4: `Average: <n>`",
+
+      "hint": "n = int(input())\nnums = list(map(int, input().split()))\nprint('Sum:', sum(nums))\nprint('Min:', min(nums))\nprint('Max:', max(nums))\nprint('Average:', round(sum(nums)/len(nums), 2))",
+
+      "testCases": [
+        {
+          "label": "Example 1",
+          "hidden": false,
+          "inputs": ["5", "10 20 30 40 50"],
+          "expected": [
+            "Sum: 150",
+            "Min: 10",
+            "Max: 50",
+            "Average: 30.0"
+          ]
+        },
+        {
+          "label": "Example 2",
+          "hidden": false,
+          "inputs": ["4", "7 3 9 1"],
+          "expected": [
+            "Sum: 20",
+            "Min: 1",
+            "Max: 9",
+            "Average: 5.0"
+          ]
+        },
+        {
+          "label": "Example 3",
+          "hidden": false,
+          "inputs": ["3", "100 200 300"],
+          "expected": [
+            "Sum: 600",
+            "Min: 100",
+            "Max: 300",
+            "Average: 200.0"
+          ]
+        },
+        {
+          "label": "Hidden: All same values",
+          "hidden": true,
+          "inputs": ["4", "5 5 5 5"],
+          "expected": [
+            "Sum: 20",
+            "Min: 5",
+            "Max: 5",
+            "Average: 5.0"
+          ]
+        },
+        {
+          "label": "Hidden: Mix of negatives and positives",
+          "hidden": true,
+          "inputs": ["4", "-10 -3 7 2"],
+          "expected": [
+            "Sum: -4",
+            "Min: -10",
+            "Max: 7",
+            "Average: -1.0"
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "string-3",
+      "title": "Power and Remainder Calculator",
+      "difficulty": "medium",
+      "points": 60,
+      "passingPercent": 75,
+
+      "description": "You are building an arithmetic calculator that performs **power and division operations** on two numbers. The program must also gracefully handle division by zero.\n\nYour program should:\n1. Read two integers **a** (base) and **b** (exponent/divisor) from a single line.\n2. Calculate and display:\n   - **a raised to the power of b** using `**`\n   - **Floor division** of a by b using `//`\n   - **Remainder** of a divided by b using `%`\n   - **Quotient and remainder together** using `divmod()`\n3. If **b is 0**, print `Error: Cannot divide by zero` for the last three operations (but still compute the power).",
+
+      "constraints": [
+        "Both a and b are integers.",
+        "a can be any integer; b can be zero or positive.",
+        "If b is 0, only the power result is valid — display the error message for division operations."
+      ],
+
+      "inputFormat": "A single line containing two integers `a` and `b` separated by a space.",
+
+      "outputFormat": "Line 1: `Power: <result>` — a raised to b.\nLine 2: `Floor Division: <result>` — or `Error: Cannot divide by zero`.\nLine 3: `Remainder: <result>` — or `Error: Cannot divide by zero`.\nLine 4: `Divmod: <result>` — or `Error: Cannot divide by zero`.",
+
+      "hint": "a, b = map(int, input().split())\nprint('Power:', a**b)\nif b == 0:\n    print('Floor Division: Error: Cannot divide by zero')\n    print('Remainder: Error: Cannot divide by zero')\n    print('Divmod: Error: Cannot divide by zero')\nelse:\n    print('Floor Division:', a//b)\n    print('Remainder:', a%b)\n    print('Divmod:', divmod(a,b))",
+
+      "testCases": [
+        {
+          "label": "Example 1",
+          "hidden": false,
+          "inputs": ["5 3"],
+          "expected": [
+            "Power: 125",
+            "Floor Division: 1",
+            "Remainder: 2",
+            "Divmod: (1, 2)"
+          ]
+        },
+        {
+          "label": "Example 2",
+          "hidden": false,
+          "inputs": ["10 2"],
+          "expected": [
+            "Power: 100",
+            "Floor Division: 5",
+            "Remainder: 0",
+            "Divmod: (5, 0)"
+          ]
+        },
+        {
+          "label": "Example 3 — b is zero",
+          "hidden": false,
+          "inputs": ["7 0"],
+          "expected": [
+            "Power: 1",
+            "Floor Division: Error: Cannot divide by zero",
+            "Remainder: Error: Cannot divide by zero",
+            "Divmod: Error: Cannot divide by zero"
+          ]
+        },
+        {
+          "label": "Hidden: Small base, large exponent",
+          "hidden": true,
+          "inputs": ["2 8"],
+          "expected": [
+            "Power: 256",
+            "Floor Division: 0",
+            "Remainder: 2",
+            "Divmod: (0, 2)"
+          ]
+        },
+        {
+          "label": "Hidden: Larger numbers",
+          "hidden": true,
+          "inputs": ["9 4"],
+          "expected": [
+            "Power: 6561",
+            "Floor Division: 2",
+            "Remainder: 1",
+            "Divmod: (2, 1)"
+          ]
+        }
+      ]
+    }
+
+  ]
+}
