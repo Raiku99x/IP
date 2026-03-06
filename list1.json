@@ -1,0 +1,292 @@
+{
+  "_note": "Self-study practice for Python Lists. Inspired by BSCS 1B coursework — not an official platform.",
+
+  "id": "lab-list1",
+  "title": "Lists I",
+  "description": "Self-study practice",
+  "dueDate": "2026-12-31",
+  "passingPercent": 75,
+
+  "problems": [
+
+    {
+      "id": "list1-1",
+      "title": "Movie Watchlist Manager",
+      "difficulty": "easy",
+      "points": 25,
+      "passingPercent": 75,
+
+      "description": "You are building a simple movie watchlist tool. The program starts with a pre-loaded list of movies and lets the user perform a series of actions on it.\n\nYour program should:\n1. Start with this watchlist: `['Inception', 'Interstellar', 'Dune', 'Avatar', 'Arrival']`\n2. Read a movie title and check if it exists in the list using the **`in`** operator.\n3. Read a second title and **append** it to the end using `append()`.\n4. **Remove** the first movie using `pop(0)` and remember what was removed.\n5. Read a third title and **insert** it at **index 2** using `insert()`.\n6. Display: whether the searched title was found, the removed movie, the new length, and the final list.",
+
+      "constraints": [
+        "All movie titles are single words (no spaces).",
+        "The initial list always starts as `['Inception', 'Interstellar', 'Dune', 'Avatar', 'Arrival']`."
+      ],
+
+      "inputFormat": "Line 1: A movie title to search for.\nLine 2: A movie title to append.\nLine 3: A movie title to insert at index 2.",
+
+      "outputFormat": "`Found` if the searched title exists, otherwise `Not found`.\n`Removed: <title>` — the movie that was popped from the front.\n`Length: <n>` — the length of the updated list.\nThe final list as comma-separated titles (no brackets).",
+
+      "hint": "watchlist = ['Inception', 'Interstellar', 'Dune', 'Avatar', 'Arrival']\nsearch = input()\nappend_title = input()\ninsert_title = input()\nprint('Found' if search in watchlist else 'Not found')\nwatchlist.append(append_title)\nremoved = watchlist.pop(0)\nwatchlist.insert(2, insert_title)\nprint('Removed:', removed)\nprint('Length:', len(watchlist))\nprint(', '.join(watchlist))",
+
+      "testCases": [
+        {
+          "label": "Example 1 — search found",
+          "hidden": false,
+          "inputs": ["Dune", "Tenet", "Oppenheimer"],
+          "expected": [
+            "Found",
+            "Removed: Inception",
+            "Length: 6",
+            "Interstellar, Dune, Oppenheimer, Avatar, Arrival, Tenet"
+          ]
+        },
+        {
+          "label": "Example 2 — search not found",
+          "hidden": false,
+          "inputs": ["Matrix", "Gravity", "Blade"],
+          "expected": [
+            "Not found",
+            "Removed: Inception",
+            "Length: 6",
+            "Interstellar, Dune, Blade, Avatar, Arrival, Gravity"
+          ]
+        },
+        {
+          "label": "Example 3 — search last item",
+          "hidden": false,
+          "inputs": ["Arrival", "Nope", "Prey"],
+          "expected": [
+            "Found",
+            "Removed: Inception",
+            "Length: 6",
+            "Interstellar, Dune, Prey, Avatar, Arrival, Nope"
+          ]
+        },
+        {
+          "label": "Hidden: Search the first item (gets popped)",
+          "hidden": true,
+          "inputs": ["Inception", "Parasite", "Us"],
+          "expected": [
+            "Found",
+            "Removed: Inception",
+            "Length: 6",
+            "Interstellar, Dune, Us, Avatar, Arrival, Parasite"
+          ]
+        },
+        {
+          "label": "Hidden: Search not found, unique insert",
+          "hidden": true,
+          "inputs": ["Joker", "Coda", "Nomadland"],
+          "expected": [
+            "Not found",
+            "Removed: Inception",
+            "Length: 6",
+            "Interstellar, Dune, Nomadland, Avatar, Arrival, Coda"
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "list1-2",
+      "title": "Score Batch Processor",
+      "difficulty": "medium",
+      "points": 50,
+      "passingPercent": 75,
+
+      "description": "You are writing a batch processing tool for a series of quiz scores. The tool should read a list of integers and perform several list operations to analyze them.\n\nYour program should:\n1. Read a **comma-separated list of integers** and convert them into a list.\n2. Create a **copy** of the list using `copy()` and **sort** it in ascending order.\n3. **Reverse** the original list using `reverse()`.\n4. Use **list comprehension** to extract only the **even numbers** from the sorted copy.\n5. Calculate the **sum** and **average** (rounded to 2 decimal places) of the numbers.\n6. Read an integer and **count** how many times it appears in the original list using `count()`.\n7. Find the **maximum** and **minimum** values from the sorted list.\n8. Display all results in order.",
+
+      "constraints": [
+        "The input list contains at least 2 integers.",
+        "All values are valid integers separated by commas.",
+        "Average is rounded to 2 decimal places."
+      ],
+
+      "inputFormat": "Line 1: A comma-separated string of integers (e.g., `4,7,2,7,9,1,7,3`).\nLine 2: An integer to count its occurrences.",
+
+      "outputFormat": "Line 1: The **reversed** original list (comma-separated, no brackets).\nLine 2: The **sorted** copy (comma-separated, no brackets).\nLine 3: The **even numbers** from the sorted list (comma-separated, no brackets; empty if none).\nLine 4: `Sum: <n>, Average: <n>` — total and mean.\nLine 5: `Count of <n>: <n>` — occurrences of the searched number.\nLine 6: `Max: <n>, Min: <n>` — from the sorted list.",
+
+      "hint": "nums = list(map(int, input().split(',')))\nsearch = int(input())\ncount = nums.count(search)\nsorted_copy = sorted(nums)\nnums.reverse()\nevens = [x for x in sorted_copy if x % 2 == 0]\ntotal = sum(sorted_copy)\navg = round(total / len(sorted_copy), 2)\nprint(', '.join(map(str, nums)))\nprint(', '.join(map(str, sorted_copy)))\nprint(', '.join(map(str, evens)))\nprint(f'Sum: {total}, Average: {avg}')\nprint(f'Count of {search}: {count}')\nprint(f'Max: {max(sorted_copy)}, Min: {min(sorted_copy)}')",
+
+      "testCases": [
+        {
+          "label": "Example 1",
+          "hidden": false,
+          "inputs": ["4,7,2,7,9,1,7,3", "7"],
+          "expected": [
+            "3, 7, 1, 9, 7, 2, 7, 4",
+            "1, 2, 3, 4, 7, 7, 7, 9",
+            "2, 4",
+            "Sum: 40, Average: 5.0",
+            "Count of 7: 3",
+            "Max: 9, Min: 1"
+          ]
+        },
+        {
+          "label": "Example 2",
+          "hidden": false,
+          "inputs": ["6,2,8,4,2,5", "2"],
+          "expected": [
+            "5, 2, 4, 8, 2, 6",
+            "2, 2, 4, 5, 6, 8",
+            "2, 2, 4, 6, 8",
+            "Sum: 27, Average: 4.5",
+            "Count of 2: 2",
+            "Max: 8, Min: 2"
+          ]
+        },
+        {
+          "label": "Example 3",
+          "hidden": false,
+          "inputs": ["10,3,6,3,9,6", "6"],
+          "expected": [
+            "6, 9, 3, 6, 3, 10",
+            "3, 3, 6, 6, 9, 10",
+            "6, 6, 10",
+            "Sum: 37, Average: 6.17",
+            "Count of 6: 2",
+            "Max: 10, Min: 3"
+          ]
+        },
+        {
+          "label": "Hidden: All same values, no evens",
+          "hidden": true,
+          "inputs": ["5,5,5,5", "5"],
+          "expected": [
+            "5, 5, 5, 5",
+            "5, 5, 5, 5",
+            "",
+            "Sum: 20, Average: 5.0",
+            "Count of 5: 4",
+            "Max: 5, Min: 5"
+          ]
+        },
+        {
+          "label": "Hidden: Search number not in list",
+          "hidden": true,
+          "inputs": ["1,2,3,4,5", "9"],
+          "expected": [
+            "5, 4, 3, 2, 1",
+            "1, 2, 3, 4, 5",
+            "2, 4",
+            "Sum: 15, Average: 3.0",
+            "Count of 9: 0",
+            "Max: 5, Min: 1"
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "list1-3",
+      "title": "Weather Station Grid",
+      "difficulty": "hard",
+      "points": 75,
+      "passingPercent": 75,
+
+      "description": "You are processing temperature readings from a grid of weather stations. Each station records temperatures over several days. The data is stored as a **2D list (list of lists)**.\n\nYour program should:\n1. Read **N** (the number of stations) from the user.\n2. Read **N** lines of comma-separated integer readings and store them as a **2D list**.\n3. Compute each **station's average** (row average) using `sum()` and `len()`, rounded to 2 decimal places.\n4. Compute each **day's average** (column average) using a loop and a generator expression, rounded to 2 decimal places.\n5. **Flatten** the 2D list into a 1D list using **list comprehension**.\n6. Find the **overall maximum** and **minimum** readings using `max()` and `min()`.\n7. **Transpose** the grid (swap rows and columns) using **nested list comprehension**.\n8. Display all results.",
+
+      "constraints": [
+        "N is at least 2.",
+        "All rows have the **same number** of columns.",
+        "All values are valid integers."
+      ],
+
+      "inputFormat": "Line 1: An integer N (number of stations).\nLines 2 to N+1: Comma-separated integer readings for each station.",
+
+      "outputFormat": "`Station 1: <avg>` through `Station N: <avg>` — one line per station.\n`Day 1: <avg>` through `Day M: <avg>` — one line per day/column.\nThe flattened list (comma-separated, no brackets).\n`Max: <n>, Min: <n>` — overall max and min.\nThe transposed grid — one row per line, comma-separated, each row indented with 2 spaces.",
+
+      "hint": "n = int(input())\ngrid = [list(map(int, input().split(','))) for _ in range(n)]\ncols = len(grid[0])\nfor i, row in enumerate(grid):\n    print(f'Station {i+1}: {round(sum(row)/len(row), 2)}')\nfor j in range(cols):\n    avg = round(sum(grid[i][j] for i in range(n)) / n, 2)\n    print(f'Day {j+1}: {avg}')\nflat = [v for row in grid for v in row]\nprint(', '.join(map(str, flat)))\nprint(f'Max: {max(flat)}, Min: {min(flat)}')\ntransposed = [[grid[r][c] for r in range(n)] for c in range(cols)]\nfor row in transposed:\n    print(' ', ', '.join(map(str, row)))",
+
+      "testCases": [
+        {
+          "label": "Example 1 — 3 stations, 3 days",
+          "hidden": false,
+          "inputs": ["3", "85,90,78", "70,88,92", "95,60,75"],
+          "expected": [
+            "Station 1: 84.33",
+            "Station 2: 83.33",
+            "Station 3: 76.67",
+            "Day 1: 83.33",
+            "Day 2: 79.33",
+            "Day 3: 81.67",
+            "85, 90, 78, 70, 88, 92, 95, 60, 75",
+            "Max: 95, Min: 60",
+            "  85, 70, 95",
+            "  90, 88, 60",
+            "  78, 92, 75"
+          ]
+        },
+        {
+          "label": "Example 2 — 2 stations, 3 days",
+          "hidden": false,
+          "inputs": ["2", "10,20,30", "40,50,60"],
+          "expected": [
+            "Station 1: 20.0",
+            "Station 2: 50.0",
+            "Day 1: 25.0",
+            "Day 2: 35.0",
+            "Day 3: 45.0",
+            "10, 20, 30, 40, 50, 60",
+            "Max: 60, Min: 10",
+            "  10, 40",
+            "  20, 50",
+            "  30, 60"
+          ]
+        },
+        {
+          "label": "Example 3 — 2 stations, 2 days",
+          "hidden": false,
+          "inputs": ["2", "100,75", "80,90"],
+          "expected": [
+            "Station 1: 87.5",
+            "Station 2: 85.0",
+            "Day 1: 90.0",
+            "Day 2: 82.5",
+            "100, 75, 80, 90",
+            "Max: 100, Min: 75",
+            "  100, 80",
+            "  75, 90"
+          ]
+        },
+        {
+          "label": "Hidden: 3 stations, 2 days",
+          "hidden": true,
+          "inputs": ["3", "60,70", "80,90", "50,100"],
+          "expected": [
+            "Station 1: 65.0",
+            "Station 2: 85.0",
+            "Station 3: 75.0",
+            "Day 1: 63.33",
+            "Day 2: 86.67",
+            "60, 70, 80, 90, 50, 100",
+            "Max: 100, Min: 50",
+            "  60, 80, 50",
+            "  70, 90, 100"
+          ]
+        },
+        {
+          "label": "Hidden: 2 stations, 4 days",
+          "hidden": true,
+          "inputs": ["2", "10,20,30,40", "50,60,70,80"],
+          "expected": [
+            "Station 1: 25.0",
+            "Station 2: 65.0",
+            "Day 1: 30.0",
+            "Day 2: 40.0",
+            "Day 3: 50.0",
+            "Day 4: 60.0",
+            "10, 20, 30, 40, 50, 60, 70, 80",
+            "Max: 80, Min: 10",
+            "  10, 50",
+            "  20, 60",
+            "  30, 70",
+            "  40, 80"
+          ]
+        }
+      ]
+    }
+
+  ]
+}
