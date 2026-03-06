@@ -1,0 +1,340 @@
+{
+  "id": "lab-sets",
+  "title": "Sets",
+  "description": "Self-study practice",
+  "dueDate": "2026-12-31",
+  "passingPercent": 75,
+  "problems": [
+    {
+      "id": "sets-1",
+      "title": "Shared Hobby Finder",
+      "difficulty": "easy",
+      "points": 10,
+      "passingPercent": 75,
+      "description": "Two friends are comparing their hobbies to see what they have in common and what makes each of them unique. Write a program that takes both of their hobby lists and figures out:\n1. The **full collection** of hobbies between both friends \u2014 every hobby at least one of them has.\n2. The hobbies they **both enjoy** \u2014 things they can do together.\n3. Hobbies that only **Friend A** has \u2014 things Friend A does alone.\n4. Hobbies that only **Friend B** has \u2014 things Friend B does alone.\n\nAll results must be printed in **alphabetical order**.",
+      "constraints": [
+        "Each friend has between 1 and 10 hobbies.",
+        "Hobby names are single words, all lowercase.",
+        "Each friend's list has no duplicates."
+      ],
+      "inputFormat": "Line 1: Hobbies of **Friend A**, separated by spaces.\nLine 2: Hobbies of **Friend B**, separated by spaces.",
+      "outputFormat": "Line 1: `All hobbies:` followed by every hobby sorted, separated by commas and a space.\nLine 2: `Both enjoy:` followed by shared hobbies sorted. If none, print `Both enjoy: none`.\nLine 3: `Only A:` followed by Friend A's unique hobbies sorted. If none, print `Only A: none`.\nLine 4: `Only B:` followed by Friend B's unique hobbies sorted. If none, print `Only B: none`.",
+      "hint": "a = set(input().split())\nb = set(input().split())\nprint('All hobbies:', ', '.join(sorted(a | b)))\nboth = sorted(a & b)\nprint('Both enjoy:', ', '.join(both) if both else 'none')\nonly_a = sorted(a - b)\nprint('Only A:', ', '.join(only_a) if only_a else 'none')\nonly_b = sorted(b - a)\nprint('Only B:', ', '.join(only_b) if only_b else 'none')",
+      "testCases": [
+        {
+          "label": "Example 1",
+          "hidden": false,
+          "inputs": [
+            "reading gaming hiking",
+            "gaming cooking hiking"
+          ],
+          "expected": [
+            "All hobbies: cooking, gaming, hiking, reading",
+            "Both enjoy: gaming, hiking",
+            "Only A: reading",
+            "Only B: cooking"
+          ]
+        },
+        {
+          "label": "Example 2 \u2014 no shared hobbies",
+          "hidden": false,
+          "inputs": [
+            "painting chess tennis",
+            "dancing cooking yoga"
+          ],
+          "expected": [
+            "All hobbies: chess, cooking, dancing, painting, tennis, yoga",
+            "Both enjoy: none",
+            "Only A: chess, painting, tennis",
+            "Only B: cooking, dancing, yoga"
+          ]
+        },
+        {
+          "label": "Example 3 \u2014 identical lists",
+          "hidden": false,
+          "inputs": [
+            "swimming cycling running",
+            "running cycling swimming"
+          ],
+          "expected": [
+            "All hobbies: cycling, running, swimming",
+            "Both enjoy: cycling, running, swimming",
+            "Only A: none",
+            "Only B: none"
+          ]
+        },
+        {
+          "label": "Hidden: A's hobbies all inside B",
+          "hidden": true,
+          "inputs": [
+            "reading gaming",
+            "reading gaming cooking drawing travel"
+          ],
+          "expected": [
+            "All hobbies: cooking, drawing, gaming, reading, travel",
+            "Both enjoy: gaming, reading",
+            "Only A: none",
+            "Only B: cooking, drawing, travel"
+          ]
+        },
+        {
+          "label": "Hidden: One shared, many unique",
+          "hidden": true,
+          "inputs": [
+            "archery bowling fishing",
+            "fishing surfing skating"
+          ],
+          "expected": [
+            "All hobbies: archery, bowling, fishing, skating, surfing",
+            "Both enjoy: fishing",
+            "Only A: archery, bowling",
+            "Only B: skating, surfing"
+          ]
+        },
+        {
+          "label": "Hidden: Larger lists, partial overlap",
+          "hidden": true,
+          "inputs": [
+            "running cycling swimming yoga chess painting",
+            "chess yoga boxing rowing diving"
+          ],
+          "expected": [
+            "All hobbies: boxing, chess, cycling, diving, painting, rowing, running, swimming, yoga",
+            "Both enjoy: chess, yoga",
+            "Only A: cycling, painting, running, swimming",
+            "Only B: boxing, diving, rowing"
+          ]
+        },
+        {
+          "label": "Hidden: Different order same content",
+          "hidden": true,
+          "inputs": [
+            "tennis golf polo",
+            "polo tennis golf"
+          ],
+          "expected": [
+            "All hobbies: golf, polo, tennis",
+            "Both enjoy: golf, polo, tennis",
+            "Only A: none",
+            "Only B: none"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sets-2",
+      "title": "Event Guest Tracker",
+      "difficulty": "easy",
+      "points": 10,
+      "passingPercent": 75,
+      "description": "You are organizing a school event and keeping track of attendees. The sign-in sheet may have some names written more than once by mistake. Write a program that:\n1. Reads the sign-in sheet (which may have duplicate names).\n2. Converts it to a **set** to count only unique attendees.\n3. Prints how many **unique guests** showed up.\n4. Reads a **late arrival** name to add to the list.\n5. Reads a name to **remove** from the list (the person left early \u2014 don't crash if the name isn't there).\n6. Prints the **final sorted guest list**.",
+      "constraints": [
+        "The sign-in sheet has between 1 and 20 names.",
+        "Names are single words starting with an uppercase letter.",
+        "The late arrival name may already be on the list.",
+        "The name to remove may or may not be on the list."
+      ],
+      "inputFormat": "Line 1: Names from the sign-in sheet, separated by spaces (may have duplicates).\nLine 2: A name to **add** (late arrival).\nLine 3: A name to **remove** (left early).",
+      "outputFormat": "Line 1: `Unique guests:` followed by the count of unique attendees (before adding/removing).\nLine 2: `Final list:` followed by the sorted final guest names, separated by commas and a space.",
+      "hint": "sheet = input().split()\nlate   = input().strip()\nleft   = input().strip()\nguests = set(sheet)\nprint('Unique guests:', len(guests))\nguests.add(late)\nguests.discard(left)\nprint('Final list:', ', '.join(sorted(guests)))",
+      "testCases": [
+        {
+          "label": "Example 1",
+          "hidden": false,
+          "inputs": [
+            "Marco Lea Marco Toni Lea Lea",
+            "Sam",
+            "Marco"
+          ],
+          "expected": [
+            "Unique guests: 3",
+            "Final list: Lea, Sam, Toni"
+          ]
+        },
+        {
+          "label": "Example 2",
+          "hidden": false,
+          "inputs": [
+            "Nina Cris Paul Nina Cris",
+            "Bea",
+            "Paul"
+          ],
+          "expected": [
+            "Unique guests: 3",
+            "Final list: Bea, Cris, Nina"
+          ]
+        },
+        {
+          "label": "Example 3 \u2014 add already present",
+          "hidden": false,
+          "inputs": [
+            "Rafa Luis Kim",
+            "Rafa",
+            "Luis"
+          ],
+          "expected": [
+            "Unique guests: 3",
+            "Final list: Kim, Rafa"
+          ]
+        },
+        {
+          "label": "Hidden: No duplicates on sheet",
+          "hidden": true,
+          "inputs": [
+            "Dan Eve Frank Grace",
+            "Hana",
+            "Frank"
+          ],
+          "expected": [
+            "Unique guests: 4",
+            "Final list: Dan, Eve, Grace, Hana"
+          ]
+        },
+        {
+          "label": "Hidden: Remove name not on list",
+          "hidden": true,
+          "inputs": [
+            "Alice Ben Carl",
+            "Diana",
+            "Zoe"
+          ],
+          "expected": [
+            "Unique guests: 3",
+            "Final list: Alice, Ben, Carl, Diana"
+          ]
+        },
+        {
+          "label": "Hidden: Many duplicates, small unique set",
+          "hidden": true,
+          "inputs": [
+            "Rex Rex Mia Mia Lena Lena",
+            "Jon",
+            "Mia"
+          ],
+          "expected": [
+            "Unique guests: 3",
+            "Final list: Jon, Lena, Rex"
+          ]
+        },
+        {
+          "label": "Hidden: Add and remove same name",
+          "hidden": true,
+          "inputs": [
+            "Tom Jerry Spike",
+            "Butch",
+            "Butch"
+          ],
+          "expected": [
+            "Unique guests: 3",
+            "Final list: Jerry, Spike, Tom"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sets-3",
+      "title": "Club Membership Checker",
+      "difficulty": "medium",
+      "points": 10,
+      "passingPercent": 75,
+      "description": "A student club has a list of requirements that members must complete before joining an advanced committee. Write a program that checks a student's completed activities against the requirements:\n1. Read the **required activities** to qualify.\n2. Read the activities the **student has completed**.\n3. Check if the student has completed **all requirements** (i.e., requirements are a subset of completed).\n4. If qualified, print a success message.\n5. If not, print which **requirements are still missing** (sorted).\n6. Finally, print the **non-overlapping activities** \u2014 things in one list but not the other \u2014 sorted. If none, print `none`.",
+      "constraints": [
+        "Each list has between 1 and 10 activity names.",
+        "Activity names are single words, all lowercase."
+      ],
+      "inputFormat": "Line 1: Required activities separated by spaces.\nLine 2: Student's completed activities separated by spaces.",
+      "outputFormat": "Line 1: `Eligible: yes` if all requirements are met, otherwise `Eligible: no`.\nLine 2 (only if not eligible): `Missing:` followed by the sorted missing activities, separated by commas and a space.\nLast line: `Non-overlapping:` followed by sorted activities in one list but not the other. If none, print `Non-overlapping: none`.",
+      "hint": "required  = set(input().split())\ndone      = set(input().split())\nif required.issubset(done):\n    print('Eligible: yes')\nelse:\n    print('Eligible: no')\n    missing = sorted(required - done)\n    print('Missing:', ', '.join(missing))\ndiff = sorted(required.symmetric_difference(done))\nprint('Non-overlapping:', ', '.join(diff) if diff else 'none')",
+      "testCases": [
+        {
+          "label": "Example 1 \u2014 eligible with extras",
+          "hidden": false,
+          "inputs": [
+            "firstaid leadership teamwork",
+            "firstaid leadership teamwork fundraising sportsday"
+          ],
+          "expected": [
+            "Eligible: yes",
+            "Non-overlapping: fundraising, sportsday"
+          ]
+        },
+        {
+          "label": "Example 2 \u2014 missing requirements",
+          "hidden": false,
+          "inputs": [
+            "firstaid leadership teamwork camping",
+            "firstaid teamwork sportsday"
+          ],
+          "expected": [
+            "Eligible: no",
+            "Missing: camping, leadership",
+            "Non-overlapping: camping, leadership, sportsday"
+          ]
+        },
+        {
+          "label": "Example 3 \u2014 exact match",
+          "hidden": false,
+          "inputs": [
+            "firstaid teamwork",
+            "firstaid teamwork"
+          ],
+          "expected": [
+            "Eligible: yes",
+            "Non-overlapping: none"
+          ]
+        },
+        {
+          "label": "Hidden: One missing activity",
+          "hidden": true,
+          "inputs": [
+            "firstaid leadership camping",
+            "firstaid leadership"
+          ],
+          "expected": [
+            "Eligible: no",
+            "Missing: camping",
+            "Non-overlapping: camping"
+          ]
+        },
+        {
+          "label": "Hidden: Eligible, many extras",
+          "hidden": true,
+          "inputs": [
+            "teamwork firstaid",
+            "teamwork firstaid camping sportsday fundraising"
+          ],
+          "expected": [
+            "Eligible: yes",
+            "Non-overlapping: camping, fundraising, sportsday"
+          ]
+        },
+        {
+          "label": "Hidden: Two missing, one extra",
+          "hidden": true,
+          "inputs": [
+            "firstaid leadership camping",
+            "firstaid sportsday"
+          ],
+          "expected": [
+            "Eligible: no",
+            "Missing: camping, leadership",
+            "Non-overlapping: camping, leadership, sportsday"
+          ]
+        },
+        {
+          "label": "Hidden: Completely different lists",
+          "hidden": true,
+          "inputs": [
+            "firstaid teamwork camping",
+            "leadership sportsday fundraising"
+          ],
+          "expected": [
+            "Eligible: no",
+            "Missing: camping, firstaid, teamwork",
+            "Non-overlapping: camping, firstaid, fundraising, leadership, sportsday, teamwork"
+          ]
+        }
+      ]
+    }
+  ]
+}
