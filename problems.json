@@ -35,7 +35,7 @@
 
           "outputFormat": "Line 1: Combined: followed by sorted combined skills, separated by commas and a space.\nLine 2: Common: followed by sorted common skills. If none, print Common: none\nLine 3: Only Team A: followed by sorted unique Team A skills. If none, print Only Team A: none\nLine 4: Only Team B: followed by sorted unique Team B skills. If none, print Only Team B: none",
 
-          "hint": "team_a = set(input().split())\nteam_b = set(input().split())\ncombined = sorted(team_a | team_b)\ncommon   = sorted(team_a & team_b)\nonly_a   = sorted(team_a - team_b)\nonly_b   = sorted(team_b - team_a)\nprint('Combined:', ', '.join(combined) if combined else 'none')\nprint('Common:',   ', '.join(common)   if common   else 'none')\nprint('Only Team A:', ', '.join(only_a) if only_a else 'none')\nprint('Only Team B:', ', '.join(only_b) if only_b else 'none')",
+          "hint": "team_a = set(input().split())\nteam_b = set(input().split())\ncombined = sorted(team_a | team_b)\ncommon   = sorted(team_a & team_b)\nonly_a   = sorted(team_a - team_b)\nonly_b   = sorted(team_b - team_a)\nprint('Combined:', ', '.join(combined))\nprint('Common:',   ', '.join(common)   if common   else 'none')\nprint('Only Team A:', ', '.join(only_a) if only_a else 'none')\nprint('Only Team B:', ', '.join(only_b) if only_b else 'none')",
 
           "steps": [
             { "text": "Read line 1 and convert to a set for Team A using set(input().split())." },
@@ -58,7 +58,7 @@
               ]
             },
             {
-              "label": "Example 2",
+              "label": "Example 2 — identical teams",
               "hidden": false,
               "inputs": ["html css javascript", "html css javascript"],
               "expected": [
@@ -69,7 +69,7 @@
               ]
             },
             {
-              "label": "No overlap",
+              "label": "No skills in common",
               "hidden": false,
               "inputs": ["python java go", "rust swift kotlin"],
               "expected": [
@@ -80,47 +80,47 @@
               ]
             },
             {
-              "label": "Hidden: Single skill each",
+              "label": "Hidden: One shared, rest unique",
               "hidden": true,
-              "inputs": ["python", "python"],
+              "inputs": ["react node css", "react python django"],
               "expected": [
-                "Combined: python",
-                "Common: python",
+                "Combined: css, django, node, python, react",
+                "Common: react",
+                "Only Team A: css, node",
+                "Only Team B: django, python"
+              ]
+            },
+            {
+              "label": "Hidden: Team A skills all in Team B",
+              "hidden": true,
+              "inputs": ["python java", "python java sql react node"],
+              "expected": [
+                "Combined: java, node, python, react, sql",
+                "Common: java, python",
+                "Only Team A: none",
+                "Only Team B: node, react, sql"
+              ]
+            },
+            {
+              "label": "Hidden: Different order, same result",
+              "hidden": true,
+              "inputs": ["excel word powerpoint", "powerpoint excel word"],
+              "expected": [
+                "Combined: excel, powerpoint, word",
+                "Common: excel, powerpoint, word",
                 "Only Team A: none",
                 "Only Team B: none"
               ]
             },
             {
-              "label": "Hidden: Single skill no overlap",
+              "label": "Hidden: More skills, partial overlap",
               "hidden": true,
-              "inputs": ["python", "java"],
+              "inputs": ["python java sql html css", "java sql react vue angular"],
               "expected": [
-                "Combined: java, python",
-                "Common: none",
-                "Only Team A: python",
-                "Only Team B: java"
-              ]
-            },
-            {
-              "label": "Hidden: Many skills large overlap",
-              "hidden": true,
-              "inputs": ["python java sql html css react node django flask", "python java sql html css vue angular spring boot"],
-              "expected": [
-                "Combined: angular, boot, css, django, flask, html, java, node, python, react, sql, spring, vue",
-                "Common: css, html, java, python, sql",
-                "Only Team A: django, flask, node, react",
-                "Only Team B: angular, boot, spring, vue"
-              ]
-            },
-            {
-              "label": "Hidden: Edge — Team A has all of Team B",
-              "hidden": true,
-              "inputs": ["python java sql react node", "python java"],
-              "expected": [
-                "Combined: java, node, python, react, sql",
-                "Common: java, python",
-                "Only Team A: node, react, sql",
-                "Only Team B: none"
+                "Combined: angular, css, html, java, python, react, sql, vue",
+                "Common: java, sql",
+                "Only Team A: css, html, python",
+                "Only Team B: angular, react, vue"
               ]
             }
           ]
@@ -177,7 +177,7 @@
               ]
             },
             {
-              "label": "Add already exists",
+              "label": "Add already in set",
               "hidden": false,
               "inputs": ["Alice Bob Charlie", "Alice", "Bob"],
               "expected": [
@@ -186,7 +186,25 @@
               ]
             },
             {
-              "label": "Hidden: Discard not in set",
+              "label": "Hidden: No duplicates in input",
+              "hidden": true,
+              "inputs": ["Alice Bob Charlie Dana", "Eve", "Bob"],
+              "expected": [
+                "Unique count: 4",
+                "Final list: Alice, Charlie, Dana, Eve"
+              ]
+            },
+            {
+              "label": "Hidden: Two duplicates, add new name",
+              "hidden": true,
+              "inputs": ["Tom Tom Jerry Jerry Spike", "Butch", "Jerry"],
+              "expected": [
+                "Unique count: 3",
+                "Final list: Butch, Spike, Tom"
+              ]
+            },
+            {
+              "label": "Hidden: Discard name not in set",
               "hidden": true,
               "inputs": ["Alice Bob Charlie", "Diana", "Zara"],
               "expected": [
@@ -195,30 +213,12 @@
               ]
             },
             {
-              "label": "Hidden: All duplicates single name",
+              "label": "Hidden: Many duplicates, small final set",
               "hidden": true,
-              "inputs": ["Alice Alice Alice Alice", "Bob", "Alice"],
+              "inputs": ["Anna Anna Bob Bob Carlos Carlos", "Diana", "Bob"],
               "expected": [
-                "Unique count: 1",
-                "Final list: Bob"
-              ]
-            },
-            {
-              "label": "Hidden: Single name, add new, discard it",
-              "hidden": true,
-              "inputs": ["Alice", "Bob", "Bob"],
-              "expected": [
-                "Unique count: 1",
-                "Final list: Alice"
-              ]
-            },
-            {
-              "label": "Hidden: Large list with many duplicates",
-              "hidden": true,
-              "inputs": ["Ana Ana Bob Bob Carlos Carlos Diana Diana Eve Eve", "Frank", "Diana"],
-              "expected": [
-                "Unique count: 5",
-                "Final list: Ana, Bob, Carlos, Eve, Frank"
+                "Unique count: 3",
+                "Final list: Anna, Carlos, Diana"
               ]
             }
           ]
@@ -231,7 +231,7 @@
           "points": 10,
           "passingPercent": 75,
 
-          "description": "A university system needs to check if a student has completed all the prerequisite courses for enrollment in an advanced program. Your program should:\n1. Read the required courses (prerequisites).\n2. Read the completed courses by the student.\n3. Check if the student has completed all prerequisites (i.e., if the required courses are a subset of the completed courses).\n4. If yes, print a success message.\n5. If no, print the missing courses (sorted alphabetically).\n6. Finally, print the symmetric difference — courses that are in one set but not the other (missing prerequisites + extra courses the student took). Print them sorted.",
+          "description": "A university system needs to check if a student has completed all the prerequisite courses for enrollment in an advanced program. Your program should:\n1. Read the required courses (prerequisites).\n2. Read the completed courses by the student.\n3. Check if the student has completed all prerequisites (i.e., if the required courses are a subset of the completed courses).\n4. If yes, print a success message.\n5. If no, print the missing courses (sorted alphabetically).\n6. Finally, print the symmetric difference — courses that are in one set but not the other. Print them sorted.",
 
           "constraints": [
             "Each set has between 1 and 10 course names.",
@@ -254,7 +254,7 @@
 
           "testCases": [
             {
-              "label": "Example 1 — Eligible",
+              "label": "Example 1 — Eligible with extras",
               "hidden": false,
               "inputs": ["math101 cs101 english101", "math101 cs101 english101 history101 pe101"],
               "expected": [
@@ -263,7 +263,7 @@
               ]
             },
             {
-              "label": "Example 2 — Not eligible",
+              "label": "Example 2 — Missing courses",
               "hidden": false,
               "inputs": ["math101 cs101 english101 physics101", "math101 english101 history101"],
               "expected": [
@@ -282,41 +282,41 @@
               ]
             },
             {
-              "label": "Hidden: All missing",
+              "label": "Hidden: One missing course",
               "hidden": true,
-              "inputs": ["math101 cs101 physics101", "english101 history101"],
+              "inputs": ["math101 cs101 english101", "math101 cs101"],
               "expected": [
                 "Eligible: no",
-                "Missing: cs101, math101, physics101",
-                "Non-overlapping: cs101, english101, history101, math101, physics101"
+                "Missing: english101",
+                "Non-overlapping: english101"
               ]
             },
             {
-              "label": "Hidden: Single required, completed",
+              "label": "Hidden: Eligible, many extras",
               "hidden": true,
-              "inputs": ["math101", "math101"],
+              "inputs": ["math101 cs101", "math101 cs101 physics101 english101 history101"],
+              "expected": [
+                "Eligible: yes",
+                "Non-overlapping: english101, history101, physics101"
+              ]
+            },
+            {
+              "label": "Hidden: Two missing, one extra",
+              "hidden": true,
+              "inputs": ["math101 cs101 physics101", "math101 english101"],
+              "expected": [
+                "Eligible: no",
+                "Missing: cs101, physics101",
+                "Non-overlapping: cs101, english101, physics101"
+              ]
+            },
+            {
+              "label": "Hidden: All required completed, no extras",
+              "hidden": true,
+              "inputs": ["bio101 chem101 phys101", "bio101 chem101 phys101"],
               "expected": [
                 "Eligible: yes",
                 "Non-overlapping: none"
-              ]
-            },
-            {
-              "label": "Hidden: Single required, missing",
-              "hidden": true,
-              "inputs": ["math101", "cs101"],
-              "expected": [
-                "Eligible: no",
-                "Missing: math101",
-                "Non-overlapping: cs101, math101"
-              ]
-            },
-            {
-              "label": "Hidden: Many completed, all required met",
-              "hidden": true,
-              "inputs": ["math101 cs101", "math101 cs101 physics101 english101 history101 pe101"],
-              "expected": [
-                "Eligible: yes",
-                "Non-overlapping: english101, history101, pe101, physics101"
               ]
             }
           ]
