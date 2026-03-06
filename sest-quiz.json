@@ -1,0 +1,401 @@
+{
+  "id": "quiz-sets-1",
+  "title": "Sets Deep Dive",
+  "topic": "Sets",
+  "icon": "🜁",
+  "questions": [
+
+    {
+      "id": "q1",
+      "type": "code_output",
+      "question": "What does this print?\n```\nnot_a_set = {}\nprint(type(not_a_set))\n```",
+      "choices": ["<class 'set'>", "<class 'dict'>", "<class 'frozenset'>", "TypeError"],
+      "answer": "<class 'dict'>"
+    },
+
+    {
+      "id": "q2",
+      "type": "multiple_choice",
+      "question": "Which of the following correctly creates an **empty set**?",
+      "choices": ["empty = {}", "empty = set", "empty = set()", "empty = {}()"],
+      "answer": "empty = set()"
+    },
+
+    {
+      "id": "q3",
+      "type": "code_output",
+      "question": "What does this print?\n```\nnumbers = {1, 2, 3, 2, 1, 4, 3, 5}\nprint(len(numbers))\n```",
+      "choices": ["8", "5", "4", "6"],
+      "answer": "5"
+    },
+
+    {
+      "id": "q4",
+      "type": "code_output",
+      "question": "What does this print?\n```\nexample = {1, True, 0, False}\nprint(len(example))\n```",
+      "choices": ["4", "3", "1", "2"],
+      "answer": "2"
+    },
+
+    {
+      "id": "q5",
+      "type": "true_false",
+      "question": "`True` and `1` are treated as the same value inside a set.",
+      "answer": "True"
+    },
+
+    {
+      "id": "q6",
+      "type": "code_output",
+      "question": "What does this print?\n```\nexample = {1, True, 0, False}\nprint(example)\n```",
+      "choices": ["{0, 1, True, False}", "{False, True}", "{0, 1}", "{1, 0}"],
+      "answer": "{0, 1}"
+    },
+
+    {
+      "id": "q7",
+      "type": "multiple_choice",
+      "question": "Which of these **cannot** be added to a set?",
+      "choices": ["3.14", "(1, 2, 3)", "[1, 2, 3]", "'hello'"],
+      "answer": "[1, 2, 3]"
+    },
+
+    {
+      "id": "q8",
+      "type": "true_false",
+      "question": "Sets support indexing — you can access a set item using `my_set[0]`.",
+      "answer": "False"
+    },
+
+    {
+      "id": "q9",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = {'banana', 'orange', 'mango', 'lemon'}\nfruits.add('banana')\nprint(len(fruits))\n```",
+      "choices": ["5", "3", "4", "Error"],
+      "answer": "4"
+    },
+
+    {
+      "id": "q10",
+      "type": "code_output",
+      "question": "What does this print?\n```\nst = {1, 2, 3}\nst.update('hello')\nprint(len(st))\n```",
+      "choices": ["8", "6", "7", "5"],
+      "answer": "7"
+    },
+
+    {
+      "id": "q11",
+      "type": "multiple_choice",
+      "question": "What does `st.update('hello')` add to `st = {1, 2, 3}`?",
+      "choices": ["The string 'hello' as one item", "Each unique character: 'h','e','l','o'", "Nothing — strings can't be added to sets", "Each character including duplicates"],
+      "answer": "Each unique character: 'h','e','l','o'"
+    },
+
+    {
+      "id": "q12",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = {'banana', 'orange', 'mango'}\nfruits.remove('apple')\nprint(fruits)\n```",
+      "choices": ["{'banana', 'orange', 'mango'}", "set()", "None", "KeyError"],
+      "answer": "KeyError"
+    },
+
+    {
+      "id": "q13",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = {'banana', 'orange', 'mango'}\nfruits.discard('apple')\nprint(len(fruits))\n```",
+      "choices": ["2", "0", "Error", "3"],
+      "answer": "3"
+    },
+
+    {
+      "id": "q14",
+      "type": "multiple_choice",
+      "question": "When should you prefer `discard()` over `remove()`?",
+      "choices": ["When you want to remove all items", "When you're not sure the item exists", "When you want to know what was removed", "When you want to remove by index"],
+      "answer": "When you're not sure the item exists"
+    },
+
+    {
+      "id": "q15",
+      "type": "true_false",
+      "question": "`pop()` on a set always removes the last item added.",
+      "answer": "False"
+    },
+
+    {
+      "id": "q16",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = {'banana', 'orange', 'mango'}\nfruits.clear()\nprint(fruits)\n```",
+      "choices": ["None", "set()", "{}", "Error"],
+      "answer": "set()"
+    },
+
+    {
+      "id": "q17",
+      "type": "true_false",
+      "question": "After calling `clear()`, the set variable still exists — it just becomes empty.",
+      "answer": "True"
+    },
+
+    {
+      "id": "q18",
+      "type": "code_output",
+      "question": "What does this print?\n```\nst1 = {1, 2, 3}\nst2 = {3, 4, 5}\nprint(st1 | st2)\n```",
+      "choices": ["{3}", "{1, 2, 3, 4, 5}", "{1, 2, 4, 5}", "{1, 2, 3, 3, 4, 5}"],
+      "answer": "{1, 2, 3, 4, 5}"
+    },
+
+    {
+      "id": "q19",
+      "type": "code_output",
+      "question": "What does this print?\n```\nst1 = {1, 2, 3}\nst2 = {3, 4, 5}\nprint(st1 & st2)\n```",
+      "choices": ["{1, 2, 3, 4, 5}", "{1, 2, 4, 5}", "{3}", "{}"],
+      "answer": "{3}"
+    },
+
+    {
+      "id": "q20",
+      "type": "code_output",
+      "question": "What does this print?\n```\nst1 = {1, 2, 3}\nst2 = {3, 4, 5}\nprint(st1 - st2)\n```",
+      "choices": ["{3}", "{4, 5}", "{1, 2}", "{1, 2, 4, 5}"],
+      "answer": "{1, 2}"
+    },
+
+    {
+      "id": "q21",
+      "type": "code_output",
+      "question": "What does this print?\n```\nst1 = {1, 2, 3}\nst2 = {3, 4, 5}\nprint(st2 - st1)\n```",
+      "choices": ["{1, 2}", "{3}", "{4, 5}", "{1, 2, 4, 5}"],
+      "answer": "{4, 5}"
+    },
+
+    {
+      "id": "q22",
+      "type": "code_output",
+      "question": "What does this print?\n```\nst1 = {1, 2, 3}\nst2 = {3, 4, 5}\nprint(st1 ^ st2)\n```",
+      "choices": ["{3}", "{1, 2, 3, 4, 5}", "{1, 2, 4, 5}", "{1, 2}"],
+      "answer": "{1, 2, 4, 5}"
+    },
+
+    {
+      "id": "q23",
+      "type": "multiple_choice",
+      "question": "What does the `^` operator return for two sets?",
+      "choices": ["Items in both sets", "Items in either set", "Items in one set but NOT the other", "Items only in the left set"],
+      "answer": "Items in one set but NOT the other"
+    },
+
+    {
+      "id": "q24",
+      "type": "true_false",
+      "question": "`st1 - st2` and `st2 - st1` always return the same result.",
+      "answer": "False"
+    },
+
+    {
+      "id": "q25",
+      "type": "code_output",
+      "question": "What does this print?\n```\na = {1, 2, 3}\nb = {1, 2, 3, 4, 5}\nprint(a.issubset(b))\n```",
+      "choices": ["False", "True", "None", "Error"],
+      "answer": "True"
+    },
+
+    {
+      "id": "q26",
+      "type": "code_output",
+      "question": "What does this print?\n```\na = {1, 2, 3}\nb = {4, 5, 6}\nprint(a.isdisjoint(b))\n```",
+      "choices": ["False", "None", "Error", "True"],
+      "answer": "True"
+    },
+
+    {
+      "id": "q27",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = {'banana', 'orange', 'mango', 'lemon'}\nprint('apple' in fruits)\n```",
+      "choices": ["True", "None", "Error", "False"],
+      "answer": "False"
+    },
+
+    {
+      "id": "q28",
+      "type": "multiple_choice",
+      "question": "What is the average time complexity of membership testing (`x in s`) for a Python set?",
+      "choices": ["O(n)", "O(log n)", "O(n log n)", "O(1)"],
+      "answer": "O(1)"
+    },
+
+    {
+      "id": "q29",
+      "type": "code_output",
+      "question": "What does this print?\n```\nnumbers = {25, 8, 47, 3, 61}\nprint(sorted(numbers))\n```",
+      "choices": ["{3, 8, 25, 47, 61}", "[61, 47, 25, 8, 3]", "[3, 8, 25, 47, 61]", "(3, 8, 25, 47, 61)"],
+      "answer": "[3, 8, 25, 47, 61]"
+    },
+
+    {
+      "id": "q30",
+      "type": "true_false",
+      "question": "`sorted()` applied to a set returns a new sorted **set**.",
+      "answer": "False"
+    },
+
+    {
+      "id": "q31",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = {'banana', 'orange', 'mango', 'lemon'}\nprint(max(fruits))\n```",
+      "choices": ["banana", "mango", "lemon", "orange"],
+      "answer": "orange"
+    },
+
+    {
+      "id": "q32",
+      "type": "code_output",
+      "question": "What does this print?\n```\nprint(any({False, False, False}))\n```",
+      "choices": ["True", "None", "Error", "False"],
+      "answer": "False"
+    },
+
+    {
+      "id": "q33",
+      "type": "code_output",
+      "question": "What does this print?\n```\nprint(all({True, True, False}))\n```",
+      "choices": ["True", "None", "Error", "False"],
+      "answer": "False"
+    },
+
+    {
+      "id": "q34",
+      "type": "code_output",
+      "question": "What does this print?\n```\nscores = {85, 90, 78, 92}\nprint(all(score >= 75 for score in scores))\n```",
+      "choices": ["False", "None", "Error", "True"],
+      "answer": "True"
+    },
+
+    {
+      "id": "q35",
+      "type": "code_output",
+      "question": "What does this print?\n```\nnumbers = {1, 2, 3, 4, 5}\nsquared = set(map(lambda x: x ** 2, numbers))\nprint(len(squared))\n```",
+      "choices": ["10", "3", "5", "25"],
+      "answer": "5"
+    },
+
+    {
+      "id": "q36",
+      "type": "code_output",
+      "question": "What does this print?\n```\nnumbers = {10, 25, 30, 45, 50, 65}\nabove_30 = set(filter(lambda x: x > 30, numbers))\nprint(len(above_30))\n```",
+      "choices": ["4", "6", "2", "3"],
+      "answer": "3"
+    },
+
+    {
+      "id": "q37",
+      "type": "code_output",
+      "question": "What does this print?\n```\nmy_set = set('hello')\nprint(len(my_set))\n```",
+      "choices": ["5", "3", "2", "4"],
+      "answer": "4"
+    },
+
+    {
+      "id": "q38",
+      "type": "code_output",
+      "question": "What does this print?\n```\nmy_set = set((1, 2, 3, 2, 1))\nprint(my_set)\n```",
+      "choices": ["(1, 2, 3)", "[1, 2, 3]", "{1, 2, 3, 2, 1}", "{1, 2, 3}"],
+      "answer": "{1, 2, 3}"
+    },
+
+    {
+      "id": "q39",
+      "type": "true_false",
+      "question": "A frozenset supports the `add()` method just like a regular set.",
+      "answer": "False"
+    },
+
+    {
+      "id": "q40",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfs = frozenset([1, 2, 3, 4, 5])\nprint(type(fs))\n```",
+      "choices": ["<class 'set'>", "<class 'tuple'>", "<class 'list'>", "<class 'frozenset'>"],
+      "answer": "<class 'frozenset'>"
+    },
+
+    {
+      "id": "q41",
+      "type": "multiple_choice",
+      "question": "Why can a frozenset be used as a dictionary key but a regular set cannot?",
+      "choices": ["Frozensets are ordered", "Frozensets are immutable (hashable)", "Frozensets are faster", "Frozensets allow duplicates"],
+      "answer": "Frozensets are immutable (hashable)"
+    },
+
+    {
+      "id": "q42",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfs1 = frozenset({1, 2, 3})\nfs2 = frozenset({3, 4, 5})\nprint(fs1 & fs2)\n```",
+      "choices": ["{3}", "frozenset({1, 2, 3, 4, 5})", "frozenset({3})", "Error"],
+      "answer": "frozenset({3})"
+    },
+
+    {
+      "id": "q43",
+      "type": "true_false",
+      "question": "A regular set can be stored as an element inside another set.",
+      "answer": "False"
+    },
+
+    {
+      "id": "q44",
+      "type": "code_output",
+      "question": "What does this print?\n```\nname_list = ['Alice', 'Bob', 'Alice', 'Charlie', 'Bob', 'Alice']\nunique = set(name_list)\nprint(len(unique))\n```",
+      "choices": ["6", "2", "3", "4"],
+      "answer": "3"
+    },
+
+    {
+      "id": "q45",
+      "type": "code_output",
+      "question": "What does this print?\n```\nmath = {'Alice', 'Bob', 'Charlie', 'Diana'}\nsci  = {'Charlie', 'Diana', 'Eve', 'Frank'}\nprint(len(math & sci))\n```",
+      "choices": ["4", "6", "3", "2"],
+      "answer": "2"
+    },
+
+    {
+      "id": "q46",
+      "type": "code_output",
+      "question": "What does this print?\n```\nwords = 'the cat sat on the mat and the cat'.split()\nprint(len(set(words)))\n```",
+      "choices": ["9", "8", "7", "6"],
+      "answer": "6"
+    },
+
+    {
+      "id": "q47",
+      "type": "multiple_choice",
+      "question": "Which operation updates `st1` **in place**, keeping only items found in both `st1` and `st2`?",
+      "choices": ["st1 & st2", "st1.intersection(st2)", "st1.intersection_update(st2)", "st1.difference_update(st2)"],
+      "answer": "st1.intersection_update(st2)"
+    },
+
+    {
+      "id": "q48",
+      "type": "code_output",
+      "question": "What does this print?\n```\nst = {1, 2, 3, 4}\nst.difference_update({3, 4, 5})\nprint(st)\n```",
+      "choices": ["{3, 4}", "{1, 2, 3, 4, 5}", "{5}", "{1, 2}"],
+      "answer": "{1, 2}"
+    },
+
+    {
+      "id": "q49",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = {'banana', 'orange', 'mango'}\ndel fruits\nprint(fruits)\n```",
+      "choices": ["set()", "None", "{}", "NameError"],
+      "answer": "NameError"
+    },
+
+    {
+      "id": "q50",
+      "type": "multiple_choice",
+      "question": "Which of the following is the BEST reason to use a set instead of a list?",
+      "choices": ["You need to access items by index", "You need to maintain insertion order", "You need fast membership testing with no duplicates", "You need to store mutable items like other lists"],
+      "answer": "You need fast membership testing with no duplicates"
+    }
+
+  ]
+}
