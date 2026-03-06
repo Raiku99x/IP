@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>Slytherin Classroom — Sets in Python</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Python Classroom</title>
 <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-<!-- CodeMirror 5 -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
@@ -21,76 +20,130 @@
   --text:#181814;--muted:#82827a;--muted2:#bbbbb0;
   --green:#1e6e32;--green-light:#eaf4ec;--green-mid:#b8ddbf;
   --red:#b83232;--red-light:#fdf0f0;--red-mid:#f0c0c0;
-  --yellow:#9a6e00;--yellow-light:#fdf6e8;
+  --yellow:#9a6e00;--yellow-light:#fdf6e8;--yellow-mid:#e8d090;
   --purple:#5a3e8a;--code-bg:#f8f8f4;
   --shadow:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.05);
   --shadow-lg:0 8px 32px rgba(0,0,0,.13),0 2px 8px rgba(0,0,0,.08);
-  --tab-h:56px;
+  --radius:10px;
 }
 html,body{height:100%;overflow:hidden;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;}
 
-/* ══ LOADING ══ */
-#loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;}
-#loading-overlay.hidden{display:none;}
+/* LOADING */
+#loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .3s;}
+#loading-overlay.hidden{opacity:0;pointer-events:none;}
 @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
 .l-snake{animation:float 2.2s ease-in-out infinite;margin-bottom:20px;}
 .l-title{font-weight:700;font-size:22px;color:var(--green);letter-spacing:-.03em;margin-bottom:4px;}
 .l-sub{font-size:13px;color:var(--muted);margin-bottom:22px;}
-.l-bar-wrap{width:180px;height:3px;background:var(--border);border-radius:99px;overflow:hidden;}
+.l-bar-wrap{width:200px;height:4px;background:var(--border);border-radius:99px;overflow:hidden;}
 .l-bar{height:100%;width:0%;background:var(--green);border-radius:99px;transition:width .4s ease;}
 .l-status{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:10px;}
 
-/* ══ TOPBAR ══ */
-#topbar{background:var(--surface);border-bottom:1px solid var(--border);height:50px;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;box-shadow:var(--shadow);z-index:10;}
-.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;color:var(--green);letter-spacing:-.02em;}
-.top-badge{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;background:var(--green-light);color:var(--green);border:1px solid var(--green-mid);font-family:'DM Mono',monospace;}
-.spacer{flex:1;}
-.score-wrap{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);display:flex;gap:4px;align-items:center;}
-.pts{color:var(--yellow);font-weight:700;}.sol{color:var(--green);font-weight:700;}
+/* TOPNAV */
+#topnav{background:var(--surface);border-bottom:1px solid var(--border);height:50px;display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;box-shadow:var(--shadow);z-index:100;}
+.nav-logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;color:var(--green);letter-spacing:-.02em;cursor:pointer;}
+.nav-breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);}
+.crumb{color:var(--muted);cursor:pointer;transition:color .12s;}
+.crumb:hover{color:var(--green);}
+.crumb.active{color:var(--text);font-weight:600;cursor:default;}
+.crumb-sep{color:var(--muted2);}
+.nav-spacer{flex:1;}
+.nav-user{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;display:flex;align-items:center;gap:6px;}
+.nav-avatar{width:28px;height:28px;border-radius:50%;background:var(--green-light);border:1px solid var(--green-mid);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--green);}
 
-/* ══ DESKTOP MAIN ══ */
-#main{display:grid;grid-template-columns:272px 1fr 272px;flex:1;overflow:hidden;min-height:0;}
+/* VIEWS */
+#view-dashboard{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+#view-editor{flex:1;overflow:hidden;display:none;flex-direction:column;}
 
-/* ══ LEFT PANEL ══ */
-#left-panel{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;background:var(--surface);}
+/* DASHBOARD */
+#dash-header{padding:24px 32px 0;}
+.dh-title{font-size:22px;font-weight:700;letter-spacing:-.03em;margin-bottom:4px;}
+.dh-meta{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px;}
+#dash-body{padding:20px 32px 32px;}
+.section-row{display:flex;align-items:center;margin-bottom:14px;}
+.section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
 
-/* Accordion */
-.prob-box{border-bottom:1px solid var(--border);flex-shrink:0;}
-.prob-box-header{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;user-select:none;transition:background .1s;}
-.prob-box-header:hover{background:var(--surface2);}
-.prob-box.active .prob-box-header{background:var(--green-light);}
-.prob-chevron{font-size:9px;color:var(--muted2);transition:transform .2s;flex-shrink:0;margin-left:auto;}
-.prob-box.open .prob-chevron{transform:rotate(180deg);}
-.prob-box-title{font-size:12px;font-weight:600;flex:1;line-height:1.3;}
-.prob-box.active .prob-box-title{color:var(--green);}
-.tag{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;font-family:'DM Mono',monospace;}
+/* Lab Card */
+.lab-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden;}
+.lab-hd{display:flex;align-items:center;gap:10px;padding:14px 18px;cursor:pointer;user-select:none;transition:background .12s;border-bottom:1px solid transparent;}
+.lab-hd:hover{background:var(--surface2);}
+.lab-card.open .lab-hd{background:var(--green-light);border-bottom-color:var(--border);}
+.lab-icon{font-size:14px;flex-shrink:0;}
+.lab-title{font-size:13px;font-weight:700;flex:1;}
+.lab-card.open .lab-title{color:var(--green);}
+.lc-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.status-badge{font-size:10px;font-weight:700;font-family:'DM Mono',monospace;padding:3px 10px;border-radius:99px;}
+.status-badge.passed{background:var(--green-light);color:var(--green);border:1px solid var(--green-mid);}
+.status-badge.failed{background:var(--red-light);color:var(--red);border:1px solid var(--red-mid);}
+.status-badge.pending{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
+.score-pill{font-size:12px;font-weight:800;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;border:3px solid;flex-shrink:0;}
+.sp-green{color:var(--green);border-color:var(--green-mid);background:var(--green-light);}
+.sp-yellow{color:var(--yellow);border-color:var(--yellow-mid);background:var(--yellow-light);}
+.sp-red{color:var(--red);border-color:var(--red-mid);background:var(--red-light);}
+.sp-gray{color:var(--muted);border-color:var(--border);background:var(--surface2);}
+.lc-chevron{font-size:10px;color:var(--muted2);transition:transform .2s;}
+.lab-card.open .lc-chevron{transform:rotate(180deg);}
+
+.lab-meta{padding:9px 18px;background:var(--bg);display:flex;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--border);}
+.lm-item{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
+
+.lab-prog-wrap{padding:8px 18px;background:var(--bg);border-bottom:1px solid var(--border);}
+.lab-prog-label{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px;}
+.lab-prog-bar{height:5px;background:var(--border);border-radius:99px;overflow:hidden;}
+.lab-prog-fill{height:100%;border-radius:99px;transition:width .5s;background:var(--green);}
+.lab-prog-fill.y{background:var(--yellow);}
+.lab-prog-fill.r{background:var(--red);}
+
+.lab-probs{display:none;}
+.lab-card.open .lab-probs{display:block;}
+
+.prob-row{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;}
+.prob-row:last-child{border-bottom:none;}
+.prob-row:hover{background:var(--surface2);}
+.pr-check{width:18px;height:18px;border-radius:4px;border:1px solid var(--border2);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;color:var(--muted);}
+.pr-check.done{background:var(--green-light);border-color:var(--green-mid);color:var(--green);}
+.pr-check.fail{background:var(--red-light);border-color:var(--red-mid);color:var(--red);}
+.pr-name{font-size:12px;font-weight:600;flex:1;}
+.pr-tags{display:flex;gap:5px;align-items:center;flex-shrink:0;}
+.tag{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:700;font-family:'DM Mono',monospace;}
 .tag-easy{background:var(--green-light);color:var(--green);border:1px solid var(--green-mid);}
-.tag-medium{background:var(--yellow-light);color:var(--yellow);border:1px solid #e8d090;}
-.prob-check{font-size:12px;flex-shrink:0;}
+.tag-medium{background:var(--yellow-light);color:var(--yellow);border:1px solid var(--yellow-mid);}
+.tag-hard{background:var(--red-light);color:var(--red);border:1px solid var(--red-mid);}
+.tag-pts{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
+.tag-pct{font-size:9px;color:var(--muted2);font-weight:400;background:none;border:none;padding:0;}
+.pr-status{font-size:10px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:4px;flex-shrink:0;}
+.pr-status.pass{background:var(--green-mid);color:var(--green);}
+.pr-status.fail{background:var(--red-mid);color:var(--red);}
+.pr-status.pending{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
+.pr-btn{font-size:10px;font-family:'DM Mono',monospace;font-weight:600;padding:4px 10px;border-radius:6px;border:1px solid var(--green-mid);background:var(--green-light);color:var(--green);cursor:pointer;flex-shrink:0;white-space:nowrap;transition:background .12s;}
+.pr-btn:hover{background:var(--green-mid);}
 
-.prob-box-body{display:none;padding:12px 14px 16px;border-top:1px solid var(--border);}
-.prob-box.open .prob-box-body{display:block;}
-.prob-meta-row{font-size:11px;color:var(--muted);margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);}
-.prob-meta-row.solved{color:var(--green);}.prob-meta-row.attempted{color:var(--yellow);}
+/* EDITOR VIEW */
+#editor-inner{display:grid;grid-template-columns:272px 1fr 272px;flex:1;overflow:hidden;min-height:0;}
 
-.section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:7px;}
-.step-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
-.step-item{display:flex;gap:9px;align-items:flex-start;}
+/* Editor Left */
+#ed-left{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;background:var(--surface);}
+.el-header{padding:14px;border-bottom:1px solid var(--border);}
+.el-back{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green);cursor:pointer;font-weight:600;margin-bottom:10px;font-family:'DM Mono',monospace;}
+.el-back:hover{text-decoration:underline;}
+.el-tags{display:flex;gap:6px;margin-bottom:8px;}
+.el-title{font-size:14px;font-weight:700;letter-spacing:-.02em;margin-bottom:3px;}
+.el-meta{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
+.el-section{padding:12px 14px;border-bottom:1px solid var(--border);}
+.el-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:7px;}
+.step-list{display:flex;flex-direction:column;gap:8px;}
+.step-item{display:flex;gap:8px;align-items:flex-start;}
 .step-num{width:20px;height:20px;border-radius:50%;background:var(--green-light);color:var(--green);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--green-mid);font-family:'DM Mono',monospace;margin-top:1px;}
-.step-text{font-size:12px;line-height:1.65;color:#44443e;}
-
-.ds{margin-bottom:12px;}
-.cb{background:var(--code-bg);border:1px solid var(--border);border-radius:5px;padding:8px 10px;font-family:'DM Mono',monospace;font-size:11px;color:#2a5a8a;white-space:pre-wrap;line-height:1.65;}
-
-/* Hint toggle */
-.hint-btn{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;padding:5px 12px;border-radius:6px;border:1px solid #e8d090;background:var(--yellow-light);color:var(--yellow);cursor:pointer;transition:background .12s;margin-bottom:0;}
+.step-txt{font-size:12px;line-height:1.65;color:#44443e;}
+.codeblock{background:var(--code-bg);border:1px solid var(--border);border-radius:5px;padding:8px 10px;font-family:'DM Mono',monospace;font-size:11px;color:#2a5a8a;white-space:pre-wrap;line-height:1.65;}
+.hint-btn{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;padding:5px 12px;border-radius:6px;border:1px solid var(--yellow-mid);background:var(--yellow-light);color:var(--yellow);cursor:pointer;}
 .hint-btn:hover{background:#f5e8b0;}
-.hint-box{display:none;margin-top:8px;background:var(--yellow-light);border:1px solid #e8d090;border-left:3px solid var(--yellow);border-radius:5px;padding:8px 10px;font-family:'DM Mono',monospace;font-size:11px;color:#7a5500;white-space:pre-wrap;line-height:1.65;}
+.hint-box{display:none;margin-top:8px;background:var(--yellow-light);border:1px solid var(--yellow-mid);border-left:3px solid var(--yellow);border-radius:5px;padding:8px 10px;font-family:'DM Mono',monospace;font-size:11px;color:#7a5500;white-space:pre-wrap;line-height:1.65;}
 .hint-box.visible{display:block;}
 
-/* ══ CENTER ══ */
-#center-panel{display:flex;flex-direction:column;overflow:hidden;background:var(--code-bg);border-right:1px solid var(--border);}
+/* Editor Center */
+#ed-center{display:flex;flex-direction:column;overflow:hidden;background:var(--code-bg);border-right:1px solid var(--border);}
 #editor-bar{background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 12px;height:46px;gap:7px;flex-shrink:0;}
 .filename{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .btn{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;padding:6px 12px;border-radius:6px;border:none;cursor:pointer;transition:all .12s;box-shadow:var(--shadow);white-space:nowrap;}
@@ -102,108 +155,55 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 #btn-test:hover:not(:disabled){background:var(--surface2);}
 #btn-submit{background:var(--purple);color:#fff;}
 #btn-submit:hover:not(:disabled){background:#4a2e7a;}
+#ed-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+#ed-container{flex:1;overflow:hidden;position:relative;}
+#cm-mount{position:absolute;inset:0;}
+#cm-mount .CodeMirror{position:absolute;inset:0;height:100%;}
+#cm-mount .CodeMirror-scroll{height:100%;}
 
-#editor-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
-#editor-container{flex:1;overflow:hidden;position:relative;}
-
-/* ── CodeMirror Slytherin Theme ── */
-.cm-s-slytherin.CodeMirror{
-  background:var(--code-bg);
-  color:var(--text);
-  font-family:'DM Mono',monospace;
-  font-size:13px;
-  line-height:21.45px;
-  height:100%;
-  border:none;
-}
-.cm-s-slytherin .CodeMirror-scroll{height:100%;}
+/* CM Slytherin theme */
+.cm-s-slytherin.CodeMirror{background:var(--code-bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;line-height:21.45px;height:100%;border:none;}
 .cm-s-slytherin .CodeMirror-cursor{border-left:2px solid var(--green);}
 .cm-s-slytherin .CodeMirror-selected{background:#c8dfc8;}
 .cm-s-slytherin.CodeMirror-focused .CodeMirror-selected{background:#b8d8b8;}
-.cm-s-slytherin .CodeMirror-gutters{
-  background:var(--code-bg);
-  border-right:1px solid var(--border);
-  padding-right:4px;
-}
-.cm-s-slytherin .CodeMirror-linenumber{
-  color:var(--muted2);
-  font-family:'DM Mono',monospace;
-  font-size:12px;
-  padding:0 8px 0 6px;
-  min-width:28px;
-}
+.cm-s-slytherin .CodeMirror-gutters{background:var(--code-bg);border-right:1px solid var(--border);}
+.cm-s-slytherin .CodeMirror-linenumber{color:var(--muted2);font-family:'DM Mono',monospace;font-size:12px;padding:0 8px 0 6px;min-width:28px;}
 .cm-s-slytherin .CodeMirror-activeline-background{background:rgba(30,110,50,.045);}
-.cm-s-slytherin .CodeMirror-matchingbracket{
-  background:#c8dfc8;
-  color:var(--green)!important;
-  font-weight:700;
-  outline:1px solid var(--green-mid);
-}
-
-/* ── Python Syntax Colors ── */
-/* Keywords: for/if/while/def/class/import/return/etc */
+.cm-s-slytherin .CodeMirror-matchingbracket{background:#c8dfc8;color:var(--green)!important;font-weight:700;outline:1px solid var(--green-mid);}
 .cm-s-slytherin .cm-keyword{color:#6d3eb7;font-weight:500;}
-/* Built-ins: print, len, range, set, input, etc */
 .cm-s-slytherin .cm-builtin{color:#b07800;}
-/* Strings */
-.cm-s-slytherin .cm-string{color:#1e6e32;}
-.cm-s-slytherin .cm-string-2{color:#1a6030;}
-/* Comments */
+.cm-s-slytherin .cm-string,.cm-s-slytherin .cm-string-2{color:#1e6e32;}
 .cm-s-slytherin .cm-comment{color:#8a8a82;font-style:italic;}
-/* Numbers */
 .cm-s-slytherin .cm-number{color:#c0392b;}
-/* Operators: =, +, -, *, etc */
 .cm-s-slytherin .cm-operator{color:#2a5a8a;}
-/* Function/class def names */
 .cm-s-slytherin .cm-def{color:#c47d00;font-weight:600;}
-/* True / False / None */
 .cm-s-slytherin .cm-atom{color:#c0392b;}
-/* Variables */
 .cm-s-slytherin .cm-variable{color:var(--text);}
 .cm-s-slytherin .cm-variable-2{color:#2a5a8a;}
-/* Decorators */
-.cm-s-slytherin .cm-meta{color:#6d3eb7;}
-/* Brackets/braces/parens */
-.cm-s-slytherin .cm-bracket{color:#555548;}
-/* Error */
 .cm-s-slytherin .cm-error{color:var(--red);background:var(--red-light);}
-
-/* Placeholder text */
-.cm-s-slytherin .CodeMirror-placeholder{
-  color:var(--muted2)!important;
-  font-style:italic;
-}
-
-/* Make CodeMirror fill the container absolutely */
-#cm-editor{position:absolute;inset:0;}
-#cm-editor .CodeMirror{
-  position:absolute;inset:0;height:100%;
-}
-#cm-editor .CodeMirror-scroll{height:100%;}
+.cm-s-slytherin .CodeMirror-placeholder{color:var(--muted2)!important;font-style:italic;}
 
 #err-banner{display:none;background:var(--red-light);border-top:1px solid var(--red-mid);padding:6px 12px;flex-shrink:0;}
 #err-banner.show{display:block;}
 #err-text{font-family:'DM Mono',monospace;font-size:11px;color:var(--red);white-space:pre-wrap;}
-
 #io-row{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border);flex-shrink:0;background:var(--surface);height:116px;}
 .io-pane{display:flex;flex-direction:column;padding:7px 10px;overflow:hidden;}
 .io-pane:first-child{border-right:1px solid var(--border);}
-.io-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;flex-shrink:0;display:flex;justify-content:space-between;}
-.io-hint{font-size:9px;color:var(--muted2);text-transform:none;letter-spacing:0;}
-#custom-in{flex:1;background:var(--code-bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:4px 8px;outline:none;resize:none;line-height:1.5;transition:border-color .15s;}
+.io-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;flex-shrink:0;}
+#custom-in{flex:1;background:var(--code-bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:4px 8px;outline:none;resize:none;line-height:1.5;}
 #custom-in:focus{border-color:var(--green);}
 #custom-in::placeholder{color:var(--muted2);}
 #out-box{flex:1;background:var(--code-bg);border:1px solid var(--border);border-radius:5px;padding:4px 8px;overflow-y:auto;}
 #out-text{font-family:'DM Mono',monospace;font-size:12px;white-space:pre-wrap;line-height:1.5;color:var(--muted2);}
 
-/* ══ RIGHT ══ */
-#right-panel{display:flex;flex-direction:column;overflow:hidden;background:var(--surface);}
-#tc-header{background:var(--surface);border-bottom:1px solid var(--border);height:46px;display:flex;align-items:center;padding:0 14px;flex-shrink:0;}
-#tc-header .tc-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+/* Editor Right */
+#ed-right{display:flex;flex-direction:column;overflow:hidden;background:var(--surface);}
+#tc-header{height:46px;display:flex;align-items:center;padding:0 14px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.tc-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
 #tc-score{margin-left:auto;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;}
 #tc-list{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:7px;background:var(--bg);}
-.tc-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;box-shadow:var(--shadow);transition:border-color .12s,transform .1s,box-shadow .1s;}
-.tc-card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.09);}
+.tc-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;box-shadow:var(--shadow);transition:border-color .12s,transform .1s;}
+.tc-card:hover{border-color:var(--border2);transform:translateY(-1px);}
 .tc-card.pass{border-color:var(--green-mid);background:var(--green-light);}
 .tc-card.fail{border-color:var(--red-mid);background:var(--red-light);}
 .tc-top{display:flex;align-items:center;gap:8px;padding:10px 12px;}
@@ -217,14 +217,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .tc-card.fail .tc-badge{background:var(--red-mid);color:var(--red);}
 .tc-card:not(.pass):not(.fail) .tc-badge{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
 .tc-sub{font-size:10px;color:var(--muted2);padding:0 12px 8px;font-family:'DM Mono',monospace;}
-
-#submit-result{display:none;background:var(--surface);border-top:1px solid var(--border);padding:12px 14px;flex-shrink:0;text-align:center;}
+#submit-result{display:none;background:var(--surface);border-top:1px solid var(--border);padding:12px 14px;text-align:center;flex-shrink:0;}
 #submit-result.show{display:block;}
 .sr-text{font-size:14px;font-weight:700;}.sr-text.ok{color:var(--green);}.sr-text.no{color:var(--red);}
 .sr-pts{font-size:12px;color:var(--yellow);margin-top:4px;font-family:'DM Mono',monospace;}
 .sr-sub{font-size:11px;color:var(--muted);margin-top:3px;}
 
-/* ══ MODAL ══ */
+/* Modal */
 #modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.32);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(2px);padding:16px;}
 #modal-overlay.open{display:flex;}
 #modal{background:var(--surface);border-radius:12px;box-shadow:var(--shadow-lg);width:480px;max-width:100%;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--border);animation:min-in .18s ease;}
@@ -235,7 +234,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 #modal-badge.pass{background:var(--green-mid);color:var(--green);}
 #modal-badge.fail{background:var(--red-mid);color:var(--red);}
 #modal-badge.pending{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
-#modal-close{width:28px;height:28px;border-radius:6px;border:none;background:var(--surface2);color:var(--muted);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .1s;flex-shrink:0;}
+#modal-close{width:28px;height:28px;border-radius:6px;border:none;background:var(--surface2);color:var(--muted);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
 #modal-close:hover{background:var(--border);}
 #modal-body{overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:12px;}
 .m-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:5px;}
@@ -245,187 +244,137 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .m-val.err{color:var(--red);border-color:var(--red-mid);background:var(--red-light);}
 .m-val.none{color:var(--muted2);font-style:italic;}
 
-/* ══ MOBILE BOTTOM TABS ══ */
-#mobile-tabs{display:none;background:var(--surface);border-top:1px solid var(--border);height:var(--tab-h);flex-shrink:0;z-index:10;}
-.tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;color:var(--muted);padding:6px 0;transition:color .15s;position:relative;}
-.tab-btn.active{color:var(--green);}
-.tab-btn svg{width:20px;height:20px;}
-.tab-badge{position:absolute;top:5px;right:calc(50% - 18px);background:var(--red);color:#fff;font-size:9px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;display:none;}
-.tab-badge.show{display:flex;}
-
-/* ══ SCROLLBAR ══ */
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px;}
-
-/* ══ ANIMATIONS ══ */
-@keyframes spin{to{transform:rotate(360deg);}}
-.spinner{width:36px;height:36px;border:3px solid var(--green-mid);border-top-color:var(--green);border-radius:50%;animation:spin .75s linear infinite;margin-bottom:8px;}
 @keyframes pg{0%,100%{box-shadow:none;}50%{box-shadow:0 0 0 3px var(--green-mid);}}
 @keyframes pp{0%,100%{box-shadow:none;}50%{box-shadow:0 0 0 3px #d0c0f0;}}
 .fg{animation:pg .4s ease;}.fp{animation:pp .4s ease;}
-
-/* ══ RESPONSIVE ══ */
-@media (max-width: 768px) {
-  #main{
-    grid-template-columns:1fr;
-    grid-template-rows:1fr;
-  }
-  #left-panel,#center-panel,#right-panel{
-    display:none;
-    grid-column:1;
-    grid-row:1;
-  }
-  #left-panel.mob-active,
-  #center-panel.mob-active,
-  #right-panel.mob-active{display:flex;}
-
-  #mobile-tabs{display:flex;}
-
-  .top-badge{display:none;}
-  .score-wrap{font-size:11px;}
-
-  #io-row{height:auto;grid-template-columns:1fr;height:200px;}
-  .io-pane:first-child{border-right:none;border-bottom:1px solid var(--border);}
-  #io-row{height:220px;}
-
-  .prob-box-header{padding:13px 14px;}
-  .tc-card .tc-top{padding:12px 14px;}
-  .btn{padding:7px 12px;}
-}
-
-@media (max-width: 400px) {
-  .logo span.logo-text{display:none;}
-  #btn-test{display:none;}
-}
 </style>
 </head>
 <body>
 
 <!-- LOADING -->
 <div id="loading-overlay">
-  <svg class="l-snake" width="90" height="110" viewBox="0 0 90 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M 65 18 C 75 18, 80 28, 72 35 C 64 42, 30 42, 22 50 C 14 58, 18 70, 28 72 C 38 74, 58 74, 62 82"
-          stroke="#1e6e32" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <svg class="l-snake" width="90" height="110" viewBox="0 0 90 110" fill="none">
+    <path d="M 65 18 C 75 18,80 28,72 35 C 64 42,30 42,22 50 C 14 58,18 70,28 72 C 38 74,58 74,62 82" stroke="#1e6e32" stroke-width="9" stroke-linecap="round" fill="none"/>
     <ellipse cx="60" cy="14" rx="11" ry="9" fill="#1e6e32" transform="rotate(-20 60 14)"/>
     <ellipse cx="62" cy="16" rx="7" ry="5" fill="#186028" transform="rotate(-20 62 16)"/>
-    <circle cx="66" cy="9" r="3" fill="#f4f4f0"/>
-    <circle cx="67" cy="9.8" r="1.5" fill="#060e06"/>
-    <circle cx="66.3" cy="9" r=".55" fill="white"/>
-    <circle cx="57" cy="8" r="2.5" fill="#f4f4f0"/>
-    <circle cx="57.8" cy="8.6" r="1.2" fill="#060e06"/>
-    <circle cx="69" cy="13" r=".9" fill="#0f3d1a"/>
+    <circle cx="66" cy="9" r="3" fill="#f4f4f0"/><circle cx="67" cy="9.8" r="1.5" fill="#060e06"/>
+    <circle cx="57" cy="8" r="2.5" fill="#f4f4f0"/><circle cx="57.8" cy="8.6" r="1.2" fill="#060e06"/>
     <path d="M71 17 L76 18 M76 18 L79 15 M76 18 L79 21" stroke="#b83232" stroke-width="1.5" stroke-linecap="round"/>
-    <path d="M62 82 C66 90, 60 98, 52 96 C 46 94, 46 88, 50 88"
-          stroke="#1e6e32" stroke-width="8" stroke-linecap="round" fill="none"/>
-    <circle cx="58" cy="28" r="2.2" fill="#186028" opacity=".45"/>
-    <circle cx="44" cy="42" r="2.2" fill="#186028" opacity=".45"/>
-    <circle cx="30" cy="56" r="2.2" fill="#186028" opacity=".45"/>
-    <circle cx="44" cy="68" r="2.2" fill="#186028" opacity=".45"/>
+    <path d="M62 82 C66 90,60 98,52 96 C 46 94,46 88,50 88" stroke="#1e6e32" stroke-width="8" stroke-linecap="round" fill="none"/>
   </svg>
-  <div class="l-title">Slytherin Classroom</div>
-  <div class="l-sub">Sets in Python</div>
+  <div class="l-title">Python Classroom</div>
+  <div class="l-sub" id="l-course">Loading...</div>
   <div class="l-bar-wrap"><div class="l-bar" id="load-bar"></div></div>
-  <div class="l-status" id="load-text">Loading Python runtime...</div>
+  <div class="l-status" id="load-txt">Loading problems...</div>
 </div>
 
-<!-- TOPBAR -->
-<div id="topbar">
-  <div class="logo">
-    <svg width="28" height="34" viewBox="0 0 90 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M 65 18 C 75 18, 80 28, 72 35 C 64 42, 30 42, 22 50 C 14 58, 18 70, 28 72 C 38 74, 58 74, 62 82"
-            stroke="#1e6e32" stroke-width="9" stroke-linecap="round" fill="none"/>
+<!-- TOPNAV -->
+<div id="topnav">
+  <div class="nav-logo" onclick="showDash()">
+    <svg width="24" height="30" viewBox="0 0 90 110" fill="none">
+      <path d="M 65 18 C 75 18,80 28,72 35 C 64 42,30 42,22 50 C 14 58,18 70,28 72 C 38 74,58 74,62 82" stroke="#1e6e32" stroke-width="9" stroke-linecap="round" fill="none"/>
       <ellipse cx="60" cy="14" rx="11" ry="9" fill="#1e6e32" transform="rotate(-20 60 14)"/>
       <ellipse cx="62" cy="16" rx="7" ry="5" fill="#186028" transform="rotate(-20 62 16)"/>
-      <circle cx="66" cy="9" r="3" fill="#f4f4f0"/>
-      <circle cx="67" cy="9.8" r="1.5" fill="#060e06"/>
-      <circle cx="57" cy="8" r="2.5" fill="#f4f4f0"/>
-      <circle cx="57.8" cy="8.6" r="1.2" fill="#060e06"/>
+      <circle cx="66" cy="9" r="3" fill="#f4f4f0"/><circle cx="67" cy="9.8" r="1.5" fill="#060e06"/>
+      <circle cx="57" cy="8" r="2.5" fill="#f4f4f0"/><circle cx="57.8" cy="8.6" r="1.2" fill="#060e06"/>
       <path d="M71 17 L76 18 M76 18 L79 15 M76 18 L79 21" stroke="#b83232" stroke-width="1.5" stroke-linecap="round"/>
-      <path d="M62 82 C66 90, 60 98, 52 96 C 46 94, 46 88, 50 88" stroke="#1e6e32" stroke-width="8" stroke-linecap="round" fill="none"/>
+      <path d="M62 82 C66 90,60 98,52 96 C 46 94,46 88,50 88" stroke="#1e6e32" stroke-width="8" stroke-linecap="round" fill="none"/>
     </svg>
-    <span class="logo-text">Slytherin Classroom</span>
+    Python Classroom
   </div>
-  <span class="top-badge">Sets in Python</span>
-  <span class="spacer"></span>
-  <div class="score-wrap">
-    <span class="pts" id="tot-pts">0</span>pts ·
-    <span class="sol" id="tot-sol">0</span>/3
+  <div class="nav-breadcrumb" id="breadcrumb"></div>
+  <div class="nav-spacer"></div>
+  <div class="nav-user">
+    <div class="nav-avatar">S</div>
+    <span id="nav-inst">...</span>
   </div>
 </div>
 
-<!-- MAIN -->
-<div id="main">
-  <!-- LEFT -->
-  <div id="left-panel"></div>
+<!-- DASHBOARD -->
+<div id="view-dashboard">
+  <div id="dash-header">
+    <div class="dh-title" id="dh-name">...</div>
+    <div class="dh-meta" id="dh-inst">...</div>
+  </div>
+  <div id="dash-body">
+    <div class="section-row"><span class="section-title">📋 Tasks</span></div>
+    <div id="lab-list"></div>
+  </div>
+</div>
 
-  <!-- CENTER -->
-  <div id="center-panel">
-    <div id="editor-bar">
-      <span class="filename" id="ed-fname">solution.py</span>
-      <button class="btn" id="btn-run" disabled>▶ Run</button>
-      <button class="btn" id="btn-test" disabled>⚡ Test</button>
-      <button class="btn" id="btn-submit" disabled>✔ Submit</button>
-    </div>
-    <div id="editor-wrap">
-      <!-- CodeMirror mounts here -->
-      <div id="editor-container">
-        <div id="cm-editor"></div>
-      </div>
-      <div id="err-banner"><div id="err-text"></div></div>
-      <div id="io-row">
-        <div class="io-pane">
-          <div class="io-label">Custom Input <span class="io-hint">← click test case</span></div>
-          <textarea id="custom-in" placeholder="Enter input line by line..."></textarea>
+<!-- EDITOR -->
+<div id="view-editor">
+  <div id="editor-inner">
+    <div id="ed-left">
+      <div class="el-header">
+        <div class="el-back" onclick="showDash()">← Back to Dashboard</div>
+        <div class="el-tags">
+          <span class="tag" id="el-diff"></span>
+          <span class="tag tag-pts" id="el-pts"></span>
         </div>
-        <div class="io-pane">
-          <div class="io-label">Output</div>
-          <div id="out-box"><div id="out-text">// Output appears here after Run</div></div>
+        <div class="el-title" id="el-title"></div>
+        <div class="el-meta" id="el-meta"></div>
+      </div>
+      <div class="el-section">
+        <div class="el-label">How to solve</div>
+        <div class="step-list" id="el-steps"></div>
+      </div>
+      <div class="el-section">
+        <div class="el-label">Input Format</div>
+        <div class="codeblock" id="el-infmt"></div>
+      </div>
+      <div class="el-section">
+        <div class="el-label">Output Format</div>
+        <div class="codeblock" id="el-outfmt"></div>
+      </div>
+      <div class="el-section">
+        <button class="hint-btn" onclick="toggleHint(this)">💡 Show Hint</button>
+        <div class="hint-box" id="el-hint"></div>
+      </div>
+    </div>
+
+    <div id="ed-center">
+      <div id="editor-bar">
+        <span class="filename" id="ed-fname">solution.py</span>
+        <button class="btn" id="btn-run" disabled>▶ Run</button>
+        <button class="btn" id="btn-test" disabled>⚡ Test</button>
+        <button class="btn" id="btn-submit" disabled>✔ Submit</button>
+      </div>
+      <div id="ed-wrap">
+        <div id="ed-container"><div id="cm-mount"></div></div>
+        <div id="err-banner"><div id="err-text"></div></div>
+        <div id="io-row">
+          <div class="io-pane">
+            <div class="io-label">Custom Input</div>
+            <textarea id="custom-in" placeholder="Enter input line by line..."></textarea>
+          </div>
+          <div class="io-pane">
+            <div class="io-label">Output</div>
+            <div id="out-box"><div id="out-text">// Output appears here after Run</div></div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- RIGHT -->
-  <div id="right-panel">
-    <div id="tc-header">
-      <span class="tc-title">Test Cases</span>
-      <span id="tc-score"></span>
-    </div>
-    <div id="tc-list"></div>
-    <div id="submit-result">
-      <div class="sr-text" id="sr-text"></div>
-      <div class="sr-pts" id="sr-pts"></div>
-      <div class="sr-sub" id="sr-sub"></div>
+    <div id="ed-right">
+      <div id="tc-header">
+        <span class="tc-title">Test Cases</span>
+        <span id="tc-score"></span>
+      </div>
+      <div id="tc-list"></div>
+      <div id="submit-result">
+        <div class="sr-text" id="sr-text"></div>
+        <div class="sr-pts" id="sr-pts"></div>
+        <div class="sr-sub" id="sr-sub"></div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- MOBILE BOTTOM TABS -->
-<div id="mobile-tabs">
-  <button class="tab-btn active" id="tab-problems" onclick="switchTab('problems')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-      <rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/>
-      <line x1="8" y1="13" x2="14" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/>
-    </svg>
-    Problems
-  </button>
-  <button class="tab-btn" id="tab-editor" onclick="switchTab('editor')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-      <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
-    </svg>
-    Editor
-  </button>
-  <button class="tab-btn" id="tab-tests" onclick="switchTab('tests')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-      <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
-    </svg>
-    Tests
-    <span class="tab-badge" id="tab-tests-badge">0</span>
-  </button>
-</div>
-
-<!-- MODAL POPUP -->
+<!-- MODAL -->
 <div id="modal-overlay">
   <div id="modal">
     <div id="modal-header">
@@ -436,428 +385,372 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
     <div id="modal-body">
       <div><div class="m-label">Input</div><div class="m-val inp" id="m-inp"></div></div>
       <div><div class="m-label">Expected Output</div><div class="m-val exp" id="m-exp"></div></div>
-      <div><div class="m-label">Your Output</div><div class="m-val none" id="m-got">Not run yet — click Run or Test first.</div></div>
+      <div><div class="m-label">Your Output</div><div class="m-val none" id="m-got">Not run yet.</div></div>
     </div>
   </div>
 </div>
 
 <script>
-// ══ PYODIDE ══════════════════════════════════
-let pyodide=null;
-async function initPyodide(){
-  const bar=$("load-bar"),txt=$("load-text");
-  bar.style.width="20%";txt.textContent="Downloading Python runtime...";
-  pyodide=await loadPyodide({indexURL:"https://cdn.jsdelivr.net/pyodide/v0.25.0/full/"});
-  bar.style.width="80%";txt.textContent="Setting up environment...";
-  await pyodide.runPythonAsync(`import sys,io,builtins`);
-  bar.style.width="100%";txt.textContent="Ready!";
-  setTimeout(()=>{
-    document.getElementById("loading-overlay").classList.add("hidden");
-    ["btn-run","btn-test","btn-submit"].forEach(id=>$(id).disabled=false);
-  },350);
+// ─── GLOBALS ───────────────────────────────────
+let DATA = null, pyodide = null, cm = null;
+let activeProblem = null;
+const state = {}; // keyed by problem.id → { code, tcResults, submitted }
+const $ = id => document.getElementById(id);
+const gs = id => { if (!state[id]) state[id] = { code:'', tcResults:null, submitted:false }; return state[id]; };
+
+// ─── LOAD JSON ─────────────────────────────────
+async function loadJSON() {
+  try {
+    const r = await fetch('problems.json');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    DATA = await r.json();
+  } catch(e) {
+    alert('Could not load problems.json.\nMake sure both files are in the same folder.\n\n' + e.message);
+  }
 }
 
-async function runPython(code,inputLines){
-  if(!pyodide)return{ok:false,error:"Python still loading."};
-  if(!code.trim())return{ok:false,error:"Editor is empty!"};
-  try{
-    pyodide.globals.set("_js_input_lines",inputLines);
+// ─── PYODIDE ───────────────────────────────────
+async function initPy() {
+  $('load-bar').style.width='20%'; $('load-txt').textContent='Downloading Python runtime...';
+  pyodide = await loadPyodide({ indexURL:'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/' });
+  $('load-bar').style.width='80%'; $('load-txt').textContent='Setting up environment...';
+  await pyodide.runPythonAsync('import sys,io,builtins');
+}
+
+async function runPy(code, inputLines) {
+  if (!pyodide) return { ok:false, error:'Python not ready.' };
+  if (!code.trim()) return { ok:false, error:'Editor is empty!' };
+  try {
+    pyodide.globals.set('_il', inputLines);
     await pyodide.runPythonAsync(`
 import sys,io,builtins
-_input_lines=list(_js_input_lines)
-_input_idx=0
-def _custom_input(prompt=""):
-    global _input_idx
-    if _input_idx<len(_input_lines):
-        v=_input_lines[_input_idx];_input_idx+=1;return str(v)
-    return ""
-builtins.input=_custom_input
-sys.stdout=io.StringIO()
-sys.stderr=io.StringIO()
+_lines=list(_il);_idx=0
+def _inp(p=""):
+  global _idx
+  if _idx<len(_lines): v=_lines[_idx];_idx+=1;return str(v)
+  return ""
+builtins.input=_inp
+sys.stdout=io.StringIO();sys.stderr=io.StringIO()
 `);
     await pyodide.runPythonAsync(code);
-    const raw=pyodide.runPython("sys.stdout.getvalue()");
-    const lines=raw.split("\n");
-    if(lines.length>0&&lines[lines.length-1]==="")lines.pop();
-    return{ok:true,lines};
-  }catch(e){
-    const parts=(e.message||String(e)).split("\n").filter(l=>l.trim());
-    return{ok:false,error:parts[parts.length-1]||String(e)};
+    const raw = pyodide.runPython('sys.stdout.getvalue()');
+    const lines = raw.split('\n');
+    if (lines.length && lines[lines.length-1]==='') lines.pop();
+    return { ok:true, lines };
+  } catch(e) {
+    const parts = (e.message||String(e)).split('\n').filter(l=>l.trim());
+    return { ok:false, error:parts[parts.length-1]||String(e) };
   }
 }
 
-// ══ PROBLEMS ═════════════════════════════════
-const PROBLEMS=[
-  {
-    id:0,title:"Team Skills Analyzer",difficulty:"easy",points:10,passPercent:75,
-    inputFmt:"Line 1: Comma-separated skills for Team A\nLine 2: Comma-separated skills for Team B",
-    outputFmt:"All skills: {skill1, skill2, ...}\nShared skills: {skill1, ...}\nOnly in A: {skill1, ...}\nOnly in B: {skill1, ...}",
-    hint:"team_a = set(input().split(\",\"))\nteam_b = set(input().split(\",\"))\n# Use |, &, - for set ops\n# sorted() to alphabetize\n# ', '.join(...) to format",
-    steps:[
-      {t:"Read both input lines and split each by comma — you'll have two lists of skills."},
-      {t:"Convert each list to a set. Sets ignore duplicates and unlock set math operations."},
-      {t:"Compute four things: union (|) for all skills, intersection (&) for shared, and difference (-) twice for each team's unique skills."},
-      {t:"Sort each result with sorted() so the output is alphabetical and consistent."},
-      {t:"Format and print each line, wrapping the sorted values in curly braces { }."},
-    ],
-    testCases:[
-      {label:"Case #1",inputs:["python,java,sql","java,sql,react"],expected:["All skills: {java, python, react, sql}","Shared skills: {java, sql}","Only in A: {python}","Only in B: {react}"]},
-      {label:"Case #2",inputs:["html,css,js","js,react,vue"],expected:["All skills: {css, html, js, react, vue}","Shared skills: {js}","Only in A: {css, html}","Only in B: {react, vue}"]},
-      {label:"Case #3",inputs:["python,django,sql,docker","python,flask,sql,aws"],expected:["All skills: {aws, django, docker, flask, python, sql}","Shared skills: {python, sql}","Only in A: {django, docker}","Only in B: {aws, flask}"]},
-      {label:"Case #4",inputs:["excel,word,powerpoint","excel,word,powerpoint"],expected:["All skills: {excel, powerpoint, word}","Shared skills: {excel, powerpoint, word}","Only in A: {}","Only in B: {}"]},
-      {label:"Case #5",inputs:["rust,go,cpp","java,kotlin,swift"],expected:["All skills: {cpp, go, java, kotlin, rust, swift}","Shared skills: {}","Only in A: {cpp, go, rust}","Only in B: {java, kotlin, swift}"]},
-    ]
-  },
-  {
-    id:1,title:"Duplicate Remover & Set Builder",difficulty:"easy",points:10,passPercent:60,
-    inputFmt:"Line 1: Comma-separated student IDs (may have duplicates)\nLine 2: A single student ID to search for",
-    outputFmt:"Unique students: <count>\nDuplicates removed: <count>\nDuplicate IDs: {id1, id2, ...}\nEnrolled: Yes / No",
-    hint:"ids = input().split(\",\")\nsearch = input().strip()\nunique = set(ids)\n# dupes_removed = len(ids) - len(unique)\n# track seen set for duplicate IDs",
-    steps:[
-      {t:"Read the first line and split by comma — keep the original list, its length matters for counting duplicates."},
-      {t:"Convert the list to a set to get unique values. Size difference between list and set = duplicates removed."},
-      {t:"Find which IDs appeared more than once by iterating through the original list while tracking what you've already seen."},
-      {t:"Read the second input as the search ID, then use 'in' on the unique set to check enrollment."},
-      {t:"Print all four output lines, sorting the duplicate IDs set before formatting."},
-    ],
-    testCases:[
-      {label:"Case #1",inputs:["S001,S002,S001,S003,S002,S004","S001"],expected:["Unique students: 4","Duplicates removed: 2","Duplicate IDs: {S001, S002}","Enrolled: Yes"]},
-      {label:"Case #2",inputs:["A1,B2,C3,A1,B2,B2","D4"],expected:["Unique students: 3","Duplicates removed: 3","Duplicate IDs: {A1, B2}","Enrolled: No"]},
-      {label:"Case #3",inputs:["X10,X20,X30,X40,X50","X30"],expected:["Unique students: 5","Duplicates removed: 0","Duplicate IDs: {}","Enrolled: Yes"]},
-      {label:"Case #4",inputs:["101,102,101,103,101,102","103"],expected:["Unique students: 3","Duplicates removed: 3","Duplicate IDs: {101, 102}","Enrolled: Yes"]},
-      {label:"Case #5",inputs:["P1,P2,P3,P1,P4,P2,P5,P3","P6"],expected:["Unique students: 5","Duplicates removed: 3","Duplicate IDs: {P1, P2, P3}","Enrolled: No"]},
-    ]
-  },
-  {
-    id:2,title:"Course Prerequisite Checker",difficulty:"medium",points:10,passPercent:75,
-    inputFmt:"Line 1: Comma-separated prerequisite courses required\nLine 2: Comma-separated courses the student completed",
-    outputFmt:"Can enroll: Yes / No\nMissing: {course1, ...}\nExtra: {course1, ...}\nCompletion: X%",
-    hint:"required  = set(input().split(\",\"))\ncompleted = set(input().split(\",\"))\nmissing = required - completed\nextra   = completed - required\n# Completion = int(len(completed & required) / len(required) * 100)",
-    steps:[
-      {t:"Read both lines and convert each to a set — one for required prerequisites, one for completed courses."},
-      {t:"Use set difference (required - completed) to find what the student is still missing."},
-      {t:"Use the reverse difference (completed - required) to find extra courses taken beyond prerequisites."},
-      {t:"If the missing set is empty the student can enroll — otherwise they cannot."},
-      {t:"Completion % = required courses the student completed ÷ total required × 100. Round down with int()."},
-      {t:"Print all four lines, sorting missing and extra sets before formatting in curly braces."},
-    ],
-    testCases:[
-      {label:"Case #1",inputs:["math,physics,cs101","math,physics,cs101,english"],expected:["Can enroll: Yes","Missing: {}","Extra: {english}","Completion: 100%"]},
-      {label:"Case #2",inputs:["math,physics,cs101,algorithms","math,cs101"],expected:["Can enroll: No","Missing: {algorithms, physics}","Extra: {}","Completion: 50%"]},
-      {label:"Case #3",inputs:["python,data_structures,math","python,math,statistics,english"],expected:["Can enroll: No","Missing: {data_structures}","Extra: {english, statistics}","Completion: 67%"]},
-      {label:"Case #4",inputs:["html,css,javascript","javascript,css,html,react,node"],expected:["Can enroll: Yes","Missing: {}","Extra: {node, react}","Completion: 100%"]},
-      {label:"Case #5",inputs:["bio101,chem101,phys101,math101","bio101,chem101"],expected:["Can enroll: No","Missing: {math101, phys101}","Extra: {}","Completion: 50%"]},
-    ]
-  }
-];
-
-// ══ STATE ════════════════════════════════════
-let cur=0;
-const userCodes=PROBLEMS.map(()=>"");
-const tcResults=PROBLEMS.map(()=>null);
-const submitted=new Set();
-const earnedPts={};
-let mobTab="problems";
-
-const $=id=>document.getElementById(id);
-const customIn=$("custom-in");
-const outText=$("out-text"),tcList=$("tc-list"),tcScore=$("tc-score");
-const errBanner=$("err-banner"),errTextEl=$("err-text");
-const submitRes=$("submit-result"),srText=$("sr-text"),srPts=$("sr-pts"),srSub=$("sr-sub");
-
-// ══ CODEMIRROR INIT ══════════════════════════
-const cmEditor = CodeMirror(document.getElementById('cm-editor'), {
-  mode: 'python',
-  theme: 'slytherin',
-  lineNumbers: true,
-  indentUnit: 4,
-  tabSize: 4,
-  indentWithTabs: false,
-  autoCloseBrackets: true,
-  matchBrackets: true,
-  lineWrapping: false,
-  autofocus: false,
-  placeholder: '# Write your Python solution here...',
-  extraKeys: {
-    "Tab": function(cm){
-      // Insert 4 spaces instead of a tab character
-      if(cm.somethingSelected()){
-        cm.indentSelection("add");
-      } else {
-        cm.replaceSelection("    ","end","*");
-      }
-    },
-    "Shift-Tab": function(cm){ cm.indentSelection("subtract"); },
-    "Ctrl-Enter": function(){ document.getElementById("btn-run").click(); },
-    "Cmd-Enter":  function(){ document.getElementById("btn-run").click(); }
-  }
-});
-
-// Sync code to userCodes on every change
-cmEditor.on("change", function(){
-  userCodes[cur] = cmEditor.getValue();
-  hideErr();
-});
-
-// ── Mobile tabs ──
-function isMobile(){return window.innerWidth<=768;}
-function switchTab(tab){
-  mobTab=tab;
-  ["left-panel","center-panel","right-panel"].forEach(id=>$(id).classList.remove("mob-active"));
-  ["tab-problems","tab-editor","tab-tests"].forEach(id=>$(id).classList.remove("active"));
-  if(tab==="problems"){$("left-panel").classList.add("mob-active");$("tab-problems").classList.add("active");}
-  else if(tab==="editor"){
-    $("center-panel").classList.add("mob-active");
-    $("tab-editor").classList.add("active");
-    // Refresh CodeMirror after it becomes visible
-    setTimeout(()=>cmEditor.refresh(), 10);
-  }
-  else if(tab==="tests"){$("right-panel").classList.add("mob-active");$("tab-tests").classList.add("active");}
-}
-function initMobileState(){
-  if(isMobile()){
-    switchTab(mobTab);
-  } else {
-    ["left-panel","center-panel","right-panel"].forEach(id=>$(id).classList.remove("mob-active"));
-    setTimeout(()=>cmEditor.refresh(), 10);
-  }
-}
-window.addEventListener("resize",initMobileState);
-
-function hideErr(){errBanner.style.display="none";errBanner.className="";}
-function showErr(msg){errBanner.style.display="block";errBanner.className="show";errTextEl.textContent="⚠ "+msg;}
-function setBusy(b){
-  ["btn-run","btn-test","btn-submit"].forEach(id=>$(id).disabled=b);
-  $("btn-run").textContent=b?"⏳ Running...":"▶ Run";
-}
-
-// ── Modal ──
-function openModal(tcIdx){
-  const tc=PROBLEMS[cur].testCases[tcIdx];
-  const res=tcResults[cur]?tcResults[cur][tcIdx]:null;
-  $("modal-title").textContent=tc.label;
-  $("m-inp").textContent=tc.inputs.join("\n");
-  $("m-exp").textContent=tc.expected.join("\n");
-  const badge=$("modal-badge"),got=$("m-got");
-  if(!res){
-    badge.className="pending";badge.textContent="Pending";
-    got.className="m-val none";got.textContent="Not run yet — click Run or Test first.";
-  }else if(res.pass){
-    badge.className="pass";badge.textContent="✓ Pass";
-    got.className="m-val ok";got.textContent=res.got||"✓ (correct)";
-  }else{
-    badge.className="fail";badge.textContent="✗ Fail";
-    got.className="m-val err";got.textContent=res.got||"(no output)";
-  }
-  customIn.value=tc.inputs.join("\n");
-  $("modal-overlay").classList.add("open");
-}
-function closeModal(){$("modal-overlay").classList.remove("open");}
-$("modal-close").addEventListener("click",closeModal);
-$("modal-overlay").addEventListener("click",e=>{if(e.target===$("modal-overlay"))closeModal();});
-
-// ── Left panel accordion ──
-function buildLeftPanel(){
-  const panel=$("left-panel");
-  panel.innerHTML="";
-  PROBLEMS.forEach((p,i)=>{
-    const res=tcResults[i],isSub=submitted.has(i);
-    const pc=res?res.filter(r=>r.pass).length:0;
-    const meets=res&&(pc/p.testCases.length)>=p.passPercent/100;
-    let st="Not attempted",sc="";
-    if(res&&!isSub){st=`Tested: ${pc}/${p.testCases.length}`;sc="attempted";}
-    if(isSub&&meets){st=`Passed (${pc}/${p.testCases.length}) ✓`;sc="solved";}
-    if(isSub&&!meets&&res){st=`Failed (${pc}/${p.testCases.length})`;sc="attempted";}
-
-    const stepsHtml=p.steps.map((s,si)=>`
-      <div class="step-item">
-        <div class="step-num">${si+1}</div>
-        <div class="step-text">${s.t}</div>
-      </div>`).join("");
-
-    const box=document.createElement("div");
-    box.className="prob-box"+(i===cur?" active":"")+(i===cur?" open":"");
-
-    box.innerHTML=`
-      <div class="prob-box-header">
-        <span class="tag tag-${p.difficulty}">${p.difficulty[0].toUpperCase()+p.difficulty.slice(1)}</span>
-        <div class="prob-box-title">${p.title}</div>
-        <span class="prob-check">${isSub?(meets?"✅":"❌"):""}</span>
-        <span class="prob-chevron">▼</span>
-      </div>
-      <div class="prob-box-body">
-        <div class="prob-meta-row ${sc}">${st} · ${p.points} pts · ${p.passPercent}% to pass</div>
-        <div class="section-label" style="margin-bottom:7px">How to solve</div>
-        <div class="step-list">${stepsHtml}</div>
-        <div class="ds"><div class="section-label">Input Format</div><div class="cb">${p.inputFmt}</div></div>
-        <div class="ds"><div class="section-label">Output Format</div><div class="cb">${p.outputFmt}</div></div>
-        <div class="ds">
-          <button class="hint-btn" onclick="toggleHint(this)">💡 Show Hint</button>
-          <div class="hint-box">${p.hint}</div>
-        </div>
-      </div>`;
-
-    box.querySelector(".prob-box-header").addEventListener("click",()=>{
-      if(i!==cur){
-        userCodes[cur]=cmEditor.getValue();
-        cur=i;
-        loadProblem();
-        if(isMobile())switchTab("editor");
-        return;
-      }
-      const isOpen=box.classList.contains("open");
-      if(isOpen){box.classList.remove("open");}
-      else{
-        document.querySelectorAll(".prob-box").forEach(b=>b.classList.remove("open"));
-        box.classList.add("open");
-      }
-    });
-
-    panel.appendChild(box);
+// ─── CODEMIRROR ────────────────────────────────
+function initCM() {
+  cm = CodeMirror($('cm-mount'), {
+    mode:'python', theme:'slytherin', lineNumbers:true,
+    indentUnit:4, tabSize:4, indentWithTabs:false,
+    autoCloseBrackets:true, matchBrackets:true,
+    placeholder:'# Write your Python solution here...',
+    extraKeys:{
+      'Tab': c => { if(c.somethingSelected()) c.indentSelection('add'); else c.replaceSelection('    ','end','*'); },
+      'Shift-Tab': c => c.indentSelection('subtract'),
+      'Ctrl-Enter': () => $('btn-run').click(),
+      'Cmd-Enter':  () => $('btn-run').click(),
+    }
   });
+  cm.on('change', () => { if(activeProblem) gs(activeProblem.id).code = cm.getValue(); hideErr(); });
 }
 
-function toggleHint(btn){
-  const box=btn.nextElementSibling;
-  const visible=box.classList.contains("visible");
-  box.classList.toggle("visible");
-  btn.textContent=visible?"💡 Show Hint":"🙈 Hide Hint";
+// ─── DASHBOARD ─────────────────────────────────
+function showDash() {
+  activeProblem = null;
+  $('view-dashboard').style.display = 'flex';
+  $('view-editor').style.display = 'none';
+  setBc(null, null);
+  renderDash();
 }
 
-// ── Load problem ──
-function loadProblem(){
-  const p=PROBLEMS[cur];
-  $("ed-fname").textContent=p.title.toLowerCase().replace(/[^a-z0-9]+/g,"_")+".py";
-  cmEditor.setValue(userCodes[cur]);
-  cmEditor.clearHistory(); // fresh undo stack per problem
-  customIn.value="";
-  outText.textContent="// Output appears here after Run";
-  outText.style.color="var(--muted2)";
+function renderDash() {
+  if (!DATA) return;
+  const c = DATA.course;
+  $('dh-name').textContent = c.name;
+  $('dh-inst').textContent = '👤 Instructor: ' + c.instructor;
+  $('nav-inst').textContent = c.instructor;
+  $('l-course').textContent = c.name;
+  const ll = $('lab-list'); ll.innerHTML = '';
+  DATA.labs.forEach(lab => ll.appendChild(makeLabCard(lab)));
+}
+
+function labStats(lab) {
+  let solved=0, subCount=0, pts=0;
+  const maxPts = lab.problems.reduce((a,p)=>a+p.points,0);
+  lab.problems.forEach(p => {
+    const s = gs(p.id);
+    if (!s.submitted) return;
+    subCount++;
+    if (s.tcResults) {
+      const pc = s.tcResults.filter(r=>r.pass).length;
+      pts += Math.round(pc / s.tcResults.length * p.points);
+      if (pc/s.tcResults.length >= p.passingPercent/100) solved++;
+    }
+  });
+  const pct = subCount>0 ? Math.round(pts/maxPts*100) : 0;
+  return { solved, subCount, pts, maxPts, pct };
+}
+
+function makeLabCard(lab) {
+  const st = labStats(lab);
+  const status = st.subCount===0 ? 'pending'
+    : st.pct >= lab.passingPercent ? 'passed' : 'failed';
+  const statusTxt = status==='passed' ? '✓ PASSED' : status==='failed' ? '✗ NOT PASSED' : 'Pending';
+  const spClass = st.pct>=80 ? 'sp-green' : st.pct>=50 ? 'sp-yellow' : st.pct>0 ? 'sp-red' : 'sp-gray';
+  const scoreDisplay = st.subCount>0 ? st.pct+'%' : '--';
+  const fillClass = st.pct>=80 ? '' : st.pct>=50 ? ' y' : st.pct>0 ? ' r' : '';
+
+  const card = document.createElement('div');
+  card.className = 'lab-card';
+  card.innerHTML = `
+    <div class="lab-hd">
+      <span class="lab-icon">📁</span>
+      <span class="lab-title">${lab.title}</span>
+      <div class="lc-right">
+        <span class="status-badge ${status}">${statusTxt}</span>
+        <div class="score-pill ${spClass}">${scoreDisplay}</div>
+        <span class="lc-chevron">▼</span>
+      </div>
+    </div>
+    <div class="lab-meta">
+      <span class="lm-item">📅 Due: ${lab.dueDate}</span>
+      <span class="lm-item">Passing: ${lab.passingPercent}%</span>
+      <span class="lm-item">${st.solved}/${lab.problems.length} solved · ${st.pts}/${st.maxPts} pts</span>
+    </div>
+    <div class="lab-prog-wrap">
+      <div class="lab-prog-label"><span>${st.solved} of ${lab.problems.length} problems solved</span><span>${st.subCount>0?st.pct+'%':'0%'}</span></div>
+      <div class="lab-prog-bar"><div class="lab-prog-fill${fillClass}" style="width:${st.subCount>0?st.pct:0}%"></div></div>
+    </div>
+    <div class="lab-probs" id="lp-${lab.id}"></div>`;
+
+  const probs = card.querySelector(`#lp-${lab.id}`);
+  lab.problems.forEach(p => probs.appendChild(makeProbRow(p, lab)));
+
+  card.querySelector('.lab-hd').addEventListener('click', () => {
+    const isOpen = card.classList.contains('open');
+    document.querySelectorAll('.lab-card').forEach(c => c.classList.remove('open'));
+    if (!isOpen) card.classList.add('open');
+  });
+
+  return card;
+}
+
+function makeProbRow(prob, lab) {
+  const s = gs(prob.id);
+  const passed = s.submitted && s.tcResults &&
+    s.tcResults.filter(r=>r.pass).length/s.tcResults.length >= prob.passingPercent/100;
+  const failed = s.submitted && !passed;
+  const diffMap = { easy:'tag-easy', medium:'tag-medium', hard:'tag-hard' };
+
+  const row = document.createElement('div');
+  row.className = 'prob-row';
+  row.innerHTML = `
+    <div class="pr-check ${passed?'done':failed?'fail':''}">${passed?'✓':failed?'✗':'○'}</div>
+    <span class="pr-name">${prob.title}</span>
+    <div class="pr-tags">
+      <span class="tag ${diffMap[prob.difficulty]||'tag-easy'}">${prob.difficulty[0].toUpperCase()+prob.difficulty.slice(1)}</span>
+      <span class="tag tag-pts">${prob.points}pts</span>
+      <span class="tag tag-pct">${prob.passingPercent}% to pass</span>
+    </div>
+    <span class="pr-status ${passed?'pass':failed?'fail':'pending'}">${passed?'Passed':failed?'Failed':'Pending'}</span>
+    <button class="pr-btn">Open →</button>`;
+  row.addEventListener('click', () => openProb(prob, lab));
+  return row;
+}
+
+// ─── EDITOR ────────────────────────────────────
+function openProb(prob, lab) {
+  activeProblem = prob;
+  const s = gs(prob.id);
+
+  $('view-dashboard').style.display = 'none';
+  $('view-editor').style.display = 'flex';
+  setBc(lab, prob);
+
+  // Left panel
+  $('ed-fname').textContent = prob.title.toLowerCase().replace(/[^a-z0-9]+/g,'_') + '.py';
+  const dm = { easy:'tag-easy', medium:'tag-medium', hard:'tag-hard' };
+  const de = $('el-diff'); de.className = 'tag ' + (dm[prob.difficulty]||'tag-easy');
+  de.textContent = prob.difficulty[0].toUpperCase()+prob.difficulty.slice(1);
+  $('el-pts').textContent = prob.points + ' pts';
+  $('el-title').textContent = prob.title;
+  $('el-meta').textContent = `${prob.passingPercent}% to pass · ${lab.title}`;
+  $('el-steps').innerHTML = prob.steps.map((st,i)=>`
+    <div class="step-item">
+      <div class="step-num">${i+1}</div>
+      <div class="step-txt">${st.text}</div>
+    </div>`).join('');
+  $('el-infmt').textContent = prob.inputFormat;
+  $('el-outfmt').textContent = prob.outputFormat;
+  $('el-hint').textContent = prob.hint;
+  $('el-hint').classList.remove('visible');
+  const hb = document.querySelector('.hint-btn');
+  if (hb) hb.textContent = '💡 Show Hint';
+
+  // CodeMirror
+  setTimeout(() => { cm.setValue(s.code||''); cm.clearHistory(); cm.refresh(); }, 20);
+
+  // Reset output
+  $('custom-in').value = '';
+  $('out-text').textContent = '// Output appears here after Run';
+  $('out-text').style.color = 'var(--muted2)';
   hideErr();
-  buildLeftPanel();
+
+  ['btn-run','btn-test','btn-submit'].forEach(id => $(id).disabled = !pyodide);
   renderTCs();
-  renderSubmit();
-  initMobileState();
-  setTimeout(()=>cmEditor.refresh(), 20);
+  renderSub();
 }
 
-// ── Test cases ──
-function renderTCs(){
-  const p=PROBLEMS[cur],results=tcResults[cur];
-  tcList.innerHTML="";
-  let pc=0;
-  p.testCases.forEach((tc,i)=>{
-    const res=results?results[i]:null;
-    if(res?.pass)pc++;
-    const lbl=res?(res.pass?"✓ Pass":"✗ Fail"):"Pending";
-    const card=document.createElement("div");
-    card.className="tc-card"+(res?(res.pass?" pass":" fail"):"");
-    card.innerHTML=`
-      <div class="tc-top">
-        <span class="tc-num">${i+1}</span>
-        <span class="tc-lbl">${tc.label}</span>
-        <span class="tc-badge">${lbl}</span>
-      </div>
-      <div class="tc-sub">Tap to view details →</div>`;
-    card.addEventListener("click",()=>openModal(i));
-    tcList.appendChild(card);
+function setBc(lab, prob) {
+  const bc = $('breadcrumb'); bc.innerHTML = '';
+  const mkCrumb = (txt, fn, active=false) => {
+    const s = document.createElement('span');
+    s.className = 'crumb' + (active ? ' active' : '');
+    s.textContent = txt;
+    if (fn) s.onclick = fn;
+    return s;
+  };
+  const sep = () => { const s=document.createElement('span'); s.className='crumb-sep'; s.textContent='/'; return s; };
+  bc.appendChild(mkCrumb('Dashboard', showDash, !lab));
+  if (lab) { bc.appendChild(sep()); bc.appendChild(mkCrumb(lab.title, prob?showDash:null, !prob)); }
+  if (prob) { bc.appendChild(sep()); bc.appendChild(mkCrumb(prob.title, null, true)); }
+}
+
+function toggleHint(btn) {
+  const b = btn.nextElementSibling;
+  b.classList.toggle('visible');
+  btn.textContent = b.classList.contains('visible') ? '🙈 Hide Hint' : '💡 Show Hint';
+}
+
+// ─── TEST CASES ────────────────────────────────
+function renderTCs() {
+  if (!activeProblem) return;
+  const p = activeProblem, s = gs(p.id), res = s.tcResults;
+  $('tc-list').innerHTML = '';
+  let pc = 0;
+  p.testCases.forEach((tc,i) => {
+    const r = res?.[i];
+    if (r?.pass) pc++;
+    const card = document.createElement('div');
+    card.className = 'tc-card' + (r?(r.pass?' pass':' fail'):'');
+    card.innerHTML = `<div class="tc-top"><span class="tc-num">${i+1}</span><span class="tc-lbl">${tc.label}</span><span class="tc-badge">${r?(r.pass?'✓ Pass':'✗ Fail'):'Pending'}</span></div><div class="tc-sub">Click to view details →</div>`;
+    card.addEventListener('click', () => openModal(i));
+    $('tc-list').appendChild(card);
   });
-  if(results){
-    tcScore.textContent=`${pc}/${p.testCases.length}`;
-    tcScore.style.color=pc===p.testCases.length?"var(--green)":pc>0?"var(--yellow)":"var(--red)";
-    const fails=results.filter(r=>!r.pass).length;
-    const badge=$("tab-tests-badge");
-    if(fails>0){badge.textContent=fails;badge.classList.add("show");}
-    else{badge.classList.remove("show");}
-  }else{
-    tcScore.textContent=`0/${p.testCases.length}`;
-    tcScore.style.color="var(--muted)";
-    $("tab-tests-badge").classList.remove("show");
-  }
+  const scEl = $('tc-score');
+  if (res) {
+    scEl.textContent = `${pc}/${p.testCases.length}`;
+    scEl.style.color = pc===p.testCases.length?'var(--green)':pc>0?'var(--yellow)':'var(--red)';
+  } else { scEl.textContent = `0/${p.testCases.length}`; scEl.style.color='var(--muted)'; }
 }
 
-function renderSubmit(){
-  if(!submitted.has(cur)||!tcResults[cur]){submitRes.className="";submitRes.style.display="none";return;}
-  const p=PROBLEMS[cur],res=tcResults[cur];
-  const pc=res.filter(r=>r.pass).length;
-  const meets=Math.round(pc/res.length*100)>=p.passPercent;
-  earnedPts[cur]=meets?p.points:0;
-  submitRes.style.display="block";submitRes.className="show";
-  srText.className="sr-text "+(meets?"ok":"no");
-  srText.textContent=meets?"✅ Passed!":"❌ Not passed";
-  srPts.textContent=`${earnedPts[cur]}/${p.points} pts — ${pc}/${res.length} cases (need ${p.passPercent}%)`;
-  srSub.textContent=meets?"Great work! Try the next problem.":"Keep trying — you can resubmit anytime.";
-  const tot=Object.values(earnedPts).reduce((a,b)=>a+b,0);
-  const sol=PROBLEMS.filter((_,i)=>{
-    if(!submitted.has(i)||!tcResults[i])return false;
-    const r=tcResults[i];
-    return(r.filter(x=>x.pass).length/r.length*100)>=PROBLEMS[i].passPercent;
-  }).length;
-  $("tot-pts").textContent=tot;
-  $("tot-sol").textContent=sol;
+function renderSub() {
+  if (!activeProblem) return;
+  const p = activeProblem, s = gs(p.id), sr = $('submit-result');
+  if (!s.submitted||!s.tcResults) { sr.className=''; sr.style.display='none'; return; }
+  const pc = s.tcResults.filter(r=>r.pass).length;
+  const meets = pc/s.tcResults.length*100 >= p.passingPercent;
+  const pts = Math.round(pc/s.tcResults.length*p.points);
+  sr.style.display='block'; sr.className='show';
+  $('sr-text').className='sr-text '+(meets?'ok':'no');
+  $('sr-text').textContent = meets?'✅ Passed!':'❌ Not passed';
+  $('sr-pts').textContent = `${pts}/${p.points} pts — ${pc}/${s.tcResults.length} cases (need ${p.passingPercent}%)`;
+  $('sr-sub').textContent = meets?'Great work! Try the next problem.':'Keep trying — you can resubmit anytime.';
 }
 
-async function execAllTCs(){
-  const p=PROBLEMS[cur],code=cmEditor.getValue();
-  if(!code.trim()){showErr("Editor is empty!");return null;}
-  const results=[];
-  for(const tc of p.testCases){
-    const r=await runPython(code,tc.inputs);
-    if(!r.ok){results.push({pass:false,got:"Error: "+r.error,expected:tc.expected.join("\n")});}
-    else{
-      const gotStr=r.lines.join("\n").trim();
-      const expStr=tc.expected.join("\n").trim();
-      results.push({pass:gotStr===expStr,got:gotStr,expected:expStr});
+async function runAllTCs() {
+  const p = activeProblem, code = cm.getValue();
+  if (!code.trim()) { showErr('Editor is empty!'); return null; }
+  const results = [];
+  for (const tc of p.testCases) {
+    const r = await runPy(code, tc.inputs);
+    if (!r.ok) results.push({ pass:false, got:'Error: '+r.error });
+    else {
+      const got = r.lines.join('\n').trim();
+      results.push({ pass: got===tc.expected.join('\n').trim(), got });
     }
   }
-  tcResults[cur]=results;
+  gs(p.id).tcResults = results;
   return results;
 }
 
-function flash(cls){const cp=$("center-panel");cp.classList.add(cls);setTimeout(()=>cp.classList.remove(cls),400);}
+// ─── MODAL ─────────────────────────────────────
+function openModal(i) {
+  const tc = activeProblem.testCases[i];
+  const res = gs(activeProblem.id).tcResults?.[i];
+  $('modal-title').textContent = tc.label;
+  $('m-inp').textContent = tc.inputs.join('\n');
+  $('m-exp').textContent = tc.expected.join('\n');
+  const [badge, got] = [$('modal-badge'), $('m-got')];
+  if (!res) { badge.className='pending'; badge.textContent='Pending'; got.className='m-val none'; got.textContent='Not run yet.'; }
+  else if (res.pass) { badge.className='pass'; badge.textContent='✓ Pass'; got.className='m-val ok'; got.textContent=res.got||'✓ (correct)'; }
+  else { badge.className='fail'; badge.textContent='✗ Fail'; got.className='m-val err'; got.textContent=res.got||'(no output)'; }
+  $('custom-in').value = tc.inputs.join('\n');
+  $('modal-overlay').classList.add('open');
+}
+$('modal-close').addEventListener('click', () => $('modal-overlay').classList.remove('open'));
+$('modal-overlay').addEventListener('click', e => { if(e.target===$('modal-overlay')) $('modal-overlay').classList.remove('open'); });
 
-// ── Buttons ──
-$("btn-run").addEventListener("click",async()=>{
-  userCodes[cur]=cmEditor.getValue();setBusy(true);hideErr();
-  const results=await execAllTCs();
-  if(!results){setBusy(false);return;}
+// ─── BUTTONS ───────────────────────────────────
+function hideErr() { $('err-banner').style.display='none'; $('err-banner').className=''; }
+function showErr(m) { $('err-banner').style.display='block'; $('err-banner').className='show'; $('err-text').textContent='⚠ '+m; }
+function setBusy(b) { ['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=b); $('btn-run').textContent=b?'⏳ Running...':'▶ Run'; }
+function flash(cls) { $('ed-center').classList.add(cls); setTimeout(()=>$('ed-center').classList.remove(cls),400); }
+
+$('btn-run').addEventListener('click', async () => {
+  setBusy(true); hideErr();
+  const res = await runAllTCs();
+  if (!res) { setBusy(false); return; }
   renderTCs();
-  const inputText=customIn.value.trim()||PROBLEMS[cur].testCases[0].inputs.join("\n");
-  customIn.value=inputText;
-  const r=await runPython(cmEditor.getValue(),inputText.split("\n"));
-  if(r.ok){
-    outText.textContent=r.lines.length?r.lines.join("\n"):"(no output — did you use print()?)";
-    outText.style.color=r.lines.length?"var(--green)":"var(--yellow)";
-  }else{
-    outText.textContent="Error: "+r.error;
-    outText.style.color="var(--red)";
-    showErr(r.error);
-  }
-  setBusy(false);flash("fg");
-  if(isMobile())switchTab("tests");
+  const inp = $('custom-in').value.trim() || activeProblem.testCases[0].inputs.join('\n');
+  $('custom-in').value = inp;
+  const r = await runPy(cm.getValue(), inp.split('\n'));
+  if (r.ok) { $('out-text').textContent=r.lines.length?r.lines.join('\n'):'(no output)'; $('out-text').style.color=r.lines.length?'var(--green)':'var(--yellow)'; }
+  else { $('out-text').textContent='Error: '+r.error; $('out-text').style.color='var(--red)'; showErr(r.error); }
+  setBusy(false); flash('fg');
 });
 
-$("btn-test").addEventListener("click",async()=>{
-  userCodes[cur]=cmEditor.getValue();setBusy(true);hideErr();
-  const results=await execAllTCs();
-  if(results){renderTCs();flash("fg");}
+$('btn-test').addEventListener('click', async () => {
+  setBusy(true); hideErr();
+  const res = await runAllTCs();
+  if (res) { renderTCs(); flash('fg'); }
   setBusy(false);
-  if(isMobile())switchTab("tests");
 });
 
-$("btn-submit").addEventListener("click",async()=>{
-  userCodes[cur]=cmEditor.getValue();setBusy(true);hideErr();
-  const results=await execAllTCs();
-  if(!results){setBusy(false);return;}
-  submitted.add(cur);
-  renderTCs();renderSubmit();buildLeftPanel();
-  setBusy(false);flash("fp");
-  if(isMobile())switchTab("tests");
+$('btn-submit').addEventListener('click', async () => {
+  setBusy(true); hideErr();
+  const res = await runAllTCs();
+  if (!res) { setBusy(false); return; }
+  gs(activeProblem.id).submitted = true;
+  renderTCs(); renderSub();
+  setBusy(false); flash('fp');
 });
 
-// ── Init ──
-loadProblem();
-initPyodide();
+// ─── BOOT ──────────────────────────────────────
+(async () => {
+  $('load-bar').style.width='10%'; $('load-txt').textContent='Loading problems.json...';
+  await loadJSON();
+  if (DATA) $('l-course').textContent = DATA.course.name;
+  $('load-bar').style.width='30%';
+
+  initCM();
+  $('load-bar').style.width='40%'; $('load-txt').textContent='Setting up editor...';
+
+  await initPy();
+  ['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=false);
+  $('load-bar').style.width='100%'; $('load-txt').textContent='Ready!';
+
+  setTimeout(() => {
+    $('loading-overlay').classList.add('hidden');
+    showDash();
+  }, 350);
+})();
 </script>
 </body>
 </html>
