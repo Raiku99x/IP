@@ -5,491 +5,235 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Slytherin Classroom — Sets in Python</title>
 <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#f5f5f0;
-  --surface:#ffffff;
-  --surface2:#f0f0eb;
-  --border:#e0e0d8;
-  --border2:#d0d0c8;
-  --text:#1a1a18;
-  --muted:#888880;
-  --muted2:#bbbbb0;
-  --green:#2a7a3b;
-  --green-light:#eaf5ec;
-  --green-mid:#c8e6cc;
-  --green-bd:#2a7a3b;
-  --red:#c0392b;
-  --red-light:#fdf0ee;
-  --red-mid:#f5c6c2;
-  --yellow:#b8860b;
-  --yellow-light:#fdf8e8;
-  --accent:#2a7a3b;
-  --purple:#5a3e8a;
-  --easy:#2a7a3b;
-  --medium:#b8860b;
-  --code-bg:#fafaf7;
-  --shadow:0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
-  --shadow-md:0 4px 12px rgba(0,0,0,0.08);
+  --bg:#f4f4f0;--surface:#fff;--surface2:#f0f0ec;
+  --border:#e2e2da;--border2:#d0d0c6;
+  --text:#181814;--muted:#82827a;--muted2:#bbbbb0;
+  --green:#1e6e32;--green-light:#eaf4ec;--green-mid:#b8ddbf;
+  --red:#b83232;--red-light:#fdf0f0;--red-mid:#f0c0c0;
+  --yellow:#9a6e00;--yellow-light:#fdf6e8;
+  --purple:#5a3e8a;--code-bg:#f8f8f4;
+  --shadow:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.05);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.13),0 2px 8px rgba(0,0,0,.08);
 }
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
 
-body{
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-}
-
-/* ── LOADING ── */
-#loading-overlay{
-  position:fixed;inset:0;
-  background:#f5f5f0;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  z-index:999;gap:0;
-}
+/* LOADING */
+#loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;}
 #loading-overlay.hidden{display:none;}
+@keyframes sway{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
+.l-snake{animation:sway 2s ease-in-out infinite;margin-bottom:18px;}
+.l-title{font-weight:700;font-size:22px;color:var(--green);letter-spacing:-.03em;margin-bottom:4px;}
+.l-sub{font-size:13px;color:var(--muted);margin-bottom:22px;}
+.l-bar-wrap{width:180px;height:3px;background:var(--border);border-radius:99px;overflow:hidden;}
+.l-bar{height:100%;width:0%;background:var(--green);border-radius:99px;transition:width .4s ease;}
+.l-status{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:10px;}
 
-.loading-snake{
-  width:72px;height:72px;
-  margin-bottom:18px;
-}
-
-.loading-title{
-  font-family:'DM Sans',sans-serif;
-  font-weight:700;font-size:22px;
-  color:var(--green);
-  letter-spacing:-.02em;
-  margin-bottom:6px;
-}
-.loading-sub{
-  font-size:13px;color:var(--muted);
-  margin-bottom:24px;
-}
-.load-bar-wrap{
-  width:200px;height:3px;
-  background:var(--border);
-  border-radius:99px;overflow:hidden;
-}
-.load-bar{
-  height:100%;width:0%;
-  background:var(--green);
-  border-radius:99px;
-  transition:width .4s ease;
-}
-.load-status{
-  font-family:'DM Mono',monospace;
-  font-size:11px;color:var(--muted);
-  margin-top:10px;
-}
-
-/* ── TOPBAR ── */
-#topbar{
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  height:50px;
-  display:flex;align-items:center;
-  padding:0 20px;gap:12px;
-  flex-shrink:0;
-  box-shadow:var(--shadow);
-}
-.logo{
-  display:flex;align-items:center;gap:8px;
-  font-weight:700;font-size:16px;
-  color:var(--green);letter-spacing:-.02em;
-}
-.logo svg{width:24px;height:24px;}
-.top-badge{
-  font-size:11px;padding:3px 10px;
-  border-radius:99px;font-weight:600;
-  background:var(--green-light);
-  color:var(--green);
-  border:1px solid var(--green-mid);
-  font-family:'DM Mono',monospace;
-}
+/* TOPBAR */
+#topbar{background:var(--surface);border-bottom:1px solid var(--border);height:50px;display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;box-shadow:var(--shadow);}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;color:var(--green);letter-spacing:-.02em;}
+.top-badge{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;background:var(--green-light);color:var(--green);border:1px solid var(--green-mid);font-family:'DM Mono',monospace;}
 .spacer{flex:1;}
-.score-wrap{
-  font-family:'DM Mono',monospace;
-  font-size:12px;color:var(--muted);
-  display:flex;gap:6px;align-items:center;
-}
-.pts{color:var(--yellow);font-weight:700;}
-.sol{color:var(--green);font-weight:700;}
-.score-sep{color:var(--border2);}
+.score-wrap{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);display:flex;gap:5px;align-items:center;}
+.pts{color:var(--yellow);font-weight:700;}.sol{color:var(--green);font-weight:700;}
 
-/* ── MAIN GRID ── */
-#main{display:grid;grid-template-columns:264px 1fr 270px;flex:1;overflow:hidden;}
+/* MAIN GRID */
+#main{display:grid;grid-template-columns:272px 1fr 272px;flex:1;overflow:hidden;}
 
-/* ── LEFT PANEL ── */
-#left-panel{
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;
-  overflow:hidden;background:var(--surface);
-}
-#problem-list{flex-shrink:0;border-bottom:1px solid var(--border);}
+/* LEFT PANEL */
+#left-panel{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;background:var(--surface);}
 
-.prob-item{
-  display:flex;align-items:flex-start;gap:10px;
-  padding:12px 16px;cursor:pointer;
-  transition:background .1s;
-  border-left:3px solid transparent;
-  border-bottom:1px solid var(--border);
-}
-.prob-item:last-child{border-bottom:none;}
-.prob-item:hover{background:var(--surface2);}
-.prob-item.active{background:var(--green-light);border-left-color:var(--green);}
-.prob-left{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0;}
-.prob-title{font-size:13px;font-weight:600;line-height:1.3;color:var(--text);}
-.prob-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+/* Accordion */
+.prob-box{border-bottom:1px solid var(--border);flex-shrink:0;}
+.prob-box-header{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;user-select:none;transition:background .1s;}
+.prob-box-header:hover{background:var(--surface2);}
+.prob-box.active .prob-box-header{background:var(--green-light);}
+.prob-chevron{font-size:9px;color:var(--muted2);transition:transform .2s;flex-shrink:0;margin-left:auto;}
+.prob-box.open .prob-chevron{transform:rotate(180deg);}
+.prob-box-title{font-size:12px;font-weight:600;flex:1;line-height:1.3;}
+.prob-box.active .prob-box-title{color:var(--green);}
+.tag{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;font-family:'DM Mono',monospace;}
+.tag-easy{background:var(--green-light);color:var(--green);border:1px solid var(--green-mid);}
+.tag-medium{background:var(--yellow-light);color:var(--yellow);border:1px solid #e8d090;}
+.prob-check{font-size:12px;flex-shrink:0;}
 
-.tag{
-  font-size:10px;padding:2px 7px;
-  border-radius:4px;font-weight:700;
-  font-family:'DM Mono',monospace;
-}
-.tag-easy{background:var(--green-light);color:var(--easy);border:1px solid var(--green-mid);}
-.tag-medium{background:var(--yellow-light);color:var(--medium);border:1px solid #e8d48a;}
-.tag-pts{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
-.tag-pass{color:var(--muted2);font-size:10px;}
+.prob-box-body{display:none;padding:12px 14px 16px;border-top:1px solid var(--border);background:var(--surface);}
+.prob-box.open .prob-box-body{display:block;}
 
-.prob-status{font-size:11px;color:var(--muted);margin-top:2px;}
-.prob-status.attempted{color:var(--yellow);}
-.prob-status.solved{color:var(--green);}
-.prob-check{font-size:15px;flex-shrink:0;margin-top:2px;}
+.prob-meta-row{font-size:11px;color:var(--muted);margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.prob-meta-row.solved{color:var(--green);}
+.prob-meta-row.attempted{color:var(--yellow);}
 
-#desc-panel{flex:1;overflow-y:auto;padding:16px;}
-.ds{margin-bottom:16px;}
-.ds h4{
-  font-size:10px;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.1em;
-  margin-bottom:6px;font-family:'DM Mono',monospace;
-}
-.ds p{font-size:12px;line-height:1.8;color:#555550;}
+.section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:7px;}
+.step-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.step-item{display:flex;gap:9px;align-items:flex-start;}
+.step-num{width:20px;height:20px;border-radius:50%;background:var(--green-light);color:var(--green);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--green-mid);font-family:'DM Mono',monospace;margin-top:1px;}
+.step-text{font-size:12px;line-height:1.65;color:#44443e;}
 
-.cb{
-  background:var(--code-bg);
-  border:1px solid var(--border);
-  border-radius:6px;padding:10px 12px;
-  font-family:'DM Mono',monospace;
-  font-size:11px;color:#2a5a8a;
-  white-space:pre-wrap;line-height:1.7;
-}
-.hb{
-  background:var(--yellow-light);
-  border:1px solid #e8d48a;
-  border-left:3px solid var(--yellow);
-  border-radius:6px;padding:10px 12px;
-  font-family:'DM Mono',monospace;
-  font-size:11px;color:#7a5a00;
-  white-space:pre-wrap;line-height:1.7;
-}
-.topic-pill{
-  display:inline-flex;align-items:center;gap:5px;
-  font-size:11px;padding:4px 10px;
-  border-radius:99px;
-  border:1px solid var(--green-mid);
-  background:var(--green-light);
-  color:var(--green);
-  font-family:'DM Mono',monospace;
-  margin-bottom:12px;font-weight:500;
-}
+.ds{margin-bottom:12px;}
+.cb{background:var(--code-bg);border:1px solid var(--border);border-radius:5px;padding:8px 10px;font-family:'DM Mono',monospace;font-size:11px;color:#2a5a8a;white-space:pre-wrap;line-height:1.65;}
+.hb{background:var(--yellow-light);border:1px solid #e8d090;border-left:3px solid var(--yellow);border-radius:5px;padding:8px 10px;font-family:'DM Mono',monospace;font-size:11px;color:#7a5500;white-space:pre-wrap;line-height:1.65;}
 
-/* ── CENTER PANEL ── */
-#center-panel{
-  display:flex;flex-direction:column;
-  overflow:hidden;
-  background:var(--code-bg);
-  border-right:1px solid var(--border);
-}
-#editor-bar{
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;
-  padding:0 14px;height:44px;gap:8px;flex-shrink:0;
-}
-.filename{
-  font-family:'DM Mono',monospace;
-  font-size:11px;color:var(--muted);flex:1;
-}
-
-.btn{
-  font-family:'DM Mono',monospace;
-  font-size:11px;font-weight:500;
-  padding:6px 14px;border-radius:6px;
-  border:none;cursor:pointer;
-  transition:all .12s;letter-spacing:.01em;
-  box-shadow:var(--shadow);
-}
+/* CENTER */
+#center-panel{display:flex;flex-direction:column;overflow:hidden;background:var(--code-bg);border-right:1px solid var(--border);}
+#editor-bar{background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;height:46px;gap:8px;flex-shrink:0;}
+.filename{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);flex:1;}
+.btn{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;padding:6px 14px;border-radius:6px;border:none;cursor:pointer;transition:all .12s;box-shadow:var(--shadow);}
 .btn:active{transform:scale(.96);}
 .btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;}
-
 #btn-run{background:var(--green);color:#fff;}
-#btn-run:hover:not(:disabled){background:#226830;}
+#btn-run:hover:not(:disabled){background:#186028;}
 #btn-test{background:var(--surface);color:var(--text);border:1px solid var(--border2);}
 #btn-test:hover:not(:disabled){background:var(--surface2);}
 #btn-submit{background:var(--purple);color:#fff;}
 #btn-submit:hover:not(:disabled){background:#4a2e7a;}
 
-/* ── EDITOR ── */
 #editor-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
-#editor-container{flex:1;display:flex;overflow:hidden;background:var(--code-bg);}
-
-#line-nums{
-  padding:14px 10px 14px 0;
-  text-align:right;
-  color:var(--muted2);
-  font-family:'DM Mono',monospace;
-  font-size:13px;line-height:21.45px;
-  background:var(--code-bg);
-  border-right:1px solid var(--border);
-  width:48px;overflow:hidden;
-  flex-shrink:0;user-select:none;
-}
-#code-editor{
-  flex:1;background:transparent;
-  color:var(--text);
-  font-family:'DM Mono',monospace;
-  font-size:13px;line-height:21.45px;
-  border:none;outline:none;resize:none;
-  padding:14px;tab-size:4;
-  caret-color:var(--green);
-  overflow:auto;white-space:pre;
-}
+#editor-container{flex:1;display:flex;overflow:hidden;}
+#line-nums{padding:14px 10px 14px 0;text-align:right;color:var(--muted2);font-family:'DM Mono',monospace;font-size:13px;line-height:21.45px;background:var(--code-bg);border-right:1px solid var(--border);width:48px;overflow:hidden;flex-shrink:0;user-select:none;}
+#code-editor{flex:1;background:transparent;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;line-height:21.45px;border:none;outline:none;resize:none;padding:14px;tab-size:4;caret-color:var(--green);overflow:auto;white-space:pre;}
 #code-editor::placeholder{color:var(--muted2);font-style:italic;}
-#code-editor::selection{background:#c8e6cc;}
+#code-editor::selection{background:#c8dfc8;}
 
-/* ── ERROR ── */
 #err-banner{display:none;background:var(--red-light);border-top:1px solid var(--red-mid);padding:6px 14px;flex-shrink:0;}
 #err-banner.show{display:block;}
 #err-text{font-family:'DM Mono',monospace;font-size:11px;color:var(--red);white-space:pre-wrap;}
 
-/* ── IO ROW ── */
-#io-row{
-  display:grid;grid-template-columns:1fr 1fr;
-  border-top:1px solid var(--border);
-  flex-shrink:0;background:var(--surface);height:120px;
-}
+#io-row{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border);flex-shrink:0;background:var(--surface);height:120px;}
 .io-pane{display:flex;flex-direction:column;padding:8px 12px;overflow:hidden;}
 .io-pane:first-child{border-right:1px solid var(--border);}
-.io-label{
-  font-family:'DM Mono',monospace;
-  font-size:10px;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.08em;
-  margin-bottom:5px;flex-shrink:0;
-  display:flex;justify-content:space-between;align-items:center;
-}
+.io-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;flex-shrink:0;display:flex;justify-content:space-between;align-items:center;}
 .io-hint{font-size:9px;color:var(--muted2);text-transform:none;letter-spacing:0;}
-
-#custom-in{
-  flex:1;background:var(--code-bg);
-  border:1px solid var(--border);border-radius:5px;
-  color:var(--text);
-  font-family:'DM Mono',monospace;font-size:12px;
-  padding:5px 9px;outline:none;resize:none;line-height:1.5;
-  transition:border-color .15s;
-}
+#custom-in{flex:1;background:var(--code-bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:5px 9px;outline:none;resize:none;line-height:1.5;transition:border-color .15s;}
 #custom-in:focus{border-color:var(--green);}
 #custom-in::placeholder{color:var(--muted2);}
+#out-box{flex:1;background:var(--code-bg);border:1px solid var(--border);border-radius:5px;padding:5px 9px;overflow-y:auto;}
+#out-text{font-family:'DM Mono',monospace;font-size:12px;white-space:pre-wrap;line-height:1.5;color:var(--muted2);}
 
-#out-box{
-  flex:1;background:var(--code-bg);
-  border:1px solid var(--border);border-radius:5px;
-  padding:5px 9px;overflow-y:auto;
-}
-#out-text{
-  font-family:'DM Mono',monospace;
-  font-size:12px;white-space:pre-wrap;
-  line-height:1.5;color:var(--muted2);
-}
-
-/* ── RIGHT PANEL ── */
-#right-panel{
-  display:flex;flex-direction:column;
-  overflow:hidden;background:var(--surface);
-}
-#tc-header{
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  height:44px;display:flex;align-items:center;
-  padding:0 16px;flex-shrink:0;
-}
-#tc-header .tc-title{
-  font-size:11px;font-weight:700;
-  text-transform:uppercase;letter-spacing:.08em;
-  color:var(--muted);
-}
-#tc-score{
-  margin-left:auto;
-  font-family:'DM Mono',monospace;
-  font-size:13px;font-weight:700;
-}
-#tc-list{
-  flex:1;overflow-y:auto;
-  padding:10px;
-  display:flex;flex-direction:column;gap:8px;
-  background:var(--bg);
-}
-
-.tc-card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:8px;overflow:hidden;
-  transition:border-color .15s;cursor:pointer;
-  box-shadow:var(--shadow);
-}
-.tc-card.pass{border-color:var(--green-bd);background:var(--green-light);}
-.tc-card.fail{border-color:#e0a09a;background:var(--red-light);}
-
+/* RIGHT */
+#right-panel{display:flex;flex-direction:column;overflow:hidden;background:var(--surface);}
+#tc-header{background:var(--surface);border-bottom:1px solid var(--border);height:46px;display:flex;align-items:center;padding:0 16px;flex-shrink:0;}
+#tc-header .tc-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+#tc-score{margin-left:auto;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;}
+#tc-list{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:7px;background:var(--bg);}
+.tc-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;box-shadow:var(--shadow);transition:border-color .12s,transform .1s,box-shadow .1s;}
+.tc-card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.09);}
+.tc-card.pass{border-color:var(--green-mid);background:var(--green-light);}
+.tc-card.fail{border-color:var(--red-mid);background:var(--red-light);}
 .tc-top{display:flex;align-items:center;gap:8px;padding:10px 12px;}
-.tc-num{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);width:18px;}
+.tc-num{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);width:16px;}
 .tc-lbl{font-size:12px;font-weight:600;flex:1;}
 .tc-card.pass .tc-lbl{color:var(--green);}
 .tc-card.fail .tc-lbl{color:var(--red);}
 .tc-card:not(.pass):not(.fail) .tc-lbl{color:var(--muted);}
-
-.tc-badge{
-  font-size:10px;font-family:'DM Mono',monospace;
-  padding:2px 8px;border-radius:4px;
-}
+.tc-badge{font-size:10px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:4px;}
 .tc-card.pass .tc-badge{background:var(--green-mid);color:var(--green);}
 .tc-card.fail .tc-badge{background:var(--red-mid);color:var(--red);}
 .tc-card:not(.pass):not(.fail) .tc-badge{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
+.tc-sub{font-size:10px;color:var(--muted2);padding:0 12px 8px;font-family:'DM Mono',monospace;}
 
-.tc-body{display:none;padding:0 12px 10px;border-top:1px solid var(--border);}
-.tc-body.open{display:block;}
-.tc-row{margin-top:8px;}
-.tc-row-lbl{
-  font-size:10px;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.06em;
-  font-family:'DM Mono',monospace;margin-bottom:3px;
-}
-.tc-val{
-  font-family:'DM Mono',monospace;font-size:11px;
-  background:var(--code-bg);border:1px solid var(--border);
-  border-radius:4px;padding:5px 8px;white-space:pre-wrap;line-height:1.5;
-}
-.tc-val.inp{color:var(--muted);}
-.tc-val.exp{color:#2a5a8a;}
-.tc-val.got-ok{color:var(--green);}
-.tc-val.got-err{color:var(--red);}
-
-/* ── SUBMIT RESULT ── */
-#submit-result{
-  display:none;background:var(--surface);
-  border-top:1px solid var(--border);
-  padding:14px 16px;flex-shrink:0;text-align:center;
-}
+#submit-result{display:none;background:var(--surface);border-top:1px solid var(--border);padding:14px 16px;flex-shrink:0;text-align:center;}
 #submit-result.show{display:block;}
 .sr-text{font-size:15px;font-weight:700;}
-.sr-text.ok{color:var(--green);}
-.sr-text.no{color:var(--red);}
+.sr-text.ok{color:var(--green);}.sr-text.no{color:var(--red);}
 .sr-pts{font-size:12px;color:var(--yellow);margin-top:4px;font-family:'DM Mono',monospace;}
 .sr-sub{font-size:11px;color:var(--muted);margin-top:3px;}
 
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:5px;height:5px;}
+/* MODAL */
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.32);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+#modal-overlay.open{display:flex;}
+#modal{background:var(--surface);border-radius:12px;box-shadow:var(--shadow-lg);width:480px;max-width:92vw;max-height:82vh;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--border);animation:min .18s ease;}
+@keyframes min{from{opacity:0;transform:scale(.95) translateY(8px);}to{opacity:1;transform:none;}}
+#modal-header{display:flex;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border);flex-shrink:0;gap:10px;}
+#modal-title{font-size:14px;font-weight:700;flex:1;}
+#modal-badge{font-family:'DM Mono',monospace;font-size:11px;padding:3px 10px;border-radius:5px;}
+#modal-badge.pass{background:var(--green-mid);color:var(--green);}
+#modal-badge.fail{background:var(--red-mid);color:var(--red);}
+#modal-badge.pending{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
+#modal-close{width:28px;height:28px;border-radius:6px;border:none;background:var(--surface2);color:var(--muted);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .1s;flex-shrink:0;}
+#modal-close:hover{background:var(--border);}
+#modal-body{overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:14px;}
+.m-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px;}
+.m-val{font-family:'DM Mono',monospace;font-size:12px;background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:9px 12px;white-space:pre-wrap;line-height:1.65;}
+.m-val.inp{color:var(--muted);}
+.m-val.exp{color:#2a5a8a;}
+.m-val.ok{color:var(--green);border-color:var(--green-mid);background:var(--green-light);}
+.m-val.err{color:var(--red);border-color:var(--red-mid);background:var(--red-light);}
+.m-val.none{color:var(--muted2);font-style:italic;}
+
+::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px;}
 
-/* ── ANIMATIONS ── */
 @keyframes spin{to{transform:rotate(360deg);}}
-.spinner{
-  width:40px;height:40px;
-  border:3px solid var(--green-mid);
-  border-top-color:var(--green);
-  border-radius:50%;
-  animation:spin .8s linear infinite;
-  margin-bottom:4px;
-}
-@keyframes pulse-green{0%,100%{box-shadow:none;}50%{box-shadow:0 0 0 3px var(--green-mid);}}
-@keyframes pulse-purple{0%,100%{box-shadow:none;}50%{box-shadow:0 0 0 3px #d0c0f0;}}
-.fg{animation:pulse-green .4s ease;}
-.fp{animation:pulse-purple .4s ease;}
-
-/* Snake wiggle on loading */
-@keyframes wiggle{
-  0%,100%{transform:rotate(-6deg);}
-  50%{transform:rotate(6deg);}
-}
-.loading-snake{animation:wiggle 1.2s ease-in-out infinite;}
+.spinner{width:36px;height:36px;border:3px solid var(--green-mid);border-top-color:var(--green);border-radius:50%;animation:spin .75s linear infinite;margin-bottom:6px;}
+@keyframes pg{0%,100%{box-shadow:none;}50%{box-shadow:0 0 0 3px var(--green-mid);}}
+@keyframes pp{0%,100%{box-shadow:none;}50%{box-shadow:0 0 0 3px #d0c0f0;}}
+.fg{animation:pg .4s ease;}.fp{animation:pp .4s ease;}
 </style>
 </head>
 <body>
 
-<!-- LOADING OVERLAY -->
+<!-- LOADING -->
 <div id="loading-overlay">
-  <!-- SVG Snake Icon -->
-  <svg class="loading-snake" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" width="72" height="72">
-    <!-- Body -->
-    <path d="M14 58 C14 58, 10 44, 20 36 C30 28, 44 34, 50 26 C56 18, 52 8, 44 6"
-          stroke="#2a7a3b" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-    <!-- Head -->
-    <ellipse cx="44" cy="5" rx="7" ry="6" fill="#2a7a3b"/>
-    <!-- Eye -->
-    <circle cx="47" cy="3.5" r="1.5" fill="white"/>
-    <circle cx="47.5" cy="3.5" r=".7" fill="#1a1a18"/>
+  <svg class="l-snake" width="88" height="88" viewBox="0 0 88 88" fill="none">
+    <!-- Coiled body -->
+    <ellipse cx="44" cy="58" rx="24" ry="15" stroke="#1e6e32" stroke-width="7.5" stroke-linecap="round" fill="none"/>
+    <path d="M68 58 C75 48, 73 34, 62 29" stroke="#1e6e32" stroke-width="7.5" stroke-linecap="round" fill="none"/>
+    <path d="M62 29 C59 22, 55 17, 55 12" stroke="#1e6e32" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <!-- Head (forward-facing) -->
+    <ellipse cx="55" cy="10" rx="11" ry="9" fill="#1e6e32"/>
+    <ellipse cx="55" cy="12.5" rx="7" ry="5" fill="#186028"/>
+    <!-- Eyes -->
+    <circle cx="49.5" cy="7.5" r="3.2" fill="#f4f4f0"/>
+    <circle cx="50.4" cy="8.2" r="1.6" fill="#060e06"/>
+    <circle cx="49.8" cy="7.5" r=".6" fill="white"/>
+    <circle cx="60.5" cy="7.5" r="3.2" fill="#f4f4f0"/>
+    <circle cx="61.4" cy="8.2" r="1.6" fill="#060e06"/>
+    <circle cx="60.8" cy="7.5" r=".6" fill="white"/>
+    <!-- Nostrils -->
+    <circle cx="53" cy="12" r=".9" fill="#0f3d1a"/>
+    <circle cx="57" cy="12" r=".9" fill="#0f3d1a"/>
     <!-- Tongue -->
-    <path d="M38 6 L34 8 M34 8 L32 6 M34 8 L32 10" stroke="#c0392b" stroke-width="1.2" stroke-linecap="round"/>
-    <!-- Tail tip -->
-    <path d="M14 58 C12 62, 10 66, 14 68" stroke="#2a7a3b" stroke-width="6" stroke-linecap="round" fill="none"/>
-    <!-- Scale dots -->
-    <circle cx="22" cy="46" r="2" fill="#226830" opacity=".5"/>
-    <circle cx="32" cy="38" r="2" fill="#226830" opacity=".5"/>
-    <circle cx="43" cy="32" r="2" fill="#226830" opacity=".5"/>
-    <circle cx="48" cy="20" r="2" fill="#226830" opacity=".5"/>
+    <path d="M55 18 L55 24 M55 24 L51.5 28 M55 24 L58.5 28" stroke="#b83232" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Scales -->
+    <path d="M32 56 Q37 52 42 56 Q47 60 52 56" stroke="#186028" stroke-width="1.2" fill="none" opacity=".45"/>
+    <path d="M25 61 Q30 57 35 61 Q40 65 45 61" stroke="#186028" stroke-width="1.2" fill="none" opacity=".35"/>
   </svg>
-
-  <div class="loading-title">Slytherin Classroom</div>
-  <div class="loading-sub">Sets in Python</div>
-  <div class="load-bar-wrap">
-    <div class="load-bar" id="load-bar"></div>
-  </div>
-  <div class="load-status" id="load-text">Loading Python runtime...</div>
+  <div class="l-title">Slytherin Classroom</div>
+  <div class="l-sub">Sets in Python</div>
+  <div class="l-bar-wrap"><div class="l-bar" id="load-bar"></div></div>
+  <div class="l-status" id="load-text">Loading Python runtime...</div>
 </div>
 
 <!-- TOPBAR -->
 <div id="topbar">
   <div class="logo">
-    <!-- Small snake SVG for topbar -->
-    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6 24 C6 24, 4 18, 10 14 C16 10, 22 14, 24 10 C26 6, 22 2, 18 2"
-            stroke="#2a7a3b" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-      <ellipse cx="18" cy="1.8" rx="3" ry="2.5" fill="#2a7a3b"/>
-      <circle cx="19.5" cy="1" r=".7" fill="white"/>
-      <path d="M15 2.5 L13 3.5 M13 3.5 L12 2.5 M13 3.5 L12 4.5" stroke="#c0392b" stroke-width=".7" stroke-linecap="round"/>
-      <path d="M6 24 C5 26, 4 28, 6 29" stroke="#2a7a3b" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <svg width="26" height="26" viewBox="0 0 88 88" fill="none">
+      <ellipse cx="44" cy="58" rx="24" ry="15" stroke="#1e6e32" stroke-width="7.5" stroke-linecap="round" fill="none"/>
+      <path d="M68 58 C75 48, 73 34, 62 29" stroke="#1e6e32" stroke-width="7.5" stroke-linecap="round" fill="none"/>
+      <path d="M62 29 C59 22, 55 17, 55 12" stroke="#1e6e32" stroke-width="7" stroke-linecap="round" fill="none"/>
+      <ellipse cx="55" cy="10" rx="11" ry="9" fill="#1e6e32"/>
+      <ellipse cx="55" cy="12.5" rx="7" ry="5" fill="#186028"/>
+      <circle cx="49.5" cy="7.5" r="3.2" fill="#f4f4f0"/>
+      <circle cx="50.4" cy="8.2" r="1.6" fill="#060e06"/>
+      <circle cx="60.5" cy="7.5" r="3.2" fill="#f4f4f0"/>
+      <circle cx="61.4" cy="8.2" r="1.6" fill="#060e06"/>
+      <path d="M55 18 L55 24 M55 24 L51.5 28 M55 24 L58.5 28" stroke="#b83232" stroke-width="1.5" stroke-linecap="round"/>
     </svg>
     Slytherin Classroom
   </div>
   <span class="top-badge">Sets in Python</span>
   <span class="spacer"></span>
-  <div class="score-wrap">
-    Score: <span class="pts" id="tot-pts">0</span> pts
-    <span class="score-sep">·</span>
-    Solved: <span class="sol" id="tot-sol">0</span>/3
-  </div>
+  <div class="score-wrap">Score: <span class="pts" id="tot-pts">0</span> pts · Solved: <span class="sol" id="tot-sol">0</span>/3</div>
 </div>
 
-<!-- MAIN -->
 <div id="main">
-  <!-- LEFT -->
-  <div id="left-panel">
-    <div id="problem-list"></div>
-    <div id="desc-panel">
-      <div class="topic-pill">🔷 <span id="d-topic"></span></div>
-      <div class="ds"><h4>Problem</h4><p id="d-desc"></p></div>
-      <div class="ds"><h4>Input Format</h4><div class="cb" id="d-in"></div></div>
-      <div class="ds"><h4>Output Format</h4><div class="cb" id="d-out"></div></div>
-      <div class="ds"><h4>💡 Hint</h4><div class="hb" id="d-hint"></div></div>
-    </div>
-  </div>
+  <div id="left-panel"></div>
 
-  <!-- CENTER -->
   <div id="center-panel">
     <div id="editor-bar">
       <span class="filename" id="ed-fname">solution.py</span>
@@ -506,7 +250,7 @@ body{
       <div id="err-banner"><div id="err-text"></div></div>
       <div id="io-row">
         <div class="io-pane">
-          <div class="io-label">Custom Input <span class="io-hint">← click a test case to load</span></div>
+          <div class="io-label">Custom Input <span class="io-hint">← click a test case</span></div>
           <textarea id="custom-in" placeholder="Enter input line by line..."></textarea>
         </div>
         <div class="io-pane">
@@ -517,7 +261,6 @@ body{
     </div>
   </div>
 
-  <!-- RIGHT -->
   <div id="right-panel">
     <div id="tc-header">
       <span class="tc-title">Test Cases</span>
@@ -532,83 +275,81 @@ body{
   </div>
 </div>
 
+<!-- MODAL -->
+<div id="modal-overlay">
+  <div id="modal">
+    <div id="modal-header">
+      <div id="modal-title">Case #1</div>
+      <div id="modal-badge" class="pending">Pending</div>
+      <button id="modal-close">✕</button>
+    </div>
+    <div id="modal-body">
+      <div><div class="m-label">Input</div><div class="m-val inp" id="m-inp"></div></div>
+      <div><div class="m-label">Expected Output</div><div class="m-val exp" id="m-exp"></div></div>
+      <div><div class="m-label">Your Output</div><div class="m-val none" id="m-got">Not run yet — click Run or Test first.</div></div>
+    </div>
+  </div>
+</div>
+
 <script>
-// ═══════════════════════════════════════════════════════════════════
-//  PYODIDE — Real CPython in the browser
-// ═══════════════════════════════════════════════════════════════════
+// ══ PYODIDE ══════════════════════════════════
 let pyodide = null;
-
 async function initPyodide() {
-  const bar = document.getElementById("load-bar");
-  const txt = document.getElementById("load-text");
-
-  bar.style.width = "20%";
-  txt.textContent = "Downloading Python runtime...";
-
-  pyodide = await loadPyodide({
-    indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.0/full/",
-  });
-
-  bar.style.width = "80%";
-  txt.textContent = "Setting up environment...";
-
-  await pyodide.runPythonAsync(`import sys, io, builtins`);
-
-  bar.style.width = "100%";
-  txt.textContent = "Ready!";
-
-  setTimeout(() => {
+  const bar=$("load-bar"), txt=$("load-text");
+  bar.style.width="20%"; txt.textContent="Downloading Python runtime...";
+  pyodide = await loadPyodide({indexURL:"https://cdn.jsdelivr.net/pyodide/v0.25.0/full/"});
+  bar.style.width="80%"; txt.textContent="Setting up environment...";
+  await pyodide.runPythonAsync(`import sys,io,builtins`);
+  bar.style.width="100%"; txt.textContent="Ready!";
+  setTimeout(()=>{
     document.getElementById("loading-overlay").classList.add("hidden");
-    document.getElementById("btn-run").disabled = false;
-    document.getElementById("btn-test").disabled = false;
-    document.getElementById("btn-submit").disabled = false;
-  }, 350);
+    ["btn-run","btn-test","btn-submit"].forEach(id=>$(id).disabled=false);
+  },350);
 }
 
 async function runPython(code, inputLines) {
-  if (!pyodide) return { ok: false, error: "Python is still loading, please wait." };
-  if (!code.trim()) return { ok: false, error: "Editor is empty! Write your solution first." };
-
+  if(!pyodide) return {ok:false,error:"Python still loading."};
+  if(!code.trim()) return {ok:false,error:"Editor is empty!"};
   try {
     pyodide.globals.set("_js_input_lines", inputLines);
-
     await pyodide.runPythonAsync(`
-import sys, io, builtins
-_input_lines = list(_js_input_lines)
-_input_idx = 0
+import sys,io,builtins
+_input_lines=list(_js_input_lines)
+_input_idx=0
 def _custom_input(prompt=""):
     global _input_idx
-    if _input_idx < len(_input_lines):
-        val = _input_lines[_input_idx]; _input_idx += 1; return str(val)
+    if _input_idx<len(_input_lines):
+        v=_input_lines[_input_idx];_input_idx+=1;return str(v)
     return ""
-builtins.input = _custom_input
-sys.stdout = io.StringIO()
-sys.stderr = io.StringIO()
+builtins.input=_custom_input
+sys.stdout=io.StringIO()
+sys.stderr=io.StringIO()
 `);
     await pyodide.runPythonAsync(code);
-
-    const raw = pyodide.runPython("sys.stdout.getvalue()");
-    const lines = raw.split("\n");
-    if (lines.length > 0 && lines[lines.length - 1] === "") lines.pop();
-    return { ok: true, lines };
-  } catch (e) {
-    let msg = e.message || String(e);
-    const parts = msg.split("\n").filter(l => l.trim());
-    return { ok: false, error: parts[parts.length - 1] || msg };
+    const raw=pyodide.runPython("sys.stdout.getvalue()");
+    const lines=raw.split("\n");
+    if(lines.length>0&&lines[lines.length-1]==="") lines.pop();
+    return {ok:true,lines};
+  } catch(e) {
+    const parts=(e.message||String(e)).split("\n").filter(l=>l.trim());
+    return {ok:false,error:parts[parts.length-1]||String(e)};
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════
-//  PROBLEMS
-// ═══════════════════════════════════════════════════════════════════
-const PROBLEMS = [
+// ══ PROBLEMS ═════════════════════════════════
+const PROBLEMS=[
   {
-    id:0, title:"Team Skills Analyzer", difficulty:"easy", points:10, passPercent:75,
-    topic:"Sets — Union, Intersection & Difference",
-    desc:"You are building a skill-matching tool. Given two teams' skill sets, find which skills are shared, unique to each team, and all skills combined. Use Python set operations.",
+    id:0,title:"Team Skills Analyzer",difficulty:"easy",points:10,passPercent:75,
     inputFmt:"Line 1: Comma-separated skills for Team A\nLine 2: Comma-separated skills for Team B",
     outputFmt:"All skills: {skill1, skill2, ...}\nShared skills: {skill1, ...}\nOnly in A: {skill1, ...}\nOnly in B: {skill1, ...}",
-    hint:"team_a = set(input().split(\",\"))\nteam_b = set(input().split(\",\"))\n# | = union   & = intersection\n# - = difference\n# sorted() then ', '.join()\n# f\"{{{', '.join(sorted(...))}}}\"",
+    hint:"team_a = set(input().split(\",\"))\nteam_b = set(input().split(\",\"))\n# Use |, &, - for set ops\n# sorted() to alphabetize\n# ', '.join(...) to format",
+    steps:[
+      {t:"Read both input lines and split each by comma — you'll have two lists of skills."},
+      {t:"Convert each list to a set. Sets ignore duplicates and allow set math operations."},
+      {t:"Compute four things: union (|) for all skills, intersection (&) for shared, and difference (-) twice for each team's unique skills."},
+      {t:"Sort each result with sorted() so the output is alphabetical and consistent across runs."},
+      {t:"Format and print each line wrapping the sorted values in curly braces { }."},
+    ],
     testCases:[
       {label:"Case #1",inputs:["python,java,sql","java,sql,react"],expected:["All skills: {java, python, react, sql}","Shared skills: {java, sql}","Only in A: {python}","Only in B: {react}"]},
       {label:"Case #2",inputs:["html,css,js","js,react,vue"],expected:["All skills: {css, html, js, react, vue}","Shared skills: {js}","Only in A: {css, html}","Only in B: {react, vue}"]},
@@ -618,12 +359,17 @@ const PROBLEMS = [
     ]
   },
   {
-    id:1, title:"Duplicate Remover and Set Builder", difficulty:"easy", points:10, passPercent:60,
-    topic:"Sets — Deduplication & Membership",
-    desc:"Given a list of student IDs (some duplicated), use a set to remove duplicates, count how many were removed, identify which IDs appeared more than once, and check if a given ID is enrolled.",
+    id:1,title:"Duplicate Remover & Set Builder",difficulty:"easy",points:10,passPercent:60,
     inputFmt:"Line 1: Comma-separated student IDs (may have duplicates)\nLine 2: A single student ID to search for",
     outputFmt:"Unique students: <count>\nDuplicates removed: <count>\nDuplicate IDs: {id1, id2, ...}\nEnrolled: Yes / No",
-    hint:"ids = input().split(\",\")\nsearch = input().strip()\nunique = set(ids)\n# Track with a seen set\n# dupes_removed = len(ids) - len(unique)\n# use 'in' to check enrollment",
+    hint:"ids = input().split(\",\")\nsearch = input().strip()\nunique = set(ids)\n# dupes_removed = len(ids) - len(unique)\n# track seen set for duplicate IDs",
+    steps:[
+      {t:"Read the first line and split by comma — keep the original list because its length matters for counting duplicates."},
+      {t:"Convert the list to a set to get unique values. The size difference between list and set tells you how many duplicates were removed."},
+      {t:"Find which IDs appeared more than once by iterating through the original list while tracking what you've already seen."},
+      {t:"Read the second input line as the search ID, then use 'in' on the unique set to check if that student is enrolled."},
+      {t:"Print the four output lines, making sure to sort the duplicate IDs set before formatting it."},
+    ],
     testCases:[
       {label:"Case #1",inputs:["S001,S002,S001,S003,S002,S004","S001"],expected:["Unique students: 4","Duplicates removed: 2","Duplicate IDs: {S001, S002}","Enrolled: Yes"]},
       {label:"Case #2",inputs:["A1,B2,C3,A1,B2,B2","D4"],expected:["Unique students: 3","Duplicates removed: 3","Duplicate IDs: {A1, B2}","Enrolled: No"]},
@@ -633,12 +379,18 @@ const PROBLEMS = [
     ]
   },
   {
-    id:2, title:"Course Prerequisite Checker", difficulty:"medium", points:10, passPercent:75,
-    topic:"Sets — Subset & Superset Checks",
-    desc:"A student wants to enroll in a course. Check if they meet all prerequisites by comparing completed courses against required ones. Report missing prerequisites, extra courses, and completion percentage.",
+    id:2,title:"Course Prerequisite Checker",difficulty:"medium",points:10,passPercent:75,
     inputFmt:"Line 1: Comma-separated prerequisite courses required\nLine 2: Comma-separated courses the student completed",
     outputFmt:"Can enroll: Yes / No\nMissing: {course1, ...}\nExtra: {course1, ...}\nCompletion: X%",
-    hint:"required  = set(input().split(\",\"))\ncompleted = set(input().split(\",\"))\nmissing = required - completed\nextra   = completed - required\n# Can enroll if missing is empty\n# Completion = int(len(completed & required) / len(required) * 100)",
+    hint:"required  = set(input().split(\",\"))\ncompleted = set(input().split(\",\"))\nmissing = required - completed\nextra   = completed - required\n# Completion = int(len(completed & required) / len(required) * 100)",
+    steps:[
+      {t:"Read both lines and convert each to a set — one for required prerequisites, one for what the student completed."},
+      {t:"Use set difference (required - completed) to find what the student is still missing."},
+      {t:"Use the reverse difference (completed - required) to find courses taken that weren't prerequisites."},
+      {t:"If the missing set is empty, the student can enroll — otherwise they cannot."},
+      {t:"Completion % = how many required courses the student actually completed, divided by total required, times 100 — round it down using int()."},
+      {t:"Print all four lines, sorting the missing and extra sets before formatting them in curly braces."},
+    ],
     testCases:[
       {label:"Case #1",inputs:["math,physics,cs101","math,physics,cs101,english"],expected:["Can enroll: Yes","Missing: {}","Extra: {english}","Completion: 100%"]},
       {label:"Case #2",inputs:["math,physics,cs101,algorithms","math,cs101"],expected:["Can enroll: No","Missing: {algorithms, physics}","Extra: {}","Completion: 50%"]},
@@ -649,81 +401,128 @@ const PROBLEMS = [
   }
 ];
 
-// ═══════════════════════════════════════════════════════════════════
-//  STATE & DOM
-// ═══════════════════════════════════════════════════════════════════
-let cur = 0;
-const userCodes = PROBLEMS.map(() => "");
-const tcResults = PROBLEMS.map(() => null);
-const submitted = new Set();
-const earnedPts = {};
+// ══ STATE ════════════════════════════════════
+let cur=0;
+const userCodes=PROBLEMS.map(()=>"");
+const tcResults=PROBLEMS.map(()=>null);
+const submitted=new Set();
+const earnedPts={};
 
-const $ = id => document.getElementById(id);
+const $=id=>document.getElementById(id);
 const codeEditor=$("code-editor"),lineNums=$("line-nums"),customIn=$("custom-in");
 const outText=$("out-text"),tcList=$("tc-list"),tcScore=$("tc-score");
 const errBanner=$("err-banner"),errTextEl=$("err-text");
 const submitRes=$("submit-result"),srText=$("sr-text"),srPts=$("sr-pts"),srSub=$("sr-sub");
 
-function updateLineNums() {
-  const n = Math.max(codeEditor.value.split("\n").length, 12);
-  lineNums.innerHTML = Array.from({length:n},(_,i)=>`<div>${i+1}</div>`).join("");
+// ── Line numbers ──
+function updateLineNums(){
+  const n=Math.max(codeEditor.value.split("\n").length,12);
+  lineNums.innerHTML=Array.from({length:n},(_,i)=>`<div>${i+1}</div>`).join("");
 }
-codeEditor.addEventListener("scroll", () => lineNums.scrollTop = codeEditor.scrollTop);
-codeEditor.addEventListener("input", () => { userCodes[cur]=codeEditor.value; updateLineNums(); hideErr(); });
-codeEditor.addEventListener("keydown", e => {
-  if (e.key === "Tab") {
+codeEditor.addEventListener("scroll",()=>lineNums.scrollTop=codeEditor.scrollTop);
+codeEditor.addEventListener("input",()=>{userCodes[cur]=codeEditor.value;updateLineNums();hideErr();});
+codeEditor.addEventListener("keydown",e=>{
+  if(e.key==="Tab"){
     e.preventDefault();
-    const s=codeEditor.selectionStart, end=codeEditor.selectionEnd;
+    const s=codeEditor.selectionStart,end=codeEditor.selectionEnd;
     codeEditor.value=codeEditor.value.slice(0,s)+"    "+codeEditor.value.slice(end);
     codeEditor.selectionStart=codeEditor.selectionEnd=s+4;
     updateLineNums();
   }
 });
-
 function hideErr(){errBanner.style.display="none";errBanner.className="";}
 function showErr(msg){errBanner.style.display="block";errBanner.className="show";errTextEl.textContent="⚠ "+msg;}
-
-function setBusy(busy){
-  ["btn-run","btn-test","btn-submit"].forEach(id=>$(id).disabled=busy);
-  $("btn-run").textContent = busy ? "⏳ Running..." : "▶ Run";
+function setBusy(b){
+  ["btn-run","btn-test","btn-submit"].forEach(id=>$(id).disabled=b);
+  $("btn-run").textContent=b?"⏳ Running...":"▶ Run";
 }
 
-function buildProbList(){
-  $("problem-list").innerHTML="";
+// ── MODAL ──
+function openModal(tcIdx){
+  const tc=PROBLEMS[cur].testCases[tcIdx];
+  const res=tcResults[cur]?tcResults[cur][tcIdx]:null;
+  $("modal-title").textContent=tc.label;
+  $("m-inp").textContent=tc.inputs.join("\n");
+  $("m-exp").textContent=tc.expected.join("\n");
+  const badge=$("modal-badge"),got=$("m-got");
+  if(!res){
+    badge.className="pending";badge.textContent="Pending";
+    got.className="m-val none";got.textContent="Not run yet — click Run or Test first.";
+  } else if(res.pass){
+    badge.className="pass";badge.textContent="✓ Pass";
+    got.className="m-val ok";got.textContent=res.got||"✓ (correct)";
+  } else {
+    badge.className="fail";badge.textContent="✗ Fail";
+    got.className="m-val err";got.textContent=res.got||"(no output)";
+  }
+  customIn.value=tc.inputs.join("\n");
+  $("modal-overlay").classList.add("open");
+}
+function closeModal(){$("modal-overlay").classList.remove("open");}
+$("modal-close").addEventListener("click",closeModal);
+$("modal-overlay").addEventListener("click",e=>{if(e.target===$("modal-overlay"))closeModal();});
+
+// ── LEFT PANEL ACCORDION ──
+function buildLeftPanel(){
+  const panel=$("left-panel");
+  panel.innerHTML="";
   PROBLEMS.forEach((p,i)=>{
-    const res=tcResults[i], isSub=submitted.has(i);
+    const res=tcResults[i],isSub=submitted.has(i);
     const pc=res?res.filter(r=>r.pass).length:0;
     const meets=res&&(pc/p.testCases.length)>=p.passPercent/100;
     let st="Not attempted",sc="";
     if(res&&!isSub){st=`Tested: ${pc}/${p.testCases.length}`;sc="attempted";}
     if(isSub&&meets){st=`Passed (${pc}/${p.testCases.length}) ✓`;sc="solved";}
     if(isSub&&!meets&&res){st=`Failed (${pc}/${p.testCases.length})`;sc="attempted";}
-    const div=document.createElement("div");
-    div.className="prob-item"+(i===cur?" active":"");
-    div.innerHTML=`<div class="prob-left">
-      <div class="prob-title">${p.title}</div>
-      <div class="prob-meta">
+
+    const stepsHtml=p.steps.map((s,si)=>`
+      <div class="step-item">
+        <div class="step-num">${si+1}</div>
+        <div class="step-text">${s.t}</div>
+      </div>`).join("");
+
+    const box=document.createElement("div");
+    box.className="prob-box"+(i===cur?" active":"")+(i===cur?" open":"");
+
+    box.innerHTML=`
+      <div class="prob-box-header">
         <span class="tag tag-${p.difficulty}">${p.difficulty[0].toUpperCase()+p.difficulty.slice(1)}</span>
-        <span class="tag tag-pts">${p.points} pts</span>
-        <span class="tag-pass">(${p.passPercent}% to pass)</span>
+        <div class="prob-box-title">${p.title}</div>
+        <span class="prob-check">${isSub?(meets?"✅":"❌"):""}</span>
+        <span class="prob-chevron">▼</span>
       </div>
-      <div class="prob-status ${sc}">${st}</div>
-    </div>
-    <div class="prob-check">${isSub?(meets?"✅":"❌"):""}</div>`;
-    div.addEventListener("click",()=>switchProblem(i));
-    $("problem-list").appendChild(div);
+      <div class="prob-box-body">
+        <div class="prob-meta-row ${sc}">${st} · ${p.points} pts · ${p.passPercent}% to pass</div>
+        <div class="section-label">How to solve</div>
+        <div class="step-list">${stepsHtml}</div>
+        <div class="ds"><div class="section-label">Input Format</div><div class="cb">${p.inputFmt}</div></div>
+        <div class="ds"><div class="section-label">Output Format</div><div class="cb">${p.outputFmt}</div></div>
+        <div class="ds"><div class="section-label">💡 Hint</div><div class="hb">${p.hint}</div></div>
+      </div>`;
+
+    box.querySelector(".prob-box-header").addEventListener("click",()=>{
+      if(i!==cur){
+        userCodes[cur]=codeEditor.value;
+        cur=i;
+        loadProblem();
+        return;
+      }
+      // Toggle current
+      const isOpen=box.classList.contains("open");
+      if(isOpen){box.classList.remove("open");}
+      else{
+        document.querySelectorAll(".prob-box").forEach(b=>b.classList.remove("open"));
+        box.classList.add("open");
+      }
+    });
+
+    panel.appendChild(box);
   });
 }
 
-function switchProblem(idx){userCodes[cur]=codeEditor.value;cur=idx;loadProblem();}
-
+// ── LOAD PROBLEM ──
 function loadProblem(){
   const p=PROBLEMS[cur];
-  $("d-topic").textContent=p.topic;
-  $("d-desc").textContent=p.desc;
-  $("d-in").textContent=p.inputFmt;
-  $("d-out").textContent=p.outputFmt;
-  $("d-hint").textContent=p.hint;
   $("ed-fname").textContent=p.title.toLowerCase().replace(/[^a-z0-9]+/g,"_")+".py";
   codeEditor.value=userCodes[cur];
   updateLineNums();
@@ -731,9 +530,60 @@ function loadProblem(){
   outText.textContent="// Output appears here after Run";
   outText.style.color="var(--muted2)";
   hideErr();
+  buildLeftPanel();
   renderTCs();
   renderSubmit();
-  buildProbList();
+}
+
+// ── TEST CASES ──
+function renderTCs(){
+  const p=PROBLEMS[cur],results=tcResults[cur];
+  tcList.innerHTML="";
+  let pc=0;
+  p.testCases.forEach((tc,i)=>{
+    const res=results?results[i]:null;
+    if(res?.pass)pc++;
+    const lbl=res?(res.pass?"✓ Pass":"✗ Fail"):"Pending";
+    const card=document.createElement("div");
+    card.className="tc-card"+(res?(res.pass?" pass":" fail"):"");
+    card.innerHTML=`
+      <div class="tc-top">
+        <span class="tc-num">${i+1}</span>
+        <span class="tc-lbl">${tc.label}</span>
+        <span class="tc-badge">${lbl}</span>
+      </div>
+      <div class="tc-sub">Click to view details →</div>`;
+    card.addEventListener("click",()=>openModal(i));
+    tcList.appendChild(card);
+  });
+  if(results){
+    tcScore.textContent=`${pc}/${p.testCases.length}`;
+    tcScore.style.color=pc===p.testCases.length?"var(--green)":pc>0?"var(--yellow)":"var(--red)";
+  } else {
+    tcScore.textContent=`0/${p.testCases.length}`;
+    tcScore.style.color="var(--muted)";
+  }
+}
+
+function renderSubmit(){
+  if(!submitted.has(cur)||!tcResults[cur]){submitRes.className="";submitRes.style.display="none";return;}
+  const p=PROBLEMS[cur],res=tcResults[cur];
+  const pc=res.filter(r=>r.pass).length;
+  const meets=Math.round(pc/res.length*100)>=p.passPercent;
+  earnedPts[cur]=meets?p.points:0;
+  submitRes.style.display="block";submitRes.className="show";
+  srText.className="sr-text "+(meets?"ok":"no");
+  srText.textContent=meets?"✅ Passed!":"❌ Not passed";
+  srPts.textContent=`${earnedPts[cur]}/${p.points} pts — ${pc}/${res.length} cases (need ${p.passPercent}%)`;
+  srSub.textContent=meets?"Great work! Try the next problem.":"Keep trying — you can resubmit anytime.";
+  const tot=Object.values(earnedPts).reduce((a,b)=>a+b,0);
+  const sol=PROBLEMS.filter((_,i)=>{
+    if(!submitted.has(i)||!tcResults[i])return false;
+    const r=tcResults[i];
+    return(r.filter(x=>x.pass).length/r.length*100)>=PROBLEMS[i].passPercent;
+  }).length;
+  $("tot-pts").textContent=tot;
+  $("tot-sol").textContent=sol;
 }
 
 async function execAllTCs(){
@@ -753,68 +603,10 @@ async function execAllTCs(){
   return results;
 }
 
-function renderTCs(){
-  const p=PROBLEMS[cur],results=tcResults[cur];
-  tcList.innerHTML="";
-  let pc=0;
-  p.testCases.forEach((tc,i)=>{
-    const res=results?results[i]:null;
-    if(res?.pass)pc++;
-    const lbl=res?(res.pass?"✓ Pass":"✗ Fail"):"Pending";
-    const card=document.createElement("div");
-    card.className="tc-card"+(res?(res.pass?" pass":" fail"):"");
-    card.innerHTML=`<div class="tc-top">
-      <span class="tc-num">${i+1}</span>
-      <span class="tc-lbl">${tc.label}</span>
-      <span class="tc-badge">${lbl}</span>
-    </div>
-    <div class="tc-body">
-      <div class="tc-row"><div class="tc-row-lbl">Input</div><div class="tc-val inp">${tc.inputs.join("\n")}</div></div>
-      <div class="tc-row"><div class="tc-row-lbl">Expected</div><div class="tc-val exp">${tc.expected.join("\n")}</div></div>
-      ${res?`<div class="tc-row"><div class="tc-row-lbl">Your Output</div><div class="tc-val ${res.pass?"got-ok":"got-err"}">${res.got||(res.pass?"✓":"(no output)")}</div></div>`:""}
-    </div>`;
-    card.querySelector(".tc-top").addEventListener("click",()=>{
-      card.querySelector(".tc-body").classList.toggle("open");
-      customIn.value=tc.inputs.join("\n");
-    });
-    tcList.appendChild(card);
-  });
-  if(results){
-    tcScore.textContent=`${pc}/${p.testCases.length}`;
-    tcScore.style.color=pc===p.testCases.length?"var(--green)":pc>0?"var(--yellow)":"var(--red)";
-  } else {
-    tcScore.textContent=`0/${p.testCases.length}`;
-    tcScore.style.color="var(--muted)";
-  }
-}
-
-function renderSubmit(){
-  if(!submitted.has(cur)||!tcResults[cur]){submitRes.className="";submitRes.style.display="none";return;}
-  const p=PROBLEMS[cur],res=tcResults[cur];
-  const pc=res.filter(r=>r.pass).length;
-  const pct=Math.round(pc/res.length*100);
-  const meets=pct>=p.passPercent;
-  earnedPts[cur]=meets?p.points:0;
-  submitRes.style.display="block";submitRes.className="show";
-  srText.className="sr-text "+(meets?"ok":"no");
-  srText.textContent=meets?"✅ Passed!":"❌ Not passed";
-  srPts.textContent=`${earnedPts[cur]}/${p.points} pts — ${pc}/${res.length} cases (need ${p.passPercent}%)`;
-  srSub.textContent=meets?"Great work! Try the next problem.":"Keep trying — you can resubmit anytime.";
-  const tot=Object.values(earnedPts).reduce((a,b)=>a+b,0);
-  const sol=PROBLEMS.filter((_,i)=>{
-    if(!submitted.has(i)||!tcResults[i])return false;
-    const r=tcResults[i];
-    return(r.filter(x=>x.pass).length/r.length*100)>=PROBLEMS[i].passPercent;
-  }).length;
-  $("tot-pts").textContent=tot;
-  $("tot-sol").textContent=sol;
-}
-
 function flash(cls){const cp=$("center-panel");cp.classList.add(cls);setTimeout(()=>cp.classList.remove(cls),400);}
 
 $("btn-run").addEventListener("click",async()=>{
-  userCodes[cur]=codeEditor.value;
-  setBusy(true);hideErr();
+  userCodes[cur]=codeEditor.value;setBusy(true);hideErr();
   const results=await execAllTCs();
   if(!results){setBusy(false);return;}
   renderTCs();
@@ -833,20 +625,18 @@ $("btn-run").addEventListener("click",async()=>{
 });
 
 $("btn-test").addEventListener("click",async()=>{
-  userCodes[cur]=codeEditor.value;
-  setBusy(true);hideErr();
+  userCodes[cur]=codeEditor.value;setBusy(true);hideErr();
   const results=await execAllTCs();
   if(results){renderTCs();flash("fg");}
   setBusy(false);
 });
 
 $("btn-submit").addEventListener("click",async()=>{
-  userCodes[cur]=codeEditor.value;
-  setBusy(true);hideErr();
+  userCodes[cur]=codeEditor.value;setBusy(true);hideErr();
   const results=await execAllTCs();
   if(!results){setBusy(false);return;}
   submitted.add(cur);
-  renderTCs();renderSubmit();buildProbList();
+  renderTCs();renderSubmit();buildLeftPanel();
   setBusy(false);flash("fp");
 });
 
