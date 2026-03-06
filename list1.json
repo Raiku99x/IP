@@ -10,7 +10,7 @@
   "problems": [
 
     {
-      "id": "list1-1",
+      "id": "list",
       "title": "Movie Watchlist Manager",
       "difficulty": "easy",
       "points": 25,
