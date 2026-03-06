@@ -1,0 +1,399 @@
+{
+  "id": "quiz-tuples-1",
+  "title": "Tuples Deep Dive",
+  "topic": "Tuples",
+  "icon": "🔮",
+  "questions": [
+
+    {
+      "id": "q1",
+      "type": "true_false",
+      "question": "Tuples are written with square brackets `[]`.",
+      "answer": "False"
+    },
+
+    {
+      "id": "q2",
+      "type": "code_output",
+      "question": "What is the output?\n```\nnot_a_tuple = ('hello')\nprint(type(not_a_tuple))\n```",
+      "choices": ["<class 'tuple'>", "<class 'str'>", "<class 'list'>", "TypeError"],
+      "answer": "<class 'str'>"
+    },
+
+    {
+      "id": "q3",
+      "type": "code_output",
+      "question": "What is the output?\n```\na_tuple = ('hello',)\nprint(type(a_tuple))\n```",
+      "choices": ["<class 'str'>", "<class 'list'>", "<class 'tuple'>", "SyntaxError"],
+      "answer": "<class 'tuple'>"
+    },
+
+    {
+      "id": "q4",
+      "type": "multiple_choice",
+      "question": "Which of the following correctly creates a single-element tuple?",
+      "choices": ["t = ('apple')", "t = ('apple',)", "t = tuple['apple']", "t = ['apple']"],
+      "answer": "t = ('apple',)"
+    },
+
+    {
+      "id": "q5",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = ('banana', 'orange', 'mango', 'lemon')\nprint(fruits[-2])\n```",
+      "choices": ["orange", "mango", "lemon", "banana"],
+      "answer": "mango"
+    },
+
+    {
+      "id": "q6",
+      "type": "true_false",
+      "question": "Once a tuple is created, you can change its values using index assignment.",
+      "answer": "False"
+    },
+
+    {
+      "id": "q7",
+      "type": "code_output",
+      "question": "What is the output?\n```\nfruits = ('banana', 'orange', 'mango', 'lemon')\nprint(fruits[1:3])\n```",
+      "choices": ["('banana', 'orange')", "('orange', 'mango')", "('orange', 'mango', 'lemon')", "('mango', 'lemon')"],
+      "answer": "('orange', 'mango')"
+    },
+
+    {
+      "id": "q8",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = ('banana', 'orange', 'mango', 'lemon')\nprint(fruits[-3:-1])\n```",
+      "choices": ["('banana', 'orange')", "('mango', 'lemon')", "('orange', 'mango')", "('orange', 'mango', 'lemon')"],
+      "answer": "('orange', 'mango')"
+    },
+
+    {
+      "id": "q9",
+      "type": "multiple_choice",
+      "question": "How many built-in methods do tuples have?",
+      "choices": ["0", "1", "2", "4"],
+      "answer": "2"
+    },
+
+    {
+      "id": "q10",
+      "type": "code_output",
+      "question": "What is the output?\n```\nfruits = ('banana', 'orange', 'banana', 'lemon', 'banana')\nprint(fruits.count('banana'))\n```",
+      "choices": ["1", "2", "3", "4"],
+      "answer": "3"
+    },
+
+    {
+      "id": "q11",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = ('banana', 'orange', 'banana', 'lemon', 'banana')\nprint(fruits.index('orange'))\n```",
+      "choices": ["0", "1", "2", "3"],
+      "answer": "1"
+    },
+
+    {
+      "id": "q12",
+      "type": "true_false",
+      "question": "`index()` returns the position of the LAST occurrence of a value in a tuple.",
+      "answer": "False"
+    },
+
+    {
+      "id": "q13",
+      "type": "code_output",
+      "question": "What is the output?\n```\nnumbers = (45, 12, 78, 3, 29)\nprint(sorted(numbers))\n```",
+      "choices": ["(3, 12, 29, 45, 78)", "[3, 12, 29, 45, 78]", "(45, 12, 78, 3, 29)", "[45, 12, 78, 3, 29]"],
+      "answer": "[3, 12, 29, 45, 78]"
+    },
+
+    {
+      "id": "q14",
+      "type": "true_false",
+      "question": "`sorted()` applied to a tuple returns a new sorted tuple.",
+      "answer": "False"
+    },
+
+    {
+      "id": "q15",
+      "type": "code_output",
+      "question": "What does this print?\n```\nscores = (85, 90, 78, 92)\nprint(all(score >= 75 for score in scores))\n```",
+      "choices": ["False", "None", "True", "Error"],
+      "answer": "True"
+    },
+
+    {
+      "id": "q16",
+      "type": "code_output",
+      "question": "What is the output?\n```\nprint(any((False, False, False)))\n```",
+      "choices": ["True", "False", "None", "Error"],
+      "answer": "False"
+    },
+
+    {
+      "id": "q17",
+      "type": "code_output",
+      "question": "What does this print?\n```\nprint(all((True, False, True)))\n```",
+      "choices": ["True", "False", "None", "Error"],
+      "answer": "False"
+    },
+
+    {
+      "id": "q18",
+      "type": "code_output",
+      "question": "What is the output?\n```\nfruits = ('banana', 'orange', 'mango', 'lemon')\nfor index, fruit in enumerate(fruits):\n    if index == 2:\n        print(fruit)\n```",
+      "choices": ["banana", "orange", "mango", "lemon"],
+      "answer": "mango"
+    },
+
+    {
+      "id": "q19",
+      "type": "code_output",
+      "question": "What does this print?\n```\nnames = ('Alice', 'Bob', 'Charlie')\nscores = (95, 87, 92)\ncombined = tuple(zip(names, scores))\nprint(combined[1])\n```",
+      "choices": ["('Alice', 95)", "('Bob', 87)", "['Bob', 87]", "('Charlie', 92)"],
+      "answer": "('Bob', 87)"
+    },
+
+    {
+      "id": "q20",
+      "type": "code_output",
+      "question": "What is the output?\n```\nfruits = ('banana', 'orange', 'mango', 'lemon')\nreversed_fruits = tuple(reversed(fruits))\nprint(reversed_fruits[0])\n```",
+      "choices": ["banana", "orange", "mango", "lemon"],
+      "answer": "lemon"
+    },
+
+    {
+      "id": "q21",
+      "type": "code_output",
+      "question": "What does this print?\n```\nnumbers = (1, 2, 3, 4, 5)\nsquared = tuple(map(lambda x: x ** 2, numbers))\nprint(squared[3])\n```",
+      "choices": ["9", "16", "25", "4"],
+      "answer": "16"
+    },
+
+    {
+      "id": "q22",
+      "type": "code_output",
+      "question": "What is the output?\n```\nnumbers = (10, 25, 30, 45, 50, 65)\nabove_30 = tuple(filter(lambda x: x > 30, numbers))\nprint(above_30)\n```",
+      "choices": ["(30, 45, 50, 65)", "(45, 50, 65)", "(10, 25, 30)", "(25, 30, 45)"],
+      "answer": "(45, 50, 65)"
+    },
+
+    {
+      "id": "q23",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = ('banana', 'orange', 'mango', 'lemon', 'apple')\nfirst, second, *rest = fruits\nprint(rest)\n```",
+      "choices": ["('mango', 'lemon', 'apple')", "['mango', 'lemon', 'apple']", "['banana', 'orange']", "('banana', 'orange')"],
+      "answer": "['mango', 'lemon', 'apple']"
+    },
+
+    {
+      "id": "q24",
+      "type": "true_false",
+      "question": "When you unpack a tuple with `*rest`, the `rest` variable is a tuple.",
+      "answer": "False"
+    },
+
+    {
+      "id": "q25",
+      "type": "code_output",
+      "question": "What is the output?\n```\nfruits = ('banana', 'orange', 'mango', 'lemon')\nfruits[0] = 'apple'\nprint(fruits)\n```",
+      "choices": ["('apple', 'orange', 'mango', 'lemon')", "('banana', 'orange', 'mango', 'lemon')", "TypeError", "None"],
+      "answer": "TypeError"
+    },
+
+    {
+      "id": "q26",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = ('banana', 'orange', 'mango', 'lemon')\nfruits_list = list(fruits)\nfruits_list[0] = 'apple'\nfruits = tuple(fruits_list)\nprint(fruits[0])\n```",
+      "choices": ["banana", "apple", "orange", "TypeError"],
+      "answer": "apple"
+    },
+
+    {
+      "id": "q27",
+      "type": "multiple_choice",
+      "question": "What does `del fruits` do when `fruits` is a tuple?",
+      "choices": ["Removes the first item", "Removes the last item", "Deletes the entire tuple variable", "Raises a TypeError"],
+      "answer": "Deletes the entire tuple variable"
+    },
+
+    {
+      "id": "q28",
+      "type": "true_false",
+      "question": "You can remove a single item from a tuple using `del tuple[0]`.",
+      "answer": "False"
+    },
+
+    {
+      "id": "q29",
+      "type": "code_output",
+      "question": "What is the output?\n```\ntpl1 = ('item1', 'item2', 'item3')\ntpl2 = ('item4', 'item5', 'item6')\ntpl3 = tpl1 + tpl2\nprint(len(tpl3))\n```",
+      "choices": ["3", "4", "6", "2"],
+      "answer": "6"
+    },
+
+    {
+      "id": "q30",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = ('banana', 'orange', 'mango', 'lemon')\nprint('apple' in fruits)\n```",
+      "choices": ["True", "False", "None", "Error"],
+      "answer": "False"
+    },
+
+    {
+      "id": "q31",
+      "type": "code_output",
+      "question": "What is the output?\n```\nmy_tuple = tuple('hello')\nprint(my_tuple)\n```",
+      "choices": ["('hello',)", "('h', 'e', 'l', 'l', 'o')", "['h', 'e', 'l', 'l', 'o']", "('hello')"],
+      "answer": "('h', 'e', 'l', 'l', 'o')"
+    },
+
+    {
+      "id": "q32",
+      "type": "code_output",
+      "question": "What does this print?\n```\nmy_tuple = tuple(range(1, 6))\nprint(my_tuple)\n```",
+      "choices": ["(1, 2, 3, 4, 5, 6)", "(0, 1, 2, 3, 4, 5)", "(1, 2, 3, 4, 5)", "[1, 2, 3, 4, 5]"],
+      "answer": "(1, 2, 3, 4, 5)"
+    },
+
+    {
+      "id": "q33",
+      "type": "multiple_choice",
+      "question": "Which feature makes tuples usable as dictionary keys while lists cannot be used?",
+      "choices": ["Tuples are ordered", "Tuples are faster", "Tuples are immutable", "Tuples use round brackets"],
+      "answer": "Tuples are immutable"
+    },
+
+    {
+      "id": "q34",
+      "type": "code_output",
+      "question": "What is the output?\n```\ndef get_student():\n    return ('Alice', 20, 'BSCS')\nname, age, course = get_student()\nprint(age)\n```",
+      "choices": ["Alice", "20", "BSCS", "('Alice', 20, 'BSCS')"],
+      "answer": "20"
+    },
+
+    {
+      "id": "q35",
+      "type": "true_false",
+      "question": "Tuples offer slightly better performance than lists.",
+      "answer": "True"
+    },
+
+    {
+      "id": "q36",
+      "type": "code_output",
+      "question": "What does this print?\n```\nnumbers = (25, 8, 47, 3, 61)\nprint(min(numbers))\n```",
+      "choices": ["25", "8", "3", "61"],
+      "answer": "3"
+    },
+
+    {
+      "id": "q37",
+      "type": "code_output",
+      "question": "What is the output?\n```\nfruits = ('banana', 'orange', 'mango', 'lemon')\nprint(max(fruits))\n```",
+      "choices": ["banana", "mango", "lemon", "orange"],
+      "answer": "orange"
+    },
+
+    {
+      "id": "q38",
+      "type": "code_output",
+      "question": "What does this print?\n```\nnumbers = (10, 20, 30, 40, 50)\nprint(sum(numbers))\n```",
+      "choices": ["100", "150", "50", "15"],
+      "answer": "150"
+    },
+
+    {
+      "id": "q39",
+      "type": "fill_blank",
+      "question": "Complete the code to unpack the first two items and collect the rest:\n```\nfruits = ('banana', 'orange', 'mango', 'lemon', 'apple')\nfirst, second, ___ = fruits\n```",
+      "answer": "*rest"
+    },
+
+    {
+      "id": "q40",
+      "type": "code_output",
+      "question": "What is the output?\n```\ntpl = ('item1', 'item2', 'item3', 'item4')\nprint(tpl[-4])\n```",
+      "choices": ["item4", "item3", "item2", "item1"],
+      "answer": "item1"
+    },
+
+    {
+      "id": "q41",
+      "type": "code_output",
+      "question": "What does this print?\n```\nnumbers = (45, 12, 78, 3, 29)\nsorted_tuple = tuple(sorted(numbers))\nprint(sorted_tuple)\n```",
+      "choices": ["[3, 12, 29, 45, 78]", "(3, 12, 29, 45, 78)", "(45, 12, 78, 3, 29)", "[45, 12, 78, 3, 29]"],
+      "answer": "(3, 12, 29, 45, 78)"
+    },
+
+    {
+      "id": "q42",
+      "type": "true_false",
+      "question": "The expression `('hello')` creates a tuple containing the string 'hello'.",
+      "answer": "False"
+    },
+
+    {
+      "id": "q43",
+      "type": "code_output",
+      "question": "What is the output?\n```\nfruits = ('banana', 'orange', 'mango', 'lemon')\nprint(fruits[0:])\n```",
+      "choices": ["('orange', 'mango', 'lemon')", "('banana',)", "('banana', 'orange', 'mango', 'lemon')", "('banana', 'orange', 'mango')"],
+      "answer": "('banana', 'orange', 'mango', 'lemon')"
+    },
+
+    {
+      "id": "q44",
+      "type": "multiple_choice",
+      "question": "What error does Python raise when you try to assign to a tuple index?",
+      "choices": ["IndexError", "ValueError", "TypeError", "AttributeError"],
+      "answer": "TypeError"
+    },
+
+    {
+      "id": "q45",
+      "type": "code_output",
+      "question": "What does this print?\n```\nmy_list = [1, 2, 3]\nmy_tuple = tuple(my_list)\nprint(my_tuple)\n```",
+      "choices": ["[1, 2, 3]", "(1, 2, 3)", "tuple([1, 2, 3])", "Error"],
+      "answer": "(1, 2, 3)"
+    },
+
+    {
+      "id": "q46",
+      "type": "code_output",
+      "question": "What is the output?\n```\nt = (4, 9)\nprint(t[1:3])\n```",
+      "choices": ["(9,)", "(4, 9)", "(4,)", "()"],
+      "answer": "(9,)"
+    },
+
+    {
+      "id": "q47",
+      "type": "true_false",
+      "question": "Tuples can be used as keys in a Python dictionary.",
+      "answer": "True"
+    },
+
+    {
+      "id": "q48",
+      "type": "code_output",
+      "question": "What does this print?\n```\nnumbers = (1, 2, 3, 4, 5)\nsquared = tuple(map(lambda x: x ** 2, numbers))\nprint(len(squared))\n```",
+      "choices": ["3", "4", "5", "25"],
+      "answer": "5"
+    },
+
+    {
+      "id": "q49",
+      "type": "code_output",
+      "question": "What is the output?\n```\nfruits = ('banana', 'orange', 'mango', 'lemon')\nprint(fruits[-4:])\n```",
+      "choices": ["('lemon',)", "('mango', 'lemon')", "('banana', 'orange', 'mango', 'lemon')", "('orange', 'mango', 'lemon')"],
+      "answer": "('banana', 'orange', 'mango', 'lemon')"
+    },
+
+    {
+      "id": "q50",
+      "type": "multiple_choice",
+      "question": "Which scenario is the BEST use case for a tuple over a list?",
+      "choices": ["Storing a playlist that users can reorder", "Storing a set of fixed coordinates (x, y)", "Storing quiz scores that need sorting", "Storing a shopping cart where items are added/removed"],
+      "answer": "Storing a set of fixed coordinates (x, y)"
+    }
+
+  ]
+}
