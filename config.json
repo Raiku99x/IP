@@ -1,5 +1,5 @@
 {
-  "_note": "Add the filename of any new lab JSON file here and the app will load it automatically.",
+  "_note": "Add lab JSON filenames under 'labs' and quiz JSON filenames under 'quizzes'.",
   "course": {
     "name": "BSCS 1B — Python Practice",
     "description": "Python Self-Study",
@@ -11,5 +11,10 @@
     "list1.json",
     "list0.json",
     "string.json"
+  ],
+  "quizzes": [
+    "sets-quiz.json",
+    "list-quiz.json",
+    "tuples-quiz.json"
   ]
 }
