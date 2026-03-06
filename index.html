@@ -15,7 +15,6 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  /* Light-mode Slytherin — parchment & aged paper, deep green accents, warm gold */
   --void:#f5f0e8;--dungeon:#ede6d6;--stone:#e4dcc8;--moss:#d8ceb6;
   --slate:#ccc0a4;--iron:#b8aa8c;--mist:#8a7a5e;--fog:#6b5c42;
   --gold:#8a6318;--gold-bright:#6b4c0e;--gold-dim:#a07828;--gold-glow:#a0782833;
@@ -28,7 +27,6 @@
 html,body{height:100%;overflow:hidden;background:var(--void);}
 body{font-family:var(--font-b);color:var(--parchment);display:flex;flex-direction:column;}
 
-/* Parchment texture overlay */
 body::before{
   content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background-image:
@@ -127,11 +125,120 @@ body::before{
 .sp-cast{font-family:var(--font-m);font-size:9px;font-weight:500;padding:4px 11px;border-radius:2px;border:1px solid var(--venom);background:transparent;color:var(--emerald);cursor:pointer;white-space:nowrap;transition:all .12s;letter-spacing:.04em;}
 .sp-cast:hover{background:var(--glow2);box-shadow:0 0 7px var(--glow);}
 
+/* ===================== PRACTICE QUIZ STYLES ===================== */
+
+/* Quiz card on dashboard */
+.quiz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;}
+.quiz-card{background:var(--dungeon);border:1px solid var(--iron);border-radius:4px;padding:14px 16px;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .12s;position:relative;overflow:hidden;}
+.quiz-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amethyst);}
+.quiz-card:hover{border-color:var(--amethyst);box-shadow:0 0 12px rgba(90,56,128,0.15);transform:translateY(-1px);}
+.quiz-card-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.quiz-ico{font-size:20px;flex-shrink:0;}
+.quiz-card-title{font-family:var(--font-d);font-size:13px;font-weight:600;color:var(--gold);letter-spacing:.04em;flex:1;}
+.quiz-card-meta{font-family:var(--font-m);font-size:10px;color:var(--mist);display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+.quiz-card-footer{display:flex;align-items:center;justify-content:space-between;}
+.quiz-score-badge{font-family:var(--font-m);font-size:10px;padding:3px 9px;border-radius:2px;border:1px solid var(--iron);color:var(--mist);background:transparent;}
+.quiz-score-badge.done-pass{border-color:var(--serpent);color:var(--emerald);background:rgba(26,107,48,0.08);}
+.quiz-score-badge.done-fail{border-color:var(--blood);color:var(--crimson);background:rgba(139,28,28,0.08);}
+.quiz-start-btn{font-family:var(--font-m);font-size:9px;font-weight:500;padding:4px 11px;border-radius:2px;border:1px solid var(--amethyst);background:transparent;color:var(--violet);cursor:pointer;transition:all .12s;letter-spacing:.04em;}
+.quiz-start-btn:hover{background:rgba(90,56,128,0.12);box-shadow:0 0 7px rgba(90,56,128,0.3);}
+.quiz-prog{height:2px;background:var(--iron);overflow:hidden;border-radius:2px;margin-top:8px;}
+.quiz-prog-fill{height:100%;background:linear-gradient(90deg,var(--amethyst),var(--violet));transition:width .4s ease;}
+
+/* Quiz view */
+#view-quiz{flex:1;overflow:hidden;display:none;flex-direction:column;position:relative;z-index:1;}
+#view-quiz.active{display:flex;}
+#quiz-topbar{height:52px;background:var(--dungeon);border-bottom:1px solid var(--iron);display:flex;align-items:center;padding:0 24px;gap:14px;flex-shrink:0;}
+#quiz-back{display:flex;align-items:center;gap:6px;font-family:var(--font-m);font-size:10px;color:var(--violet);cursor:pointer;letter-spacing:.08em;transition:color .12s;}
+#quiz-back:hover{color:var(--amethyst);}
+#quiz-title-bar{font-family:var(--font-d);font-size:13px;font-weight:600;color:var(--gold);letter-spacing:.04em;flex:1;}
+#quiz-progress-text{font-family:var(--font-m);font-size:11px;color:var(--mist);}
+#quiz-body{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:28px 24px 40px;}
+#quiz-inner{width:100%;max-width:680px;display:flex;flex-direction:column;gap:0;}
+
+/* Question card */
+.q-card{background:var(--dungeon);border:1px solid var(--iron);border-radius:4px;overflow:hidden;margin-bottom:12px;transition:border-color .2s;}
+.q-card.answered-correct{border-color:var(--serpent);}
+.q-card.answered-wrong{border-color:var(--blood);}
+.q-head{padding:14px 16px 10px;border-bottom:1px solid var(--stone);}
+.q-num{font-family:var(--font-m);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--violet);margin-bottom:4px;}
+.q-type-tag{font-family:var(--font-m);font-size:9px;padding:2px 7px;border-radius:2px;margin-left:8px;letter-spacing:.04em;}
+.qt-mc{background:rgba(90,56,128,0.1);color:var(--violet);border:1px solid var(--amethyst);}
+.qt-tf{background:rgba(26,107,48,0.1);color:var(--emerald);border:1px solid var(--venom);}
+.qt-co{background:rgba(139,28,28,0.1);color:var(--crimson);border:1px solid var(--blood);}
+.qt-fb{background:rgba(160,120,40,0.1);color:var(--gold);border:1px solid var(--gold-dim);}
+.q-text{font-family:var(--font-b);font-size:15px;font-weight:600;color:var(--parchment);line-height:1.65;}
+.q-code{font-family:var(--font-m);font-size:12px;background:var(--stone);border:1px solid var(--iron);border-radius:3px;padding:10px 12px;margin-top:8px;white-space:pre;overflow-x:auto;color:var(--parchment);line-height:1.6;}
+.q-body{padding:12px 16px 14px;}
+
+/* MC / TF choices */
+.choices{display:flex;flex-direction:column;gap:7px;}
+.choice{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:3px;border:1px solid var(--iron);cursor:pointer;transition:all .12s;user-select:none;}
+.choice:hover:not(.locked){border-color:var(--amethyst);background:rgba(90,56,128,0.06);}
+.choice.selected{border-color:var(--amethyst);background:rgba(90,56,128,0.1);}
+.choice.correct{border-color:var(--serpent)!important;background:rgba(26,107,48,0.1)!important;}
+.choice.wrong{border-color:var(--blood)!important;background:rgba(139,28,28,0.1)!important;}
+.choice.locked{cursor:default;}
+.choice-dot{width:16px;height:16px;border-radius:50%;border:1px solid var(--iron);flex-shrink:0;transition:all .12s;display:flex;align-items:center;justify-content:center;font-size:8px;}
+.choice.selected .choice-dot{border-color:var(--amethyst);background:var(--amethyst);color:#fff;}
+.choice.correct .choice-dot{border-color:var(--serpent)!important;background:var(--serpent)!important;color:#fff;}
+.choice.wrong .choice-dot{border-color:var(--blood)!important;background:var(--blood)!important;color:#fff;}
+.choice-label{font-family:var(--font-b);font-size:14px;color:var(--fog);}
+.choice.selected .choice-label{color:var(--parchment);}
+.choice.correct .choice-label{color:var(--emerald)!important;}
+.choice.wrong .choice-label{color:var(--crimson)!important;}
+
+/* Fill in blank */
+.fill-row{display:flex;align-items:center;gap:10px;}
+.fill-input{flex:1;background:var(--stone);border:1px solid var(--iron);border-radius:3px;padding:9px 12px;font-family:var(--font-m);font-size:13px;color:var(--parchment);outline:none;transition:border-color .12s;}
+.fill-input:focus{border-color:var(--gold-dim);}
+.fill-input.correct{border-color:var(--serpent);background:rgba(26,107,48,0.06);color:var(--emerald);}
+.fill-input.wrong{border-color:var(--blood);background:rgba(139,28,28,0.06);color:var(--crimson);}
+.fill-input:disabled{opacity:.8;cursor:default;}
+
+/* Feedback strip */
+.q-feedback{display:none;padding:8px 12px;font-family:var(--font-m);font-size:11px;border-top:1px solid var(--stone);align-items:center;gap:8px;}
+.q-feedback.show{display:flex;}
+.q-feedback.ok{color:var(--emerald);background:rgba(26,107,48,0.06);}
+.q-feedback.no{color:var(--crimson);background:rgba(139,28,28,0.06);}
+.q-feedback .fb-ans{font-weight:600;}
+
+/* Submit / Results */
+#quiz-submit-wrap{text-align:center;padding:8px 0 4px;}
+#quiz-submit-btn{font-family:var(--font-d);font-size:12px;font-weight:600;padding:12px 32px;border-radius:3px;border:1px solid var(--amethyst);background:transparent;color:var(--violet);cursor:pointer;letter-spacing:.08em;transition:all .15s;}
+#quiz-submit-btn:hover:not(:disabled){background:rgba(90,56,128,0.12);box-shadow:0 0 14px rgba(90,56,128,0.3);}
+#quiz-submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* Results panel */
+#quiz-results{display:none;background:var(--dungeon);border:1px solid var(--gold-dim);border-radius:4px;padding:24px;margin-top:12px;text-align:center;}
+#quiz-results.show{display:block;}
+.res-sigil{font-size:40px;margin-bottom:10px;}
+.res-title{font-family:var(--font-d);font-size:20px;font-weight:700;letter-spacing:.06em;margin-bottom:6px;}
+.res-title.pass{color:var(--emerald);}
+.res-title.fail{color:var(--crimson);}
+.res-score{font-family:var(--font-m);font-size:28px;font-weight:500;color:var(--gold);margin-bottom:4px;}
+.res-sub{font-family:var(--font-b);font-style:italic;font-size:13px;color:var(--mist);margin-bottom:16px;}
+.res-breakdown{display:flex;justify-content:center;gap:20px;margin-bottom:20px;}
+.res-stat{text-align:center;}
+.res-stat-n{font-family:var(--font-m);font-size:18px;color:var(--parchment);}
+.res-stat-l{font-family:var(--font-m);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mist);}
+.res-actions{display:flex;justify-content:center;gap:10px;}
+.res-btn{font-family:var(--font-m);font-size:10px;font-weight:500;padding:8px 18px;border-radius:2px;cursor:pointer;transition:all .12s;letter-spacing:.05em;}
+.res-btn-retry{border:1px solid var(--amethyst);color:var(--violet);background:transparent;}
+.res-btn-retry:hover{background:rgba(90,56,128,0.12);}
+.res-btn-back{border:1px solid var(--iron);color:var(--mist);background:transparent;}
+.res-btn-back:hover{background:var(--stone);}
+
+/* Progress bar in quiz view */
+#quiz-prog-bar{height:2px;background:var(--iron);flex-shrink:0;}
+#quiz-prog-fill{height:100%;background:linear-gradient(90deg,var(--amethyst),var(--violet));transition:width .3s ease;}
+
+/* ===================== END QUIZ STYLES ===================== */
+
 /* EDITOR */
 #view-editor{flex:1;overflow:hidden;display:none;position:relative;z-index:1;}
 #view-editor.active{display:grid;grid-template-columns:300px 1fr 280px;}
 
-/* Grimoire (left) */
 #grimoire{background:var(--dungeon);border-right:1px solid var(--iron);display:flex;flex-direction:column;overflow-y:auto;height:100%;}
 .grm-hd{padding:18px;border-bottom:1px solid var(--iron);background:var(--stone);flex-shrink:0;}
 .grm-back{display:flex;align-items:center;gap:6px;font-family:var(--font-m);font-size:10px;color:var(--serpent);cursor:pointer;letter-spacing:.08em;margin-bottom:12px;transition:color .12s;width:fit-content;}
@@ -163,7 +270,6 @@ body::before{
 .hint-box{display:none;margin-top:8px;background:var(--stone);border:1px solid var(--gold-dim);border-left:2px solid var(--gold);border-radius:2px;padding:10px;font-family:var(--font-m);font-size:11px;color:var(--gold-bright);white-space:pre-wrap;line-height:1.65;}
 .hint-box.visible{display:block;}
 
-/* Editor center */
 #ed-center{display:flex;flex-direction:column;overflow:hidden;background:var(--void);}
 #spell-bar{height:46px;background:var(--dungeon);border-bottom:1px solid var(--iron);display:flex;align-items:center;padding:0 14px;gap:7px;flex-shrink:0;}
 .sf{font-family:var(--font-m);font-size:11px;color:var(--mist);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -182,7 +288,6 @@ body::before{
 #cm-mount .CodeMirror{position:absolute;inset:0;height:100%;}
 #cm-mount .CodeMirror-scroll{height:100%;}
 
-/* Light Slytherin CM theme — aged parchment editor */
 .cm-s-sly.CodeMirror{background:#f0ead8;color:#2c2218;font-family:var(--font-m);font-size:13px;line-height:1.65;height:100%;border:none;}
 .cm-s-sly .CodeMirror-cursor{border-left:2px solid #1a6b30;}
 .cm-s-sly .CodeMirror-selected{background:rgba(26,107,48,0.18);}
@@ -217,7 +322,6 @@ body::before{
 #out-box{flex:1;background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:5px 8px;overflow-y:auto;}
 #out-text{font-family:var(--font-m);font-size:12px;white-space:pre-wrap;line-height:1.5;color:var(--mist);}
 
-/* Trials panel (right) */
 #trials-panel{display:flex;flex-direction:column;overflow:hidden;background:var(--dungeon);border-left:1px solid var(--iron);}
 #trials-hd{height:46px;display:flex;align-items:center;padding:0 14px;border-bottom:1px solid var(--iron);flex-shrink:0;gap:10px;}
 .trials-t{font-family:var(--font-d);font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dim);}
@@ -246,7 +350,6 @@ body::before{
 .vd-pts{font-family:var(--font-m);font-size:11px;color:var(--gold);margin-bottom:3px;}
 .vd-sub{font-family:var(--font-b);font-style:italic;font-size:12px;color:var(--mist);}
 
-/* Modal */
 #modal-overlay{display:none;position:fixed;inset:0;background:rgba(100,80,50,.4);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(3px);padding:16px;}
 #modal-overlay.open{display:flex;}
 #modal{background:var(--dungeon);border:1px solid var(--gold-dim);border-radius:4px;width:480px;max-width:100%;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.2),0 0 24px var(--gold-glow);animation:ma .18s ease;}
@@ -274,24 +377,9 @@ body::before{
 @keyframes fg{0%,100%{box-shadow:none;}50%{box-shadow:inset 0 0 0 1px var(--venom),0 0 14px rgba(26,107,48,0.25);}}
 @keyframes fp{0%,100%{box-shadow:none;}50%{box-shadow:inset 0 0 0 1px var(--amethyst),0 0 14px rgba(90,56,128,0.25);}}
 .fg{animation:fg .35s ease;}.fp{animation:fp .35s ease;}
-@media (max-width: 1100px){
-  #view-editor.active{grid-template-columns:260px 1fr 240px;}
-}
-@media (max-width: 900px){
-  #view-editor.active{grid-template-columns:220px 1fr 200px;}
-  .dash-hero{padding:16px 20px;}
-  .dash-body{padding:16px 20px 24px;}
-  .hero-title{font-size:18px;}
-}
-@media (max-width: 700px){
-  #view-editor.active{grid-template-columns:1fr;}
-  #grimoire,#trials-panel{display:none;}
-  .dash-hero{padding:14px 16px;}
-  .dash-body{padding:14px 16px 20px;}
-  .tome-hd{padding:12px 14px;}
-  .sp-tags,.sp-st{display:none;}
-}
-
+@media (max-width: 1100px){#view-editor.active{grid-template-columns:260px 1fr 240px;}}
+@media (max-width: 900px){#view-editor.active{grid-template-columns:220px 1fr 200px;}.dash-hero{padding:16px 20px;}.dash-body{padding:16px 20px 24px;}.hero-title{font-size:18px;}}
+@media (max-width: 700px){#view-editor.active{grid-template-columns:1fr;}#grimoire,#trials-panel{display:none;}.dash-hero{padding:14px 16px;}.dash-body{padding:14px 16px 20px;}.tome-hd{padding:12px 14px;}.sp-tags,.sp-st{display:none;}.quiz-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -334,6 +422,7 @@ body::before{
   </div>
 </div>
 
+<!-- DASHBOARD -->
 <div id="view-dashboard">
   <div class="dash-hero">
     <div class="hero-tag">Active Term</div>
@@ -343,9 +432,33 @@ body::before{
   <div class="dash-body">
     <div class="sec-label">Assigned Tomes</div>
     <div id="lab-list"></div>
+
+    <!-- PRACTICE QUIZ SECTION -->
+    <div class="sec-label" style="margin-top:8px;">Practice Quizzes</div>
+    <div id="quiz-list" class="quiz-grid"></div>
   </div>
 </div>
 
+<!-- QUIZ VIEW -->
+<div id="view-quiz">
+  <div id="quiz-topbar">
+    <div id="quiz-back" onclick="showDash()">← Return to Hall</div>
+    <div id="quiz-title-bar">Quiz</div>
+    <div id="quiz-progress-text"></div>
+  </div>
+  <div id="quiz-prog-bar"><div id="quiz-prog-fill" style="width:0%"></div></div>
+  <div id="quiz-body">
+    <div id="quiz-inner">
+      <div id="quiz-questions"></div>
+      <div id="quiz-submit-wrap">
+        <button id="quiz-submit-btn" disabled>✦ Submit Answers</button>
+      </div>
+      <div id="quiz-results"></div>
+    </div>
+  </div>
+</div>
+
+<!-- EDITOR VIEW -->
 <div id="view-editor">
   <div id="grimoire">
     <div class="grm-hd">
@@ -415,11 +528,13 @@ body::before{
 </div>
 
 <script>
-let DATA=null,pyodide=null,cm=null,activeProblem=null;
-const state={};
+/* ===== CORE STATE ===== */
+let DATA=null,QUIZDATA=null,pyodide=null,cm=null,activeProblem=null,activeQuiz=null;
+const state={},quizState={};
 const $=id=>document.getElementById(id);
 const gs=id=>{if(!state[id])state[id]={code:'',tcResults:null,submitted:false};return state[id];};
 
+/* ===== DATA LOADING ===== */
 async function loadJSON(){
   try{
     const cfgRes=await fetch('config.json');
@@ -434,6 +549,15 @@ async function loadJSON(){
   }catch(e){alert('Could not load config.json.\n\n'+e.message);}
 }
 
+async function loadQuizzes(){
+  try{
+    const r=await fetch('quizzes.json');
+    if(!r.ok)return;
+    QUIZDATA=await r.json();
+  }catch(e){console.warn('quizzes.json not found — quiz section hidden.');}
+}
+
+/* ===== PYTHON ===== */
 async function initPy(){
   $('load-bar').style.width='20%';$('load-txt').textContent='Summoning Python runtime…';
   pyodide=await loadPyodide({indexURL:'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/'});
@@ -441,8 +565,6 @@ async function initPy(){
   await pyodide.runPythonAsync('import sys,io,builtins');
 }
 
-// Cache compiled code for speed
-const _pyCache={};
 async function runPy(code,inputLines){
   if(!pyodide)return{ok:false,error:'Python not ready.'};
   if(!code.trim())return{ok:false,error:'The scroll is empty!'};
@@ -469,6 +591,7 @@ sys.stdout=io.StringIO();sys.stderr=io.StringIO()
   }
 }
 
+/* ===== CODEMIRROR ===== */
 function initCM(){
   cm=CodeMirror($('cm-mount'),{
     mode:'python',theme:'sly',lineNumbers:true,
@@ -485,10 +608,12 @@ function initCM(){
   cm.on('change',()=>{if(activeProblem)gs(activeProblem.id).code=cm.getValue();hideErr();});
 }
 
+/* ===== NAVIGATION ===== */
 function showDash(){
-  activeProblem=null;
+  activeProblem=null;activeQuiz=null;
   $('view-dashboard').classList.add('active');
   $('view-editor').classList.remove('active');
+  $('view-quiz').classList.remove('active');
   setBc(null,null);renderDash();
 }
 
@@ -501,8 +626,10 @@ function renderDash(){
   $('l-course').textContent=c.name;
   const ll=$('lab-list');ll.innerHTML='';
   DATA.labs.forEach(lab=>ll.appendChild(makeLabCard(lab)));
+  renderQuizDash();
 }
 
+/* ===== LAB / TOME LOGIC (unchanged) ===== */
 function labStats(lab){
   let solved=0,subCount=0,pts=0;
   const maxPts=lab.problems.reduce((a,p)=>a+p.points,0);
@@ -568,6 +695,7 @@ function makeSpellRow(prob,lab){
 function openProb(prob,lab){
   activeProblem=prob;const s=gs(prob.id);
   $('view-dashboard').classList.remove('active');
+  $('view-quiz').classList.remove('active');
   $('view-editor').classList.add('active');
   setBc(lab,prob);
   $('ed-fname').textContent=prob.title.toLowerCase().replace(/[^a-z0-9]+/g,'_')+'.py';
@@ -608,6 +736,243 @@ function toggleHint(btn){
   btn.textContent=b.classList.contains('visible')?'⟡ Conceal Scroll':'⟡ Reveal Scroll';
 }
 
+/* ===== QUIZ DASHBOARD ===== */
+function renderQuizDash(){
+  const ql=$('quiz-list');ql.innerHTML='';
+  if(!QUIZDATA||!QUIZDATA.quizzes||QUIZDATA.quizzes.length===0){
+    ql.innerHTML='<div style="font-family:var(--font-m);font-size:11px;color:var(--mist);padding:12px 4px;">No quizzes found. Add a <code style=\'color:var(--emerald)\'>quizzes.json</code> file to get started.</div>';
+    return;
+  }
+  QUIZDATA.quizzes.forEach(q=>ql.appendChild(makeQuizCard(q)));
+}
+
+function makeQuizCard(quiz){
+  const qs=quizState[quiz.id]||{};
+  const done=qs.submitted;
+  const score=done?qs.score:null;
+  const total=quiz.questions.length;
+  const pct=done?Math.round(score/total*100):0;
+
+  const typeSet=new Set(quiz.questions.map(q=>q.type));
+  const typeLabels={'multiple_choice':'MC','true_false':'T/F','code_output':'Code','fill_blank':'Fill'};
+  const typeTags=[...typeSet].map(t=>`<span class="glyph gp">${typeLabels[t]||t}</span>`).join('');
+
+  let badgeCls='quiz-score-badge',badgeTxt='Not attempted';
+  if(done){
+    badgeCls='quiz-score-badge '+(pct>=70?'done-pass':'done-fail');
+    badgeTxt=`${score}/${total} · ${pct}%`;
+  }
+
+  const card=document.createElement('div');
+  card.className='quiz-card';
+  card.innerHTML=`
+    <div class="quiz-card-top">
+      <span class="quiz-ico">${quiz.icon||'📝'}</span>
+      <span class="quiz-card-title">${quiz.title}</span>
+    </div>
+    <div class="quiz-card-meta">
+      <span>${total} questions</span>
+      <span>${quiz.topic}</span>
+      <span>${typeTags}</span>
+    </div>
+    <div class="quiz-card-footer">
+      <span class="${badgeCls}">${badgeTxt}</span>
+      <button class="quiz-start-btn">${done?'Retake →':'Start →'}</button>
+    </div>
+    <div class="quiz-prog"><div class="quiz-prog-fill" style="width:${pct}%"></div></div>`;
+  card.addEventListener('click',()=>openQuiz(quiz));
+  return card;
+}
+
+/* ===== QUIZ VIEW ===== */
+function openQuiz(quiz){
+  activeQuiz=quiz;
+  // Reset answers for this session
+  quizState[quiz.id]=quizState[quiz.id]||{};
+  quizState[quiz.id].answers={};
+  quizState[quiz.id].submitted=false;
+
+  $('view-dashboard').classList.remove('active');
+  $('view-editor').classList.remove('active');
+  $('view-quiz').classList.add('active');
+  $('quiz-title-bar').textContent=quiz.title;
+
+  // Breadcrumb
+  const bc=$('breadcrumb');bc.innerHTML='';
+  const mk=(t,fn,a)=>{const s=document.createElement('span');s.className='bc-i'+(a?' active':'');s.textContent=t;if(fn)s.onclick=fn;return s;};
+  const sep=()=>{const s=document.createElement('span');s.className='bc-s';s.textContent='›';return s;};
+  bc.appendChild(mk('Hall',showDash,false));
+  bc.appendChild(sep());
+  bc.appendChild(mk(quiz.title,null,true));
+
+  renderQuizQuestions(quiz);
+  updateQuizProgress(quiz);
+}
+
+const QT_LABELS={'multiple_choice':'Multiple Choice','true_false':'True or False','code_output':'Code Output','fill_blank':'Fill in the Blank'};
+const QT_CLS={'multiple_choice':'qt-mc','true_false':'qt-tf','code_output':'qt-co','fill_blank':'qt-fb'};
+
+function renderQuizQuestions(quiz){
+  const container=$('quiz-questions');
+  container.innerHTML='';
+  $('quiz-results').className='';
+  $('quiz-results').innerHTML='';
+  $('quiz-submit-btn').disabled=true;
+  $('quiz-submit-btn').textContent='✦ Submit Answers';
+
+  quiz.questions.forEach((q,idx)=>{
+    const card=document.createElement('div');
+    card.className='q-card';
+    card.id='qcard-'+q.id;
+
+    // Parse question text and code block
+    let qText=q.question,qCode='';
+    const codeMatch=q.question.match(/^([\s\S]*?)```([\s\S]*)```([\s\S]*)$/);
+    if(codeMatch){
+      qText=(codeMatch[1]+codeMatch[3]).trim();
+      qCode=codeMatch[2].trim();
+    }
+
+    card.innerHTML=`
+      <div class="q-head">
+        <div class="q-num">Question ${idx+1} <span class="q-type-tag ${QT_CLS[q.type]||'qt-mc'}">${QT_LABELS[q.type]||q.type}</span></div>
+        <div class="q-text">${qText}</div>
+        ${qCode?`<div class="q-code">${escHtml(qCode)}</div>`:''}
+      </div>
+      <div class="q-body" id="qbody-${q.id}"></div>
+      <div class="q-feedback" id="qfb-${q.id}"></div>`;
+
+    container.appendChild(card);
+    renderQuestionInput(q,idx);
+  });
+}
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function renderQuestionInput(q,idx){
+  const body=$('qbody-'+q.id);
+  const qs=quizState[activeQuiz.id];
+
+  if(q.type==='multiple_choice'||q.type==='code_output'||q.type==='true_false'){
+    const choices=q.type==='true_false'?['True','False']:q.choices;
+    const div=document.createElement('div');
+    div.className='choices';
+    choices.forEach(ch=>{
+      const c=document.createElement('div');
+      c.className='choice';
+      c.dataset.val=ch;
+      c.innerHTML=`<div class="choice-dot">◆</div><span class="choice-label">${escHtml(ch)}</span>`;
+      c.addEventListener('click',()=>{
+        if(c.classList.contains('locked'))return;
+        div.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected'));
+        c.classList.add('selected');
+        qs.answers[q.id]=ch;
+        checkSubmitReady();
+      });
+      div.appendChild(c);
+    });
+    body.appendChild(div);
+  } else if(q.type==='fill_blank'){
+    const row=document.createElement('div');
+    row.className='fill-row';
+    const inp=document.createElement('input');
+    inp.type='text';inp.className='fill-input';inp.placeholder='Type your answer…';inp.autocomplete='off';
+    inp.addEventListener('input',()=>{
+      qs.answers[q.id]=inp.value.trim();
+      checkSubmitReady();
+    });
+    row.appendChild(inp);
+    body.appendChild(row);
+  }
+}
+
+function checkSubmitReady(){
+  const quiz=activeQuiz;
+  const qs=quizState[quiz.id];
+  const answered=quiz.questions.filter(q=>qs.answers[q.id]!==undefined&&qs.answers[q.id]!=='').length;
+  $('quiz-progress-text').textContent=`${answered}/${quiz.questions.length} answered`;
+  $('quiz-prog-fill').style.width=(answered/quiz.questions.length*100)+'%';
+  $('quiz-submit-btn').disabled=answered<quiz.questions.length;
+}
+
+function updateQuizProgress(quiz){
+  $('quiz-progress-text').textContent=`0/${quiz.questions.length} answered`;
+  $('quiz-prog-fill').style.width='0%';
+}
+
+/* ===== QUIZ SUBMIT ===== */
+$('quiz-submit-btn').addEventListener('click',()=>{
+  const quiz=activeQuiz;
+  const qs=quizState[quiz.id];
+  if(qs.submitted)return;
+  qs.submitted=true;
+
+  let correct=0;
+  quiz.questions.forEach((q,idx)=>{
+    const userAns=(qs.answers[q.id]||'').toString().trim();
+    const correctAns=q.answer.toString().trim();
+    const isCorrect=userAns.toLowerCase()===correctAns.toLowerCase();
+    if(isCorrect)correct++;
+
+    // Lock and show feedback on each card
+    const card=$('qcard-'+q.id);
+    const body=$('qbody-'+q.id);
+    const fb=$('qfb-'+q.id);
+
+    card.classList.add(isCorrect?'answered-correct':'answered-wrong');
+
+    // For choice-based questions
+    body.querySelectorAll('.choice').forEach(c=>{
+      c.classList.add('locked');
+      if(c.dataset.val.toLowerCase()===correctAns.toLowerCase())c.classList.add('correct');
+      else if(c.classList.contains('selected')&&!isCorrect)c.classList.add('wrong');
+    });
+    // For fill blank
+    const fi=body.querySelector('.fill-input');
+    if(fi){
+      fi.disabled=true;
+      fi.classList.add(isCorrect?'correct':'wrong');
+    }
+
+    fb.className='q-feedback show '+(isCorrect?'ok':'no');
+    fb.innerHTML=isCorrect
+      ?'✦ Correct!'
+      :`✗ Incorrect — correct answer: <span class="fb-ans">${escHtml(correctAns)}</span>`;
+  });
+
+  qs.score=correct;
+  const pct=Math.round(correct/quiz.questions.length*100);
+  const pass=pct>=70;
+
+  $('quiz-submit-btn').disabled=true;
+  $('quiz-submit-btn').textContent='✦ Submitted';
+
+  // Results panel
+  const res=$('quiz-results');
+  res.className='show';
+  res.innerHTML=`
+    <div class="res-sigil">${pass?'✦':'✗'}</div>
+    <div class="res-title ${pass?'pass':'fail'}">${pass?'Quiz Passed!':'Quiz Failed'}</div>
+    <div class="res-score">${correct}/${quiz.questions.length}</div>
+    <div class="res-sub">${pct}% — ${pass?'Well done, the grimoire approves.':'Study more and try again.'}</div>
+    <div class="res-breakdown">
+      <div class="res-stat"><div class="res-stat-n" style="color:var(--emerald)">${correct}</div><div class="res-stat-l">Correct</div></div>
+      <div class="res-stat"><div class="res-stat-n" style="color:var(--crimson)">${quiz.questions.length-correct}</div><div class="res-stat-l">Wrong</div></div>
+      <div class="res-stat"><div class="res-stat-n" style="color:var(--gold)">${pct}%</div><div class="res-stat-l">Score</div></div>
+    </div>
+    <div class="res-actions">
+      <button class="res-btn res-btn-retry" onclick="retakeQuiz()">↺ Retake</button>
+      <button class="res-btn res-btn-back" onclick="showDash()">← Back to Hall</button>
+    </div>`;
+
+  res.scrollIntoView({behavior:'smooth',block:'center'});
+});
+
+function retakeQuiz(){
+  openQuiz(activeQuiz);
+}
+
+/* ===== EDITOR LOGIC (unchanged) ===== */
 function renderTrials(){
   if(!activeProblem)return;
   const p=activeProblem,s=gs(p.id),res=s.tcResults,sub=s.submitted;
@@ -699,9 +1064,11 @@ $('btn-run').addEventListener('click',async()=>{
 $('btn-test').addEventListener('click',async()=>{setBusy(true);hideErr();const res=await runVisibleTCs();if(res){renderTrials();flash('fg');}setBusy(false);});
 $('btn-submit').addEventListener('click',async()=>{setBusy(true);hideErr();const res=await runAllTCs();if(!res){setBusy(false);return;}gs(activeProblem.id).submitted=true;renderTrials();renderVerdict();setBusy(false);flash('fp');});
 
+/* ===== INIT ===== */
 (async()=>{
   $('load-bar').style.width='10%';$('load-txt').textContent='Loading tomes…';
   await loadJSON();
+  await loadQuizzes();
   if(DATA){$('l-course').textContent=DATA.course.name;console.log('Loaded',DATA.labs.length,'labs');}
   $('load-bar').style.width='30%';initCM();
   $('load-bar').style.width='40%';$('load-txt').textContent='Binding Python spells…';
