@@ -906,6 +906,92 @@ $('btn-submit').addEventListener('click',async()=>{
   }
 });
 
+/* ===== MOBILE NAV ===== */
+const isMobile=()=>window.innerWidth<=700;
+
+function showMobNav(show){
+  const nav=$('mob-editor-nav');
+  if(!nav)return;
+  nav.style.display=show?'flex':'none';
+}
+
+// Track which mobile tab is open
+let mobActiveTab='code';
+
+function mobTab(tab){
+  if(!isMobile())return;
+  mobActiveTab=tab;
+  const grimoire=document.getElementById('grimoire');
+  const trials=document.getElementById('trials-panel');
+  const edCenter=$('ed-center');
+
+  // Reset all drawers
+  grimoire.classList.remove('mob-open');
+  trials.classList.remove('mob-open');
+
+  // Update nav button states
+  ['code','problem','trials'].forEach(t=>{
+    const btn=$('mob-btn-'+t);
+    if(!btn)return;
+    btn.classList.remove('active','active-violet');
+    if(t===tab){
+      if(t==='trials') btn.classList.add('active-violet');
+      else btn.classList.add('active');
+    }
+  });
+
+  if(tab==='problem'){
+    grimoire.classList.add('mob-open');
+    // Scroll grimoire to top when opened
+    grimoire.scrollTop=0;
+  } else if(tab==='trials'){
+    trials.classList.add('mob-open');
+    trials.scrollTop=0;
+  } else {
+    // code tab — refresh CodeMirror so it fills correctly
+    if(cm) setTimeout(()=>cm.refresh(),30);
+  }
+}
+
+// Patch showDash to hide mobile nav
+const _origShowDash=showDash;
+function showDash(){
+  _origShowDash();
+  showMobNav(false);
+  mobActiveTab='code';
+}
+
+// Patch openProb to show mobile nav and reset to code tab
+const _origOpenProb=openProb;
+function openProb(prob,lab){
+  _origOpenProb(prob,lab);
+  if(isMobile()){
+    showMobNav(true);
+    mobTab('code');
+  }
+}
+
+// Keep mobile nav visible when resizing back to mobile while in editor
+window.addEventListener('resize',()=>{
+  if($('view-editor').classList.contains('active')){
+    if(isMobile()){
+      showMobNav(true);
+      // Re-apply current tab state
+      mobTab(mobActiveTab);
+    } else {
+      showMobNav(false);
+      // Ensure panels are visible on desktop
+      const grimoire=document.getElementById('grimoire');
+      const trials=document.getElementById('trials-panel');
+      grimoire.classList.remove('mob-open');
+      trials.classList.remove('mob-open');
+      grimoire.style.display='';
+      trials.style.display='';
+      if(cm) setTimeout(()=>cm.refresh(),30);
+    }
+  }
+});
+
 /* ===== INIT ===== */
 (async()=>{
   $('load-bar').style.width='10%';$('load-txt').textContent='Loading scrolls…';
