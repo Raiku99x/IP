@@ -26,10 +26,25 @@ function randomError(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
 
+function setUserDisplay(user) {
+  if (!user) return;
+  const username = user.user_metadata?.full_name || user.email?.split('@')[0] || '?';
+  const firstLetter = username.charAt(0).toUpperCase();
+
+  const avatarEl = document.getElementById('user-avatar');
+  const nameEl = document.getElementById('user-username-display');
+  const emailEl = document.getElementById('user-email-display');
+
+  if (avatarEl) avatarEl.textContent = firstLetter;
+  if (nameEl) nameEl.textContent = username;
+  if (emailEl) emailEl.textContent = user.email || '';
+}
+
 async function initAuth() {
   const { data: { session } } = await sbClient.auth.getSession();
   if (session) {
     currentUser = session.user;
+    setUserDisplay(currentUser);
     hideAuthScreen();
   } else {
     showAuthScreen();
@@ -37,6 +52,7 @@ async function initAuth() {
   sbClient.auth.onAuthStateChange((event, session) => {
     if (session) {
       currentUser = session.user;
+      setUserDisplay(currentUser);
       hideAuthScreen();
     } else {
       currentUser = null;
@@ -90,7 +106,7 @@ async function handleSignup() {
     return;
   }
 
-  // Check allowed_usernames via RPC (list stays hidden on server)
+  // Check allowed_usernames via secure RPC
   const { data: isAllowed, error: rpcError } = await sbClient.rpc('check_username_allowed', {
     input_username: username
   });
@@ -100,7 +116,7 @@ async function handleSignup() {
     return;
   }
 
-  // Check if username already taken in profiles
+  // Check if username already taken
   const { data: existing } = await sbClient
     .from('profiles')
     .select('id')
@@ -127,6 +143,9 @@ async function handleSignup() {
 }
 
 async function handleLogout() {
+  // Close dropdown first
+  document.getElementById('user-dropdown-btn')?.classList.remove('open');
+  document.getElementById('user-dropdown-menu')?.classList.remove('open');
   await sbClient.auth.signOut();
 }
 
