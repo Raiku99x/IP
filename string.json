@@ -246,7 +246,183 @@
           ]
         }
       ]
+    },
+    {
+  "id": "string-4",
+  "title": "[new] String Method Toolkit",
+  "difficulty": "medium",
+  "points": 45,
+  "passingPercent": 75,
+  "description": "You are building a string inspection utility that demonstrates a wide range of **Python string methods**.\n\nYour program should:\n1. Read a single line of text.\n2. Read a **search word** to locate in the text.\n3. Print the result of `find()` for the search word (returns -1 if not found).\n4. Print how many times the search word appears using `count()`.\n5. Read a **replacement word** and print the text after `replace()`-ing the search word with it.\n6. Print whether the original text `startswith()` a prefix read from input.\n7. Print whether the original text `endswith()` a suffix read from input.\n8. Print `isalpha()` on the **search word**.\n9. Read an integer **width** and print the search word padded with `zfill()`.\n10. Print `swapcase()` of the original text.",
+  "constraints": [
+    "The text may contain letters, digits, and spaces.",
+    "The search word is a single word (no spaces).",
+    "Width for zfill is between 1 and 10."
+  ],
+  "inputFormat": "Line 1: The text string.\nLine 2: The search word.\nLine 3: The replacement word.\nLine 4: A prefix string to check with startswith.\nLine 5: A suffix string to check with endswith.\nLine 6: An integer width for zfill.",
+  "outputFormat": "Line 1: `Find: <n>`\nLine 2: `Count: <n>`\nLine 3: `Replaced: <text>`\nLine 4: `Starts with '<prefix>': <True/False>`\nLine 5: `Ends with '<suffix>': <True/False>`\nLine 6: `Is alpha: <True/False>`\nLine 7: `Zfill: <result>`\nLine 8: `Swapcase: <text>`",
+  "hint": "text = input()\nsearch = input()\nreplace_word = input()\nprefix = input()\nsuffix = input()\nwidth = int(input())\nprint('Find:', text.find(search))\nprint('Count:', text.count(search))\nprint('Replaced:', text.replace(search, replace_word))\nprint(f\"Starts with '{prefix}':\", text.startswith(prefix))\nprint(f\"Ends with '{suffix}':\", text.endswith(suffix))\nprint('Is alpha:', search.isalpha())\nprint('Zfill:', search.zfill(width))\nprint('Swapcase:', text.swapcase())",
+  "testCases": [
+    {
+      "label": "Example 1 — word found, alpha true",
+      "hidden": false,
+      "inputs": ["hello world hello", "hello", "hi", "hello", "world", "7"],
+      "expected": [
+        "Find: 0",
+        "Count: 2",
+        "Replaced: hi world hi",
+        "Starts with 'hello': True",
+        "Ends with 'world': False",
+        "Is alpha: True",
+        "Zfill: 00hello",
+        "Swapcase: HELLO WORLD HELLO"
+      ]
+    },
+    {
+      "label": "Example 2 — word not found, digit search",
+      "hidden": false,
+      "inputs": ["Python 101 is fun", "java", "ruby", "Python", "fun", "6"],
+      "expected": [
+        "Find: -1",
+        "Count: 0",
+        "Replaced: Python 101 is fun",
+        "Starts with 'Python': True",
+        "Ends with 'fun': True",
+        "Is alpha: True",
+        "Zfill: 00java",
+        "Swapcase: pYTHON 101 IS FUN"
+      ]
+    },
+    {
+      "label": "Hidden: Search word with digits (isalpha false)",
+      "hidden": true,
+      "inputs": ["score is 100 today", "100", "zero", "score", "today", "5"],
+      "expected": [
+        "Find: 9",
+        "Count: 1",
+        "Replaced: score is zero today",
+        "Starts with 'score': True",
+        "Ends with 'today': True",
+        "Is alpha: False",
+        "Zfill: 00100",
+        "Swapcase: SCORE IS 100 TODAY"
+      ]
+    },
+    {
+      "label": "Hidden: zfill shorter than word",
+      "hidden": true,
+      "inputs": ["good morning everyone", "morning", "evening", "good", "one", "3"],
+      "expected": [
+        "Find: 5",
+        "Count: 1",
+        "Replaced: good evening everyone",
+        "Starts with 'good': True",
+        "Ends with 'one': True",
+        "Is alpha: True",
+        "Zfill: morning",
+        "Swapcase: GOOD MORNING EVERYONE"
+      ]
+    },
+    {
+      "label": "Hidden: Mixed case original text",
+      "hidden": true,
+      "inputs": ["Hello World Python", "World", "Earth", "Hello", "Java", "8"],
+      "expected": [
+        "Find: 6",
+        "Count: 1",
+        "Replaced: Hello Earth Python",
+        "Starts with 'Hello': True",
+        "Ends with 'Java': False",
+        "Is alpha: True",
+        "Zfill: 000World",
+        "Swapcase: hELLO wORLD pYTHON"
+      ]
     }
+  ]
+},
+{
+  "id": "string-5",
+  "title": "[new] Formatted Report Printer",
+  "difficulty": "hard",
+  "points": 55,
+  "passingPercent": 75,
+  "description": "You are writing a formatted report printer that practices **all string formatting strategies**: f-strings with format specifiers, `%` operator, `.format()`, and Template strings.\n\nYour program should:\n1. Read a **student name**, an **integer score**, and a **float GPA** on separate lines.\n2. Compute the **percentage** (score is out of 120) as a float.\n3. Using an **f-string**: print the name right-aligned in a field of width 15, score zero-padded to width 5, and GPA to 2 decimal places.\n4. Using the **% operator**: print `'Student: <name>, Score: <score>, GPA: <gpa>'` where name is `%s`, score is `%d`, GPA is `%.2f`.\n5. Using **`.format()`**: print the percentage formatted to 1 decimal place followed by `%`.\n6. Using a **Template string**: print `'Hello, <name>! Your GPA is <gpa>.'` substituting name and gpa (gpa formatted to 2 decimal places before substituting).\n7. Print the GPA formatted with **center alignment** in a field of width 10 using an f-string.\n8. Print the score formatted as **binary** using `format()`.",
+  "constraints": [
+    "Name is a single word, no spaces.",
+    "Score is an integer between 0 and 120.",
+    "GPA is a float with up to 2 decimal places."
+  ],
+  "inputFormat": "Line 1: Student name.\nLine 2: Integer score (out of 120).\nLine 3: Float GPA.",
+  "outputFormat": "Line 1: `Name: <right-aligned name in 15 chars>, Score: <zero-padded 5-digit score>, GPA: <2 decimal gpa>`\nLine 2: `Student: <name>, Score: <score>, GPA: <2 decimal gpa>` (using % operator)\nLine 3: `Percentage: <1 decimal>%` (using .format())\nLine 4: `Hello, <name>! Your GPA is <2 decimal gpa>.` (using Template)\nLine 5: `GPA centered: |<gpa centered in 10 chars>|`\nLine 6: `Score binary: <binary>`",
+  "hint": "from string import Template\nname = input()\nscore = int(input())\ngpa = float(input())\npct = score / 120 * 100\nprint(f'Name: {name:>15}, Score: {score:05d}, GPA: {gpa:.2f}')\nprint('Student: %s, Score: %d, GPA: %.2f' % (name, score, gpa))\nprint('Percentage: {:.1f}%'.format(pct))\nt = Template('Hello, $name! Your GPA is $gpa.')\nprint(t.substitute(name=name, gpa=f'{gpa:.2f}'))\nprint(f'GPA centered: |{gpa:^10.2f}|')\nprint('Score binary:', format(score, 'b'))",
+  "testCases": [
+    {
+      "label": "Example 1",
+      "hidden": false,
+      "inputs": ["Alice", "96", "3.75"],
+      "expected": [
+        "Name:           Alice, Score: 00096, GPA: 3.75",
+        "Student: Alice, Score: 96, GPA: 3.75",
+        "Percentage: 80.0%",
+        "Hello, Alice! Your GPA is 3.75.",
+        "GPA centered: |   3.75   |",
+        "Score binary: 1100000"
+      ]
+    },
+    {
+      "label": "Example 2 — short name, low score",
+      "hidden": false,
+      "inputs": ["Bob", "60", "2.50"],
+      "expected": [
+        "Name:             Bob, Score: 00060, GPA: 2.50",
+        "Student: Bob, Score: 60, GPA: 2.50",
+        "Percentage: 50.0%",
+        "Hello, Bob! Your GPA is 2.50.",
+        "GPA centered: |   2.50   |",
+        "Score binary: 111100"
+      ]
+    },
+    {
+      "label": "Hidden: Perfect score",
+      "hidden": true,
+      "inputs": ["Charlie", "120", "4.00"],
+      "expected": [
+        "Name:         Charlie, Score: 00120, GPA: 4.00",
+        "Student: Charlie, Score: 120, GPA: 4.00",
+        "Percentage: 100.0%",
+        "Hello, Charlie! Your GPA is 4.00.",
+        "GPA centered: |   4.00   |",
+        "Score binary: 1111000"
+      ]
+    },
+    {
+      "label": "Hidden: Long name",
+      "hidden": true,
+      "inputs": ["Bartholomew", "84", "3.10"],
+      "expected": [
+        "Name:     Bartholomew, Score: 00084, GPA: 3.10",
+        "Student: Bartholomew, Score: 84, GPA: 3.10",
+        "Percentage: 70.0%",
+        "Hello, Bartholomew! Your GPA is 3.10.",
+        "GPA centered: |   3.10   |",
+        "Score binary: 1010100"
+      ]
+    },
+    {
+      "label": "Hidden: Score of 1",
+      "hidden": true,
+      "inputs": ["Zoe", "1", "1.00"],
+      "expected": [
+        "Name:             Zoe, Score: 00001, GPA: 1.00",
+        "Student: Zoe, Score: 1, GPA: 1.00",
+        "Percentage: 0.8%",
+        "Hello, Zoe! Your GPA is 1.00.",
+        "GPA centered: |   1.00   |",
+        "Score binary: 1"
+      ]
+    }
+  ]
+}
 
   ]
 }
