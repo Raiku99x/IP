@@ -97,7 +97,206 @@
           ]
         }
       ]
+    },
+    {
+  "id": "list2-2",
+  "title": "[new] Number List Transformer",
+  "difficulty": "medium",
+  "points": 40,
+  "passingPercent": 75,
+  "description": "You are writing a number transformation tool that uses **list comprehension, map(), and filter()** to process a list of integers.\n\nYour program should:\n1. Read a comma-separated list of integers.\n2. Use **list comprehension** to create a list of squares of all numbers.\n3. Use **list comprehension with a condition** to extract only numbers **greater than the average** of the original list.\n4. Use `map()` to create a list where every number is increased by **10**.\n5. Use `filter()` to keep only **even numbers** from the original list.\n6. Use **nested list comprehension** to create a multiplication table: a 2D list where `table[i][j] = original[i] * original[j]` for the **first 3 elements** of the original list only.\n7. Print all results.",
+  "constraints": [
+    "Input contains between 3 and 8 integers.",
+    "All values are valid integers (can be negative).",
+    "Average is computed from the original list rounded to 2 decimal places for display only — use the exact value for comparison."
+  ],
+  "inputFormat": "A single comma-separated line of integers.",
+  "outputFormat": "Line 1: `Squares: <list>`\nLine 2: `Above avg (<avg>): <list>` — avg rounded to 2 decimal places\nLine 3: `Plus 10: <list>`\nLine 4: `Evens: <list>`\nLine 5+: `Table:` followed by each row of the 3x3 multiplication table, one per line, comma-separated.",
+  "hint": "nums = list(map(int, input().split(',')))\nsquares = [x**2 for x in nums]\navg = sum(nums) / len(nums)\nabove = [x for x in nums if x > avg]\nplus10 = list(map(lambda x: x + 10, nums))\nevens = list(filter(lambda x: x % 2 == 0, nums))\nfirst3 = nums[:3]\ntable = [[first3[i] * first3[j] for j in range(3)] for i in range(3)]\nprint('Squares:', squares)\nprint(f'Above avg ({round(avg,2)}):', above)\nprint('Plus 10:', plus10)\nprint('Evens:', evens)\nprint('Table:')\nfor row in table:\n    print(', '.join(map(str, row)))",
+  "testCases": [
+    {
+      "label": "Example 1",
+      "hidden": false,
+      "inputs": ["1,2,3,4,5"],
+      "expected": [
+        "Squares: [1, 4, 9, 16, 25]",
+        "Above avg (3.0): [4, 5]",
+        "Plus 10: [11, 12, 13, 14, 15]",
+        "Evens: [2, 4]",
+        "Table:",
+        "1, 2, 3",
+        "2, 4, 6",
+        "3, 6, 9"
+      ]
+    },
+    {
+      "label": "Example 2 — all even",
+      "hidden": false,
+      "inputs": ["2,4,6,8"],
+      "expected": [
+        "Squares: [4, 16, 36, 64]",
+        "Above avg (5.0): [6, 8]",
+        "Plus 10: [12, 14, 16, 18]",
+        "Evens: [2, 4, 6, 8]",
+        "Table:",
+        "4, 8, 12",
+        "8, 16, 24",
+        "12, 24, 36"
+      ]
+    },
+    {
+      "label": "Hidden: Contains negatives",
+      "hidden": true,
+      "inputs": ["-2,0,4,6"],
+      "expected": [
+        "Squares: [4, 0, 16, 36]",
+        "Above avg (2.0): [4, 6]",
+        "Plus 10: [8, 10, 14, 16]",
+        "Evens: [-2, 0, 4, 6]",
+        "Table:",
+        "4, 0, -8",
+        "0, 0, 0",
+        "-8, 0, 16"
+      ]
+    },
+    {
+      "label": "Hidden: No even numbers",
+      "hidden": true,
+      "inputs": ["1,3,5,7,9"],
+      "expected": [
+        "Squares: [1, 9, 25, 49, 81]",
+        "Above avg (5.0): [7, 9]",
+        "Plus 10: [11, 13, 15, 17, 19]",
+        "Evens: []",
+        "Table:",
+        "1, 3, 5",
+        "3, 9, 15",
+        "5, 15, 25"
+      ]
+    },
+    {
+      "label": "Hidden: Three elements exactly",
+      "hidden": true,
+      "inputs": ["3,6,9"],
+      "expected": [
+        "Squares: [9, 36, 81]",
+        "Above avg (6.0): [9]",
+        "Plus 10: [13, 16, 19]",
+        "Evens: [6]",
+        "Table:",
+        "9, 18, 27",
+        "18, 36, 54",
+        "27, 54, 81"
+      ]
     }
+  ]
+},
+{
+  "id": "list2-3",
+  "title": "[new] Student Grade Matrix",
+  "difficulty": "hard",
+  "points": 60,
+  "passingPercent": 75,
+  "description": "You are processing a grade matrix where each row is a student and each column is a subject. Use **2D list operations** to analyze the data.\n\nYour program should:\n1. Read **N** (students) and **M** (subjects).\n2. Read N lines of comma-separated integer grades, building a **2D list**.\n3. Compute each **student's average** (row average), rounded to 2 decimal places.\n4. Compute each **subject's average** (column average), rounded to 2 decimal places.\n5. **Flatten** the 2D list using list comprehension into a 1D list.\n6. Find the **overall highest** and **lowest** grades from the flat list.\n7. Use list comprehension to find **all students who passed** — students whose row average is >= 75. Print their row index (0-based) and average.\n8. **Transpose** the matrix (swap rows and columns) using nested list comprehension and print it, one row per line.",
+  "constraints": [
+    "N and M are each between 2 and 4.",
+    "All grades are integers between 0 and 100.",
+    "Passing threshold is 75."
+  ],
+  "inputFormat": "Line 1: Two integers N and M separated by a space.\nLines 2 to N+1: M comma-separated integers per line.",
+  "outputFormat": "`Student <i>: <avg>` for i from 1 to N.\n`Subject <j>: <avg>` for j from 1 to M.\n`Flat: <list>`\n`Highest: <n>, Lowest: <n>`\n`Passed: <list of (index, avg) tuples>`\nTransposed matrix, one row per line, comma-separated.",
+  "hint": "n, m = map(int, input().split())\ngrid = [list(map(int, input().split(','))) for _ in range(n)]\nfor i, row in enumerate(grid):\n    print(f'Student {i+1}: {round(sum(row)/m, 2)}')\nfor j in range(m):\n    col_avg = round(sum(grid[i][j] for i in range(n)) / n, 2)\n    print(f'Subject {j+1}: {col_avg}')\nflat = [v for row in grid for v in row]\nprint('Flat:', flat)\nprint(f'Highest: {max(flat)}, Lowest: {min(flat)}')\npassed = [(i, round(sum(grid[i])/m, 2)) for i in range(n) if round(sum(grid[i])/m, 2) >= 75]\nprint('Passed:', passed)\ntransposed = [[grid[r][c] for r in range(n)] for c in range(m)]\nfor row in transposed:\n    print(', '.join(map(str, row)))",
+  "testCases": [
+    {
+      "label": "Example 1 — 3x3, mixed",
+      "hidden": false,
+      "inputs": ["3 3", "80,90,85", "60,55,70", "75,80,78"],
+      "expected": [
+        "Student 1: 85.0",
+        "Student 2: 61.67",
+        "Student 3: 77.67",
+        "Subject 1: 71.67",
+        "Subject 2: 75.0",
+        "Subject 3: 77.67",
+        "Flat: [80, 90, 85, 60, 55, 70, 75, 80, 78]",
+        "Highest: 90, Lowest: 55",
+        "Passed: [(0, 85.0), (2, 77.67)]",
+        "80, 60, 75",
+        "90, 55, 80",
+        "85, 70, 78"
+      ]
+    },
+    {
+      "label": "Example 2 — 2x2",
+      "hidden": false,
+      "inputs": ["2 2", "70,80", "90,100"],
+      "expected": [
+        "Student 1: 75.0",
+        "Student 2: 95.0",
+        "Subject 1: 80.0",
+        "Subject 2: 90.0",
+        "Flat: [70, 80, 90, 100]",
+        "Highest: 100, Lowest: 70",
+        "Passed: [(0, 75.0), (1, 95.0)]",
+        "70, 90",
+        "80, 100"
+      ]
+    },
+    {
+      "label": "Hidden: All failing",
+      "hidden": true,
+      "inputs": ["2 3", "50,60,55", "40,45,42"],
+      "expected": [
+        "Student 1: 55.0",
+        "Student 2: 42.33",
+        "Subject 1: 45.0",
+        "Subject 2: 52.5",
+        "Subject 3: 48.5",
+        "Flat: [50, 60, 55, 40, 45, 42]",
+        "Highest: 60, Lowest: 40",
+        "Passed: []",
+        "50, 40",
+        "60, 45",
+        "55, 42"
+      ]
+    },
+    {
+      "label": "Hidden: 4x2 grid",
+      "hidden": true,
+      "inputs": ["4 2", "80,90", "70,60", "95,85", "55,65"],
+      "expected": [
+        "Student 1: 85.0",
+        "Student 2: 65.0",
+        "Student 3: 90.0",
+        "Student 4: 60.0",
+        "Subject 1: 75.0",
+        "Subject 2: 75.0",
+        "Flat: [80, 90, 70, 60, 95, 85, 55, 65]",
+        "Highest: 95, Lowest: 55",
+        "Passed: [(0, 85.0), (2, 90.0)]",
+        "80, 70, 95, 55",
+        "90, 60, 85, 65"
+      ]
+    },
+    {
+      "label": "Hidden: All passing, 3x2",
+      "hidden": true,
+      "inputs": ["3 2", "78,82", "90,88", "75,80"],
+      "expected": [
+        "Student 1: 80.0",
+        "Student 2: 89.0",
+        "Student 3: 77.5",
+        "Subject 1: 81.0",
+        "Subject 2: 83.33",
+        "Flat: [78, 82, 90, 88, 75, 80]",
+        "Highest: 90, Lowest: 75",
+        "Passed: [(0, 80.0), (1, 89.0), (2, 77.5)]",
+        "78, 90, 75",
+        "82, 88, 80"
+      ]
+    }
+  ]
+}
 
   ]
 }
