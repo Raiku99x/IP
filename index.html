@@ -129,9 +129,7 @@ body::before{
 
 /* Quiz card on dashboard */
 .quiz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;}
-.quiz-card{background:var(--dungeon);border:1px solid var(--iron);border-radius:4px;padding:14px 16px;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .12s;position:relative;overflow:hidden;}
-.quiz-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amethyst);}
-.quiz-card:hover{border-color:var(--amethyst);box-shadow:0 0 12px rgba(90,56,128,0.15);transform:translateY(-1px);}
+
 .quiz-card-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
 .quiz-ico{font-size:20px;flex-shrink:0;}
 .quiz-card-title{font-family:var(--font-d);font-size:13px;font-weight:600;color:var(--gold);letter-spacing:.04em;flex:1;}
@@ -141,38 +139,76 @@ body::before{
 .quiz-score-badge.done-pass{border-color:var(--serpent);color:var(--emerald);background:rgba(26,107,48,0.08);}
 .quiz-score-badge.done-fail{border-color:var(--blood);color:var(--crimson);background:rgba(139,28,28,0.08);}
 
-/* Show-answer toggle — top-right corner sigil */
-.quiz-reveal-toggle{
+/* Gear settings button — top-right corner */
+.quiz-gear-btn{
   position:absolute;top:10px;right:12px;
-  display:flex;align-items:center;gap:5px;
-  font-family:var(--font-m);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
-  padding:3px 8px 3px 6px;
-  border:1px solid var(--iron);border-radius:2px;
-  background:transparent;color:var(--mist);
-  cursor:pointer;transition:border-color .18s,color .18s;
-  user-select:none;
+  width:26px;height:26px;border-radius:50%;
+  border:1px solid var(--iron);background:transparent;
+  color:var(--mist);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .18s,color .18s,transform .3s;
+  font-size:12px;z-index:5;flex-shrink:0;
 }
-.quiz-reveal-toggle::before{
-  content:'';display:block;
-  width:5px;height:5px;border-radius:50%;
-  background:var(--iron);flex-shrink:0;
-  transition:background .18s,box-shadow .18s;
+.quiz-gear-btn:hover{border-color:var(--gold-dim);color:var(--gold);transform:rotate(60deg);}
+.quiz-gear-btn.open{border-color:var(--gold-dim);color:var(--gold);transform:rotate(90deg);}
+
+/* Card flip container */
+.quiz-card{
+  background:var(--dungeon);border:1px solid var(--iron);border-radius:4px;
+  cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .12s;
+  position:relative;overflow:hidden;
+  perspective:800px;
+  min-height:110px;
 }
-.quiz-reveal-toggle:hover{border-color:var(--gold-dim);color:var(--gold);}
-.quiz-reveal-toggle:hover::before{background:var(--gold-dim);}
-.quiz-reveal-toggle.active{border-color:var(--gold-dim);color:var(--gold-dim);}
-.quiz-reveal-toggle.active::before{
-  background:var(--gold-dim);
-  box-shadow:0 0 4px var(--gold-glow),0 0 8px var(--gold-glow);
+.quiz-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amethyst);z-index:1;}
+.quiz-card:hover{border-color:var(--amethyst);box-shadow:0 0 12px rgba(90,56,128,0.15);transform:translateY(-1px);}
+.quiz-card.settings-open{transform:none !important;border-color:var(--gold-dim) !important;box-shadow:0 0 14px rgba(160,120,40,0.15) !important;cursor:default;}
+
+/* Front and back faces */
+.qcard-inner{width:100%;transition:none;transform-style:preserve-3d;position:relative;}
+.qcard-front,.qcard-back{backface-visibility:hidden;-webkit-backface-visibility:hidden;}
+.qcard-front{padding:14px 16px;}
+.qcard-back{
+  position:absolute;top:0;left:0;width:100%;
+  padding:14px 16px;
+  background:var(--dungeon);
+  transform:rotateY(180deg);
+  display:none;
 }
-.quiz-reveal-toggle .toggle-tooltip{
-  position:absolute;top:calc(100% + 5px);right:0;
-  background:var(--bone);color:var(--void);
-  font-family:var(--font-m);font-size:9px;letter-spacing:.04em;
-  padding:4px 8px;border-radius:2px;white-space:nowrap;
-  opacity:0;pointer-events:none;transition:opacity .15s;z-index:10;
+.qcard-inner.flipped .qcard-front{display:none;}
+.qcard-inner.flipped .qcard-back{display:block;position:relative;transform:none;}
+
+/* Settings panel content */
+.qs-header{font-family:var(--font-d);font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.qs-header::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--iron),transparent);}
+.qs-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;}
+.qs-label{font-family:var(--font-m);font-size:10px;color:var(--mist);letter-spacing:.06em;}
+.qs-pills{display:flex;gap:5px;}
+.qs-pill{
+  font-family:var(--font-m);font-size:9px;padding:3px 10px;border-radius:2px;
+  border:1px solid var(--iron);color:var(--mist);background:transparent;
+  cursor:pointer;transition:all .15s;letter-spacing:.04em;
 }
-.quiz-reveal-toggle:hover .toggle-tooltip{opacity:1;}
+.qs-pill:hover{border-color:var(--gold-dim);color:var(--gold);}
+.qs-pill.active{border-color:var(--gold-dim);color:var(--gold);background:var(--gold-glow);box-shadow:0 0 6px var(--gold-glow);}
+/* Toggle checkbox row */
+.qs-check{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
+.qs-check input[type=checkbox]{display:none;}
+.qs-checkmark{
+  width:14px;height:14px;border:1px solid var(--iron);border-radius:2px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;color:transparent;background:transparent;
+  transition:all .15s;flex-shrink:0;
+}
+.qs-check.checked .qs-checkmark{border-color:var(--gold-dim);background:var(--gold-glow);color:var(--gold);}
+.qs-check.disabled{opacity:.4;pointer-events:none;}
+/* Save button */
+.qs-save{
+  font-family:var(--font-m);font-size:9px;font-weight:500;padding:4px 14px;
+  border-radius:2px;border:1px solid var(--gold-dim);background:transparent;
+  color:var(--gold);cursor:pointer;transition:all .12s;letter-spacing:.06em;float:right;margin-top:4px;
+}
+.qs-save:hover{background:var(--gold-glow);box-shadow:0 0 8px var(--gold-glow);}
 
 .quiz-footer-right{display:flex;align-items:center;gap:6px;}
 .quiz-start-btn{font-family:var(--font-m);font-size:9px;font-weight:500;padding:4px 11px;border-radius:2px;border:1px solid var(--amethyst);background:transparent;color:var(--violet);cursor:pointer;transition:all .12s;letter-spacing:.04em;}
@@ -600,8 +636,14 @@ body::before{
 /* ===== CORE STATE ===== */
 let DATA=null,QUIZDATA=null,pyodide=null,cm=null,activeProblem=null,activeQuiz=null;
 const state={},quizState={};
-// Per-quiz reveal preference: quizRevealPrefs[quizId] = true/false (default true)
-const quizRevealPrefs={};
+// Per-quiz settings: { numQ: 50, reveal: true, randomize: true }
+const quizSettings={};
+function getQSettings(id){
+  if(!quizSettings[id]) quizSettings[id]={numQ:50,reveal:true,randomize:true};
+  return quizSettings[id];
+}
+// Track which card has settings open
+let openSettingsId=null;
 // Current quiz reveal mode (set when quiz starts)
 let quizRevealMode=true;
 
@@ -829,41 +871,163 @@ function makeQuizCard(quiz){
   let badgeCls='quiz-score-badge',badgeTxt='Not attempted';
   if(done){badgeCls='quiz-score-badge '+(pct>=70?'done-pass':'done-fail');badgeTxt=`${qs.score}/${total} · ${pct}%`;}
 
-  // Reveal pref: default true if not set
-  if(quizRevealPrefs[quiz.id]===undefined) quizRevealPrefs[quiz.id]=true;
-  const revealOn=quizRevealPrefs[quiz.id];
+  const s=getQSettings(quiz.id);
 
   const card=document.createElement('div');
   card.className='quiz-card';
-  card.innerHTML=`
-    <div class="quiz-reveal-toggle ${revealOn?'active':''}" id="rt-${quiz.id}">
-      ${revealOn?'reveal on':'reveal off'}
-      <span class="toggle-tooltip">${revealOn?'Answers shown per question — click to hide until results':'Answers hidden until results — click to reveal per question'}</span>
-    </div>
+  card.id='qcard-'+quiz.id;
+
+  // --- gear button ---
+  const gearBtn=document.createElement('button');
+  gearBtn.className='quiz-gear-btn';
+  gearBtn.title='Quiz Settings';
+  gearBtn.innerHTML='⚙';
+  gearBtn.addEventListener('click',e=>{e.stopPropagation();toggleSettings(quiz.id,card,inner,s,total);});
+
+  // --- inner (flip container) ---
+  const inner=document.createElement('div');
+  inner.className='qcard-inner';
+
+  // FRONT FACE
+  const front=document.createElement('div');
+  front.className='qcard-front';
+  front.innerHTML=`
     <div class="quiz-card-top"><span class="quiz-ico">${quiz.icon||'📝'}</span><span class="quiz-card-title">${quiz.title}</span></div>
-    <div class="quiz-card-meta"><span>${total} questions</span><span>${quiz.topic}</span><span style="display:flex;gap:4px">${typeTags}</span></div>
+    <div class="quiz-card-meta"><span id="qmeta-n-${quiz.id}">${s.numQ} questions</span><span>${quiz.topic}</span><span style="display:flex;gap:4px">${typeTags}</span></div>
     <div class="quiz-card-footer">
       <span class="${badgeCls}">${badgeTxt}</span>
       <button class="quiz-start-btn">${done?'Retake →':'Start →'}</button>
     </div>
     <div class="quiz-prog"><div class="quiz-prog-fill" style="width:${pct}%"></div></div>`;
 
-  // Toggle button — stop propagation so card click doesn't fire
-  const toggleBtn=card.querySelector(`#rt-${quiz.id}`);
-  toggleBtn.addEventListener('click',e=>{
-    e.stopPropagation();
-    quizRevealPrefs[quiz.id]=!quizRevealPrefs[quiz.id];
-    const on=quizRevealPrefs[quiz.id];
-    toggleBtn.classList.toggle('active',on);
-    // update label + tooltip
-    const tn=toggleBtn.firstChild;if(tn&&tn.nodeType===3)tn.textContent='\n      '+(on?'reveal on':'reveal off')+'\n      ';
-    toggleBtn.querySelector('.toggle-tooltip').textContent=on
-      ?'Answers shown per question — click to hide until results'
-      :'Answers hidden until results — click to reveal per question';
+  // BACK FACE (settings panel)
+  const back=document.createElement('div');
+  back.className='qcard-back';
+  back.innerHTML=buildSettingsHTML(quiz.id,s,total);
+
+  inner.appendChild(front);
+  inner.appendChild(back);
+  card.appendChild(gearBtn);
+  card.appendChild(inner);
+
+  // Start button click
+  front.querySelector('.quiz-start-btn').addEventListener('click',e=>{e.stopPropagation();openQuiz(quiz);});
+
+  // Card body click → open quiz (not on gear, not on start btn)
+  card.addEventListener('click',()=>{
+    if(card.classList.contains('settings-open')) return;
+    openQuiz(quiz);
   });
 
-  card.addEventListener('click',()=>openQuiz(quiz));
+  // Wire settings interactions
+  wireSettings(quiz.id,card,inner,back,s,total);
+
   return card;
+}
+
+function buildSettingsHTML(id,s,total){
+  const n=s.numQ;
+  const randDisabled=n<50;
+  return `
+    <div class="qs-header">Quiz Settings</div>
+    <div class="qs-row">
+      <span class="qs-label">No. of questions</span>
+      <div class="qs-pills">
+        <button class="qs-pill${n===15?' active':''}" data-n="15">15</button>
+        <button class="qs-pill${n===30?' active':''}" data-n="30">30</button>
+        <button class="qs-pill${n===50?' active':''}" data-n="50">50</button>
+      </div>
+    </div>
+    <div class="qs-row">
+      <label class="qs-check${s.reveal?' checked':''}" id="qs-rev-${id}">
+        <input type="checkbox" ${s.reveal?'checked':''}>
+        <span class="qs-checkmark">✓</span>
+        <span class="qs-label">Reveal answer after each</span>
+      </label>
+    </div>
+    <div class="qs-row">
+      <label class="qs-check${s.randomize?' checked':''}${randDisabled?' checked':''}" id="qs-rnd-${id}" ${randDisabled?'style="opacity:.55;pointer-events:none;"':''}>
+        <input type="checkbox" ${(s.randomize||randDisabled)?'checked':''}>
+        <span class="qs-checkmark">✓</span>
+        <span class="qs-label">Randomize questions${randDisabled?' <span style="font-size:8px;color:var(--gold-dim)">(auto on)</span>':''}</span>
+      </label>
+    </div>
+    <button class="qs-save" id="qs-save-${id}">Save</button>
+  `;
+}
+
+function wireSettings(id,card,inner,back,s,total){
+  // pill buttons
+  back.querySelectorAll('.qs-pill').forEach(p=>{
+    p.addEventListener('click',e=>{
+      e.stopPropagation();
+      back.querySelectorAll('.qs-pill').forEach(x=>x.classList.remove('active'));
+      p.classList.add('active');
+      s.numQ=parseInt(p.dataset.n);
+      // auto-force randomize if <50
+      const rndLabel=back.querySelector(`#qs-rnd-${id}`);
+      if(s.numQ<50){
+        rndLabel.style.opacity='.55';rndLabel.style.pointerEvents='none';
+        rndLabel.classList.add('checked');
+        s.randomize=true;
+        // update label text
+        const span=rndLabel.querySelector('.qs-label');
+        span.innerHTML='Randomize questions <span style="font-size:8px;color:var(--gold-dim)">(auto on)</span>';
+      } else {
+        rndLabel.style.opacity='';rndLabel.style.pointerEvents='';
+        const span=rndLabel.querySelector('.qs-label');
+        span.innerHTML='Randomize questions';
+      }
+    });
+  });
+  // reveal checkbox
+  const revLabel=back.querySelector(`#qs-rev-${id}`);
+  revLabel.addEventListener('click',e=>{
+    e.stopPropagation();
+    s.reveal=!s.reveal;
+    revLabel.classList.toggle('checked',s.reveal);
+  });
+  // randomize checkbox
+  const rndLabel=back.querySelector(`#qs-rnd-${id}`);
+  rndLabel.addEventListener('click',e=>{
+    e.stopPropagation();
+    if(s.numQ<50) return;
+    s.randomize=!s.randomize;
+    rndLabel.classList.toggle('checked',s.randomize);
+  });
+  // save button
+  back.querySelector(`#qs-save-${id}`).addEventListener('click',e=>{
+    e.stopPropagation();
+    // update front meta label
+    const metaN=document.getElementById('qmeta-n-'+id);
+    if(metaN) metaN.textContent=s.numQ+' questions';
+    closeSettings(id,card,inner);
+  });
+}
+
+function toggleSettings(id,card,inner,s,total){
+  if(openSettingsId && openSettingsId!==id){
+    // close other open settings
+    const otherCard=document.getElementById('qcard-'+openSettingsId);
+    const otherInner=otherCard?otherCard.querySelector('.qcard-inner'):null;
+    if(otherCard&&otherInner) closeSettings(openSettingsId,otherCard,otherInner);
+  }
+  if(openSettingsId===id){
+    closeSettings(id,card,inner);
+  } else {
+    openSettingsId=id;
+    card.classList.add('settings-open');
+    inner.classList.add('flipped');
+    card.querySelector('.quiz-gear-btn').classList.add('open');
+  }
+}
+
+function closeSettings(id,card,inner){
+  if(openSettingsId===id) openSettingsId=null;
+  card.classList.remove('settings-open');
+  inner.classList.remove('flipped');
+  const gb=card.querySelector('.quiz-gear-btn');
+  if(gb) gb.classList.remove('open');
 }
 
 /* ===== ONE-AT-A-TIME QUIZ ===== */
@@ -877,8 +1041,15 @@ function openQuiz(quiz){
   qzIdx=0;qzResults=[];
   quizState[quiz.id]={answers:{},submitted:false};
 
-  // Grab reveal preference at quiz start
-  quizRevealMode = quizRevealPrefs[quiz.id] !== false;
+  // Apply settings
+  const s=getQSettings(quiz.id);
+  quizRevealMode=s.reveal;
+
+  // Build question list based on numQ + randomize
+  let qList=[...quiz.questions];
+  if(s.randomize) qList=qList.sort(()=>Math.random()-.5);
+  qList=qList.slice(0,Math.min(s.numQ,qList.length));
+  activeQuiz._qList=qList; // store for this session
 
   $('view-dashboard').classList.remove('active');
   $('view-editor').classList.remove('active');
@@ -911,8 +1082,9 @@ function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').
 
 function showQuestion(idx){
   const quiz=activeQuiz;
-  const total=quiz.questions.length;
-  const q=quiz.questions[idx];
+  const qList=quiz._qList||quiz.questions;
+  const total=qList.length;
+  const q=qList[idx];
   const isLast=idx===total-1;
 
   $('quiz-prog-fill').style.width=((idx)/total*100)+'%';
@@ -1040,7 +1212,8 @@ function advanceQuestion(){
 
 function finishQuiz(){
   const quiz=activeQuiz;
-  const total=quiz.questions.length;
+  const qList=quiz._qList||quiz.questions;
+  const total=qList.length;
   const correct=qzResults.filter(r=>r.correct).length;
   const pct=Math.round(correct/total*100);
   const pass=pct>=70;
