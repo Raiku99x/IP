@@ -55,9 +55,7 @@ async function loadJSON(){
 
 /* ===== PYTHON ===== */
 async function initPy(){
-  $('load-bar').style.width='20%';$('load-txt').textContent='Summoning Python runtime…';
   pyodide=await loadPyodide({indexURL:'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/'});
-  $('load-bar').style.width='80%';$('load-txt').textContent='Binding spells…';
   await pyodide.runPythonAsync('import sys,io,builtins');
 }
 
@@ -939,6 +937,8 @@ function toggleIoPane(pane){
     if(btn){ btn.classList.add('expanded'); btn.textContent='⤡'; }
   }
 }
+
+function mobTab(tab){
   if(!isMobile())return;
   mobActiveTab=tab;
   const grimoire=document.getElementById('grimoire');
@@ -996,14 +996,27 @@ window.addEventListener('resize',()=>{
 
 /* ===== INIT ===== */
 (async()=>{
-  $('load-bar').style.width='10%';$('load-txt').textContent='Loading scrolls…';
+  // Immediately start crawling so it never looks frozen
+  const bar=$('load-bar');
+  bar.style.width='5%';
+  // Fake crawl: inch to 20% over 1.2s before real work starts
+  let fakePct=5;
+  const crawl=setInterval(()=>{
+    fakePct+=1.5;
+    if(fakePct>=20){clearInterval(crawl);return;}
+    bar.style.width=fakePct+'%';
+  },80);
+
+  $('load-txt').textContent='Loading scrolls…';
   await loadJSON();
-  if(DATA){$('l-course').textContent=DATA.course.name;console.log('Loaded',DATA.labs.length,'labs');}
-  $('load-bar').style.width='30%';initCM();
-  $('load-bar').style.width='40%';$('load-txt').textContent='Binding Python spells…';
+  clearInterval(crawl);
+  if(DATA){$('l-course').textContent=DATA.course.name;}
+  bar.style.width='35%';$('load-txt').textContent='Binding spells…';
+  initCM();
+  bar.style.width='45%';$('load-txt').textContent='Summoning Python runtime…';
   await initPy();
   ['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=false);
-  $('load-bar').style.width='100%';$('load-txt').textContent='The dungeon is ready.';
-  setTimeout(()=>{$('loading-overlay').classList.add('hidden');showDash();},350);
+  bar.style.width='100%';$('load-txt').textContent='The dungeon is ready.';
+  setTimeout(()=>{$('loading-overlay').classList.add('hidden');showDash();},400);
 })();
 
