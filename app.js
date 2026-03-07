@@ -696,7 +696,7 @@ function toggleRevExpand(i){
   if(chev)chev.classList.toggle('open',!isOpen);
 }
 
-function finishQuiz(){
+async function finishQuiz(){
   const quiz=activeQuiz;
   const qList=quiz._qList||quiz.questions;
   const total=qList.length;
