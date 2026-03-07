@@ -761,7 +761,7 @@ body::before{
 <div id="congrats-overlay">
   <div id="congrats-modal">
     <div class="cgr-sigil">✦</div>
-    <div class="cgr-title">The Grimoire Accepts Your Spell</div>
+    <div class="cgr-title">Code Inscribed — All Trials Passed</div>
     <div class="cgr-pts" id="cgr-pts"></div>
     <div class="cgr-sub" id="cgr-sub"></div>
     <div class="cgr-divider"></div>
@@ -1013,6 +1013,11 @@ function openProb(prob,lab){
   $('out-text').textContent='— Awaiting cast —';$('out-text').style.color='var(--mist)';
   hideErr();['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=!pyodide);
   renderTrials();renderVerdict();
+  // Show congrats popup if problem was already fully passed
+  if(s.submitted&&s.tcResults&&s.tcResults.every(r=>r.pass)){
+    const pts=prob.points,total=s.tcResults.length;
+    showCongrats(pts,total,pts);
+  }
 }
 
 function setBc(lab,prob){
@@ -1611,8 +1616,8 @@ $('modal-overlay').addEventListener('click',e=>{if(e.target===$('modal-overlay')
 function hideErr(){$('err-banner').style.display='none';$('err-banner').className='';}
 function showErr(m){$('err-banner').style.display='block';$('err-banner').className='show';$('err-text').textContent='⚠ '+m;}
 function showCongrats(pts,total,maxPts){
-  $('cgr-pts').textContent=`${pts} / ${maxPts} pts  ·  All ${total} trials vanquished`;
-  $('cgr-sub').textContent='Every rune aligned. Every trial conquered.\nYour incantation has been sealed into the grimoire.';
+  $('cgr-pts').textContent=`You passed — ${pts} / ${maxPts} pts  ·  All ${total} trials passed`;
+  $('cgr-sub').textContent='All trials passed and all runes answered. The grimoire bows to your craft.';
   $('congrats-overlay').classList.add('open');
 }
 $('cgr-btn-hall').addEventListener('click',()=>{
