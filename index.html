@@ -126,10 +126,7 @@ body::before{
 .sp-cast:hover{background:var(--glow2);box-shadow:0 0 7px var(--glow);}
 
 /* ===================== PRACTICE QUIZ STYLES ===================== */
-
-/* Quiz card on dashboard */
 .quiz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;}
-
 .quiz-card-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
 .quiz-ico{font-size:20px;flex-shrink:0;}
 .quiz-card-title{font-family:var(--font-d);font-size:13px;font-weight:600;color:var(--gold);letter-spacing:.04em;flex:1;}
@@ -138,78 +135,34 @@ body::before{
 .quiz-score-badge{font-family:var(--font-m);font-size:10px;padding:3px 9px;border-radius:2px;border:1px solid var(--iron);color:var(--mist);background:transparent;}
 .quiz-score-badge.done-pass{border-color:var(--serpent);color:var(--emerald);background:rgba(26,107,48,0.08);}
 .quiz-score-badge.done-fail{border-color:var(--blood);color:var(--crimson);background:rgba(139,28,28,0.08);}
-
-/* Gear settings button — top-right corner */
-.quiz-gear-btn{
-  position:absolute;top:10px;right:12px;
-  width:26px;height:26px;border-radius:50%;
-  border:1px solid var(--iron);background:transparent;
-  color:var(--mist);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:border-color .18s,color .18s,transform .3s;
-  font-size:12px;z-index:5;flex-shrink:0;
-}
+.quiz-gear-btn{position:absolute;top:10px;right:12px;width:26px;height:26px;border-radius:50%;border:1px solid var(--iron);background:transparent;color:var(--mist);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .18s,color .18s,transform .3s;font-size:12px;z-index:5;flex-shrink:0;}
 .quiz-gear-btn:hover{border-color:var(--gold-dim);color:var(--gold);transform:rotate(60deg);}
 .quiz-gear-btn.open{border-color:var(--gold-dim);color:var(--gold);transform:rotate(90deg);}
-
-/* Card flip container */
-.quiz-card{
-  background:var(--dungeon);border:1px solid var(--iron);border-radius:4px;
-  cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .12s;
-  position:relative;overflow:hidden;
-  perspective:800px;
-  min-height:110px;
-}
+.quiz-card{background:var(--dungeon);border:1px solid var(--iron);border-radius:4px;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .12s;position:relative;overflow:hidden;perspective:800px;min-height:110px;}
 .quiz-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amethyst);z-index:1;}
 .quiz-card:hover{border-color:var(--amethyst);box-shadow:0 0 12px rgba(90,56,128,0.15);transform:translateY(-1px);}
 .quiz-card.settings-open{transform:none !important;border-color:var(--gold-dim) !important;box-shadow:0 0 14px rgba(160,120,40,0.15) !important;cursor:default;}
-
-/* Front and back faces */
 .qcard-inner{width:100%;transition:none;transform-style:preserve-3d;position:relative;}
 .qcard-front,.qcard-back{backface-visibility:hidden;-webkit-backface-visibility:hidden;}
 .qcard-front{padding:14px 16px;}
-.qcard-back{
-  position:absolute;top:0;left:0;width:100%;
-  padding:14px 16px;
-  background:var(--dungeon);
-  transform:rotateY(180deg);
-  display:none;
-}
+.qcard-back{position:absolute;top:0;left:0;width:100%;padding:14px 16px;background:var(--dungeon);transform:rotateY(180deg);display:none;}
 .qcard-inner.flipped .qcard-front{display:none;}
 .qcard-inner.flipped .qcard-back{display:block;position:relative;transform:none;}
-
-/* Settings panel content */
 .qs-header{font-family:var(--font-d);font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
 .qs-header::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--iron),transparent);}
 .qs-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;}
 .qs-label{font-family:var(--font-m);font-size:10px;color:var(--mist);letter-spacing:.06em;}
 .qs-pills{display:flex;gap:5px;}
-.qs-pill{
-  font-family:var(--font-m);font-size:9px;padding:3px 10px;border-radius:2px;
-  border:1px solid var(--iron);color:var(--mist);background:transparent;
-  cursor:pointer;transition:all .15s;letter-spacing:.04em;
-}
+.qs-pill{font-family:var(--font-m);font-size:9px;padding:3px 10px;border-radius:2px;border:1px solid var(--iron);color:var(--mist);background:transparent;cursor:pointer;transition:all .15s;letter-spacing:.04em;}
 .qs-pill:hover{border-color:var(--gold-dim);color:var(--gold);}
 .qs-pill.active{border-color:var(--gold-dim);color:var(--gold);background:var(--gold-glow);box-shadow:0 0 6px var(--gold-glow);}
-/* Toggle checkbox row */
 .qs-check{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
 .qs-check input[type=checkbox]{display:none;}
-.qs-checkmark{
-  width:14px;height:14px;border:1px solid var(--iron);border-radius:2px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:9px;color:transparent;background:transparent;
-  transition:all .15s;flex-shrink:0;
-}
+.qs-checkmark{width:14px;height:14px;border:1px solid var(--iron);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;background:transparent;transition:all .15s;flex-shrink:0;}
 .qs-check.checked .qs-checkmark{border-color:var(--gold-dim);background:var(--gold-glow);color:var(--gold);}
 .qs-check.disabled{opacity:.4;pointer-events:none;}
-/* Save button */
-.qs-save{
-  font-family:var(--font-m);font-size:9px;font-weight:500;padding:4px 14px;
-  border-radius:2px;border:1px solid var(--gold-dim);background:transparent;
-  color:var(--gold);cursor:pointer;transition:all .12s;letter-spacing:.06em;float:right;margin-top:4px;
-}
+.qs-save{font-family:var(--font-m);font-size:9px;font-weight:500;padding:4px 14px;border-radius:2px;border:1px solid var(--gold-dim);background:transparent;color:var(--gold);cursor:pointer;transition:all .12s;letter-spacing:.06em;float:right;margin-top:4px;}
 .qs-save:hover{background:var(--gold-glow);box-shadow:0 0 8px var(--gold-glow);}
-
 .quiz-footer-right{display:flex;align-items:center;gap:6px;}
 .quiz-start-btn{font-family:var(--font-m);font-size:9px;font-weight:500;padding:4px 11px;border-radius:2px;border:1px solid var(--amethyst);background:transparent;color:var(--violet);cursor:pointer;transition:all .12s;letter-spacing:.04em;}
 .quiz-start-btn:hover{background:rgba(90,56,128,0.12);box-shadow:0 0 7px rgba(90,56,128,0.3);}
@@ -219,35 +172,25 @@ body::before{
 /* ---- ONE-AT-A-TIME QUIZ VIEW ---- */
 #view-quiz{flex:1;overflow:hidden;display:none;flex-direction:column;position:relative;z-index:1;}
 #view-quiz.active{display:flex;}
-
-/* Top bar */
 #quiz-topbar{height:52px;background:var(--dungeon);border-bottom:1px solid var(--iron);display:flex;align-items:center;padding:0 24px;gap:14px;flex-shrink:0;position:relative;}
 #quiz-topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--amethyst),transparent);opacity:.3;}
 #quiz-title-bar{font-family:var(--font-d);font-size:13px;font-weight:600;color:var(--gold);letter-spacing:.04em;flex:1;}
 #quiz-progress-text{font-family:var(--font-m);font-size:11px;color:var(--mist);}
-
-/* Exit button in quiz topbar */
 #quiz-exit-btn{font-family:var(--font-m);font-size:10px;font-weight:500;padding:6px 14px;border-radius:2px;border:1px solid var(--blood);background:transparent;color:var(--crimson);cursor:pointer;letter-spacing:.05em;transition:all .15s;flex-shrink:0;display:flex;align-items:center;gap:6px;}
 #quiz-exit-btn:hover{background:rgba(139,28,28,0.1);box-shadow:0 0 8px rgba(139,28,28,0.2);}
-
-/* Progress bar */
 #quiz-prog-bar{height:3px;background:var(--iron);flex-shrink:0;}
 #quiz-prog-fill{height:100%;background:linear-gradient(90deg,var(--amethyst),var(--violet));transition:width .4s ease;box-shadow:0 0 6px rgba(90,56,128,0.4);}
-
-/* Stage — centered single-question area */
 #quiz-stage{flex:1;display:flex;align-items:center;justify-content:center;padding:24px 20px;overflow:hidden;}
 #quiz-card-wrap{width:100%;max-width:620px;display:flex;flex-direction:column;gap:16px;}
 
-/* The question card itself */
+/* The question card */
 .q-card{background:var(--dungeon);border:1px solid var(--iron);border-radius:4px;overflow:hidden;transition:border-color .25s;position:relative;}
 .q-card.answered-correct{border-color:var(--serpent);box-shadow:0 0 16px rgba(26,107,48,0.12);}
 .q-card.answered-wrong{border-color:var(--blood);box-shadow:0 0 16px rgba(139,28,28,0.1);}
-
 @keyframes qin{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
 @keyframes qout{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(-14px);}}
 .q-card.entering{animation:qin .22s ease forwards;}
 .q-card.leaving{animation:qout .18s ease forwards;}
-
 .q-head{padding:16px 18px 12px;border-bottom:1px solid var(--stone);}
 .q-num{font-family:var(--font-m);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--violet);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
 .q-type-tag{font-family:var(--font-m);font-size:9px;padding:2px 7px;border-radius:2px;letter-spacing:.04em;}
@@ -304,32 +247,82 @@ body::before{
 .q-feedback.ok .why-btn:hover{border-color:var(--serpent);color:var(--emerald);background:rgba(26,107,48,0.08);}
 .q-feedback.no .why-btn{border-color:var(--blood);color:var(--crimson);font-weight:700;box-shadow:0 0 6px rgba(139,28,28,0.2);}
 .q-feedback.no .why-btn:hover{background:rgba(139,28,28,0.1);box-shadow:0 0 10px rgba(139,28,28,0.3);}
+.why-btn.active-ok{border-color:var(--serpent)!important;color:var(--emerald)!important;background:rgba(26,107,48,0.08)!important;}
+.why-btn.active-no{border-color:var(--blood)!important;color:var(--crimson)!important;background:rgba(139,28,28,0.08)!important;}
 
-/* WHY explanation box — slides up over the q-body (choices area) */
+/* ===================== WHY BOX — slides down from feedback banner ===================== */
 .why-box{
-  display:none;
-  position:absolute;bottom:0;left:0;right:0;
-  padding:16px 18px 14px;
-  font-family:var(--font-b);font-size:14px;color:var(--fog);line-height:1.7;
-  background:var(--dungeon);
-  border-top:1px solid var(--stone);
-  z-index:10;
-  transform:translateY(100%);
-  transition:transform .28s cubic-bezier(.22,.68,0,1.1);
+  overflow:hidden;
+  max-height:0;
+  opacity:0;
+  transition:max-height .4s cubic-bezier(.22,.68,0,1.05), opacity .3s ease;
+  border-top:0px solid transparent;
 }
-.why-box.show{display:block;transform:translateY(0);}
-.why-box.loading{font-family:var(--font-m);font-size:10px;color:var(--mist);font-style:italic;letter-spacing:.04em;}
-.why-label{font-family:var(--font-m);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:6px;}
+.why-box.open{
+  max-height:500px;
+  opacity:1;
+  border-top:1px solid var(--stone);
+}
+.why-box-inner{
+  padding:14px 18px 16px;
+  font-family:var(--font-b);
+  font-size:14px;
+  color:var(--fog);
+  line-height:1.75;
+}
+.why-label{
+  font-family:var(--font-m);font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold-dim);margin-bottom:8px;display:flex;align-items:center;gap:8px;
+}
+.why-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--iron),transparent);}
+
+/* Shimmer loading skeleton */
+.why-shimmer{
+  display:flex;flex-direction:column;gap:8px;padding:14px 18px 16px;
+}
+.shimmer-line{
+  height:12px;border-radius:2px;
+  background:linear-gradient(90deg, var(--stone) 25%, var(--moss) 50%, var(--stone) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.4s infinite;
+}
+.shimmer-line:nth-child(1){width:92%;}
+.shimmer-line:nth-child(2){width:78%;}
+.shimmer-line:nth-child(3){width:85%;}
+.shimmer-line:nth-child(4){width:60%;}
+@keyframes shimmer{
+  0%{background-position:200% 0;}
+  100%{background-position:-200% 0;}
+}
+
+/* AI badge on why box */
+.why-ai-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:var(--font-m);font-size:8px;letter-spacing:.1em;
+  padding:2px 7px;border-radius:2px;
+  border:1px solid var(--amethyst);color:var(--violet);
+  background:rgba(90,56,128,0.06);margin-left:8px;
+  vertical-align:middle;
+}
+.why-fallback-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:var(--font-m);font-size:8px;letter-spacing:.1em;
+  padding:2px 7px;border-radius:2px;
+  border:1px solid var(--iron);color:var(--mist);
+  background:transparent;margin-left:8px;
+  vertical-align:middle;
+}
+
+/* ===================== END WHY BOX ===================== */
+
 #quiz-action-row{display:flex;justify-content:flex-end;gap:10px;}
 #quiz-next-btn{font-family:var(--font-d);font-size:11px;font-weight:600;padding:11px 28px;border-radius:3px;border:1px solid var(--amethyst);background:transparent;color:var(--violet);cursor:pointer;letter-spacing:.08em;transition:all .15s;display:none;}
 #quiz-next-btn.show{display:block;}
 #quiz-next-btn:hover{background:rgba(90,56,128,0.12);box-shadow:0 0 12px rgba(90,56,128,0.3);}
 
 /* ===================== RESULTS SCREEN ===================== */
-/* Results replaces the entire quiz view content — scrollable */
 #quiz-results{display:none;flex:1;overflow-y:auto;padding:20px;}
 #quiz-results.show{display:block;}
-
 .res-outer{display:flex;align-items:flex-start;justify-content:center;min-height:100%;padding-bottom:20px;}
 .res-inner{background:var(--dungeon);border:1px solid var(--gold-dim);border-radius:4px;padding:28px 32px;text-align:center;max-width:480px;width:100%;box-shadow:0 0 32px var(--gold-glow);margin:auto;}
 .res-sigil{font-size:40px;margin-bottom:10px;}
@@ -348,8 +341,6 @@ body::before{
 .res-btn-retry:hover{background:rgba(90,56,128,0.12);}
 .res-btn-back{border:1px solid var(--iron);color:var(--mist);background:transparent;}
 .res-btn-back:hover{background:var(--stone);}
-
-/* Review list in results */
 .res-review{text-align:left;display:flex;flex-direction:column;gap:5px;border-top:1px solid var(--iron);padding-top:14px;}
 .rev-row{display:flex;align-items:flex-start;gap:10px;padding:7px 10px;border-radius:3px;font-family:var(--font-m);font-size:11px;}
 .rev-row.ok{background:rgba(26,107,48,0.07);border:1px solid var(--serpent);color:var(--emerald);}
@@ -360,12 +351,9 @@ body::before{
 .rev-correct{color:var(--emerald);font-weight:600;}
 .rev-yours{color:var(--crimson);}
 
-/* ===================== END QUIZ STYLES ===================== */
-
 /* EDITOR */
 #view-editor{flex:1;overflow:hidden;display:none;position:relative;z-index:1;}
 #view-editor.active{display:grid;grid-template-columns:300px 1fr 280px;}
-
 #grimoire{background:var(--dungeon);border-right:1px solid var(--iron);display:flex;flex-direction:column;overflow-y:auto;height:100%;}
 .grm-hd{padding:18px;border-bottom:1px solid var(--iron);background:var(--stone);flex-shrink:0;}
 .grm-back{display:flex;align-items:center;gap:6px;font-family:var(--font-m);font-size:10px;color:var(--serpent);cursor:pointer;letter-spacing:.08em;margin-bottom:12px;transition:color .12s;width:fit-content;}
@@ -572,7 +560,6 @@ body::before{
     <button id="quiz-exit-btn" onclick="confirmLeaveQuiz()">✕ Exit Quiz</button>
   </div>
   <div id="quiz-prog-bar"><div id="quiz-prog-fill" style="width:0%"></div></div>
-  <!-- Single question stage -->
   <div id="quiz-stage">
     <div id="quiz-card-wrap">
       <div id="quiz-q-slot"></div>
@@ -581,7 +568,6 @@ body::before{
       </div>
     </div>
   </div>
-  <!-- Results (scrollable, replaces stage) -->
   <div id="quiz-results">
     <div class="res-outer">
       <div class="res-inner" id="quiz-res-inner"></div>
@@ -662,15 +648,12 @@ body::before{
 /* ===== CORE STATE ===== */
 let DATA=null,QUIZDATA=null,pyodide=null,cm=null,activeProblem=null,activeQuiz=null;
 const state={},quizState={};
-// Per-quiz settings: { numQ: 50, reveal: true, randomize: true }
 const quizSettings={};
 function getQSettings(id){
   if(!quizSettings[id]) quizSettings[id]={numQ:50,reveal:true,randomize:true};
   return quizSettings[id];
 }
-// Track which card has settings open
 let openSettingsId=null;
-// Current quiz reveal mode (set when quiz starts)
 let quizRevealMode=true;
 
 const $=id=>document.getElementById(id);
@@ -880,7 +863,7 @@ function toggleHint(btn){
 function renderQuizDash(){
   const ql=$('quiz-list');ql.innerHTML='';
   if(!QUIZDATA||!QUIZDATA.quizzes||QUIZDATA.quizzes.length===0){
-    ql.innerHTML='<div style="font-family:var(--font-m);font-size:11px;color:var(--mist);padding:12px 4px;">No quizzes found. Add quiz filenames to <code style=\'color:var(--emerald)\'>config.json</code> under <code style=\'color:var(--emerald)\'>"quizzes"</code>.</div>';
+    ql.innerHTML='<div style="font-family:var(--font-m);font-size:11px;color:var(--mist);padding:12px 4px;">No quizzes found.</div>';
     return;
   }
   QUIZDATA.quizzes.forEach(q=>ql.appendChild(makeQuizCard(q)));
@@ -896,25 +879,17 @@ function makeQuizCard(quiz){
   const typeTags=[...typeSet].map(t=>`<span class="glyph gp">${typeLabels[t]||t}</span>`).join('');
   let badgeCls='quiz-score-badge',badgeTxt='Not attempted';
   if(done){badgeCls='quiz-score-badge '+(pct>=70?'done-pass':'done-fail');badgeTxt=`${qs.score}/${total} · ${pct}%`;}
-
   const s=getQSettings(quiz.id);
-
   const card=document.createElement('div');
   card.className='quiz-card';
   card.id='qcard-'+quiz.id;
-
-  // --- gear button ---
   const gearBtn=document.createElement('button');
   gearBtn.className='quiz-gear-btn';
   gearBtn.title='Quiz Settings';
   gearBtn.innerHTML='⚙';
   gearBtn.addEventListener('click',e=>{e.stopPropagation();toggleSettings(quiz.id,card,inner,s,total);});
-
-  // --- inner (flip container) ---
   const inner=document.createElement('div');
   inner.className='qcard-inner';
-
-  // FRONT FACE
   const front=document.createElement('div');
   front.className='qcard-front';
   front.innerHTML=`
@@ -925,29 +900,16 @@ function makeQuizCard(quiz){
       <button class="quiz-start-btn">${done?'Retake →':'Start →'}</button>
     </div>
     <div class="quiz-prog"><div class="quiz-prog-fill" style="width:${pct}%"></div></div>`;
-
-  // BACK FACE (settings panel)
   const back=document.createElement('div');
   back.className='qcard-back';
   back.innerHTML=buildSettingsHTML(quiz.id,s,total);
-
   inner.appendChild(front);
   inner.appendChild(back);
   card.appendChild(gearBtn);
   card.appendChild(inner);
-
-  // Start button click
   front.querySelector('.quiz-start-btn').addEventListener('click',e=>{e.stopPropagation();openQuiz(quiz);});
-
-  // Card body click → open quiz (not on gear, not on start btn)
-  card.addEventListener('click',()=>{
-    if(card.classList.contains('settings-open')) return;
-    openQuiz(quiz);
-  });
-
-  // Wire settings interactions
+  card.addEventListener('click',()=>{if(card.classList.contains('settings-open'))return;openQuiz(quiz);});
   wireSettings(quiz.id,card,inner,back,s,total);
-
   return card;
 }
 
@@ -983,64 +945,52 @@ function buildSettingsHTML(id,s,total){
 }
 
 function wireSettings(id,card,inner,back,s,total){
-  // pill buttons
   back.querySelectorAll('.qs-pill').forEach(p=>{
     p.addEventListener('click',e=>{
       e.stopPropagation();
       back.querySelectorAll('.qs-pill').forEach(x=>x.classList.remove('active'));
       p.classList.add('active');
       s.numQ=parseInt(p.dataset.n);
-      // auto-force randomize if <50
       const rndLabel=back.querySelector(`#qs-rnd-${id}`);
       if(s.numQ<50){
         rndLabel.style.opacity='.55';rndLabel.style.pointerEvents='none';
-        rndLabel.classList.add('checked');
-        s.randomize=true;
-        // update label text
+        rndLabel.classList.add('checked');s.randomize=true;
         const span=rndLabel.querySelector('.qs-label');
         span.innerHTML='Randomize questions <span style="font-size:8px;color:var(--gold-dim)">(auto on)</span>';
-      } else {
+      }else{
         rndLabel.style.opacity='';rndLabel.style.pointerEvents='';
         const span=rndLabel.querySelector('.qs-label');
         span.innerHTML='Randomize questions';
       }
     });
   });
-  // reveal checkbox — use mousedown to prevent label double-fire
   const revLabel=back.querySelector(`#qs-rev-${id}`);
   revLabel.addEventListener('mousedown',e=>{
     e.preventDefault();e.stopPropagation();
-    s.reveal=!s.reveal;
-    revLabel.classList.toggle('checked',s.reveal);
+    s.reveal=!s.reveal;revLabel.classList.toggle('checked',s.reveal);
   });
-  // randomize checkbox
   const rndLabel=back.querySelector(`#qs-rnd-${id}`);
   rndLabel.addEventListener('mousedown',e=>{
     e.preventDefault();e.stopPropagation();
-    if(s.numQ<50) return;
-    s.randomize=!s.randomize;
-    rndLabel.classList.toggle('checked',s.randomize);
+    if(s.numQ<50)return;
+    s.randomize=!s.randomize;rndLabel.classList.toggle('checked',s.randomize);
   });
-  // save button
   back.querySelector(`#qs-save-${id}`).addEventListener('click',e=>{
     e.stopPropagation();
-    // update front meta label
     const metaN=document.getElementById('qmeta-n-'+id);
-    if(metaN) metaN.textContent=s.numQ+' questions';
+    if(metaN)metaN.textContent=s.numQ+' questions';
     closeSettings(id,card,inner);
   });
 }
 
 function toggleSettings(id,card,inner,s,total){
-  if(openSettingsId && openSettingsId!==id){
-    // close other open settings
+  if(openSettingsId&&openSettingsId!==id){
     const otherCard=document.getElementById('qcard-'+openSettingsId);
     const otherInner=otherCard?otherCard.querySelector('.qcard-inner'):null;
-    if(otherCard&&otherInner) closeSettings(openSettingsId,otherCard,otherInner);
+    if(otherCard&&otherInner)closeSettings(openSettingsId,otherCard,otherInner);
   }
-  if(openSettingsId===id){
-    closeSettings(id,card,inner);
-  } else {
+  if(openSettingsId===id){closeSettings(id,card,inner);}
+  else{
     openSettingsId=id;
     card.classList.add('settings-open');
     inner.classList.add('flipped');
@@ -1049,11 +999,11 @@ function toggleSettings(id,card,inner,s,total){
 }
 
 function closeSettings(id,card,inner){
-  if(openSettingsId===id) openSettingsId=null;
+  if(openSettingsId===id)openSettingsId=null;
   card.classList.remove('settings-open');
   inner.classList.remove('flipped');
   const gb=card.querySelector('.quiz-gear-btn');
-  if(gb) gb.classList.remove('open');
+  if(gb)gb.classList.remove('open');
 }
 
 /* ===== ONE-AT-A-TIME QUIZ ===== */
@@ -1066,17 +1016,12 @@ function openQuiz(quiz){
   activeQuiz=quiz;
   qzIdx=0;qzResults=[];
   quizState[quiz.id]={answers:{},submitted:false};
-
-  // Apply settings
   const s=getQSettings(quiz.id);
   quizRevealMode=s.reveal;
-
-  // Build question list based on numQ + randomize
   let qList=[...quiz.questions];
-  if(s.randomize) qList=qList.sort(()=>Math.random()-.5);
+  if(s.randomize)qList=qList.sort(()=>Math.random()-.5);
   qList=qList.slice(0,Math.min(s.numQ,qList.length));
-  activeQuiz._qList=qList; // store for this session
-
+  activeQuiz._qList=qList;
   $('view-dashboard').classList.remove('active');
   $('view-editor').classList.remove('active');
   $('view-quiz').classList.add('active');
@@ -1084,15 +1029,12 @@ function openQuiz(quiz){
   $('quiz-stage').style.display='flex';
   $('quiz-results').className='';
   $('quiz-results').style.display='none';
-
-  // Breadcrumb
   const bc=$('breadcrumb');bc.innerHTML='';
   const mk=(t,fn,a)=>{const s=document.createElement('span');s.className='bc-i'+(a?' active':'');s.textContent=t;if(fn)s.onclick=fn;return s;};
   const sep=()=>{const s=document.createElement('span');s.className='bc-s';s.textContent='›';return s;};
   bc.appendChild(mk('Hall',confirmLeaveQuiz,false));
   bc.appendChild(sep());
   bc.appendChild(mk(quiz.title,null,true));
-
   showQuestion(0);
 }
 
@@ -1112,17 +1054,17 @@ function showQuestion(idx){
   const total=qList.length;
   const q=qList[idx];
   const isLast=idx===total-1;
-
   $('quiz-prog-fill').style.width=((idx)/total*100)+'%';
   $('quiz-progress-text').textContent=`${idx+1} / ${total}`;
-  $('quiz-next-btn').className=''; // hide
-
+  $('quiz-next-btn').className='';
   let qText=q.question,qCode='';
   const cm=q.question.match(/^([\s\S]*?)```([\s\S]*)```([\s\S]*)$/);
   if(cm){qText=(cm[1]+cm[3]).trim();qCode=cm[2].trim();}
 
   const card=document.createElement('div');
   card.className='q-card entering';
+
+  // WHY box container (slides down below feedback, inside the card flow)
   card.innerHTML=`
     <div class="q-head">
       <div class="q-num">Question ${idx+1} of ${total} <span class="q-type-tag ${QT_CLS[q.type]||'qt-mc'}">${QT_LABELS[q.type]||q.type}</span></div>
@@ -1130,7 +1072,10 @@ function showQuestion(idx){
       ${qCode?`<div class="q-code">${escHtml(qCode)}</div>`:''}
     </div>
     <div class="q-body" id="qqbody"></div>
-    <div class="q-feedback" id="qqfb"></div>`;
+    <div class="q-feedback" id="qqfb"></div>
+    <div class="why-box" id="qqwhy">
+      <div class="why-box-inner" id="qqwhy-inner"></div>
+    </div>`;
 
   const slot=$('quiz-q-slot');
   slot.innerHTML='';
@@ -1148,12 +1093,12 @@ function showQuestion(idx){
       c.innerHTML=`<div class="choice-dot">◆</div><span class="choice-label">${escHtml(String(ch))}</span>`;
       c.addEventListener('click',()=>{
         if(c.classList.contains('locked'))return;
-        lockAndReveal(q,ch,div,fb,isLast);
+        lockAndReveal(q,ch,div,fb,isLast,card);
       });
       div.appendChild(c);
     });
     body.appendChild(div);
-  } else if(q.type==='fill_blank'){
+  }else if(q.type==='fill_blank'){
     const row=document.createElement('div');row.className='fill-row';
     const inp=document.createElement('input');
     inp.type='text';inp.className='fill-input';inp.placeholder='Type your answer…';inp.autocomplete='off';
@@ -1164,7 +1109,7 @@ function showQuestion(idx){
     btn.addEventListener('click',()=>{
       if(btn.disabled)return;
       inp.disabled=true;btn.disabled=true;
-      lockAndReveal(q,inp.value.trim(),null,fb,isLast,inp);
+      lockAndReveal(q,inp.value.trim(),null,fb,isLast,card,inp);
     });
     row.appendChild(inp);row.appendChild(btn);
     body.appendChild(row);
@@ -1172,70 +1117,130 @@ function showQuestion(idx){
   }
 }
 
-function lockAndReveal(q,userAns,choicesDiv,fb,isLast,fillInp=null){
+/* ===== WHY BOX — API + FALLBACK ===== */
+async function fetchWhyExplanation(q, isCorrect) {
+  const questionText = q.question.replace(/```[\s\S]*?```/g, '[code block]').trim();
+  const prompt = `A student is studying Python and just answered a quiz question.
+
+Question: "${questionText}"
+Correct answer: "${q.answer}"
+The student got it ${isCorrect ? 'correct ✓' : 'wrong ✗'}
+
+Give a clear, concise explanation (2-4 sentences) of WHY the correct answer is "${q.answer}". 
+Focus on the key Python concept involved. Be direct and educational.
+Do NOT start with "Great job" or any filler praise. Just explain the concept.`;
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000); // 8s timeout
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 200,
+        messages: [{ role: 'user', content: prompt }]
+      }),
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+
+    if (!response.ok) throw new Error('API error ' + response.status);
+    const data = await response.json();
+    const text = (data.content || []).map(b => b.type === 'text' ? b.text : '').join('').trim();
+    if (!text) throw new Error('Empty response');
+    return { text, source: 'ai' };
+  } catch (e) {
+    // Fallback to hardcoded explanation
+    return { text: q.explanation || 'No explanation available.', source: 'fallback' };
+  }
+}
+
+function lockAndReveal(q, userAns, choicesDiv, fb, isLast, card, fillInp=null){
   const correctAns=q.answer.toString().trim();
   const isCorrect=userAns.toLowerCase()===correctAns.toLowerCase();
 
   qzResults.push({qid:q.id,correct:isCorrect,userAns,correctAns});
   quizState[activeQuiz.id].answers[q.id]=userAns;
 
-  // Always lock the UI so user can't change answer
   if(choicesDiv){
     choicesDiv.querySelectorAll('.choice').forEach(c=>{
       c.classList.add('locked');
-      // Only show correct/wrong highlighting if reveal mode is ON
       if(quizRevealMode){
         if(c.dataset.val.toLowerCase()===correctAns.toLowerCase())c.classList.add('correct');
         else if(c.dataset.val===userAns&&!isCorrect)c.classList.add('wrong');
-      } else {
-        // Just mark the selected choice visually without revealing correct/wrong
+      }else{
         if(c.dataset.val===userAns)c.classList.add('selected');
       }
     });
   }
   if(fillInp){
-    if(quizRevealMode) fillInp.classList.add(isCorrect?'correct':'wrong');
-    // else just leave it locked/neutral
+    if(quizRevealMode)fillInp.classList.add(isCorrect?'correct':'wrong');
   }
 
-  // Card border only in reveal mode
-  const card=$('quiz-q-slot').querySelector('.q-card');
   if(card&&quizRevealMode){
     card.classList.add(isCorrect?'answered-correct':'answered-wrong');
   }
 
-  // Feedback banner only in reveal mode
   if(quizRevealMode){
     fb.className='q-feedback show '+(isCorrect?'ok':'no');
+
+    const whyBtn=document.createElement('button');
+    whyBtn.className='why-btn';
+    whyBtn.textContent='WHY?';
+
     fb.innerHTML=isCorrect
-      ?`✦ Correct! <button class="why-btn" id="why-btn-q">WHY?</button>`
-      :`✗ Wrong — correct answer: <span class="fb-ans">${escHtml(correctAns)}</span> <button class="why-btn" id="why-btn-q">WHY?</button>`;
+      ?`✦ Correct!`
+      :`✗ Wrong — correct answer: <span class="fb-ans">${escHtml(correctAns)}</span>`;
+    fb.appendChild(whyBtn);
 
-    // WHY box — overlay inside the card, slides up over choices
-    const whyBox=document.createElement('div');
-    whyBox.className='why-box';
-    whyBox.id='why-box-q';
-    const qCard=$('quiz-q-slot').querySelector('.q-card');
-    if(qCard) qCard.appendChild(whyBox);
+    const whyBox=card.querySelector('#qqwhy');
+    const whyInner=card.querySelector('#qqwhy-inner');
 
-    // WHY button logic — uses hardcoded explanation from JSON
-    const whyBtn=fb.querySelector('#why-btn-q');
-    whyBtn.addEventListener('click', ()=>{
-      if(whyBox.classList.contains('show')){
-        whyBox.classList.remove('show');
+    let whyOpen=false;
+    let whyLoaded=false;
+
+    whyBtn.addEventListener('click', async ()=>{
+      if(whyOpen){
+        // Close
+        whyBox.classList.remove('open');
         whyBtn.textContent='WHY?';
+        whyBtn.classList.remove('active-ok','active-no');
+        whyOpen=false;
         return;
       }
-      whyBox.classList.add('show');
+
+      // Open
+      whyOpen=true;
       whyBtn.textContent='HIDE';
-      if(whyBox.dataset.loaded) return;
-      whyBox.dataset.loaded='1';
-      const explanation=q.explanation||'No explanation available for this question.';
-      whyBox.innerHTML=`<div class="why-label">Why?</div>${explanation}`;
+      whyBtn.classList.add(isCorrect?'active-ok':'active-no');
+      whyBox.classList.add('open');
+
+      if(whyLoaded) return; // already fetched
+      whyLoaded=true;
+
+      // Show shimmer while loading
+      whyInner.innerHTML=`
+        <div class="why-shimmer">
+          <div class="shimmer-line"></div>
+          <div class="shimmer-line"></div>
+          <div class="shimmer-line"></div>
+          <div class="shimmer-line"></div>
+        </div>`;
+
+      const result = await fetchWhyExplanation(q, isCorrect);
+
+      const badge = result.source === 'ai'
+        ? `<span class="why-ai-badge">✦ AI</span>`
+        : `<span class="why-fallback-badge">📖 Explanation</span>`;
+
+      whyInner.innerHTML=`
+        <div class="why-label">Why? ${badge}</div>
+        <div>${escHtml(result.text).replace(/\n/g,'<br>')}</div>`;
     });
   }
 
-  // Show next / finish button
   const btn=$('quiz-next-btn');
   btn.className='show';
   btn.textContent=isLast?'✦ See Results':'Next →';
@@ -1254,7 +1259,7 @@ function advanceQuestion(){
     card.classList.remove('entering');
     card.classList.add('leaving');
     setTimeout(()=>showQuestion(qzIdx),180);
-  } else {
+  }else{
     showQuestion(qzIdx);
   }
 }
@@ -1273,13 +1278,11 @@ function finishQuiz(){
   $('quiz-prog-fill').style.width='100%';
   $('quiz-progress-text').textContent=`${total} / ${total}`;
 
-  // Hide stage, show results (scrollable)
   $('quiz-stage').style.display='none';
   const resEl=$('quiz-results');
   resEl.style.display='block';
   resEl.className='show';
 
-  // Build review rows — always show answers here regardless of reveal mode
   const reviewRows=qzResults.map((r,i)=>`
     <div class="rev-row ${r.correct?'ok':'no'}">
       <span class="rev-num">${i+1}</span>
