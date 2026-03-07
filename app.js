@@ -1,4 +1,3 @@
-
 /* ===== SVG ICONS ===== */
 const SVG_LAB=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4c0-1 .7-1.5 1.5-1.5S9 3 9 4v1H6V4z"/><path d="M9 4h9.5C19.3 4 20 4.7 20 5.5S19.3 7 18.5 7H9"/><path d="M9 4v14"/><path d="M9 18H5.5C4.7 18 4 18.7 4 19.5S4.7 21 5.5 21H18c1 0 1.5-.7 1.5-1.5V7"/><path d="M9 20.5c0 .3.2.5.5.5"/><path d="M5.5 21c-.8 0-1.5-.7-1.5-1.5V5.5C4 4.7 4.7 4 5.5 4"/><line x1="12" y1="9" x2="17" y2="9"/><line x1="12" y1="12" x2="17" y2="12"/><line x1="12" y1="15" x2="15" y2="15"/></svg>`;
 const SVG_SNAKE=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="1.4" stroke-linecap="round"><path d="M7 8c0-2.2 1.8-4 4-4h2c2.2 0 4 1.8 4 4s-1.8 4-4 4H9c-2.2 0-4 1.8-4 4s1.8 4 4 4h2c1 0 2-.3 2.7-1"/><circle cx="16.5" cy="7" r="1.2" fill="var(--violet)"/></svg>`;
@@ -134,7 +133,7 @@ function renderDash(){
   $('dh-name').textContent=c.name.replace(/^BSCS\s*\w+\s*[—–-]+\s*/i,'');
   $('dh-inst').textContent='✦ Instructor: '+c.instructor;
   $('nav-inst').textContent=c.instructor;
-  $('l-course').textContent=c.name;
+  $('l-course').textContent='BSCS — Python Practice';
   const ll=$('lab-list');ll.innerHTML='';
   DATA.labs.forEach(lab=>ll.appendChild(makeLabCard(lab)));
   renderQuizDash();
@@ -996,27 +995,52 @@ window.addEventListener('resize',()=>{
 
 /* ===== INIT ===== */
 (async()=>{
-  // Immediately start crawling so it never looks frozen
   const bar=$('load-bar');
-  bar.style.width='5%';
-  // Fake crawl: inch to 20% over 1.2s before real work starts
-  let fakePct=5;
-  const crawl=setInterval(()=>{
-    fakePct+=1.5;
-    if(fakePct>=20){clearInterval(crawl);return;}
-    bar.style.width=fakePct+'%';
-  },80);
+  const txt=$('load-txt');
+  const lcourse=$('l-course');
 
-  $('load-txt').textContent='Loading scrolls…';
+  // ── Phase 1: animated crawl 0% → 80% over ~9 seconds ──
+  // Uses easing so it starts fast, slows near 80% (like real loaders)
+  let pct = 0;
+  let stopped = false;
+  const CRAWL_DURATION = 9000; // ms
+  const CRAWL_MAX = 80;
+  const startTime = performance.now();
+
+  function easedCrawl(){
+    if(stopped) return;
+    const elapsed = performance.now() - startTime;
+    const t = Math.min(elapsed / CRAWL_DURATION, 1); // 0 → 1
+    // Ease out cubic: fast start, very slow near end — never quite reaches 1
+    const eased = 1 - Math.pow(1 - t, 3);
+    pct = eased * CRAWL_MAX;
+    bar.style.width = pct + '%';
+
+    // Update status text at milestones
+    if(pct < 20)       txt.textContent = 'Loading scrolls…';
+    else if(pct < 45)  txt.textContent = 'Preparing grimoire…';
+    else if(pct < 65)  txt.textContent = 'Summoning Python runtime…';
+    else               txt.textContent = 'Binding spells…';
+
+    if(pct < CRAWL_MAX - 0.1) requestAnimationFrame(easedCrawl);
+  }
+  requestAnimationFrame(easedCrawl);
+
+  // ── Phase 2: real work happens in parallel ──
+  lcourse.textContent = 'BSCS — Python Practice';
   await loadJSON();
-  clearInterval(crawl);
-  if(DATA){$('l-course').textContent=DATA.course.name;}
-  bar.style.width='35%';$('load-txt').textContent='Binding spells…';
+  if(DATA){ lcourse.textContent = 'BSCS — Python Practice'; }
   initCM();
-  bar.style.width='45%';$('load-txt').textContent='Summoning Python runtime…';
   await initPy();
-  ['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=false);
-  bar.style.width='100%';$('load-txt').textContent='The dungeon is ready.';
-  setTimeout(()=>{$('loading-overlay').classList.add('hidden');showDash();},400);
-})();
 
+  // ── Phase 3: stop crawl, slam to 100% ──
+  stopped = true;
+  ['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=false);
+
+  // Jump from wherever we are to 100% smoothly
+  bar.style.transition = 'width .6s ease';
+  bar.style.width = '100%';
+  txt.textContent = 'The dungeon is ready.';
+
+  setTimeout(()=>{ $('loading-overlay').classList.add('hidden'); showDash(); }, 700);
+})();
