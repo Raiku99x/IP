@@ -431,6 +431,21 @@ body::before{
 .rev-expand-lbl{font-family:var(--font-m);font-size:9px;color:var(--mist);flex-shrink:0;min-width:88px;letter-spacing:.04em;padding-top:1px;}
 
 /* EXIT CONFIRM OVERLAY */
+#congrats-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:16px;}
+#congrats-overlay.open{display:flex;}
+#congrats-modal{background:var(--dungeon);border:1px solid var(--serpent);border-radius:4px;width:420px;max-width:100%;text-align:center;padding:36px 32px 28px;box-shadow:0 0 60px rgba(26,107,48,0.3),0 20px 60px rgba(0,0,0,.4);animation:ma .22s ease;position:relative;overflow:hidden;}
+#congrats-modal::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(26,107,48,0.12) 0%,transparent 70%);pointer-events:none;}
+.cgr-sigil{font-size:36px;margin-bottom:12px;line-height:1;filter:drop-shadow(0 0 12px var(--serpent));}
+.cgr-title{font-family:var(--font-d);font-size:20px;font-weight:900;color:var(--emerald);letter-spacing:.06em;margin-bottom:8px;}
+.cgr-pts{font-family:var(--font-m);font-size:11px;color:var(--gold);letter-spacing:.08em;margin-bottom:6px;}
+.cgr-sub{font-family:var(--font-m);font-size:11px;color:var(--mist);line-height:1.7;margin-bottom:24px;}
+.cgr-divider{height:1px;background:linear-gradient(to right,transparent,var(--serpent),transparent);margin-bottom:22px;opacity:.5;}
+.cgr-btns{display:flex;gap:10px;justify-content:center;}
+.cgr-btn{font-family:var(--font-m);font-size:11px;letter-spacing:.08em;padding:9px 20px;border-radius:2px;cursor:pointer;transition:all .14s;border:1px solid;}
+.cgr-btn-hall{border-color:var(--iron);color:var(--ash);background:transparent;}
+.cgr-btn-hall:hover{border-color:var(--mist);color:var(--bone);background:var(--stone);}
+.cgr-btn-retake{border-color:var(--serpent);color:var(--emerald);background:transparent;}
+.cgr-btn-retake:hover{background:rgba(26,107,48,0.12);box-shadow:0 0 10px rgba(26,107,48,0.25);}
 #exit-confirm-overlay{position:fixed;inset:0;background:rgba(44,34,24,.55);z-index:3000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px);animation:ecfadein .15s ease;}
 @keyframes ecfadein{from{opacity:0;}to{opacity:1;}}
 #exit-confirm-modal{background:var(--dungeon);border:1px solid var(--blood);border-radius:4px;padding:32px 36px;text-align:center;max-width:360px;width:90%;box-shadow:0 0 40px rgba(139,28,28,0.25),0 20px 60px rgba(0,0,0,.35);animation:ma .2s ease;}
@@ -738,6 +753,21 @@ body::before{
       <div><div class="m-lbl">Input</div><div class="m-val inp" id="m-inp"></div></div>
       <div><div class="m-lbl">Expected Output</div><div class="m-val exp" id="m-exp"></div></div>
       <div><div class="m-lbl">Your Output</div><div class="m-val none" id="m-got">Not yet cast.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CONGRATS POPUP -->
+<div id="congrats-overlay">
+  <div id="congrats-modal">
+    <div class="cgr-sigil">✦</div>
+    <div class="cgr-title">The Grimoire Accepts Your Spell</div>
+    <div class="cgr-pts" id="cgr-pts"></div>
+    <div class="cgr-sub" id="cgr-sub"></div>
+    <div class="cgr-divider"></div>
+    <div class="cgr-btns">
+      <button class="cgr-btn cgr-btn-hall" id="cgr-btn-hall">⬡ Return to Hall</button>
+      <button class="cgr-btn cgr-btn-retake" id="cgr-btn-retake">↺ Retake the Trial</button>
     </div>
   </div>
 </div>
@@ -1580,7 +1610,28 @@ $('modal-overlay').addEventListener('click',e=>{if(e.target===$('modal-overlay')
 
 function hideErr(){$('err-banner').style.display='none';$('err-banner').className='';}
 function showErr(m){$('err-banner').style.display='block';$('err-banner').className='show';$('err-text').textContent='⚠ '+m;}
-function setBusy(b){['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=b);$('btn-run').textContent=b?'⏳ Casting…':'▶ Cast';}
+function showCongrats(pts,total,maxPts){
+  $('cgr-pts').textContent=`${pts} / ${maxPts} pts  ·  All ${total} trials vanquished`;
+  $('cgr-sub').textContent='Every rune aligned. Every trial conquered.\nYour incantation has been sealed into the grimoire.';
+  $('congrats-overlay').classList.add('open');
+}
+$('cgr-btn-hall').addEventListener('click',()=>{
+  $('congrats-overlay').classList.remove('open');
+  showDash();
+});
+$('cgr-btn-retake').addEventListener('click',()=>{
+  $('congrats-overlay').classList.remove('open');
+  // Reset state — clear code and results
+  const s=gs(activeProblem.id);
+  s.code='';s.tcResults=null;s.submitted=false;
+  cm.setValue('');cm.clearHistory();
+  const firstEx=(activeProblem.testCases||[]).find(tc=>!tc.hidden);
+  $('custom-in').value=firstEx?firstEx.inputs.join('\n'):'';
+  $('out-text').textContent='— Awaiting cast —';$('out-text').style.color='var(--mist)';
+  hideErr();renderTrials();renderVerdict();
+});
+
+{['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=b);$('btn-run').textContent=b?'⏳ Casting…':'▶ Cast';}
 function flash(cls){$('ed-center').classList.add(cls);setTimeout(()=>$('ed-center').classList.remove(cls),350);}
 
 $('btn-run').addEventListener('click',async()=>{
@@ -1608,9 +1659,17 @@ $('btn-submit').addEventListener('click',async()=>{
   setBusy(true);hideErr();
   const res=await runAllTCs();
   if(!res){setBusy(false);return;}
-  gs(activeProblem.id).submitted=true;
+  const s=gs(activeProblem.id);
+  s.submitted=true;
   renderTrials();renderVerdict();
   setBusy(false);flash('fp');
+  // Show congrats popup if ALL test cases passed
+  const allPassed=res.every(r=>r.pass);
+  if(allPassed){
+    const total=res.length;
+    const pts=activeProblem.points;
+    showCongrats(pts,total,pts);
+  }
 });
 
 /* ===== INIT ===== */
