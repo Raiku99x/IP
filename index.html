@@ -980,17 +980,17 @@ function wireSettings(id,card,inner,back,s,total){
       }
     });
   });
-  // reveal checkbox
+  // reveal checkbox — use mousedown to prevent label double-fire
   const revLabel=back.querySelector(`#qs-rev-${id}`);
-  revLabel.addEventListener('click',e=>{
-    e.stopPropagation();
+  revLabel.addEventListener('mousedown',e=>{
+    e.preventDefault();e.stopPropagation();
     s.reveal=!s.reveal;
     revLabel.classList.toggle('checked',s.reveal);
   });
   // randomize checkbox
   const rndLabel=back.querySelector(`#qs-rnd-${id}`);
-  rndLabel.addEventListener('click',e=>{
-    e.stopPropagation();
+  rndLabel.addEventListener('mousedown',e=>{
+    e.preventDefault();e.stopPropagation();
     if(s.numQ<50) return;
     s.randomize=!s.randomize;
     rndLabel.classList.toggle('checked',s.randomize);
