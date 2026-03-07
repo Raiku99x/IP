@@ -293,7 +293,27 @@ body::before{
 .q-feedback.no{color:var(--crimson);background:rgba(139,28,28,0.07);}
 .fb-ans{font-weight:700;margin-left:4px;}
 
-/* Next button row */
+/* WHY button */
+.why-btn{
+  font-family:var(--font-m);font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  padding:3px 9px;border-radius:2px;cursor:pointer;transition:all .15s;
+  white-space:nowrap;flex-shrink:0;margin-left:auto;
+  border:1px solid;background:transparent;
+}
+.q-feedback.ok .why-btn{border-color:rgba(26,107,48,0.35);color:rgba(30,128,56,0.6);}
+.q-feedback.ok .why-btn:hover{border-color:var(--serpent);color:var(--emerald);background:rgba(26,107,48,0.08);}
+.q-feedback.no .why-btn{border-color:var(--blood);color:var(--crimson);font-weight:700;box-shadow:0 0 6px rgba(139,28,28,0.2);}
+.q-feedback.no .why-btn:hover{background:rgba(139,28,28,0.1);box-shadow:0 0 10px rgba(139,28,28,0.3);}
+
+/* WHY explanation box */
+.why-box{
+  display:none;padding:12px 18px;border-top:1px solid var(--stone);
+  font-family:var(--font-b);font-size:14px;color:var(--fog);line-height:1.7;
+  background:var(--void);
+}
+.why-box.show{display:block;}
+.why-box.loading{font-family:var(--font-m);font-size:10px;color:var(--mist);font-style:italic;letter-spacing:.04em;}
+.why-label{font-family:var(--font-m);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:6px;}
 #quiz-action-row{display:flex;justify-content:flex-end;gap:10px;}
 #quiz-next-btn{font-family:var(--font-d);font-size:11px;font-weight:600;padding:11px 28px;border-radius:3px;border:1px solid var(--amethyst);background:transparent;color:var(--violet);cursor:pointer;letter-spacing:.08em;transition:all .15s;display:none;}
 #quiz-next-btn.show{display:block;}
@@ -1182,8 +1202,52 @@ function lockAndReveal(q,userAns,choicesDiv,fb,isLast,fillInp=null){
   if(quizRevealMode){
     fb.className='q-feedback show '+(isCorrect?'ok':'no');
     fb.innerHTML=isCorrect
-      ?'✦ Correct!'
-      :`✗ Wrong — correct answer: <span class="fb-ans">${escHtml(correctAns)}</span>`;
+      ?`✦ Correct! <button class="why-btn" id="why-btn-q">WHY?</button>`
+      :`✗ Wrong — correct answer: <span class="fb-ans">${escHtml(correctAns)}</span> <button class="why-btn" id="why-btn-q">WHY?</button>`;
+
+    // WHY box (hidden until clicked)
+    const whyBox=document.createElement('div');
+    whyBox.className='why-box';
+    whyBox.id='why-box-q';
+    fb.parentNode.insertBefore(whyBox, fb.nextSibling);
+
+    // WHY button logic
+    const whyBtn=fb.querySelector('#why-btn-q');
+    let whyLoaded=false;
+    whyBtn.addEventListener('click', async ()=>{
+      if(whyBox.classList.contains('show')){
+        whyBox.classList.remove('show');
+        whyBtn.textContent='WHY?';
+        return;
+      }
+      whyBox.classList.add('show');
+      whyBtn.textContent='HIDE';
+      if(whyLoaded) return;
+      whyLoaded=true;
+      whyBox.classList.add('loading');
+      whyBox.innerHTML='<div class="why-label">Explanation</div>⏳ Consulting the grimoire...';
+      try{
+        const prompt=isCorrect
+          ?`A Python student just answered this question correctly.\nQuestion: ${q.question}\nCorrect answer: ${correctAns}\nExplain in 2-3 simple sentences WHY this is the correct answer. Write for a complete beginner. Be clear and direct.`
+          :`A Python student just answered this question WRONG.\nQuestion: ${q.question}\nStudent answered: ${userAns}\nCorrect answer: ${correctAns}\nIn 2-3 simple sentences: first explain why the student's answer is wrong, then explain why the correct answer is right. Write for a complete beginner.`;
+        const res=await fetch('https://api.anthropic.com/v1/messages',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            model:'claude-sonnet-4-20250514',
+            max_tokens:200,
+            messages:[{role:'user',content:prompt}]
+          })
+        });
+        const data=await res.json();
+        const text=data.content?.[0]?.text||'Could not load explanation.';
+        whyBox.classList.remove('loading');
+        whyBox.innerHTML=`<div class="why-label">Why?</div>${escHtml(text)}`;
+      } catch(err){
+        whyBox.classList.remove('loading');
+        whyBox.innerHTML=`<div class="why-label">Why?</div>Could not load explanation — check your connection.`;
+      }
+    });
   }
 
   // Show next / finish button
