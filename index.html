@@ -1218,10 +1218,9 @@ function lockAndReveal(q,userAns,choicesDiv,fb,isLast,fillInp=null){
     const qCard=$('quiz-q-slot').querySelector('.q-card');
     if(qCard) qCard.appendChild(whyBox);
 
-    // WHY button logic
+    // WHY button logic — uses hardcoded explanation from JSON
     const whyBtn=fb.querySelector('#why-btn-q');
-    let whyLoaded=false;
-    whyBtn.addEventListener('click', async ()=>{
+    whyBtn.addEventListener('click', ()=>{
       if(whyBox.classList.contains('show')){
         whyBox.classList.remove('show');
         whyBtn.textContent='WHY?';
@@ -1229,35 +1228,10 @@ function lockAndReveal(q,userAns,choicesDiv,fb,isLast,fillInp=null){
       }
       whyBox.classList.add('show');
       whyBtn.textContent='HIDE';
-      if(whyLoaded) return;
-      whyLoaded=true;
-      whyBox.classList.add('loading');
-      whyBox.innerHTML='<div class="why-label">Why?</div>⏳ Consulting the grimoire...';
-      try{
-        const prompt=isCorrect
-          ?`A Python student just answered this question correctly.\nQuestion: ${q.question}\nCorrect answer: ${correctAns}\nExplain in 2-3 simple sentences WHY this is the correct answer. Write for a complete beginner. Be clear and direct.`
-          :`A Python student just answered this question WRONG.\nQuestion: ${q.question}\nStudent answered: ${userAns}\nCorrect answer: ${correctAns}\nIn 2-3 simple sentences: first explain why the student's answer is wrong, then explain why the correct answer is right. Write for a complete beginner.`;
-        const res=await fetch('https://api.anthropic.com/v1/messages',{
-          method:'POST',
-          headers:{
-            'Content-Type':'application/json',
-            'anthropic-version':'2023-06-01',
-            'anthropic-dangerous-direct-browser-access':'true'
-          },
-          body:JSON.stringify({
-            model:'claude-sonnet-4-20250514',
-            max_tokens:200,
-            messages:[{role:'user',content:prompt}]
-          })
-        });
-        const data=await res.json();
-        const text=data.content?.[0]?.text||'Could not load explanation.';
-        whyBox.classList.remove('loading');
-        whyBox.innerHTML=`<div class="why-label">Why?</div>${text}`;
-      } catch(err){
-        whyBox.classList.remove('loading');
-        whyBox.innerHTML=`<div class="why-label">Why?</div>Could not load explanation — check your connection.`;
-      }
+      if(whyBox.dataset.loaded) return;
+      whyBox.dataset.loaded='1';
+      const explanation=q.explanation||'No explanation available for this question.';
+      whyBox.innerHTML=`<div class="why-label">Why?</div>${explanation}`;
     });
   }
 
