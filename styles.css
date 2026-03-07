@@ -622,7 +622,7 @@ body::before{
   .top-logo { font-size: 12px; gap: 7px; }
   .top-logo svg { width: 16px; height: 20px; }
   #nav-inst { display: none; }
-  #fullscreen-btn { display: none; }
+  #fullscreen-btn { display: flex; } /* keep fullscreen on mobile */
   .tdiv { display: none; }
   .top-bc { font-size: 10px; gap: 5px; }
 
@@ -653,32 +653,39 @@ body::before{
     overflow: hidden;
   }
 
-  /* Grimoire (problem panel) becomes a slide-up drawer */
+  /* Grimoire (problem panel) — fixed overlay, scrollable, padded above nav */
   #grimoire {
     display: none;
     position: fixed;
-    inset: 48px 0 52px 0;
+    top: 48px; left: 0; right: 0; bottom: 52px;
     z-index: 200;
     overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
     background: var(--dungeon);
     border: none;
     border-top: 1px solid var(--iron);
     animation: slideUp .22s ease;
+    /* Extra bottom padding so last content isn't clipped by nav */
+    padding-bottom: 16px;
   }
   #grimoire.mob-open { display: flex; flex-direction: column; }
 
-  /* Trials panel becomes a slide-up drawer too */
+  /* Trials panel — same treatment */
   #trials-panel {
     display: none;
     position: fixed;
-    inset: 48px 0 52px 0;
+    top: 48px; left: 0; right: 0; bottom: 52px;
     z-index: 200;
     overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
     background: var(--dungeon);
     border: none;
     border-top: 1px solid var(--iron);
     animation: slideUp .22s ease;
     flex-direction: column;
+    padding-bottom: 16px;
   }
   #trials-panel.mob-open { display: flex; }
 
@@ -802,4 +809,3 @@ body::before{
 
 /* Show mob-editor-nav ONLY when editor is active on mobile */
 #mob-editor-nav { display: none; }
-
