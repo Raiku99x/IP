@@ -20,6 +20,15 @@ function getQSettings(id){
 let openSettingsId=null;
 let quizRevealMode=true;
 
+/* ===== MOBILE STATE ===== */
+const isMobile=()=>window.innerWidth<=700;
+let mobActiveTab='code';
+function showMobNav(show){
+  const nav=document.getElementById('mob-editor-nav');
+  if(!nav)return;
+  nav.style.display=show?'flex':'none';
+}
+
 const $=id=>document.getElementById(id);
 const gs=id=>{if(!state[id])state[id]={code:'',tcResults:null,submitted:false};return state[id];};
 
@@ -117,6 +126,8 @@ function showDash(){
   $('view-editor').classList.remove('active');
   $('view-quiz').classList.remove('active');
   setBc(null,null);renderDash();
+  showMobNav(false);
+  mobActiveTab='code';
 }
 
 function renderDash(){
@@ -225,6 +236,8 @@ function openProb(prob,lab){
   $('out-text').textContent='— Awaiting cast —';$('out-text').style.color='var(--mist)';
   hideErr();['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=!pyodide);
   renderTrials();renderVerdict();
+  // Mobile: show bottom nav, default to code tab
+  if(isMobile()){showMobNav(true);mobTab('code');}
   // Show congrats popup if problem was already fully passed
   if(s.submitted&&s.tcResults&&s.tcResults.every(r=>r.pass)){
     const pts=prob.points,total=s.tcResults.length;
@@ -907,17 +920,6 @@ $('btn-submit').addEventListener('click',async()=>{
 });
 
 /* ===== MOBILE NAV ===== */
-const isMobile=()=>window.innerWidth<=700;
-
-function showMobNav(show){
-  const nav=$('mob-editor-nav');
-  if(!nav)return;
-  nav.style.display=show?'flex':'none';
-}
-
-// Track which mobile tab is open
-let mobActiveTab='code';
-
 function mobTab(tab){
   if(!isMobile())return;
   mobActiveTab=tab;
@@ -950,24 +952,6 @@ function mobTab(tab){
   } else {
     // code tab — refresh CodeMirror so it fills correctly
     if(cm) setTimeout(()=>cm.refresh(),30);
-  }
-}
-
-// Patch showDash to hide mobile nav
-const _origShowDash=showDash;
-function showDash(){
-  _origShowDash();
-  showMobNav(false);
-  mobActiveTab='code';
-}
-
-// Patch openProb to show mobile nav and reset to code tab
-const _origOpenProb=openProb;
-function openProb(prob,lab){
-  _origOpenProb(prob,lab);
-  if(isMobile()){
-    showMobNav(true);
-    mobTab('code');
   }
 }
 
