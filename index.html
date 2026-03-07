@@ -13,21 +13,31 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/display/placeholder.min.js"></script>
 <link rel="stylesheet" href="styles.css"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script></head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+<style>
+.user-dropdown-wrap{position:relative;}
+.user-dropdown-btn{display:flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--iron);border-radius:2px;padding:4px 9px;cursor:pointer;font-family:var(--font-m);font-size:11px;color:var(--parchment);letter-spacing:.05em;transition:border-color .2s;}
+.user-dropdown-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
+.user-dropdown-btn .u-av{width:22px;height:22px;border-radius:50%;background:var(--gold-glow);border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:11px;color:var(--gold);flex-shrink:0;text-transform:uppercase;}
+.user-dropdown-btn .u-chev{font-size:9px;color:var(--mist);transition:transform .2s;}
+.user-dropdown-btn.open .u-chev{transform:rotate(180deg);}
+.user-dropdown-menu{display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--dungeon);border:1px solid var(--gold-dim);border-radius:3px;box-shadow:0 8px 24px rgba(0,0,0,.5);min-width:150px;z-index:9999;overflow:hidden;}
+.user-dropdown-menu.open{display:block;}
+.dd-email{font-family:var(--font-m);font-size:9px;color:var(--mist);padding:10px 14px 7px;border-bottom:1px solid var(--iron);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px;}
+.user-dropdown-menu button{width:100%;background:transparent;border:none;padding:10px 14px;font-family:var(--font-m);font-size:11px;color:var(--crimson);cursor:pointer;text-align:left;letter-spacing:.05em;transition:background .15s;}
+.user-dropdown-menu button:hover{background:rgba(139,0,0,.18);color:var(--parchment);}
+</style>
+</head>
 <body>
 
 <!-- AUTH OVERLAY -->
 <div id="auth-overlay" style="display:none;position:fixed;inset:0;background:var(--void);z-index:99999;align-items:center;justify-content:center;font-family:var(--font-b);">
   <div style="background:var(--dungeon);border:1px solid var(--gold-dim);border-radius:4px;padding:40px 36px;width:380px;max-width:calc(100% - 32px);box-shadow:0 0 40px var(--gold-glow);">
-    
-    <!-- Crest -->
     <div style="text-align:center;margin-bottom:20px;">
       <img src="logo.png" style="width:64px;height:64px;border-radius:50%;border:1px solid var(--gold-dim);"/>
       <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--gold);letter-spacing:.1em;margin-top:10px;" id="auth-title">Welcome Back</div>
       <div style="font-family:var(--font-m);font-size:10px;color:var(--mist);margin-top:4px;">Slytherin Classroom</div>
     </div>
-
-    <!-- Username field (signup only) -->
     <div id="auth-username-row" style="display:none;flex-direction:column;gap:5px;margin-bottom:12px;">
       <label style="font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:var(--mist);">USERNAME</label>
       <input id="auth-username" type="text" placeholder="e.g. alex or maryjane"
@@ -35,46 +45,30 @@
         oninput="this.value=this.value.toLowerCase().replace(/[^a-z]/g,'')"/>
       <div style="font-family:var(--font-m);font-size:10px;color:var(--mist);margin-top:2px;">Your first name only — lowercase, no spaces</div>
     </div>
-
-    <!-- Email -->
     <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
       <label style="font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:var(--mist);">EMAIL</label>
-      <input id="auth-email" type="email" placeholder="you@email.com"
+      <input id="auth-email" type="email" placeholder="you@gmail.com"
         style="background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:10px 12px;font-family:var(--font-m);font-size:12px;color:var(--parchment);outline:none;"/>
     </div>
-
-    <!-- Password -->
     <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:18px;">
       <label style="font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:var(--mist);">PASSWORD</label>
       <input id="auth-password" type="password" placeholder="••••••••"
         style="background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:10px 12px;font-family:var(--font-m);font-size:12px;color:var(--parchment);outline:none;"/>
     </div>
-
-    <!-- Error -->
     <div id="auth-error" style="font-family:var(--font-m);font-size:11px;color:var(--crimson);margin-bottom:12px;min-height:16px;"></div>
-
-    <!-- Submit -->
     <button id="auth-submit-btn" onclick="document.getElementById('auth-username-row').style.display==='none'?handleLogin():handleSignup()"
       style="width:100%;padding:11px;border-radius:2px;border:1px solid var(--gold-dim);background:var(--gold-glow);color:var(--gold);font-family:var(--font-d);font-size:12px;font-weight:600;letter-spacing:.1em;cursor:pointer;">
       Log In
     </button>
-
-    <!-- Switch mode -->
     <div id="auth-switch-text" style="text-align:center;font-family:var(--font-m);font-size:11px;color:var(--mist);margin-top:16px;">
       No account yet? <span onclick="toggleAuthMode()" style="color:var(--gold);cursor:pointer;text-decoration:underline;">Sign Up</span>
     </div>
-
   </div>
 </div>
   
 <div id="loading-overlay">
-  <div class="lc">
-    <img src="logo.png" class="lc-crest" alt="Slytherin Classroom" width="108" height="108"/>
-  </div>
-  <div class="lt">
-    <span>Slytherin</span>
-    <span>Classroom</span>
-  </div>
+  <div class="lc"><img src="logo.png" class="lc-crest" alt="Slytherin Classroom" width="108" height="108"/></div>
+  <div class="lt"><span>Slytherin</span><span>Classroom</span></div>
   <div class="ls" id="l-course">Preparing the dungeon…</div>
   <div class="lb"><div class="lbf" id="load-bar"></div></div>
   <div class="lst" id="load-txt">Summoning Python runtime…</div>
@@ -94,8 +88,17 @@
   </button>
   <div class="top-u">
     <span id="nav-inst">…</span>
-    <div class="top-av">S</div>
-    <button onclick="handleLogout()" style="font-family:var(--font-m);font-size:10px;padding:5px 12px;border-radius:2px;border:1px solid var(--blood);background:transparent;color:var(--crimson);cursor:pointer;letter-spacing:.05em;">Log out</button>
+    <div class="user-dropdown-wrap" id="user-dropdown-wrap">
+      <button class="user-dropdown-btn" id="user-dropdown-btn" onclick="toggleUserDropdown()">
+        <div class="u-av" id="user-avatar">?</div>
+        <span id="user-username-display">…</span>
+        <span class="u-chev">▾</span>
+      </button>
+      <div class="user-dropdown-menu" id="user-dropdown-menu">
+        <div class="dd-email" id="user-email-display"></div>
+        <button onclick="handleLogout()">↩ Log out</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -159,7 +162,6 @@
       <div class="hint-box" id="el-hint"></div>
     </div>
   </div>
-
   <div id="ed-center">
     <div id="spell-bar">
       <span class="sf" id="ed-fname">incantation.py</span>
@@ -182,7 +184,6 @@
       </div>
     </div>
   </div>
-
   <div id="trials-panel">
     <div id="trials-hd">
       <span class="trials-t">Trials</span>
@@ -212,10 +213,8 @@
   </div>
 </div>
 
-<!-- CONGRATS POPUP -->
 <div id="congrats-overlay">
   <div id="congrats-modal">
-    <!-- SUCCESS VIEW -->
     <div id="cgr-success-view">
       <div class="cgr-sigil">✦</div>
       <div class="cgr-title">Code Inscribed — All Trials Passed</div>
@@ -227,7 +226,6 @@
         <button class="cgr-btn cgr-btn-retake" id="cgr-btn-retake">↺ Retake the Trial</button>
       </div>
     </div>
-    <!-- WARNING VIEW -->
     <div id="cgr-warn-view" style="display:none">
       <div class="cgr-warn-sigil">⚠</div>
       <div class="cgr-warn-title">This Cannot Be Undone</div>
@@ -241,7 +239,6 @@
   </div>
 </div>
 
-<!-- EXIT QUIZ CONFIRMATION -->
 <div id="exit-confirm-overlay" style="display:none">
   <div id="exit-confirm-modal">
     <div class="ecm-sigil">✗</div>
@@ -255,7 +252,6 @@
   </div>
 </div>
 
-<!-- MOBILE EDITOR NAV (shown only in editor view on small screens) -->
 <div id="mob-editor-nav">
   <button class="mob-nav-btn" id="mob-btn-problem" onclick="mobTab('problem')">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
@@ -273,5 +269,18 @@
 
 <script src="auth.js"></script>
 <script src="app.js"></script>
+<script>
+  document.addEventListener('click', function(e) {
+    const wrap = document.getElementById('user-dropdown-wrap');
+    if (wrap && !wrap.contains(e.target)) {
+      document.getElementById('user-dropdown-btn')?.classList.remove('open');
+      document.getElementById('user-dropdown-menu')?.classList.remove('open');
+    }
+  });
+  function toggleUserDropdown() {
+    document.getElementById('user-dropdown-btn').classList.toggle('open');
+    document.getElementById('user-dropdown-menu').classList.toggle('open');
+  }
+</script>
 </body>
 </html>
