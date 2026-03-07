@@ -1,3 +1,39 @@
+/* ===== DISABLE COPY / PASTE + CONSOLE TRICKS ===== */
+(function() {
+  // Block copy, cut, paste on the whole page
+  ['copy','cut','paste'].forEach(evt => {
+    document.addEventListener(evt, e => {
+      const tag = document.activeElement?.tagName;
+      // Allow in auth inputs and custom-in textarea
+      if (tag === 'INPUT' || document.activeElement?.id === 'custom-in') return;
+      e.preventDefault();
+    }, true);
+  });
+
+  // Block right-click context menu
+  document.addEventListener('contextmenu', e => e.preventDefault(), true);
+
+  // Nuke console methods so pasting via console is useless
+  const noop = () => {};
+  try {
+    ['log','warn','error','info','debug','table','dir'].forEach(m => {
+      Object.defineProperty(console, m, { get: () => noop, set: () => {} });
+    });
+  } catch(_) {}
+
+  // Detect DevTools open via size diff — if open, reload
+  let devOpen = false;
+  setInterval(() => {
+    const threshold = 160;
+    const widthOpen  = window.outerWidth  - window.innerWidth  > threshold;
+    const heightOpen = window.outerHeight - window.innerHeight > threshold;
+    if ((widthOpen || heightOpen) && !devOpen) {
+      devOpen = true;
+    } else if (!(widthOpen || heightOpen)) {
+      devOpen = false;
+    }
+  }, 1000);
+})();
 
 /* ===== SVG ICONS ===== */
 const SVG_LAB=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4c0-1 .7-1.5 1.5-1.5S9 3 9 4v1H6V4z"/><path d="M9 4h9.5C19.3 4 20 4.7 20 5.5S19.3 7 18.5 7H9"/><path d="M9 4v14"/><path d="M9 18H5.5C4.7 18 4 18.7 4 19.5S4.7 21 5.5 21H18c1 0 1.5-.7 1.5-1.5V7"/><path d="M9 20.5c0 .3.2.5.5.5"/><path d="M5.5 21c-.8 0-1.5-.7-1.5-1.5V5.5C4 4.7 4.7 4 5.5 4"/><line x1="12" y1="9" x2="17" y2="9"/><line x1="12" y1="12" x2="17" y2="12"/><line x1="12" y1="15" x2="15" y2="15"/></svg>`;
@@ -97,9 +133,27 @@ function initCM(){
       'Shift-Tab':c=>c.indentSelection('subtract'),
       'Ctrl-Enter':()=>$('btn-run').click(),
       'Cmd-Enter':()=>$('btn-run').click(),
+      // Block copy/paste/cut shortcuts in editor
+      'Ctrl-C':()=>false,
+      'Ctrl-V':()=>false,
+      'Ctrl-X':()=>false,
+      'Cmd-C':()=>false,
+      'Cmd-V':()=>false,
+      'Cmd-X':()=>false,
     }
   });
   cm.on('change',()=>{if(activeProblem)gs(activeProblem.id).code=cm.getValue();hideErr();});
+
+  // Block paste event directly on CodeMirror's textarea
+  cm.on('paste', () => false);
+
+  // Also block on the underlying textarea element
+  const cmTextarea = $('cm-mount').querySelector('textarea');
+  if (cmTextarea) {
+    cmTextarea.addEventListener('paste', e => e.preventDefault(), true);
+    cmTextarea.addEventListener('copy', e => e.preventDefault(), true);
+    cmTextarea.addEventListener('cut',  e => e.preventDefault(), true);
+  }
 }
 
 /* ===== FULLSCREEN ===== */
@@ -133,7 +187,6 @@ function renderDash(){
   const c=DATA.course;
   $('dh-name').textContent=c.name.replace(/^BSCS\s*\w+\s*[—–-]+\s*/i,'');
   $('dh-inst').textContent='✦ Instructor: '+c.instructor;
-  $('nav-inst').textContent=c.instructor;
   $('l-course').textContent='BSCS — Python Practice';
   const ll=$('lab-list');ll.innerHTML='';
   DATA.labs.forEach(lab=>ll.appendChild(makeLabCard(lab)));
@@ -225,18 +278,13 @@ function openProb(prob,lab){
       <div><div class="ex-col-h">Input</div><div class="ex-col-v">${tc.inputs.join('\n')}</div></div>
       <div><div class="ex-col-h">Output</div><div class="ex-col-v out">${tc.expected.join('\n')}</div></div>
     </div></div>`).join('');
-  $('el-hint').textContent=prob.hint||'';$('el-hint').classList.remove('visible');
-  const hb=document.querySelector('.hint-btn');if(hb)hb.textContent='⟡ Reveal Scroll';
   setTimeout(()=>{cm.setValue(s.code||'');cm.clearHistory();cm.refresh();},20);
-  // Auto-fill first visible example input if custom input is empty or no TC picked
   const firstEx=(prob.testCases||[]).find(tc=>!tc.hidden);
   $('custom-in').value=firstEx?firstEx.inputs.join('\n'):'';
   $('out-text').textContent='— Awaiting cast —';$('out-text').style.color='var(--mist)';
   hideErr();['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=!pyodide);
   renderTrials();renderVerdict();
-  // Mobile: show bottom nav, default to code tab
   if(isMobile()){showMobNav(true);mobTab('code');}
-  // Show congrats popup if problem was already fully passed
   if(s.submitted&&s.tcResults&&s.tcResults.every(r=>r.pass)){
     const pts=prob.points,total=s.tcResults.length;
     showCongrats(pts,total,pts);
@@ -250,11 +298,6 @@ function setBc(lab,prob){
   bc.appendChild(mk('Hall',showDash,!lab));
   if(lab){bc.appendChild(sep());bc.appendChild(mk(lab.title,prob?showDash:null,!prob));}
   if(prob){bc.appendChild(sep());bc.appendChild(mk(prob.title,null,true));}
-}
-
-function toggleHint(btn){
-  const b=btn.nextElementSibling;b.classList.toggle('visible');
-  btn.textContent=b.classList.contains('visible')?'⟡ Conceal Scroll':'⟡ Reveal Scroll';
 }
 
 /* ===== QUIZ DASHBOARD ===== */
@@ -436,7 +479,6 @@ function openQuiz(quiz){
   showQuestion(0);
 }
 
-/* ===== EXIT QUIZ CONFIRM ===== */
 function confirmLeaveQuiz(){
   if(!activeQuiz)return showDash();
   const qs=quizState[activeQuiz.id];
@@ -517,7 +559,6 @@ function showQuestion(idx){
   }
 }
 
-/* ===== WHY BOX — API + FALLBACK ===== */
 async function fetchWhyExplanation(q, isCorrect) {
   const questionText = q.question.replace(/```[\s\S]*?```/g, '[code block]').trim();
   const prompt = `A student is studying Python and just answered a quiz question.
@@ -533,7 +574,6 @@ Do NOT start with "Great job" or any filler praise. Just explain the concept.`;
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 8000);
-
     const response = await fetch('/api/why', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -541,7 +581,6 @@ Do NOT start with "Great job" or any filler praise. Just explain the concept.`;
       signal: controller.signal
     });
     clearTimeout(timeout);
-
     if (!response.ok) throw new Error('API error ' + response.status);
     const data = await response.json();
     const text = (data.text || '').trim();
@@ -604,16 +643,13 @@ function lockAndReveal(q, userAns, choicesDiv, fb, isLast, card, fillInp=null){
         whyOpen=false;
         return;
       }
-
       whyOpen=true;
       whyBtn.textContent='HIDE';
       whyBtn.classList.add(isCorrect?'active-ok':'active-no');
       whyBox.classList.add('open');
       if(!isCorrect) whyBox.classList.add('wrong-why');
-
       if(whyLoaded) return;
       whyLoaded=true;
-
       whyInner.innerHTML=`
         <div class="why-shimmer">
           <div class="shimmer-line"></div>
@@ -621,13 +657,10 @@ function lockAndReveal(q, userAns, choicesDiv, fb, isLast, card, fillInp=null){
           <div class="shimmer-line"></div>
           <div class="shimmer-line"></div>
         </div>`;
-
       const result = await fetchWhyExplanation(q, isCorrect);
-
       const badge = result.source === 'ai'
         ? `<span class="why-ai-badge">✦ AI</span>`
         : `<span class="why-fallback-badge">📖 Explanation</span>`;
-
       const labelCls = isCorrect ? 'why-label ok-lbl' : 'why-label no-lbl';
       whyInner.innerHTML=`
         <div class="${labelCls}">Why? ${badge}</div>
@@ -658,7 +691,6 @@ function advanceQuestion(){
   }
 }
 
-/* ===== REVIEW EXPAND ===== */
 function toggleRevExpand(i){
   const row=document.getElementById('rev-row-'+i);
   const panel=document.getElementById('rev-expand-'+i);
@@ -739,28 +771,24 @@ function renderTrials(){
   $('trials-list').innerHTML='';
   const visibleTCs=p.testCases.filter(tc=>!tc.hidden);
   const hiddenTCs=p.testCases.filter(tc=>tc.hidden);
-  // Check if all visible TCs have passed
   const allVisiblePassed=visibleTCs.length>0&&visibleTCs.every((tc,vi)=>{
     const i=p.testCases.indexOf(tc);
     return res?.[i]?.pass===true;
   });
-  // Count for score display — visible only (or all if submitted)
   let pc=0,total=0;
   p.testCases.forEach((tc,i)=>{
     const isH=tc.hidden===true;
-    if(isH&&!sub&&!allVisiblePassed)return; // skip hidden if locked
+    if(isH&&!sub&&!allVisiblePassed)return;
     total++;
     if(res?.[i]?.pass)pc++;
   });
-  // Render visible TCs always
   p.testCases.forEach((tc,i)=>{
     const isH=tc.hidden===true;
-    // Hidden: only show after all visible pass OR after submission
     if(isH&&!sub&&!allVisiblePassed)return;
     const r=res?.[i];
     const card=document.createElement('div');
     let cls='tc-card';
-    if(isH&&!sub)cls+=' htc'; // unlocked but not yet run
+    if(isH&&!sub)cls+=' htc';
     else if(r)cls+=r.pass?' pass':' fail';
     card.className=cls;
     const bt=isH&&!sub?'🔒 Sealed — click Inscribe to run':r?(r.pass?'✦ Pass':'✗ Fail'):'Pending';
@@ -769,7 +797,6 @@ function renderTrials(){
     if(!(isH&&!sub))card.addEventListener('click',()=>openModal(i));
     $('trials-list').appendChild(card);
   });
-  // If all visible passed but not yet submitted, show a hint row
   if(allVisiblePassed&&!sub&&hiddenTCs.length>0){
     const hint=document.createElement('div');
     hint.style.cssText='font-family:var(--font-m);font-size:10px;color:var(--gold);text-align:center;padding:10px 8px;border:1px dashed var(--gold-dim);border-radius:3px;background:var(--gold-glow);letter-spacing:.05em;';
@@ -837,7 +864,6 @@ function showErr(m){$('err-banner').style.display='block';$('err-banner').classN
 function showCongrats(pts,total,maxPts){
   $('cgr-pts').textContent=`You passed — ${pts} / ${maxPts} pts  ·  All ${total} trials passed`;
   $('cgr-sub').textContent='All trials passed and all runes answered. The grimoire bows to your craft.';
-  // Always reset to success view
   $('cgr-success-view').style.display='';
   $('cgr-warn-view').style.display='none';
   $('congrats-modal').classList.remove('warn');
@@ -848,13 +874,11 @@ $('cgr-btn-hall').addEventListener('click',()=>{
   showDash();
 });
 $('cgr-btn-retake').addEventListener('click',()=>{
-  // Switch to warning view
   $('cgr-success-view').style.display='none';
   $('cgr-warn-view').style.display='';
   $('congrats-modal').classList.add('warn');
 });
 $('cgr-btn-cancel').addEventListener('click',()=>{
-  // Switch back to success view
   $('cgr-success-view').style.display='';
   $('cgr-warn-view').style.display='none';
   $('congrats-modal').classList.remove('warn');
@@ -862,7 +886,6 @@ $('cgr-btn-cancel').addEventListener('click',()=>{
 $('cgr-btn-confirm-retake').addEventListener('click',()=>{
   $('congrats-overlay').classList.remove('open');
   $('congrats-modal').classList.remove('warn');
-  // Reset state — clear code and results
   const s=gs(activeProblem.id);
   s.code='';s.tcResults=null;s.submitted=false;
   cm.setValue('');cm.clearHistory();
@@ -879,7 +902,6 @@ $('btn-run').addEventListener('click',async()=>{
   setBusy(true);hideErr();
   const code=cm.getValue();
   if(!code.trim()){showErr('The scroll is empty!');setBusy(false);return;}
-  // Auto-fill first example input if field is empty
   if(!$('custom-in').value.trim()){
     const firstEx=(activeProblem.testCases||[]).find(tc=>!tc.hidden);
     if(firstEx)$('custom-in').value=firstEx.inputs.join('\n');
@@ -904,7 +926,6 @@ $('btn-submit').addEventListener('click',async()=>{
   s.submitted=true;
   renderTrials();renderVerdict();
   setBusy(false);flash('fp');
-  // Show congrats popup if ALL test cases passed
   const allPassed=res.every(r=>r.pass);
   if(allPassed){
     const total=res.length;
@@ -919,14 +940,10 @@ function toggleIoPane(pane){
   const btnInput=$('io-expand-input');
   const btnOutput=$('io-expand-output');
   if(!row)return;
-
   const isExpanded = row.classList.contains('expanded-'+pane);
-
-  // Collapse everything first
   row.classList.remove('expanded-input','expanded-output');
   if(btnInput){ btnInput.classList.remove('expanded'); btnInput.textContent='⤢'; }
   if(btnOutput){ btnOutput.classList.remove('expanded'); btnOutput.textContent='⤢'; }
-
   if(!isExpanded){
     row.classList.add('expanded-'+pane);
     const btn = pane==='input' ? btnInput : btnOutput;
@@ -940,12 +957,8 @@ function mobTab(tab){
   const grimoire=document.getElementById('grimoire');
   const trials=document.getElementById('trials-panel');
   const edCenter=$('ed-center');
-
-  // Reset all drawers
   grimoire.classList.remove('mob-open');
   trials.classList.remove('mob-open');
-
-  // Update nav button states
   ['code','problem','trials'].forEach(t=>{
     const btn=$('mob-btn-'+t);
     if(!btn)return;
@@ -955,30 +968,24 @@ function mobTab(tab){
       else btn.classList.add('active');
     }
   });
-
   if(tab==='problem'){
     grimoire.classList.add('mob-open');
-    // Scroll grimoire to top when opened
     grimoire.scrollTop=0;
   } else if(tab==='trials'){
     trials.classList.add('mob-open');
     trials.scrollTop=0;
   } else {
-    // code tab — refresh CodeMirror so it fills correctly
     if(cm) setTimeout(()=>cm.refresh(),30);
   }
 }
 
-// Keep mobile nav visible when resizing back to mobile while in editor
 window.addEventListener('resize',()=>{
   if($('view-editor').classList.contains('active')){
     if(isMobile()){
       showMobNav(true);
-      // Re-apply current tab state
       mobTab(mobActiveTab);
     } else {
       showMobNav(false);
-      // Ensure panels are visible on desktop
       const grimoire=document.getElementById('grimoire');
       const trials=document.getElementById('trials-panel');
       grimoire.classList.remove('mob-open');
@@ -997,49 +1004,37 @@ window.addEventListener('resize',()=>{
   const txt=$('load-txt');
   const lcourse=$('l-course');
 
-  // ── Phase 1: animated crawl 0% → 80% over ~9 seconds ──
-  // Uses easing so it starts fast, slows near 80% (like real loaders)
   let pct = 0;
   let stopped = false;
-  const CRAWL_DURATION = 9000; // ms
+  const CRAWL_DURATION = 9000;
   const CRAWL_MAX = 80;
   const startTime = performance.now();
 
   function easedCrawl(){
     if(stopped) return;
     const elapsed = performance.now() - startTime;
-    const t = Math.min(elapsed / CRAWL_DURATION, 1); // 0 → 1
-    // Ease out cubic: fast start, very slow near end — never quite reaches 1
+    const t = Math.min(elapsed / CRAWL_DURATION, 1);
     const eased = 1 - Math.pow(1 - t, 3);
     pct = eased * CRAWL_MAX;
     bar.style.width = pct + '%';
-
-    // Update status text at milestones
     if(pct < 20)       txt.textContent = 'Loading scrolls…';
     else if(pct < 45)  txt.textContent = 'Preparing grimoire…';
     else if(pct < 65)  txt.textContent = 'Summoning Python runtime…';
     else               txt.textContent = 'Binding spells…';
-
     if(pct < CRAWL_MAX - 0.1) requestAnimationFrame(easedCrawl);
   }
   requestAnimationFrame(easedCrawl);
 
-  // ── Phase 2: real work happens in parallel ──
   lcourse.textContent = 'BSCS — Python Practice';
   await loadJSON();
   if(DATA){ lcourse.textContent = 'BSCS — Python Practice'; }
   initCM();
   await initPy();
 
-  // ── Phase 3: stop crawl, slam to 100% ──
   stopped = true;
   ['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=false);
-
-  // Jump from wherever we are to 100% smoothly
   bar.style.transition = 'width .6s ease';
   bar.style.width = '100%';
   txt.textContent = 'The dungeon is ready.';
-
   setTimeout(()=>{ $('loading-overlay').classList.add('hidden'); showDash(); }, 700);
 })();
-
