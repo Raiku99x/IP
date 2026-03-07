@@ -1631,7 +1631,7 @@ $('cgr-btn-retake').addEventListener('click',()=>{
   hideErr();renderTrials();renderVerdict();
 });
 
-{['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=b);$('btn-run').textContent=b?'⏳ Casting…':'▶ Cast';}
+function setBusy(b){['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=b);$('btn-run').textContent=b?'⏳ Casting…':'▶ Cast';}
 function flash(cls){$('ed-center').classList.add(cls);setTimeout(()=>$('ed-center').classList.remove(cls),350);}
 
 $('btn-run').addEventListener('click',async()=>{
