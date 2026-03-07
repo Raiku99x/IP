@@ -7,15 +7,14 @@ const sbClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let currentUser = null;
 
 async function initAuth() {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await sbClient.auth.getSession();
   if (session) {
     currentUser = session.user;
     hideAuthScreen();
   } else {
     showAuthScreen();
   }
-
-  supabase.auth.onAuthStateChange((event, session) => {
+  sbClient.auth.onAuthStateChange((event, session) => {
     if (session) {
       currentUser = session.user;
       hideAuthScreen();
@@ -39,13 +38,11 @@ async function handleLogin() {
   const password = document.getElementById('auth-password').value.trim();
   const errorEl = document.getElementById('auth-error');
   errorEl.textContent = '';
-
   if (!email || !password) {
     errorEl.textContent = 'Please fill in all fields.';
     return;
   }
-
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { error } = await sbClient.auth.signInWithPassword({ email, password });
   if (error) {
     errorEl.textContent = error.message;
   }
@@ -57,23 +54,19 @@ async function handleSignup() {
   const name = document.getElementById('auth-name').value.trim();
   const errorEl = document.getElementById('auth-error');
   errorEl.textContent = '';
-
   if (!email || !password || !name) {
     errorEl.textContent = 'Please fill in all fields.';
     return;
   }
-
   if (password.length < 6) {
     errorEl.textContent = 'Password must be at least 6 characters.';
     return;
   }
-
-  const { error } = await supabase.auth.signUp({
+  const { error } = await sbClient.auth.signUp({
     email,
     password,
     options: { data: { full_name: name } }
   });
-
   if (error) {
     errorEl.textContent = error.message;
   } else {
@@ -83,16 +76,14 @@ async function handleSignup() {
 }
 
 async function handleLogout() {
-  await supabase.auth.signOut();
+  await sbClient.auth.signOut();
 }
 
 function toggleAuthMode() {
   const nameField = document.getElementById('auth-name-row');
-  const toggleBtn = document.getElementById('auth-toggle-btn');
   const submitBtn = document.getElementById('auth-submit-btn');
   const titleEl = document.getElementById('auth-title');
   const switchEl = document.getElementById('auth-switch-text');
-
   const isLogin = nameField.style.display === 'none';
   if (isLogin) {
     nameField.style.display = 'flex';
