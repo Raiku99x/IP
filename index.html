@@ -130,8 +130,14 @@
       <div id="ed-container"><div id="cm-mount"></div></div>
       <div id="err-banner"><div id="err-text"></div></div>
       <div id="io-row">
-        <div class="io-pane"><div class="io-lbl">Custom Input</div><textarea id="custom-in" placeholder="Enter incantation lines…"></textarea></div>
-        <div class="io-pane"><div class="io-lbl">Output</div><div id="out-box"><div id="out-text">— Awaiting cast —</div></div></div>
+        <div class="io-pane" id="io-pane-input">
+          <div class="io-lbl">Custom Input <button class="io-expand-btn" id="io-expand-input" onclick="toggleIoPane('input')" title="Expand">⤢</button></div>
+          <textarea id="custom-in" placeholder="Enter incantation lines…"></textarea>
+        </div>
+        <div class="io-pane" id="io-pane-output">
+          <div class="io-lbl">Output <button class="io-expand-btn" id="io-expand-output" onclick="toggleIoPane('output')" title="Expand">⤢</button></div>
+          <div id="out-box"><div id="out-text">— Awaiting cast —</div></div>
+        </div>
       </div>
     </div>
   </div>

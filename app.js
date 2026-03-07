@@ -920,7 +920,25 @@ $('btn-submit').addEventListener('click',async()=>{
 });
 
 /* ===== MOBILE NAV ===== */
-function mobTab(tab){
+function toggleIoPane(pane){
+  const row=$('io-row');
+  const btnInput=$('io-expand-input');
+  const btnOutput=$('io-expand-output');
+  if(!row)return;
+
+  const isExpanded = row.classList.contains('expanded-'+pane);
+
+  // Collapse everything first
+  row.classList.remove('expanded-input','expanded-output');
+  if(btnInput){ btnInput.classList.remove('expanded'); btnInput.textContent='⤢'; }
+  if(btnOutput){ btnOutput.classList.remove('expanded'); btnOutput.textContent='⤢'; }
+
+  if(!isExpanded){
+    row.classList.add('expanded-'+pane);
+    const btn = pane==='input' ? btnInput : btnOutput;
+    if(btn){ btn.classList.add('expanded'); btn.textContent='⤡'; }
+  }
+}
   if(!isMobile())return;
   mobActiveTab=tab;
   const grimoire=document.getElementById('grimoire');

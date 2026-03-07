@@ -538,6 +538,11 @@ body::before{
 #custom-in{flex:1;background:var(--stone);border:1px solid var(--iron);border-radius:2px;color:var(--parchment);font-family:var(--font-m);font-size:12px;padding:5px 8px;outline:none;resize:none;line-height:1.5;}
 #custom-in:focus{border-color:var(--venom);}
 #custom-in::placeholder{color:var(--iron);}
+/* IO expand button — mobile only */
+.io-expand-btn {
+  display: none;
+}
+
 #out-box{flex:1;background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:5px 8px;overflow-y:auto;}
 #out-text{font-family:var(--font-m);font-size:12px;white-space:pre-wrap;line-height:1.5;color:var(--mist);}
 
@@ -653,11 +658,11 @@ body::before{
     overflow: hidden;
   }
 
-  /* Grimoire (problem panel) — fixed overlay, scrollable, padded above nav */
+  /* Grimoire (problem panel) — fixed overlay, scrollable, clears nav */
   #grimoire {
     display: none;
     position: fixed;
-    top: 48px; left: 0; right: 0; bottom: 52px;
+    top: 48px; left: 0; right: 0; bottom: 0;
     z-index: 200;
     overflow-y: auto;
     overflow-x: hidden;
@@ -666,8 +671,8 @@ body::before{
     border: none;
     border-top: 1px solid var(--iron);
     animation: slideUp .22s ease;
-    /* Extra bottom padding so last content isn't clipped by nav */
-    padding-bottom: 16px;
+    /* Push content above the mobile nav + browser chrome */
+    padding-bottom: calc(52px + 24px + env(safe-area-inset-bottom, 0px));
   }
   #grimoire.mob-open { display: flex; flex-direction: column; }
 
@@ -675,7 +680,7 @@ body::before{
   #trials-panel {
     display: none;
     position: fixed;
-    top: 48px; left: 0; right: 0; bottom: 52px;
+    top: 48px; left: 0; right: 0; bottom: 0;
     z-index: 200;
     overflow-y: auto;
     overflow-x: hidden;
@@ -685,7 +690,7 @@ body::before{
     border-top: 1px solid var(--iron);
     animation: slideUp .22s ease;
     flex-direction: column;
-    padding-bottom: 16px;
+    padding-bottom: calc(52px + 24px + env(safe-area-inset-bottom, 0px));
   }
   #trials-panel.mob-open { display: flex; }
 
@@ -710,9 +715,46 @@ body::before{
   #io-row {
     grid-template-columns: 1fr;
     height: 160px;
+    transition: height .25s ease;
   }
-  .io-pane:first-child { border-right: none; border-bottom: 1px solid var(--iron); height: 80px; }
-  .io-pane { height: 80px; }
+  .io-pane:first-child { border-right: none; border-bottom: 1px solid var(--iron); height: 80px; transition: height .25s ease; }
+  .io-pane { height: 80px; transition: height .25s ease; }
+
+  /* Expanded states — one pane takes full io-row height */
+  #io-row.expanded-input  { height: 220px; }
+  #io-row.expanded-output { height: 220px; }
+  #io-row.expanded-input  .io-pane:first-child { height: 180px; }
+  #io-row.expanded-input  .io-pane:last-child  { height: 40px; }
+  #io-row.expanded-output .io-pane:first-child { height: 40px; }
+  #io-row.expanded-output .io-pane:last-child  { height: 180px; }
+
+  /* Show expand button on mobile */
+  .io-expand-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid var(--iron);
+    border-radius: 2px;
+    color: var(--mist);
+    font-size: 11px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    line-height: 1;
+    transition: color .12s, border-color .12s;
+    flex-shrink: 0;
+  }
+  .io-expand-btn:active { color: var(--gold); border-color: var(--gold-dim); }
+  .io-expand-btn.expanded { color: var(--gold); border-color: var(--gold-dim); font-size: 10px; }
+
+  /* Make io-lbl a flex row so button sits on the right */
+  .io-lbl {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
 
   /* --- MOBILE NAV BAR (editor) --- */
   #mob-editor-nav {
@@ -809,3 +851,4 @@ body::before{
 
 /* Show mob-editor-nav ONLY when editor is active on mobile */
 #mob-editor-nav { display: none; }
+
