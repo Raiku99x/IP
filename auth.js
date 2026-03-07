@@ -90,6 +90,10 @@ async function handleSignup() {
     errorEl.textContent = randomError(ERRORS.emptyFields);
     return;
   }
+  if (!email.toLowerCase().endsWith('@gmail.com')) {
+    errorEl.textContent = 'Please use your Gmail address (@gmail.com) to sign up.';
+    return;
+  }
   if (password.length < 6) {
     errorEl.textContent = 'Password must be at least 6 characters.';
     return;
@@ -120,7 +124,7 @@ async function handleSignup() {
     errorEl.textContent = error.message;
   } else {
     errorEl.style.color = 'var(--emerald)';
-    errorEl.textContent = 'Account created! You are now logged in.';
+    errorEl.textContent = 'Account created! Check your Gmail to verify before logging in.';
   }
 }
 
