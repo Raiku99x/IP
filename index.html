@@ -17,6 +17,55 @@
 </head>
 <body>
 
+<!-- AUTH OVERLAY -->
+<div id="auth-overlay" style="display:none;position:fixed;inset:0;background:var(--void);z-index:99999;align-items:center;justify-content:center;font-family:var(--font-b);">
+  <div style="background:var(--dungeon);border:1px solid var(--gold-dim);border-radius:4px;padding:40px 36px;width:380px;max-width:calc(100% - 32px);box-shadow:0 0 40px var(--gold-glow);">
+    
+    <!-- Crest -->
+    <div style="text-align:center;margin-bottom:20px;">
+      <img src="logo.png" style="width:64px;height:64px;border-radius:50%;border:1px solid var(--gold-dim);"/>
+      <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--gold);letter-spacing:.1em;margin-top:10px;" id="auth-title">Welcome Back</div>
+      <div style="font-family:var(--font-m);font-size:10px;color:var(--mist);margin-top:4px;">Slytherin Classroom</div>
+    </div>
+
+    <!-- Name field (signup only) -->
+    <div id="auth-name-row" style="display:none;flex-direction:column;gap:5px;margin-bottom:12px;">
+      <label style="font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:var(--mist);">FULL NAME</label>
+      <input id="auth-name" type="text" placeholder="Your full name"
+        style="background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:10px 12px;font-family:var(--font-m);font-size:12px;color:var(--parchment);outline:none;"/>
+    </div>
+
+    <!-- Email -->
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
+      <label style="font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:var(--mist);">EMAIL</label>
+      <input id="auth-email" type="email" placeholder="you@email.com"
+        style="background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:10px 12px;font-family:var(--font-m);font-size:12px;color:var(--parchment);outline:none;"/>
+    </div>
+
+    <!-- Password -->
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:18px;">
+      <label style="font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:var(--mist);">PASSWORD</label>
+      <input id="auth-password" type="password" placeholder="••••••••"
+        style="background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:10px 12px;font-family:var(--font-m);font-size:12px;color:var(--parchment);outline:none;"/>
+    </div>
+
+    <!-- Error -->
+    <div id="auth-error" style="font-family:var(--font-m);font-size:11px;color:var(--crimson);margin-bottom:12px;min-height:16px;"></div>
+
+    <!-- Submit -->
+    <button id="auth-submit-btn" onclick="document.getElementById('auth-name-row').style.display==='none'?handleLogin():handleSignup()"
+      style="width:100%;padding:11px;border-radius:2px;border:1px solid var(--gold-dim);background:var(--gold-glow);color:var(--gold);font-family:var(--font-d);font-size:12px;font-weight:600;letter-spacing:.1em;cursor:pointer;">
+      Log In
+    </button>
+
+    <!-- Switch mode -->
+    <div id="auth-switch-text" style="text-align:center;font-family:var(--font-m);font-size:11px;color:var(--mist);margin-top:16px;">
+      No account yet? <span onclick="toggleAuthMode()" style="color:var(--gold);cursor:pointer;text-decoration:underline;">Sign Up</span>
+    </div>
+
+  </div>
+</div>
+  
 <div id="loading-overlay">
   <div class="lc">
     <img src="logo.png" class="lc-crest" alt="Slytherin Classroom" width="108" height="108"/>
@@ -220,6 +269,7 @@
   </button>
 </div>
 
+<script src="auth.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
