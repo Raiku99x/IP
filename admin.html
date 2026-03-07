@@ -9,36 +9,17 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
-  --bg:#f4f1eb;
-  --bg2:#ffffff;
-  --bg3:#f9f7f3;
-  --bg4:#ede9df;
-  --border:#ddd8cc;
-  --border2:#c8c2b4;
-  --gold:#8a6d2f;
-  --gold-light:#c9a84c;
-  --gold-bg:#fdf8ee;
-  --gold-border:#e8d5a0;
-  --violet:#5b3fa6;
-  --violet-bg:#f0ebff;
-  --violet-border:#c4b0f0;
-  --amethyst:#6d4fc4;
-  --emerald:#1a6b3a;
-  --emerald-bg:#edfaf3;
-  --emerald-border:#a3d9bb;
-  --crimson:#b91c1c;
-  --crimson-bg:#fff1f1;
-  --crimson-border:#fca5a5;
-  --mist:#9e9585;
-  --mist2:#6b6357;
-  --text:#1e1a14;
-  --text2:#4a4237;
-  --text3:#6b6357;
+  --bg:#f4f1eb;--bg2:#ffffff;--bg3:#f9f7f3;--bg4:#ede9df;
+  --border:#ddd8cc;--border2:#c8c2b4;
+  --gold:#8a6d2f;--gold-light:#c9a84c;--gold-bg:#fdf8ee;--gold-border:#e8d5a0;
+  --violet:#5b3fa6;--violet-bg:#f0ebff;--violet-border:#c4b0f0;--amethyst:#6d4fc4;
+  --emerald:#1a6b3a;--emerald-bg:#edfaf3;--emerald-border:#a3d9bb;
+  --crimson:#b91c1c;--crimson-bg:#fff1f1;--crimson-border:#fca5a5;
+  --mist:#9e9585;--mist2:#6b6357;
+  --text:#1e1a14;--text2:#4a4237;--text3:#6b6357;
   --shadow:0 1px 4px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04);
   --shadow-sm:0 1px 3px rgba(0,0,0,.06);
-  --font-d:'Cinzel',serif;
-  --font-m:'Share Tech Mono',monospace;
-  --font-b:'Inter',sans-serif;
+  --font-d:'Cinzel',serif;--font-m:'Share Tech Mono',monospace;--font-b:'Inter',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:var(--font-b);min-height:100vh;}
@@ -70,14 +51,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-b);min-height
 .stat-card.c-violet::before{background:linear-gradient(90deg,var(--amethyst),#9b7de8);}
 .stat-card.c-green::before{background:linear-gradient(90deg,#22c55e,#4ade80);}
 .stat-card.c-red::before{background:linear-gradient(90deg,#ef4444,#f87171);}
+.stat-card.c-blue::before{background:linear-gradient(90deg,#3b82f6,#60a5fa);}
 .stat-card:hover{box-shadow:var(--shadow);transform:translateY(-1px);}
 .stat-n{font-family:var(--font-d);font-size:30px;font-weight:700;line-height:1;margin-bottom:5px;}
 .stat-l{font-size:11px;color:var(--text3);font-weight:600;}
 .stat-sub{font-size:10px;color:var(--mist);margin-top:3px;}
-.cn-gold{color:var(--gold);}
-.cn-violet{color:var(--amethyst);}
-.cn-green{color:var(--emerald);}
-.cn-red{color:var(--crimson);}
+.cn-gold{color:var(--gold);}.cn-violet{color:var(--amethyst);}.cn-green{color:var(--emerald);}.cn-red{color:var(--crimson);}.cn-blue{color:#3b82f6;}
 
 .tabs-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:5px;display:inline-flex;gap:3px;margin-bottom:18px;box-shadow:var(--shadow-sm);}
 .tab{font-size:12px;font-weight:500;padding:8px 16px;cursor:pointer;color:var(--text3);border-radius:7px;border:1px solid transparent;background:none;transition:all .15s;}
@@ -114,6 +93,7 @@ tr:hover td{background:#fdfbf7;}
 .b-fail{background:var(--crimson-bg);color:var(--crimson);border:1px solid var(--crimson-border);}
 .b-pct{background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-border);}
 .b-violet{background:var(--violet-bg);color:var(--amethyst);border:1px solid var(--violet-border);}
+.b-blue{background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe;}
 
 .user-pill{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;color:var(--text);}
 .uav{width:26px;height:26px;border-radius:50%;background:var(--violet-bg);border:1px solid var(--violet-border);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:10px;color:var(--amethyst);font-weight:700;flex-shrink:0;}
@@ -127,7 +107,6 @@ tr:hover td{background:#fdfbf7;}
 .td-dim{font-size:11px;color:var(--mist2);}
 .tnw{white-space:nowrap;}
 .ttr{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-
 .tbl-empty{text-align:center;padding:48px;font-size:13px;color:var(--mist);}
 .tei{font-size:28px;margin-bottom:8px;}
 
@@ -151,18 +130,45 @@ tr:hover td{background:#fdfbf7;}
 .uc-sec{font-size:10px;font-weight:700;color:var(--mist);letter-spacing:.06em;text-transform:uppercase;margin:10px 0 6px;}
 .uc-bar{height:4px;background:var(--border);border-radius:2px;margin-top:4px;margin-bottom:10px;}
 .uc-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--gold-light));}
+.uc-bar-fill.quiz{background:linear-gradient(90deg,var(--amethyst),#9b7de8);}
 .uc-last{font-size:10px;color:var(--mist);margin-top:4px;}
 
-.lboard{padding:20px;}
-.lb-row{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:8px;margin-bottom:8px;background:var(--bg3);border:1px solid var(--border);transition:all .15s;}
+/* LEADERBOARD */
+.lb-split{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+@media(max-width:900px){.lb-split{grid-template-columns:1fr;}}
+.lb-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-sm);overflow:hidden;}
+.lb-card-hd{padding:14px 18px;border-bottom:1px solid var(--border);}
+.lb-card-hd.lab{background:linear-gradient(135deg,#fdf8ee,#faf3dc);}
+.lb-card-hd.quiz{background:linear-gradient(135deg,var(--violet-bg),#e8deff);}
+.lb-card-title{font-family:var(--font-d);font-size:13px;letter-spacing:.06em;}
+.lb-card-sub{font-size:10px;color:var(--mist2);margin-top:2px;}
+.lb-list{padding:12px 16px;display:flex;flex-direction:column;gap:7px;}
+.lb-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);transition:all .15s;}
 .lb-row:hover{background:var(--bg4);}
+.lb-row.top1{background:linear-gradient(135deg,#fffbef,#fef9e4);border-color:var(--gold-border);}
+.lb-row.top2{background:linear-gradient(135deg,#f9f9fb,#f1f1f5);border-color:#d1d5db;}
+.lb-row.top3{background:linear-gradient(135deg,#fff8f4,#fef0e8);border-color:#fcd9bd;}
 .lb-rank{font-family:var(--font-d);font-size:15px;font-weight:700;width:30px;text-align:center;flex-shrink:0;}
 .r1{color:#c9a84c;}.r2{color:#9ca3af;}.r3{color:#cd7f32;}.rn{color:var(--mist);}
-.lb-name{flex:1;font-weight:600;font-size:13px;}
-.lb-stats{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.lb-info{flex:1;min-width:0;}
+.lb-name{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lb-detail{font-size:10px;color:var(--mist2);margin-top:2px;}
+.lb-mini{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;}
+.lb-score{text-align:right;flex-shrink:0;}
+.lb-score-main{font-family:var(--font-d);font-size:17px;font-weight:700;}
+.lb-score-main.lab{color:var(--gold);}
+.lb-score-main.quiz{color:var(--amethyst);}
+.lb-score-sub{font-size:9px;color:var(--mist);margin-top:1px;text-align:right;}
+
+.combo-lb{padding:16px;}
+.combo-row{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:8px;margin-bottom:6px;border:1px solid var(--border);background:var(--bg3);transition:all .15s;}
+.combo-row:hover{background:var(--bg4);}
+.combo-row.top1{background:linear-gradient(135deg,#fffbef,#fef9e4);border-color:var(--gold-border);}
+.combo-row.top2{background:linear-gradient(135deg,#f9f9fb,#f1f1f5);border-color:#d1d5db;}
+.combo-row.top3{background:linear-gradient(135deg,#fff8f4,#fef0e8);border-color:#fcd9bd;}
+.combo-stats{display:flex;gap:6px;align-items:center;flex-wrap:wrap;flex:1;}
 
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
-
 .loading{display:flex;align-items:center;justify-content:center;padding:64px;flex-direction:column;gap:14px;}
 .spin{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--gold-light);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -189,7 +195,6 @@ tr:hover td{background:#fdfbf7;}
       <button class="tb-btn danger" onclick="doLogout()">Sign Out</button>
     </div>
   </div>
-
   <div id="main">
     <div class="page-title">Dashboard</div>
     <div class="page-sub" id="last-updated">Loading…</div>
@@ -237,6 +242,7 @@ function render(){
   const pS=allSubs.filter(s=>s.passed).length, pA=allAttempts.filter(a=>a.passed).length;
   const lRate=allSubs.length?Math.round(pS/allSubs.length*100):0;
   const qRate=allAttempts.length?Math.round(pA/allAttempts.length*100):0;
+  const totalPts=allSubs.reduce((acc,s)=>acc+(s.score||0),0);
   document.getElementById('content').innerHTML=`
     <div class="stats-row">
       <div class="stat-card c-gold"><div class="stat-n cn-gold">${uU.size}</div><div class="stat-l">Total Students</div><div class="stat-sub">enrolled & active</div></div>
@@ -244,7 +250,7 @@ function render(){
       <div class="stat-card c-green"><div class="stat-n cn-green">${pS}</div><div class="stat-l">Labs Passed</div><div class="stat-sub">out of ${allSubs.length}</div></div>
       <div class="stat-card c-violet"><div class="stat-n cn-violet">${allAttempts.length}</div><div class="stat-l">Quiz Attempts</div><div class="stat-sub">${qRate}% pass rate</div></div>
       <div class="stat-card c-green"><div class="stat-n cn-green">${pA}</div><div class="stat-l">Quizzes Passed</div><div class="stat-sub">out of ${allAttempts.length}</div></div>
-      <div class="stat-card c-red"><div class="stat-n cn-red">${allSubs.filter(s=>!s.passed).length+allAttempts.filter(a=>!a.passed).length}</div><div class="stat-l">Total Failures</div><div class="stat-sub">labs + quizzes</div></div>
+      <div class="stat-card c-blue"><div class="stat-n cn-blue">${totalPts}</div><div class="stat-l">Total Lab Points</div><div class="stat-sub">earned by all students</div></div>
     </div>
     <div class="tabs-wrap">
       <button class="tab ${currentTab==='overview'?'active':''}" onclick="sTab('overview')">📊 Overview</button>
@@ -265,28 +271,27 @@ function rTab(){
 }
 function rT(){document.getElementById('tc').innerHTML=rTab();}
 
-/* OVERVIEW */
+/* ── OVERVIEW ── */
 function rOverview(){
   const pc={};
-  allSubs.forEach(s=>{const k=s.problem_title||'?';if(!pc[k])pc[k]={t:0,p:0};pc[k].t++;if(s.passed)pc[k].p++;});
+  allSubs.forEach(s=>{const k=s.problem_title||'?';if(!pc[k])pc[k]={t:0,p:0,pts:0};pc[k].t++;if(s.passed)pc[k].p++;pc[k].pts+=(s.score||0);});
   const qc={};
   allAttempts.forEach(a=>{const k=a.quiz_title||'?';if(!qc[k])qc[k]={t:0,p:0};qc[k].t++;if(a.passed)qc[k].p++;});
   const recent=[
-    ...allSubs.slice(0,6).map(s=>({type:'lab',name:s.username,item:s.problem_title,passed:s.passed,time:s.submitted_at})),
-    ...allAttempts.slice(0,6).map(a=>({type:'quiz',name:a.username,item:a.quiz_title,passed:a.passed,time:a.attempted_at}))
-  ].sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,10);
-
-  const pRows=Object.entries(pc).sort((a,b)=>b[1].t-a[1].t).slice(0,8).map(([n,d])=>{
-    const r=Math.round(d.p/d.t*100),bc=r>=70?'fg':r>=40?'fo':'fr';
-    return `<tr><td class="ttr" title="${esc(n)}">${esc(n)}</td><td><span class="badge b-violet">${d.t}</span></td><td><span class="badge b-pass">${d.p}</span></td><td><div class="sw"><div class="sb"><div class="sbf ${bc}" style="width:${r}%"></div></div><span class="badge b-pct">${r}%</span></div></td></tr>`;
+    ...allSubs.slice(0,8).map(s=>({type:'lab',name:s.username,item:s.problem_title,passed:s.passed,time:s.submitted_at})),
+    ...allAttempts.slice(0,8).map(a=>({type:'quiz',name:a.username,item:a.quiz_title,passed:a.passed,time:a.attempted_at}))
+  ].sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,12);
+  const pRows=Object.entries(pc).sort((a,b)=>b[1].t-a[1].t).slice(0,10).map(([n,d])=>{
+    const r=d.t>0?Math.round(d.p/d.t*100):0,bc=r>=70?'fg':r>=40?'fo':'fr';
+    return `<tr><td class="ttr" title="${esc(n)}">${esc(n)}</td><td><span class="badge b-violet">${d.t}</span></td><td><span class="badge b-pass">${d.p}</span></td><td class="tm">${d.pts}</td><td><div class="sw"><div class="sb"><div class="sbf ${bc}" style="width:${r}%"></div></div><span class="badge b-pct">${r}%</span></div></td></tr>`;
   }).join('');
-  const qRows=Object.entries(qc).map(([n,d])=>{
-    const r=Math.round(d.p/d.t*100),bc=r>=70?'fg':r>=40?'fo':'fr';
+  const qRows=Object.entries(qc).sort((a,b)=>b[1].t-a[1].t).map(([n,d])=>{
+    const r=d.t>0?Math.round(d.p/d.t*100):0,bc=r>=70?'fg':r>=40?'fo':'fr';
     return `<tr><td class="ttr" title="${esc(n)}">${esc(n)}</td><td><span class="badge b-violet">${d.t}</span></td><td><span class="badge b-pass">${d.p}</span></td><td><div class="sw"><div class="sb"><div class="sbf ${bc}" style="width:${r}%"></div></div><span class="badge b-pct">${r}%</span></div></td></tr>`;
   }).join('');
   const actRows=recent.map(r=>`<tr>
     <td><span class="user-pill"><span class="uav">${r.name.charAt(0).toUpperCase()}</span>${esc(r.name)}</span></td>
-    <td><span class="badge ${r.type==='lab'?'b-violet':'b-pct'}">${r.type==='lab'?'Lab':'Quiz'}</span></td>
+    <td><span class="badge ${r.type==='lab'?'b-violet':'b-pct'}">${r.type==='lab'?'🧪 Lab':'📝 Quiz'}</span></td>
     <td class="ttr" title="${esc(r.item)}">${esc(r.item)}</td>
     <td><span class="badge ${r.passed?'b-pass':'b-fail'}">${r.passed?'✓ Pass':'✗ Fail'}</span></td>
     <td class="td-dim tnw">${fmtDate(r.time)}</td>
@@ -294,14 +299,14 @@ function rOverview(){
   return `
     <div class="two-col">
       <div class="section-card">
-        <div class="section-hd"><div class="section-title">🧪 Lab Problems — Who Attempted</div></div>
-        <div class="tbl-wrap"><table><thead><tr><th>Problem</th><th>Attempts</th><th>Passed</th><th>Rate</th></tr></thead>
-        <tbody>${pRows||'<tr><td colspan="4"><div class="tbl-empty"><div class="tei">📭</div>No data yet</div></td></tr>'}</tbody></table></div>
+        <div class="section-hd"><div class="section-title">🧪 Lab Problems — Attempts</div></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Problem</th><th>Attempts</th><th>Passed</th><th>Pts Earned</th><th>Rate</th></tr></thead>
+        <tbody>${pRows||'<tr><td colspan="5"><div class="tbl-empty"><div class="tei">📭</div>No lab data yet</div></td></tr>'}</tbody></table></div>
       </div>
       <div class="section-card">
-        <div class="section-hd"><div class="section-title">📝 Quizzes — Who Attempted</div></div>
-        <div class="tbl-wrap"><table><thead><tr><th>Quiz</th><th>Attempts</th><th>Passed</th><th>Rate</th></tr></thead>
-        <tbody>${qRows||'<tr><td colspan="4"><div class="tbl-empty"><div class="tei">📭</div>No data yet</div></td></tr>'}</tbody></table></div>
+        <div class="section-hd"><div class="section-title">📝 Quizzes — Attempts</div></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Quiz</th><th>Attempts</th><th>Passed</th><th>Pass Rate</th></tr></thead>
+        <tbody>${qRows||'<tr><td colspan="4"><div class="tbl-empty"><div class="tei">📭</div>No quiz data yet</div></td></tr>'}</tbody></table></div>
       </div>
     </div>
     <div class="section-card">
@@ -311,7 +316,7 @@ function rOverview(){
     </div>`;
 }
 
-/* LABS */
+/* ── LABS ── */
 function rLabs(){
   let rows=[...allSubs];
   if(labF.user)rows=rows.filter(r=>r.username.toLowerCase().includes(labF.user.toLowerCase()));
@@ -354,7 +359,7 @@ function rLabs(){
 }
 function sLab(c){labSort=labSort.col===c?{col:c,dir:labSort.dir==='asc'?'desc':'asc'}:{col:c,dir:'desc'};rT();}
 
-/* QUIZZES */
+/* ── QUIZZES ── */
 function rQuizzes(){
   let rows=[...allAttempts];
   if(quizF.user)rows=rows.filter(r=>r.username.toLowerCase().includes(quizF.user.toLowerCase()));
@@ -395,7 +400,7 @@ function rQuizzes(){
 }
 function sQuiz(c){quizSort=quizSort.col===c?{col:c,dir:quizSort.dir==='asc'?'desc':'asc'}:{col:c,dir:'desc'};rT();}
 
-/* STUDENTS */
+/* ── STUDENTS ── */
 function rStudents(){
   const u={};
   allSubs.forEach(s=>{if(!u[s.username])u[s.username]={labs:[],quizzes:[]};u[s.username].labs.push(s);});
@@ -412,54 +417,155 @@ function rStudents(){
     const last=[...d.labs.map(l=>l.submitted_at),...d.quizzes.map(q=>q.attempted_at)].filter(Boolean).sort().pop();
     return `<div class="user-card">
       <div class="uc-hd"><div class="uc-av">${name.charAt(0).toUpperCase()}</div><div><div class="uc-name">${esc(name)}</div><div class="uc-sub">${lt+qt} total activities</div></div></div>
-      <div class="uc-sec">Labs</div>
+      <div class="uc-sec">🧪 Labs</div>
       <div class="uc-row"><span>Submissions</span><span class="uc-val">${lt}</span></div>
       <div class="uc-row"><span>Unique problems</span><span class="uc-val">${uProbs}</span></div>
       <div class="uc-row"><span>Passed</span><span class="uc-val" style="color:var(--emerald)">${lp} / ${lt}</span></div>
-      <div class="uc-row"><span>Points</span><span class="uc-val">${lpts} / ${lmax}</span></div>
+      <div class="uc-row"><span>Points earned</span><span class="uc-val">${lpts} / ${lmax}</span></div>
       <div class="uc-bar"><div class="uc-bar-fill" style="width:${lpct}%"></div></div>
-      <div class="uc-sec">Quizzes</div>
+      <div class="uc-sec">📝 Quizzes</div>
       <div class="uc-row"><span>Attempts</span><span class="uc-val">${qt}</span></div>
       <div class="uc-row"><span>Unique quizzes</span><span class="uc-val">${uQuiz}</span></div>
-      <div class="uc-row"><span>Passed</span><span class="uc-val" style="color:var(--emerald)">${qp} / ${qt}</span></div>
-      <div class="uc-bar"><div class="uc-bar-fill" style="width:${qpct}%"></div></div>
+      <div class="uc-row"><span>Passed</span><span class="uc-val" style="color:var(--amethyst)">${qp} / ${qt}</span></div>
+      <div class="uc-bar"><div class="uc-bar-fill quiz" style="width:${qpct}%"></div></div>
       <div class="uc-last">Last active: ${last?fmtDate(last):'Never'}</div>
     </div>`;
   }).join('');
   return `<div class="user-grid">${cards}</div>`;
 }
 
-/* LEADERBOARD */
+/* ── LEADERBOARD — SEPARATE LAB & QUIZ ── */
 function rLeaderboard(){
   const u={};
-  allSubs.forEach(s=>{if(!u[s.username])u[s.username]={lpts:0,lmax:0,lp:0,qt:0,qp:0};u[s.username].lpts+=(s.score||0);u[s.username].lmax+=(s.max_score||0);if(s.passed)u[s.username].lp++;});
-  allAttempts.forEach(a=>{if(!u[a.username])u[a.username]={lpts:0,lmax:0,lp:0,qt:0,qp:0};u[a.username].qt++;if(a.passed)u[a.username].qp++;});
-  const ranked=Object.entries(u).map(([n,d])=>({n,...d,total:d.lpts+d.qp*10})).sort((a,b)=>b.total-a.total);
-  if(!ranked.length)return `<div class="section-card"><div class="tbl-empty"><div class="tei">🏆</div>No data yet</div></div>`;
-  const rows=ranked.map((u,i)=>{
+  allSubs.forEach(s=>{
+    if(!u[s.username])u[s.username]={lpts:0,lmax:0,lpassed:0,ltotal:0,qtotal:0,qpassed:0,qpts:0,qmax:0};
+    u[s.username].lpts+=(s.score||0);
+    u[s.username].lmax+=(s.max_score||0);
+    u[s.username].ltotal++;
+    if(s.passed)u[s.username].lpassed++;
+  });
+  allAttempts.forEach(a=>{
+    if(!u[a.username])u[a.username]={lpts:0,lmax:0,lpassed:0,ltotal:0,qtotal:0,qpassed:0,qpts:0,qmax:0};
+    u[a.username].qtotal++;
+    u[a.username].qpts+=(a.score||0);
+    u[a.username].qmax+=(a.total||0);
+    if(a.passed)u[a.username].qpassed++;
+  });
+
+  if(!Object.keys(u).length)return `<div class="section-card"><div class="tbl-empty"><div class="tei">🏆</div>No data yet</div></div>`;
+
+  /* Lab leaderboard: ranked by lab points, tiebreak by pass count */
+  const labRanked=Object.entries(u)
+    .filter(([,d])=>d.ltotal>0)
+    .map(([n,d])=>({n,...d,lpct:d.lmax>0?Math.round(d.lpts/d.lmax*100):0}))
+    .sort((a,b)=>b.lpts-a.lpts||b.lpassed-a.lpassed);
+
+  /* Quiz leaderboard: ranked by quizzes passed, tiebreak by score % */
+  const quizRanked=Object.entries(u)
+    .filter(([,d])=>d.qtotal>0)
+    .map(([n,d])=>({n,...d,qpct:d.qmax>0?Math.round(d.qpts/d.qmax*100):0}))
+    .sort((a,b)=>b.qpassed-a.qpassed||b.qpct-a.qpct);
+
+  /* Combined: lab pts + each quiz pass worth 10 pts */
+  const comboRanked=Object.entries(u)
+    .map(([n,d])=>({n,...d,
+      lpct:d.lmax>0?Math.round(d.lpts/d.lmax*100):0,
+      qpct:d.qmax>0?Math.round(d.qpts/d.qmax*100):0,
+      combo:d.lpts+(d.qpassed*10)
+    }))
+    .sort((a,b)=>b.combo-a.combo);
+
+  const labRows=labRanked.map((u,i)=>{
     const rc=i===0?'r1':i===1?'r2':i===2?'r3':'rn';
     const med=i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`;
-    const qpct=u.qt>0?Math.round(u.qp/u.qt*100):0;
-    const lpct=u.lmax>0?Math.round(u.lpts/u.lmax*100):0;
-    return `<div class="lb-row">
+    const cls=i===0?'top1':i===1?'top2':i===2?'top3':'';
+    return `<div class="lb-row ${cls}">
       <div class="lb-rank ${rc}">${med}</div>
       <div class="uav">${u.n.charAt(0).toUpperCase()}</div>
-      <div class="lb-name">${esc(u.n)}</div>
-      <div class="lb-stats">
-        <span class="badge b-violet">Lab pts: ${u.lpts}</span>
-        <span class="badge b-pct">Lab rate: ${lpct}%</span>
-        <span class="badge b-pass">Labs passed: ${u.lp}</span>
-        <span class="badge b-pass">Quizzes: ${u.qp}/${u.qt} (${qpct}%)</span>
+      <div class="lb-info">
+        <div class="lb-name">${esc(u.n)}</div>
+        <div class="lb-mini">
+          <span class="badge b-pass">${u.lpassed} passed</span>
+          <span class="badge b-pct">${u.lpct}% rate</span>
+          <span class="badge b-violet">${u.ltotal} tries</span>
+        </div>
+      </div>
+      <div class="lb-score">
+        <div class="lb-score-main lab">${u.lpts}</div>
+        <div class="lb-score-sub">pts earned</div>
       </div>
     </div>`;
   }).join('');
-  return `<div class="section-card">
-    <div class="section-hd"><div class="section-title">🏆 Student Leaderboard — ranked by lab points + quiz passes</div></div>
-    <div class="lboard">${rows}</div>
-  </div>`;
+
+  const quizRows=quizRanked.map((u,i)=>{
+    const rc=i===0?'r1':i===1?'r2':i===2?'r3':'rn';
+    const med=i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`;
+    const cls=i===0?'top1':i===1?'top2':i===2?'top3':'';
+    return `<div class="lb-row ${cls}">
+      <div class="lb-rank ${rc}">${med}</div>
+      <div class="uav" style="background:var(--violet-bg);color:var(--amethyst);border-color:var(--violet-border)">${u.n.charAt(0).toUpperCase()}</div>
+      <div class="lb-info">
+        <div class="lb-name">${esc(u.n)}</div>
+        <div class="lb-mini">
+          <span class="badge b-violet">${u.qtotal} attempts</span>
+          <span class="badge b-pct">${u.qpct}% score</span>
+        </div>
+      </div>
+      <div class="lb-score">
+        <div class="lb-score-main quiz">${u.qpassed}</div>
+        <div class="lb-score-sub">passed</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const comboRows=comboRanked.map((u,i)=>{
+    const rc=i===0?'r1':i===1?'r2':i===2?'r3':'rn';
+    const med=i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`;
+    const cls=i===0?'top1':i===1?'top2':i===2?'top3':'';
+    return `<div class="combo-row ${cls}">
+      <div class="lb-rank ${rc}">${med}</div>
+      <div class="uav">${u.n.charAt(0).toUpperCase()}</div>
+      <div style="font-weight:600;font-size:13px;min-width:110px">${esc(u.n)}</div>
+      <div class="combo-stats">
+        <span class="badge b-pct">🧪 ${u.lpts} pts</span>
+        <span class="badge b-pass">Lab ${u.lpct}%</span>
+        <span class="badge b-violet">📝 ${u.qpassed}/${u.qtotal} passed</span>
+        <span class="badge b-blue">Quiz ${u.qpct}%</span>
+      </div>
+      <div style="font-family:var(--font-d);font-size:17px;font-weight:700;color:var(--gold);flex-shrink:0">${u.combo}<span style="font-size:9px;color:var(--mist);font-family:var(--font-b);font-weight:400;margin-left:3px">pts</span></div>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="lb-split">
+      <div class="lb-card">
+        <div class="lb-card-hd lab">
+          <div class="lb-card-title">🧪 Lab Leaderboard</div>
+          <div class="lb-card-sub">Ranked by total lab points earned</div>
+        </div>
+        <div class="lb-list">${labRows||'<div class="tbl-empty"><div class="tei">📭</div>No lab data yet</div>'}</div>
+      </div>
+      <div class="lb-card">
+        <div class="lb-card-hd quiz">
+          <div class="lb-card-title">📝 Quiz Leaderboard</div>
+          <div class="lb-card-sub">Ranked by quizzes passed, then avg score</div>
+        </div>
+        <div class="lb-list">${quizRows||'<div class="tbl-empty"><div class="tei">📭</div>No quiz data yet</div>'}</div>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-hd">
+        <div class="section-hd-left">
+          <div class="section-title">⚔️ Combined Ranking</div>
+          <span class="section-count">${comboRanked.length} students</span>
+        </div>
+        <span style="font-size:10px;color:var(--mist2)">Score = lab pts + (quiz passes × 10)</span>
+      </div>
+      <div class="combo-lb">${comboRows||'<div class="tbl-empty"><div class="tei">🏆</div>No data yet</div>'}</div>
+    </div>`;
 }
 
-/* PAGINATION */
+/* ── PAGINATION ── */
 function rPg(page,tp,tot,vn){
   const s=(page-1)*PG+1,e=Math.min(page*PG,tot);
   const nums=[];
@@ -474,7 +580,7 @@ function rPg(page,tp,tot,vn){
   </div>`;
 }
 
-/* EXPORT */
+/* ── EXPORT ── */
 function exportCSV(type){
   let h,r;
   if(type==='labs'){h=['username','lab_title','problem_title','score','max_score','tc_passed','tc_total','passed','submitted_at'];r=allSubs;}
