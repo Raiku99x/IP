@@ -66,22 +66,17 @@ const gs=id=>{if(!state[id])state[id]={code:'',tcResults:null,submitted:false};r
 /* ===== DATA LOADING ===== */
 async function loadJSON(){
   try{
-    const cfgRes=await fetch('config.json');
-    if(!cfgRes.ok)throw new Error('Could not load config.json (HTTP '+cfgRes.status+')');
-    const cfg=await cfgRes.json();
-    const labs=[];
-    for(const f of(cfg.labs||[])){
-      try{const r=await fetch(f);if(!r.ok)throw new Error('HTTP '+r.status);labs.push(await r.json());}
-      catch(e){console.warn('Skip '+f+':',e.message);}
-    }
-    const quizzes=[];
-    for(const f of(cfg.quizzes||[])){
-      try{const r=await fetch(f);if(!r.ok)throw new Error('HTTP '+r.status);quizzes.push(await r.json());}
-      catch(e){console.warn('Skip quiz '+f+':',e.message);}
-    }
-    DATA={course:cfg.course,labs};
+    const [{data:labRows,error:labErr},{data:quizRows,error:quizErr}]=await Promise.all([
+      sbClient.from('labs').select('data').eq('active',true).order('created_at'),
+      sbClient.from('quizzes').select('data').eq('active',true).order('created_at')
+    ]);
+    if(labErr)throw new Error(labErr.message);
+    if(quizErr)throw new Error(quizErr.message);
+    const labs=(labRows||[]).map(r=>r.data);
+    const quizzes=(quizRows||[]).map(r=>r.data);
+    DATA={course:{name:'BSCS 1B — Python Practice',instructor:'Self-Study'},labs};
     QUIZDATA={quizzes};
-  }catch(e){alert('Could not load config.json.\n\n'+e.message);}
+  }catch(e){alert('Could not load content.\n\n'+e.message);}
 }
 
 /* ===== PYTHON ===== */
