@@ -706,6 +706,15 @@ function finishQuiz(){
 
   quizState[quiz.id].submitted=true;
   quizState[quiz.id].score=correct;
+  await sbClient.from('quiz_attempts').insert({
+    user_id:currentUser.id,
+    username:currentUser.user_metadata?.full_name||'unknown',
+    quiz_id:quiz.id,
+    quiz_title:quiz.title,
+    score:correct,
+    total:total,
+    passed:pass
+  });
 
   $('quiz-prog-fill').style.width='100%';
   $('quiz-progress-text').textContent=`${total} / ${total}`;
@@ -921,11 +930,30 @@ $('btn-submit').addEventListener('click',async()=>{
   s.submitted=true;
   renderTrials();renderVerdict();
   setBusy(false);flash('fp');
+
+  // Save to Supabase
+  const tcPassed=res.filter(r=>r.pass).length;
+  const pts=Math.round(tcPassed/res.length*activeProblem.points);
+  const passed=tcPassed/res.length*100>=activeProblem.passingPercent;
+  const lab=DATA.labs.find(l=>l.problems.find(p=>p.id===activeProblem.id));
+  await sbClient.from('lab_submissions').insert({
+    user_id:currentUser.id,
+    username:currentUser.user_metadata?.full_name||'unknown',
+    problem_id:activeProblem.id,
+    problem_title:activeProblem.title,
+    lab_title:lab?lab.title:'Unknown',
+    score:pts,
+    max_score:activeProblem.points,
+    passed:passed,
+    tc_passed:tcPassed,
+    tc_total:res.length
+  });
+
   const allPassed=res.every(r=>r.pass);
   if(allPassed){
     const total=res.length;
-    const pts=activeProblem.points;
-    showCongrats(pts,total,pts);
+    const pts2=activeProblem.points;
+    showCongrats(pts2,total,pts2);
   }
 });
 
