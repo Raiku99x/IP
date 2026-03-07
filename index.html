@@ -60,6 +60,10 @@ body::before{
 .top-u{display:flex;align-items:center;gap:10px;font-family:var(--font-m);font-size:11px;color:var(--ash);}
 .top-av{width:30px;height:30px;border-radius:50%;background:var(--stone);border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:11px;font-weight:700;color:var(--gold);}
 
+/* FULLSCREEN BUTTON */
+#fullscreen-btn{width:30px;height:30px;border-radius:2px;border:1px solid var(--iron);background:transparent;color:var(--mist);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0;}
+#fullscreen-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
+
 /* DASHBOARD */
 #view-dashboard{flex:1;overflow:hidden;display:none;flex-direction:column;position:relative;z-index:1;}
 #view-dashboard.active{display:flex;}
@@ -78,7 +82,7 @@ body::before{
 .tome{background:var(--dungeon);border:1px solid var(--iron);border-radius:4px;overflow:hidden;transition:border-color .15s,box-shadow .15s;position:relative;}
 .tome::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--emerald);}
 .tome-hd{display:flex;align-items:center;gap:14px;padding:12px 18px 12px 20px;user-select:none;}
-.tome-ico{font-size:18px;flex-shrink:0;}
+.tome-ico{font-size:18px;flex-shrink:0;display:flex;align-items:center;}
 .tome-inf{flex:1;min-width:0;}
 .tome-nm{font-family:var(--font-d);font-size:14px;font-weight:600;color:var(--gold);letter-spacing:.05em;margin-bottom:3px;}
 .tome-mt{font-family:var(--font-m);font-size:10px;color:var(--mist);display:flex;gap:12px;flex-wrap:wrap;}
@@ -128,7 +132,7 @@ body::before{
 /* ===================== PRACTICE QUIZ STYLES ===================== */
 .quiz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;}
 .quiz-card-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-.quiz-ico{font-size:20px;flex-shrink:0;}
+.quiz-ico{font-size:20px;flex-shrink:0;display:flex;align-items:center;}
 .quiz-card-title{font-family:var(--font-d);font-size:13px;font-weight:600;color:var(--gold);letter-spacing:.04em;flex:1;}
 .quiz-card-meta{font-family:var(--font-m);font-size:10px;color:var(--mist);display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
 .quiz-card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;}
@@ -398,15 +402,48 @@ body::before{
 .res-btn-retry:hover{background:rgba(90,56,128,0.12);}
 .res-btn-back{border:1px solid var(--iron);color:var(--mist);background:transparent;}
 .res-btn-back:hover{background:var(--stone);}
-.res-review{text-align:left;display:flex;flex-direction:column;gap:5px;border-top:1px solid var(--iron);padding-top:14px;}
-.rev-row{display:flex;align-items:flex-start;gap:10px;padding:7px 10px;border-radius:3px;font-family:var(--font-m);font-size:11px;}
-.rev-row.ok{background:rgba(26,107,48,0.07);border:1px solid var(--serpent);color:var(--emerald);}
-.rev-row.no{background:rgba(139,28,28,0.07);border:1px solid var(--blood);color:var(--crimson);}
+
+/* Review section */
+.res-review{text-align:left;display:flex;flex-direction:column;gap:0;border-top:1px solid var(--iron);padding-top:14px;}
+.rev-notice{font-family:var(--font-m);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mist);margin-bottom:8px;padding:0 2px;opacity:.7;}
+.rev-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:3px 3px 0 0;font-family:var(--font-m);font-size:11px;cursor:pointer;transition:opacity .1s;user-select:none;}
+.rev-row:hover{opacity:.85;}
+.rev-row.ok{background:rgba(26,107,48,0.07);border:1px solid var(--serpent);border-bottom:none;}
+.rev-row.no{background:rgba(139,28,28,0.07);border:1px solid var(--blood);border-bottom:none;}
+.rev-row + .rev-expand{margin-bottom:6px;}
+.rev-row + .rev-expand[style*="display: none"] + .rev-row,
+.rev-row + .rev-expand[style*="display:none"] + .rev-row{margin-top:0;}
 .rev-num{flex-shrink:0;font-weight:700;width:18px;}
 .rev-txt{flex:1;line-height:1.5;color:var(--fog);}
 .rev-row.ok .rev-txt{color:var(--fog);}
 .rev-correct{color:var(--emerald);font-weight:600;}
 .rev-yours{color:var(--crimson);}
+.rev-hint{font-family:var(--font-m);font-size:8px;color:var(--mist);letter-spacing:.06em;margin-left:6px;opacity:.65;font-style:italic;white-space:nowrap;}
+.rev-chevron{font-size:9px;color:var(--mist);flex-shrink:0;transition:transform .2s;opacity:.6;}
+.rev-chevron.open{transform:rotate(90deg);}
+
+/* Expandable review content */
+.rev-expand{display:none;padding:10px 14px 12px 38px;border-left:1px solid var(--serpent);border-right:1px solid var(--serpent);border-bottom:1px solid var(--serpent);border-radius:0 0 3px 3px;background:rgba(26,107,48,0.04);}
+.rev-expand.no-exp{border-color:var(--blood);background:rgba(139,28,28,0.04);}
+.rev-expand-q{font-family:var(--font-b);font-size:12px;font-style:italic;color:var(--fog);margin-bottom:8px;line-height:1.6;}
+.rev-expand-divider{height:1px;background:var(--iron);opacity:.4;margin:6px 0;}
+.rev-expand-row{display:flex;gap:8px;align-items:flex-start;margin-top:5px;}
+.rev-expand-lbl{font-family:var(--font-m);font-size:9px;color:var(--mist);flex-shrink:0;min-width:88px;letter-spacing:.04em;padding-top:1px;}
+
+/* EXIT CONFIRM OVERLAY */
+#exit-confirm-overlay{position:fixed;inset:0;background:rgba(44,34,24,.55);z-index:3000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px);animation:ecfadein .15s ease;}
+@keyframes ecfadein{from{opacity:0;}to{opacity:1;}}
+#exit-confirm-modal{background:var(--dungeon);border:1px solid var(--blood);border-radius:4px;padding:32px 36px;text-align:center;max-width:360px;width:90%;box-shadow:0 0 40px rgba(139,28,28,0.25),0 20px 60px rgba(0,0,0,.35);animation:ma .2s ease;}
+.ecm-sigil{font-family:var(--font-d);font-size:26px;color:var(--crimson);margin-bottom:12px;letter-spacing:.1em;}
+.ecm-title{font-family:var(--font-d);font-size:17px;font-weight:700;letter-spacing:.06em;color:var(--crimson);margin-bottom:8px;}
+.ecm-sub{font-family:var(--font-b);font-style:italic;font-size:13px;color:var(--mist);margin-bottom:24px;line-height:1.6;}
+.ecm-divider{height:1px;background:linear-gradient(90deg,transparent,var(--blood),transparent);opacity:.4;margin-bottom:20px;}
+.ecm-btns{display:flex;justify-content:center;gap:10px;}
+.ecm-btn{font-family:var(--font-m);font-size:10px;font-weight:500;padding:9px 22px;border-radius:2px;cursor:pointer;transition:all .12s;letter-spacing:.06em;}
+.ecm-exit{border:1px solid var(--blood);color:var(--crimson);background:transparent;}
+.ecm-exit:hover{background:rgba(139,28,28,0.12);box-shadow:0 0 8px rgba(139,28,28,0.2);}
+.ecm-stay{border:1px solid var(--amethyst);color:var(--violet);background:transparent;}
+.ecm-stay:hover{background:rgba(90,56,128,0.12);box-shadow:0 0 8px rgba(90,56,128,0.2);}
 
 /* EDITOR */
 #view-editor{flex:1;overflow:hidden;display:none;position:relative;z-index:1;}
@@ -588,6 +625,10 @@ body::before{
   <div class="tdiv"></div>
   <div class="top-bc" id="breadcrumb"></div>
   <div class="top-sp"></div>
+  <button id="fullscreen-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen">
+    <svg id="fs-icon-enter" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+    <svg id="fs-icon-exit" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg>
+  </button>
   <div class="top-u">
     <span id="nav-inst">…</span>
     <div class="top-av">S</div>
@@ -701,7 +742,31 @@ body::before{
   </div>
 </div>
 
+<!-- EXIT QUIZ CONFIRMATION -->
+<div id="exit-confirm-overlay" style="display:none">
+  <div id="exit-confirm-modal">
+    <div class="ecm-sigil">✗</div>
+    <div class="ecm-title">Abandon Quiz?</div>
+    <div class="ecm-sub">Your current progress will be lost<br>and cannot be recovered.</div>
+    <div class="ecm-divider"></div>
+    <div class="ecm-btns">
+      <button class="ecm-btn ecm-exit" onclick="exitConfirmYes()">Exit Quiz</button>
+      <button class="ecm-btn ecm-stay" onclick="exitConfirmNo()">Keep Going</button>
+    </div>
+  </div>
+</div>
+
 <script>
+/* ===== SVG ICONS ===== */
+const SVG_LAB=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>`;
+const SVG_SNAKE=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="1.4" stroke-linecap="round"><path d="M7 8c0-2.2 1.8-4 4-4h2c2.2 0 4 1.8 4 4s-1.8 4-4 4H9c-2.2 0-4 1.8-4 4s1.8 4 4 4h2c1 0 2-.3 2.7-1"/><circle cx="16.5" cy="7" r="1.2" fill="var(--violet)"/></svg>`;
+const SVG_FORK=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="8"/><line x1="12" y1="8" x2="7" y2="14"/><line x1="12" y1="8" x2="17" y2="14"/><line x1="7" y1="14" x2="7" y2="21"/><line x1="17" y1="14" x2="17" y2="21"/></svg>`;
+const SVG_LIST=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="1.4" stroke-linecap="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4.5" cy="6" r="1.8" fill="var(--amethyst)" stroke="none"/><circle cx="4.5" cy="12" r="1.8" fill="var(--amethyst)" stroke="none"/><circle cx="4.5" cy="18" r="1.8" fill="var(--amethyst)" stroke="none"/></svg>`;
+const SVG_DIAMOND=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="1.4" stroke-linejoin="round"><polygon points="12,2 22,12 12,22 2,12"/><line x1="2" y1="12" x2="22" y2="12"/></svg>`;
+const SVG_RINGS=`<svg width="20" height="18" viewBox="0 0 26 18" fill="none" stroke="var(--violet)" stroke-width="1.4"><circle cx="9" cy="9" r="7"/><circle cx="17" cy="9" r="7"/></svg>`;
+const SVG_DEFAULT_QUIZ=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="1.4" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="var(--violet)"/></svg>`;
+const QUIZ_ICONS={'quiz-pyreview-1':SVG_SNAKE,'quiz-controlflow-1':SVG_FORK,'quiz-lists-1':SVG_LIST,'quiz-tuples-1':SVG_DIAMOND,'quiz-sets-1':SVG_RINGS};
+
 /* ===== CORE STATE ===== */
 let DATA=null,QUIZDATA=null,pyodide=null,cm=null,activeProblem=null,activeQuiz=null;
 const state={},quizState={};
@@ -788,6 +853,21 @@ function initCM(){
   cm.on('change',()=>{if(activeProblem)gs(activeProblem.id).code=cm.getValue();hideErr();});
 }
 
+/* ===== FULLSCREEN ===== */
+function toggleFullscreen(){
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen().catch(()=>{});
+  } else {
+    document.exitFullscreen().catch(()=>{});
+  }
+}
+document.addEventListener('fullscreenchange',()=>{
+  const fs=!!document.fullscreenElement;
+  const enter=$('fs-icon-enter'),exit=$('fs-icon-exit');
+  if(enter)enter.style.display=fs?'none':'block';
+  if(exit)exit.style.display=fs?'block':'none';
+});
+
 /* ===== NAVIGATION ===== */
 function showDash(){
   activeProblem=null;activeQuiz=null;
@@ -833,7 +913,7 @@ function makeLabCard(lab){
   card.className='tome';
   card.innerHTML=`
     <div class="tome-hd">
-      <span class="tome-ico">📜</span>
+      <span class="tome-ico">${SVG_LAB}</span>
       <div class="tome-inf">
         <div class="tome-nm">${lab.title}</div>
         <div class="tome-mt"><span>Due: ${lab.dueDate}</span><span>Passing: ${lab.passingPercent}%</span><span>${st.solved}/${lab.problems.length} solved · ${st.pts}/${st.maxPts} pts</span></div>
@@ -950,7 +1030,7 @@ function makeQuizCard(quiz){
   const front=document.createElement('div');
   front.className='qcard-front';
   front.innerHTML=`
-    <div class="quiz-card-top"><span class="quiz-ico">${quiz.icon||'📝'}</span><span class="quiz-card-title">${quiz.title}</span></div>
+    <div class="quiz-card-top"><span class="quiz-ico">${QUIZ_ICONS[quiz.id]||SVG_DEFAULT_QUIZ}</span><span class="quiz-card-title">${quiz.title}</span></div>
     <div class="quiz-card-meta"><span id="qmeta-n-${quiz.id}">${s.numQ} questions</span><span>${quiz.topic}</span><span style="display:flex;gap:4px">${typeTags}</span></div>
     <div class="quiz-card-footer">
       <span class="${badgeCls}">${badgeTxt}</span>
@@ -1095,13 +1175,16 @@ function openQuiz(quiz){
   showQuestion(0);
 }
 
+/* ===== EXIT QUIZ CONFIRM ===== */
 function confirmLeaveQuiz(){
   if(!activeQuiz)return showDash();
   const qs=quizState[activeQuiz.id];
   if(qs&&qs.submitted){showDash();return;}
   if(qzIdx===0&&qzResults.length===0){showDash();return;}
-  if(confirm('Exit this quiz? Your current progress will be lost.'))showDash();
+  $('exit-confirm-overlay').style.display='flex';
 }
+function exitConfirmYes(){$('exit-confirm-overlay').style.display='none';showDash();}
+function exitConfirmNo(){$('exit-confirm-overlay').style.display='none';}
 
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
@@ -1121,7 +1204,6 @@ function showQuestion(idx){
   const card=document.createElement('div');
   card.className='q-card entering';
 
-  // WHY box container (slides down below feedback, inside the card flow)
   card.innerHTML=`
     <div class="q-head">
       <div class="q-num">Question ${idx+1} of ${total} <span class="q-type-tag ${QT_CLS[q.type]||'qt-mc'}">${QT_LABELS[q.type]||q.type}</span></div>
@@ -1189,7 +1271,7 @@ Do NOT start with "Great job" or any filler praise. Just explain the concept.`;
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000); // 8s timeout
+    const timeout = setTimeout(() => controller.abort(), 8000);
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -1209,7 +1291,6 @@ Do NOT start with "Great job" or any filler praise. Just explain the concept.`;
     if (!text) throw new Error('Empty response');
     return { text, source: 'ai' };
   } catch (e) {
-    // Fallback to hardcoded explanation
     return { text: q.explanation || 'No explanation available.', source: 'fallback' };
   }
 }
@@ -1260,7 +1341,6 @@ function lockAndReveal(q, userAns, choicesDiv, fb, isLast, card, fillInp=null){
 
     whyBtn.addEventListener('click', async ()=>{
       if(whyOpen){
-        // Close
         whyBox.classList.remove('open','wrong-why');
         whyBtn.textContent='WHY?';
         whyBtn.classList.remove('active-ok','active-no');
@@ -1268,17 +1348,15 @@ function lockAndReveal(q, userAns, choicesDiv, fb, isLast, card, fillInp=null){
         return;
       }
 
-      // Open
       whyOpen=true;
       whyBtn.textContent='HIDE';
       whyBtn.classList.add(isCorrect?'active-ok':'active-no');
       whyBox.classList.add('open');
       if(!isCorrect) whyBox.classList.add('wrong-why');
 
-      if(whyLoaded) return; // already fetched
+      if(whyLoaded) return;
       whyLoaded=true;
 
-      // Show shimmer while loading
       whyInner.innerHTML=`
         <div class="why-shimmer">
           <div class="shimmer-line"></div>
@@ -1323,6 +1401,17 @@ function advanceQuestion(){
   }
 }
 
+/* ===== REVIEW EXPAND ===== */
+function toggleRevExpand(i){
+  const row=document.getElementById('rev-row-'+i);
+  const panel=document.getElementById('rev-expand-'+i);
+  const chev=document.getElementById('rev-chev-'+i);
+  if(!panel)return;
+  const isOpen=panel.style.display==='block';
+  panel.style.display=isOpen?'none':'block';
+  if(chev)chev.classList.toggle('open',!isOpen);
+}
+
 function finishQuiz(){
   const quiz=activeQuiz;
   const qList=quiz._qList||quiz.questions;
@@ -1342,15 +1431,29 @@ function finishQuiz(){
   resEl.style.display='block';
   resEl.className='show';
 
-  const reviewRows=qzResults.map((r,i)=>`
-    <div class="rev-row ${r.correct?'ok':'no'}">
+  const reviewRows=qzResults.map((r,i)=>{
+    const qObj=qList.find(q=>q.id===r.qid);
+    const rawQ=qObj?qObj.question:'';
+    const qText=rawQ.replace(/```[\s\S]*?```/g,'[code block]').trim();
+    const shortQ=qText.length>80?qText.slice(0,80)+'…':qText;
+    return `
+    <div class="rev-row ${r.correct?'ok':'no'}" id="rev-row-${i}" onclick="toggleRevExpand(${i})">
       <span class="rev-num">${i+1}</span>
       <span class="rev-txt">
         ${r.correct
           ?`<span class="rev-correct">✦ Correct</span>`
-          :`<span class="rev-yours">✗ You answered: ${escHtml(r.userAns||'—')}</span> · <span class="rev-correct">Answer: ${escHtml(r.correctAns)}</span>`}
+          :`<span class="rev-yours">✗ ${escHtml(r.userAns||'—')}</span> · <span class="rev-correct">${escHtml(r.correctAns)}</span>`}
+        <span class="rev-hint">(click to expand)</span>
       </span>
-    </div>`).join('');
+      <span class="rev-chevron" id="rev-chev-${i}">›</span>
+    </div>
+    <div class="rev-expand ${r.correct?'':'no-exp'}" id="rev-expand-${i}" style="display:none">
+      <div class="rev-expand-q">${escHtml(shortQ)}</div>
+      <div class="rev-expand-divider"></div>
+      ${!r.correct?`<div class="rev-expand-row"><span class="rev-expand-lbl">Your answer:</span> <span class="rev-yours">${escHtml(r.userAns||'—')}</span></div>`:''}
+      <div class="rev-expand-row"><span class="rev-expand-lbl">Correct answer:</span> <span class="rev-correct">${escHtml(r.correctAns)}</span></div>
+    </div>`;
+  }).join('');
 
   $('quiz-res-inner').innerHTML=`
     <div class="res-sigil">${pass?'✦':'✗'}</div>
@@ -1366,7 +1469,10 @@ function finishQuiz(){
       <button class="res-btn res-btn-retry" onclick="openQuiz(activeQuiz)">↺ Retake</button>
       <button class="res-btn res-btn-back" onclick="showDash()">← Back to Hall</button>
     </div>
-    <div class="res-review">${reviewRows}</div>`;
+    <div class="res-review">
+      <div class="rev-notice">Review — click any row to expand</div>
+      ${reviewRows}
+    </div>`;
 }
 
 /* ===== EDITOR LOGIC ===== */
