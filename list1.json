@@ -288,174 +288,174 @@
       ]
     },
     {
-  "id": "list1-4",
-  "title": "[new] Sentence Workshop",
-  "difficulty": "medium",
-  "points": 40,
-  "passingPercent": 75,
-  "description": "You are building a sentence manipulation tool that practices **string-list conversion and list as a stack**.\n\nYour program should:\n1. Read a sentence from the user.\n2. Use `split()` to convert it to a list of words.\n3. Use `join()` with a **hyphen** to print the hyphenated version.\n4. Replace the **second word** (index 1) with a word read from input, then `join()` back with spaces.\n5. Use the word list as a **stack**: `append()` a new word (read from input), then `pop()` it back off and print what was popped.\n6. Use list comprehension to create a new list of **word lengths** for each word in the (modified) list.\n7. Use `filter()` to keep only words with **length > 3** from the modified list.\n8. Print all results.",
-  "constraints": [
-    "The sentence has between 3 and 8 words.",
-    "All words are lowercase single words.",
-    "Replacement word and push word are single lowercase words."
-  ],
-  "inputFormat": "Line 1: A sentence (lowercase words, space-separated).\nLine 2: A replacement word for position 1.\nLine 3: A word to push onto the stack.",
-  "outputFormat": "Line 1: `Hyphenated: <sentence>`\nLine 2: `Replaced: <sentence>` — after replacing word at index 1\nLine 3: `Popped: <word>`\nLine 4: `Lengths: <list>`\nLine 5: `Long words: <list>` — words with length > 3",
-  "hint": "words = input().split()\nreplace = input()\npush = input()\nprint('Hyphenated:', '-'.join(words))\nwords[1] = replace\nprint('Replaced:', ' '.join(words))\nwords.append(push)\npopped = words.pop()\nprint('Popped:', popped)\nlengths = [len(w) for w in words]\nprint('Lengths:', lengths)\nlong_words = list(filter(lambda w: len(w) > 3, words))\nprint('Long words:', long_words)",
-  "testCases": [
-    {
-      "label": "Example 1",
-      "hidden": false,
-      "inputs": ["i love python very much", "enjoy", "coding"],
-      "expected": [
-        "Hyphenated: i-love-python-very-much",
-        "Replaced: i enjoy python very much",
-        "Popped: coding",
-        "Lengths: [1, 5, 6, 4, 4]",
-        "Long words: ['enjoy', 'python', 'very', 'much']"
+      "id": "list1-4",
+      "title": "[new] Sentence Workshop",
+      "difficulty": "medium",
+      "points": 40,
+      "passingPercent": 75,
+      "description": "You are building a sentence manipulation tool that practices **string-list conversion and list as a stack**.\n\nYour program should:\n1. Read a sentence from the user.\n2. Use `split()` to convert it to a list of words.\n3. Use `join()` with a **hyphen** to print the hyphenated version.\n4. Replace the **second word** (index 1) with a word read from input, then `join()` back with spaces.\n5. Use the word list as a **stack**: `append()` a new word (read from input), then `pop()` it back off and print what was popped.\n6. Use list comprehension to create a new list of **word lengths** for each word in the (modified) list.\n7. Use `filter()` to keep only words with **length > 3** from the modified list.\n8. Print all results.",
+      "constraints": [
+        "The sentence has between 3 and 8 words.",
+        "All words are lowercase single words.",
+        "Replacement word and push word are single lowercase words."
+      ],
+      "inputFormat": "Line 1: A sentence (lowercase words, space-separated).\nLine 2: A replacement word for position 1.\nLine 3: A word to push onto the stack.",
+      "outputFormat": "Line 1: `Hyphenated: <sentence>`\nLine 2: `Replaced: <sentence>` — after replacing word at index 1\nLine 3: `Popped: <word>`\nLine 4: `Lengths: <list>`\nLine 5: `Long words: <list>` — words with length > 3",
+      "hint": "words = input().split()\nreplace = input()\npush = input()\nprint('Hyphenated:', '-'.join(words))\nwords[1] = replace\nprint('Replaced:', ' '.join(words))\nwords.append(push)\npopped = words.pop()\nprint('Popped:', popped)\nlengths = [len(w) for w in words]\nprint('Lengths:', lengths)\nlong_words = list(filter(lambda w: len(w) > 3, words))\nprint('Long words:', long_words)",
+      "testCases": [
+        {
+          "label": "Example 1",
+          "hidden": false,
+          "inputs": ["i love python very much", "enjoy", "coding"],
+          "expected": [
+            "Hyphenated: i-love-python-very-much",
+            "Replaced: i enjoy python very much",
+            "Popped: coding",
+            "Lengths: [1, 5, 6, 4, 4]",
+            "Long words: ['enjoy', 'python', 'very', 'much']"
+          ]
+        },
+        {
+          "label": "Example 2",
+          "hidden": false,
+          "inputs": ["the cat sat on mat", "dog", "runs"],
+          "expected": [
+            "Hyphenated: the-cat-sat-on-mat",
+            "Replaced: the dog sat on mat",
+            "Popped: runs",
+            "Lengths: [3, 3, 3, 2, 3]",
+            "Long words: []"
+          ]
+        },
+        {
+          "label": "Hidden: Long replacement word",
+          "hidden": true,
+          "inputs": ["go to the store now", "supermarket", "quickly"],
+          "expected": [
+            "Hyphenated: go-to-the-store-now",
+            "Replaced: go supermarket the store now",
+            "Popped: quickly",
+            "Lengths: [2, 11, 3, 5, 3]",
+            "Long words: ['supermarket', 'store']"
+          ]
+        },
+        {
+          "label": "Hidden: All short words",
+          "hidden": true,
+          "inputs": ["it is ok so far", "not", "yes"],
+          "expected": [
+            "Hyphenated: it-is-ok-so-far",
+            "Replaced: it not ok so far",
+            "Popped: yes",
+            "Lengths: [2, 3, 2, 2, 3]",
+            "Long words: []"
+          ]
+        },
+        {
+          "label": "Hidden: Mixed length words",
+          "hidden": true,
+          "inputs": ["data science is amazing and fun", "engineering", "cool"],
+          "expected": [
+            "Hyphenated: data-science-is-amazing-and-fun",
+            "Replaced: data engineering is amazing and fun",
+            "Popped: cool",
+            "Lengths: [4, 11, 2, 7, 3, 3]",
+            "Long words: ['data', 'engineering', 'amazing']"
+          ]
+        }
       ]
     },
     {
-      "label": "Example 2",
-      "hidden": false,
-      "inputs": ["the cat sat on mat", "dog", "runs"],
-      "expected": [
-        "Hyphenated: the-cat-sat-on-mat",
-        "Replaced: the dog sat on mat",
-        "Popped: runs",
-        "Lengths: [3, 3, 3, 2, 3]",
-        "Long words: []"
-      ]
-    },
-    {
-      "label": "Hidden: Long replacement word",
-      "hidden": true,
-      "inputs": ["go to the store now", "supermarket", "quickly"],
-      "expected": [
-        "Hyphenated: go-to-the-store-now",
-        "Replaced: go supermarket the store now",
-        "Popped: quickly",
-        "Lengths: [2, 11, 3, 5, 3]",
-        "Long words: ['supermarket', 'store']"
-      ]
-    },
-    {
-      "label": "Hidden: All short words",
-      "hidden": true,
-      "inputs": ["it is ok so far", "not", "yes"],
-      "expected": [
-        "Hyphenated: it-is-ok-so-far",
-        "Replaced: it not ok so far",
-        "Popped: yes",
-        "Lengths: [2, 3, 2, 2, 3]",
-        "Long words: []"
-      ]
-    },
-    {
-      "label": "Hidden: Mixed length words",
-      "hidden": true,
-      "inputs": ["data science is amazing and fun", "engineering", "cool"],
-      "expected": [
-        "Hyphenated: data-science-is-amazing-and-fun",
-        "Replaced: data engineering is amazing and fun",
-        "Popped: cool",
-        "Lengths: [4, 11, 2, 7, 3, 3]",
-        "Long words: ['data', 'engineering', 'amazing']"
+      "id": "list1-5",
+      "title": "[new] Class Roster Analyzer",
+      "difficulty": "hard",
+      "points": 65,
+      "passingPercent": 75,
+      "description": "You are building a class roster analysis tool using **zip, enumerate, map, filter, and list comprehension** together.\n\nYour program should:\n1. Read a comma-separated list of **student names**.\n2. Read a comma-separated list of **integer scores** (same count as names).\n3. Use `zip()` to combine names and scores into a list of `(name, score)` tuples.\n4. Use `enumerate()` to print each entry as `#<rank>: <name> - <score>` (1-based rank).\n5. Use `map()` to create a list of **letter grades** (A/B/C/D/F using same thresholds as the reference).\n6. Use list comprehension to build a **name: grade** formatted list.\n7. Use `filter()` to get only the names of **passing students** (score >= 75).\n8. Use list comprehension to get **scores above the class average**, paired as `(name, score)`.\n9. Print the class average rounded to 2 decimal places.",
+      "constraints": [
+        "Between 3 and 6 students.",
+        "All scores are integers between 0 and 100.",
+        "Names are single words starting with uppercase."
+      ],
+      "inputFormat": "Line 1: Comma-separated student names.\nLine 2: Comma-separated integer scores.",
+      "outputFormat": "`#1: <name> - <score>` through `#N: <name> - <score>`\n`Grades: <list of 'Name: Grade' strings>`\n`Passing: <list of names>`\n`Average: <avg>`\n`Above average: <list of (name, score) tuples>`",
+      "hint": "names = [n.strip() for n in input().split(',')]\nscores = list(map(int, input().split(',')))\npairs = list(zip(names, scores))\nfor i, (n, s) in enumerate(pairs, 1):\n    print(f'#{i}: {n} - {s}')\ndef grade(s):\n    return 'A' if s>=90 else 'B' if s>=80 else 'C' if s>=70 else 'D' if s>=60 else 'F'\ngrades = list(map(lambda p: f'{p[0]}: {grade(p[1])}', pairs))\nprint('Grades:', grades)\npassing = list(filter(lambda n: dict(pairs)[n] >= 75, names))\nprint('Passing:', passing)\navg = round(sum(scores)/len(scores), 2)\nprint('Average:', avg)\nabove = [(n, s) for n, s in pairs if s > avg]\nprint('Above average:', above)",
+      "testCases": [
+        {
+          "label": "Example 1 — 4 students",
+          "hidden": false,
+          "inputs": ["Alice,Bob,Charlie,Diana", "92,68,85,74"],
+          "expected": [
+            "#1: Alice - 92",
+            "#2: Bob - 68",
+            "#3: Charlie - 85",
+            "#4: Diana - 74",
+            "Grades: ['Alice: A', 'Bob: D', 'Charlie: B', 'Diana: C']",
+            "Passing: ['Alice', 'Charlie']",
+            "Average: 79.75",
+            "Above average: [('Alice', 92), ('Charlie', 85)]"
+          ]
+        },
+        {
+          "label": "Example 2 — 3 students, all pass",
+          "hidden": false,
+          "inputs": ["Juan,Maria,Pedro", "80,90,75"],
+          "expected": [
+            "#1: Juan - 80",
+            "#2: Maria - 90",
+            "#3: Pedro - 75",
+            "Grades: ['Juan: B', 'Maria: A', 'Pedro: C']",
+            "Passing: ['Juan', 'Maria', 'Pedro']",
+            "Average: 81.67",
+            "Above average: [('Maria', 90)]"
+          ]
+        },
+        {
+          "label": "Hidden: All fail",
+          "hidden": true,
+          "inputs": ["Dan,Eve,Frank", "50,55,60"],
+          "expected": [
+            "#1: Dan - 50",
+            "#2: Eve - 55",
+            "#3: Frank - 60",
+            "Grades: ['Dan: F', 'Eve: F', 'Frank: D']",
+            "Passing: []",
+            "Average: 55.0",
+            "Above average: [('Frank', 60)]"
+          ]
+        },
+        {
+          "label": "Hidden: 5 students, mixed",
+          "hidden": true,
+          "inputs": ["Leo,Mia,Kai,Nia,Rex", "95,82,70,58,76"],
+          "expected": [
+            "#1: Leo - 95",
+            "#2: Mia - 82",
+            "#3: Kai - 70",
+            "#4: Nia - 58",
+            "#5: Rex - 76",
+            "Grades: ['Leo: A', 'Mia: B', 'Kai: C', 'Nia: F', 'Rex: C']",
+            "Passing: ['Leo', 'Mia', 'Rex']",
+            "Average: 76.2",
+            "Above average: [('Leo', 95), ('Mia', 82)]"
+          ]
+        },
+        {
+          "label": "Hidden: All same score",
+          "hidden": true,
+          "inputs": ["Sam,Jay,Kim", "80,80,80"],
+          "expected": [
+            "#1: Sam - 80",
+            "#2: Jay - 80",
+            "#3: Kim - 80",
+            "Grades: ['Sam: B', 'Jay: B', 'Kim: B']",
+            "Passing: ['Sam', 'Jay', 'Kim']",
+            "Average: 80.0",
+            "Above average: []"
+          ]
+        }
       ]
     }
-  ]
-},
-{
-  "id": "list1-5",
-  "title": "[new] Class Roster Analyzer",
-  "difficulty": "hard",
-  "points": 65,
-  "passingPercent": 75,
-  "description": "You are building a class roster analysis tool using **zip, enumerate, map, filter, and list comprehension** together.\n\nYour program should:\n1. Read a comma-separated list of **student names**.\n2. Read a comma-separated list of **integer scores** (same count as names).\n3. Use `zip()` to combine names and scores into a list of `(name, score)` tuples.\n4. Use `enumerate()` to print each entry as `#<rank>: <name> - <score>` (1-based rank).\n5. Use `map()` to create a list of **letter grades** (A/B/C/D/F using same thresholds as the reference).\n6. Use list comprehension to build a **name: grade** formatted list.\n7. Use `filter()` to get only the names of **passing students** (score >= 75).\n8. Use list comprehension to get **scores above the class average**, paired as `(name, score)`.\n9. Print the class average rounded to 2 decimal places.",
-  "constraints": [
-    "Between 3 and 6 students.",
-    "All scores are integers between 0 and 100.",
-    "Names are single words starting with uppercase."
-  ],
-  "inputFormat": "Line 1: Comma-separated student names.\nLine 2: Comma-separated integer scores.",
-  "outputFormat": "`#1: <name> - <score>` through `#N: <name> - <score>`\n`Grades: <list of 'Name: Grade' strings>`\n`Passing: <list of names>`\n`Average: <avg>`\n`Above average: <list of (name, score) tuples>`",
-  "hint": "names = [n.strip() for n in input().split(',')]\nscores = list(map(int, input().split(',')))\npairs = list(zip(names, scores))\nfor i, (n, s) in enumerate(pairs, 1):\n    print(f'#{i}: {n} - {s}')\ndef grade(s):\n    return 'A' if s>=90 else 'B' if s>=80 else 'C' if s>=70 else 'D' if s>=60 else 'F'\ngrades = list(map(lambda p: f'{p[0]}: {grade(p[1])}', pairs))\nprint('Grades:', grades)\npassing = list(filter(lambda n: dict(pairs)[n] >= 75, names))\nprint('Passing:', passing)\navg = round(sum(scores)/len(scores), 2)\nprint('Average:', avg)\nabove = [(n, s) for n, s in pairs if s > avg]\nprint('Above average:', above)",
-  "testCases": [
-    {
-      "label": "Example 1 — 4 students",
-      "hidden": false,
-      "inputs": ["Alice,Bob,Charlie,Diana", "92,68,85,74"],
-      "expected": [
-        "#1: Alice - 92",
-        "#2: Bob - 68",
-        "#3: Charlie - 85",
-        "#4: Diana - 74",
-        "Grades: ['Alice: A', 'Bob: D', 'Charlie: B', 'Diana: C']",
-        "Passing: ['Alice', 'Charlie']",
-        "Average: 79.75",
-        "Above average: [('Alice', 92), ('Charlie', 85)]"
-      ]
-    },
-    {
-      "label": "Example 2 — 3 students, all pass",
-      "hidden": false,
-      "inputs": ["Juan,Maria,Pedro", "80,90,75"],
-      "expected": [
-        "#1: Juan - 80",
-        "#2: Maria - 90",
-        "#3: Pedro - 75",
-        "Grades: ['Juan: B', 'Maria: A', 'Pedro: C']",
-        "Passing: ['Juan', 'Maria', 'Pedro']",
-        "Average: 81.67",
-        "Above average: []"
-      ]
-    },
-    {
-      "label": "Hidden: All fail",
-      "hidden": true,
-      "inputs": ["Dan,Eve,Frank", "50,55,60"],
-      "expected": [
-        "#1: Dan - 50",
-        "#2: Eve - 55",
-        "#3: Frank - 60",
-        "Grades: ['Dan: F', 'Eve: F', 'Frank: D']",
-        "Passing: []",
-        "Average: 55.0",
-        "Above average: [('Frank', 60)]"
-      ]
-    },
-    {
-      "label": "Hidden: 5 students, mixed",
-      "hidden": true,
-      "inputs": ["Leo,Mia,Kai,Nia,Rex", "95,82,70,58,76"],
-      "expected": [
-        "#1: Leo - 95",
-        "#2: Mia - 82",
-        "#3: Kai - 70",
-        "#4: Nia - 58",
-        "#5: Rex - 76",
-        "Grades: ['Leo: A', 'Mia: B', 'Kai: C', 'Nia: F', 'Rex: C']",
-        "Passing: ['Leo', 'Mia', 'Rex']",
-        "Average: 76.2",
-        "Above average: [('Leo', 95), ('Mia', 82)]"
-      ]
-    },
-    {
-      "label": "Hidden: All same score",
-      "hidden": true,
-      "inputs": ["Sam,Jay,Kim", "80,80,80"],
-      "expected": [
-        "#1: Sam - 80",
-        "#2: Jay - 80",
-        "#3: Kim - 80",
-        "Grades: ['Sam: B', 'Jay: B', 'Kim: B']",
-        "Passing: ['Sam', 'Jay', 'Kim']",
-        "Average: 80.0",
-        "Above average: []"
-      ]
-    }
-  ]
-}
 
   ]
 }
