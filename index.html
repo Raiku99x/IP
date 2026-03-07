@@ -446,6 +446,16 @@ body::before{
 .cgr-btn-hall:hover{border-color:var(--mist);color:var(--bone);background:var(--stone);}
 .cgr-btn-retake{border-color:var(--serpent);color:var(--emerald);background:transparent;}
 .cgr-btn-retake:hover{background:rgba(26,107,48,0.12);box-shadow:0 0 10px rgba(26,107,48,0.25);}
+.cgr-warn-sigil{font-size:30px;margin-bottom:12px;line-height:1;filter:drop-shadow(0 0 10px var(--blood));}
+.cgr-warn-title{font-family:var(--font-d);font-size:17px;font-weight:900;color:var(--crimson);letter-spacing:.06em;margin-bottom:8px;}
+.cgr-warn-sub{font-family:var(--font-m);font-size:11px;color:var(--mist);line-height:1.75;margin-bottom:24px;}
+.cgr-btn-danger{border-color:var(--blood);color:var(--crimson);background:transparent;}
+.cgr-btn-danger:hover{background:rgba(139,28,28,0.12);box-shadow:0 0 10px rgba(139,28,28,0.25);}
+.cgr-btn-cancel{border-color:var(--iron);color:var(--ash);background:transparent;}
+.cgr-btn-cancel:hover{border-color:var(--mist);color:var(--bone);background:var(--stone);}
+#congrats-modal.warn{border-color:var(--blood);}
+#congrats-modal.warn::before{background:radial-gradient(ellipse at 50% 0%,rgba(139,28,28,0.12) 0%,transparent 70%);}
+#congrats-modal.warn .cgr-divider{background:linear-gradient(to right,transparent,var(--blood),transparent);}
 #exit-confirm-overlay{position:fixed;inset:0;background:rgba(44,34,24,.55);z-index:3000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px);animation:ecfadein .15s ease;}
 @keyframes ecfadein{from{opacity:0;}to{opacity:1;}}
 #exit-confirm-modal{background:var(--dungeon);border:1px solid var(--blood);border-radius:4px;padding:32px 36px;text-align:center;max-width:360px;width:90%;box-shadow:0 0 40px rgba(139,28,28,0.25),0 20px 60px rgba(0,0,0,.35);animation:ma .2s ease;}
@@ -760,14 +770,28 @@ body::before{
 <!-- CONGRATS POPUP -->
 <div id="congrats-overlay">
   <div id="congrats-modal">
-    <div class="cgr-sigil">✦</div>
-    <div class="cgr-title">Code Inscribed — All Trials Passed</div>
-    <div class="cgr-pts" id="cgr-pts"></div>
-    <div class="cgr-sub" id="cgr-sub"></div>
-    <div class="cgr-divider"></div>
-    <div class="cgr-btns">
-      <button class="cgr-btn cgr-btn-hall" id="cgr-btn-hall">⬡ Return to Hall</button>
-      <button class="cgr-btn cgr-btn-retake" id="cgr-btn-retake">↺ Retake the Trial</button>
+    <!-- SUCCESS VIEW -->
+    <div id="cgr-success-view">
+      <div class="cgr-sigil">✦</div>
+      <div class="cgr-title">Code Inscribed — All Trials Passed</div>
+      <div class="cgr-pts" id="cgr-pts"></div>
+      <div class="cgr-sub" id="cgr-sub"></div>
+      <div class="cgr-divider"></div>
+      <div class="cgr-btns">
+        <button class="cgr-btn cgr-btn-hall" id="cgr-btn-hall">⬡ Return to Hall</button>
+        <button class="cgr-btn cgr-btn-retake" id="cgr-btn-retake">↺ Retake the Trial</button>
+      </div>
+    </div>
+    <!-- WARNING VIEW -->
+    <div id="cgr-warn-view" style="display:none">
+      <div class="cgr-warn-sigil">⚠</div>
+      <div class="cgr-warn-title">This Cannot Be Undone</div>
+      <div class="cgr-warn-sub">Retaking will shatter your inscribed record.<br>Your score, your passed trials — all wiped from the grimoire.<br>Are you certain you wish to begin again?</div>
+      <div class="cgr-divider"></div>
+      <div class="cgr-btns">
+        <button class="cgr-btn cgr-btn-cancel" id="cgr-btn-cancel">✕ Keep My Record</button>
+        <button class="cgr-btn cgr-btn-danger" id="cgr-btn-confirm-retake">⚔ Retake the Trial</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1618,6 +1642,10 @@ function showErr(m){$('err-banner').style.display='block';$('err-banner').classN
 function showCongrats(pts,total,maxPts){
   $('cgr-pts').textContent=`You passed — ${pts} / ${maxPts} pts  ·  All ${total} trials passed`;
   $('cgr-sub').textContent='All trials passed and all runes answered. The grimoire bows to your craft.';
+  // Always reset to success view
+  $('cgr-success-view').style.display='';
+  $('cgr-warn-view').style.display='none';
+  $('congrats-modal').classList.remove('warn');
   $('congrats-overlay').classList.add('open');
 }
 $('cgr-btn-hall').addEventListener('click',()=>{
@@ -1625,7 +1653,20 @@ $('cgr-btn-hall').addEventListener('click',()=>{
   showDash();
 });
 $('cgr-btn-retake').addEventListener('click',()=>{
+  // Switch to warning view
+  $('cgr-success-view').style.display='none';
+  $('cgr-warn-view').style.display='';
+  $('congrats-modal').classList.add('warn');
+});
+$('cgr-btn-cancel').addEventListener('click',()=>{
+  // Switch back to success view
+  $('cgr-success-view').style.display='';
+  $('cgr-warn-view').style.display='none';
+  $('congrats-modal').classList.remove('warn');
+});
+$('cgr-btn-confirm-retake').addEventListener('click',()=>{
   $('congrats-overlay').classList.remove('open');
+  $('congrats-modal').classList.remove('warn');
   // Reset state — clear code and results
   const s=gs(activeProblem.id);
   s.code='';s.tcResults=null;s.submitted=false;
