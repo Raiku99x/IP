@@ -11,7 +11,7 @@
       "difficulty": "easy",
       "points": 10,
       "passingPercent": 75,
-      "description": "Two friends are comparing their hobbies to see what they have in common and what makes each of them unique. Write a program that takes both of their hobby lists and figures out:\n1. The **full collection** of hobbies between both friends \u2014 every hobby at least one of them has.\n2. The hobbies they **both enjoy** \u2014 things they can do together.\n3. Hobbies that only **Friend A** has \u2014 things Friend A does alone.\n4. Hobbies that only **Friend B** has \u2014 things Friend B does alone.\n\nAll results must be printed in **alphabetical order**.",
+      "description": "Two friends are comparing their hobbies to see what they have in common and what makes each of them unique. Write a program that takes both of their hobby lists and figures out:\n1. The **full collection** of hobbies between both friends — every hobby at least one of them has.\n2. The hobbies they **both enjoy** — things they can do together.\n3. Hobbies that only **Friend A** has — things Friend A does alone.\n4. Hobbies that only **Friend B** has — things Friend B does alone.\n\nAll results must be printed in **alphabetical order**.",
       "constraints": [
         "Each friend has between 1 and 10 hobbies.",
         "Hobby names are single words, all lowercase.",
@@ -36,7 +36,7 @@
           ]
         },
         {
-          "label": "Example 2 \u2014 no shared hobbies",
+          "label": "Example 2 — no shared hobbies",
           "hidden": false,
           "inputs": [
             "painting chess tennis",
@@ -50,7 +50,7 @@
           ]
         },
         {
-          "label": "Example 3 \u2014 identical lists",
+          "label": "Example 3 — identical lists",
           "hidden": false,
           "inputs": [
             "swimming cycling running",
@@ -127,7 +127,7 @@
       "difficulty": "easy",
       "points": 10,
       "passingPercent": 75,
-      "description": "You are organizing a school event and keeping track of attendees. The sign-in sheet may have some names written more than once by mistake. Write a program that:\n1. Reads the sign-in sheet (which may have duplicate names).\n2. Converts it to a **set** to count only unique attendees.\n3. Prints how many **unique guests** showed up.\n4. Reads a **late arrival** name to add to the list.\n5. Reads a name to **remove** from the list (the person left early \u2014 don't crash if the name isn't there).\n6. Prints the **final sorted guest list**.",
+      "description": "You are organizing a school event and keeping track of attendees. The sign-in sheet may have some names written more than once by mistake. Write a program that:\n1. Reads the sign-in sheet (which may have duplicate names).\n2. Converts it to a **set** to count only unique attendees.\n3. Prints how many **unique guests** showed up.\n4. Reads a **late arrival** name to add to the list.\n5. Reads a name to **remove** from the list (the person left early — don't crash if the name isn't there).\n6. Prints the **final sorted guest list**.",
       "constraints": [
         "The sign-in sheet has between 1 and 20 names.",
         "Names are single words starting with an uppercase letter.",
@@ -165,7 +165,7 @@
           ]
         },
         {
-          "label": "Example 3 \u2014 add already present",
+          "label": "Example 3 — add already present",
           "hidden": false,
           "inputs": [
             "Rafa Luis Kim",
@@ -237,7 +237,7 @@
       "difficulty": "medium",
       "points": 10,
       "passingPercent": 75,
-      "description": "A student club has a list of requirements that members must complete before joining an advanced committee. Write a program that checks a student's completed activities against the requirements:\n1. Read the **required activities** to qualify.\n2. Read the activities the **student has completed**.\n3. Check if the student has completed **all requirements** (i.e., requirements are a subset of completed).\n4. If qualified, print a success message.\n5. If not, print which **requirements are still missing** (sorted).\n6. Finally, print the **non-overlapping activities** \u2014 things in one list but not the other \u2014 sorted. If none, print `none`.",
+      "description": "A student club has a list of requirements that members must complete before joining an advanced committee. Write a program that checks a student's completed activities against the requirements:\n1. Read the **required activities** to qualify.\n2. Read the activities the **student has completed**.\n3. Check if the student has completed **all requirements** (i.e., requirements are a subset of completed).\n4. If qualified, print a success message.\n5. If not, print which **requirements are still missing** (sorted).\n6. Finally, print the **non-overlapping activities** — things in one list but not the other — sorted. If none, print `none`.",
       "constraints": [
         "Each list has between 1 and 10 activity names.",
         "Activity names are single words, all lowercase."
@@ -247,7 +247,7 @@
       "hint": "required  = set(input().split())\ndone      = set(input().split())\nif required.issubset(done):\n    print('Eligible: yes')\nelse:\n    print('Eligible: no')\n    missing = sorted(required - done)\n    print('Missing:', ', '.join(missing))\ndiff = sorted(required.symmetric_difference(done))\nprint('Non-overlapping:', ', '.join(diff) if diff else 'none')",
       "testCases": [
         {
-          "label": "Example 1 \u2014 eligible with extras",
+          "label": "Example 1 — eligible with extras",
           "hidden": false,
           "inputs": [
             "firstaid leadership teamwork",
@@ -259,7 +259,7 @@
           ]
         },
         {
-          "label": "Example 2 \u2014 missing requirements",
+          "label": "Example 2 — missing requirements",
           "hidden": false,
           "inputs": [
             "firstaid leadership teamwork camping",
@@ -272,7 +272,7 @@
           ]
         },
         {
-          "label": "Example 3 \u2014 exact match",
+          "label": "Example 3 — exact match",
           "hidden": false,
           "inputs": [
             "firstaid teamwork",
@@ -337,165 +337,165 @@
       ]
     },
     {
-  "id": "sets-4",
-  "title": "[new] Duplicate Remover & Score Filter",
-  "difficulty": "medium",
-  "points": 15,
-  "passingPercent": 75,
-  "description": "You are processing a raw list of student scores that may contain duplicates. Write a program that:\n1. Read a space-separated list of integers (scores, may have duplicates).\n2. Convert to a set to get **unique scores**.\n3. Use `map()` to create a new set with each unique score **multiplied by 2** (doubled).\n4. Use `filter()` to keep only scores from the **original unique set** that are **75 or above** (passing).\n5. Use `filter()` to keep only scores from the **original unique set** that are **below 75** (failing).\n6. Check if a queried score (read from input) is in the **original unique set** using `in`.\n7. Print all results.",
-  "constraints": [
-    "Input scores are integers between 0 and 100.",
-    "There are between 3 and 15 scores on the input line.",
-    "The query score is a single integer."
-  ],
-  "inputFormat": "Line 1: Space-separated integers (raw scores with possible duplicates).\nLine 2: A single integer to check membership.",
-  "outputFormat": "Line 1: `Unique: <n>` — count of unique scores.\nLine 2: `Doubled: <sorted list>` — sorted list of doubled unique scores.\nLine 3: `Passing: <sorted list>` — sorted list of unique scores >= 75.\nLine 4: `Failing: <sorted list>` — sorted list of unique scores < 75.\nLine 5: `Found` if the query score is in unique scores, otherwise `Not found`.",
-  "hint": "raw = list(map(int, input().split()))\nquery = int(input())\nunique = set(raw)\ndoubled = sorted(set(map(lambda x: x * 2, unique)))\npassing = sorted(filter(lambda x: x >= 75, unique))\nfailing = sorted(filter(lambda x: x < 75, unique))\nprint('Unique:', len(unique))\nprint('Doubled:', doubled)\nprint('Passing:', passing)\nprint('Failing:', failing)\nprint('Found' if query in unique else 'Not found')",
-  "testCases": [
-    {
-      "label": "Example 1 — duplicates present, query found",
-      "hidden": false,
-      "inputs": ["85 90 78 85 92 90 78 88 85", "90"],
-      "expected": [
-        "Unique: 5",
-        "Doubled: [156, 164, 170, 176, 180, 184]",
-        "Passing: [78, 85, 88, 90, 92]",
-        "Failing: []",
-        "Found"
+      "id": "sets-4",
+      "title": "[new] Duplicate Remover & Score Filter",
+      "difficulty": "medium",
+      "points": 15,
+      "passingPercent": 75,
+      "description": "You are processing a raw list of student scores that may contain duplicates. Write a program that:\n1. Read a space-separated list of integers (scores, may have duplicates).\n2. Convert to a set to get **unique scores**.\n3. Use `map()` to create a new set with each unique score **multiplied by 2** (doubled).\n4. Use `filter()` to keep only scores from the **original unique set** that are **75 or above** (passing).\n5. Use `filter()` to keep only scores from the **original unique set** that are **below 75** (failing).\n6. Check if a queried score (read from input) is in the **original unique set** using `in`.\n7. Print all results.",
+      "constraints": [
+        "Input scores are integers between 0 and 100.",
+        "There are between 3 and 15 scores on the input line.",
+        "The query score is a single integer."
+      ],
+      "inputFormat": "Line 1: Space-separated integers (raw scores with possible duplicates).\nLine 2: A single integer to check membership.",
+      "outputFormat": "Line 1: `Unique: <n>` — count of unique scores.\nLine 2: `Doubled: <sorted list>` — sorted list of doubled unique scores.\nLine 3: `Passing: <sorted list>` — sorted list of unique scores >= 75.\nLine 4: `Failing: <sorted list>` — sorted list of unique scores < 75.\nLine 5: `Found` if the query score is in unique scores, otherwise `Not found`.",
+      "hint": "raw = list(map(int, input().split()))\nquery = int(input())\nunique = set(raw)\ndoubled = sorted(set(map(lambda x: x * 2, unique)))\npassing = sorted(filter(lambda x: x >= 75, unique))\nfailing = sorted(filter(lambda x: x < 75, unique))\nprint('Unique:', len(unique))\nprint('Doubled:', doubled)\nprint('Passing:', passing)\nprint('Failing:', failing)\nprint('Found' if query in unique else 'Not found')",
+      "testCases": [
+        {
+          "label": "Example 1 — duplicates present, query found",
+          "hidden": false,
+          "inputs": ["85 90 78 85 92 90 78 88 85", "90"],
+          "expected": [
+            "Unique: 5",
+            "Doubled: [156, 170, 176, 180, 184]",
+            "Passing: [78, 85, 88, 90, 92]",
+            "Failing: []",
+            "Found"
+          ]
+        },
+        {
+          "label": "Example 2 — mixed passing/failing, query not found",
+          "hidden": false,
+          "inputs": ["60 75 80 60 45 75 90 45", "70"],
+          "expected": [
+            "Unique: 5",
+            "Doubled: [90, 120, 150, 160, 180]",
+            "Passing: [75, 80, 90]",
+            "Failing: [45, 60]",
+            "Not found"
+          ]
+        },
+        {
+          "label": "Hidden: All same score",
+          "hidden": true,
+          "inputs": ["70 70 70 70", "70"],
+          "expected": [
+            "Unique: 1",
+            "Doubled: [140]",
+            "Passing: []",
+            "Failing: [70]",
+            "Found"
+          ]
+        },
+        {
+          "label": "Hidden: All passing, no duplicates",
+          "hidden": true,
+          "inputs": ["80 85 90 95 100", "50"],
+          "expected": [
+            "Unique: 5",
+            "Doubled: [160, 170, 180, 190, 200]",
+            "Passing: [80, 85, 90, 95, 100]",
+            "Failing: []",
+            "Not found"
+          ]
+        },
+        {
+          "label": "Hidden: Mix with failing majority",
+          "hidden": true,
+          "inputs": ["50 60 70 50 60 80 70", "60"],
+          "expected": [
+            "Unique: 4",
+            "Doubled: [100, 120, 140, 160]",
+            "Passing: [80]",
+            "Failing: [50, 60, 70]",
+            "Found"
+          ]
+        }
       ]
     },
     {
-      "label": "Example 2 — mixed passing/failing, query not found",
-      "hidden": false,
-      "inputs": ["60 75 80 60 45 75 90 45", "70"],
-      "expected": [
-        "Unique: 5",
-        "Doubled: [90, 120, 150, 160, 180]",
-        "Passing: [75, 80, 90]",
-        "Failing: [45, 60]",
-        "Not found"
-      ]
-    },
-    {
-      "label": "Hidden: All same score",
-      "hidden": true,
-      "inputs": ["70 70 70 70", "70"],
-      "expected": [
-        "Unique: 1",
-        "Doubled: [140]",
-        "Passing: []",
-        "Failing: [70]",
-        "Found"
-      ]
-    },
-    {
-      "label": "Hidden: All passing, no duplicates",
-      "hidden": true,
-      "inputs": ["80 85 90 95 100", "50"],
-      "expected": [
-        "Unique: 5",
-        "Doubled: [160, 170, 180, 190, 200]",
-        "Passing: [80, 85, 90, 95, 100]",
-        "Failing: []",
-        "Not found"
-      ]
-    },
-    {
-      "label": "Hidden: Mix with failing majority",
-      "hidden": true,
-      "inputs": ["50 60 70 50 60 80 70", "60"],
-      "expected": [
-        "Unique: 4",
-        "Doubled: [100, 120, 140, 160]",
-        "Passing: [80]",
-        "Failing: [50, 60, 70]",
-        "Found"
+      "id": "sets-5",
+      "title": "[new] Permission Role Mapper",
+      "difficulty": "hard",
+      "points": 20,
+      "passingPercent": 75,
+      "description": "You are building an access control system using **frozensets as dictionary keys**. The system maps sets of permissions to role names.\n\nYour program should:\n1. The system has three fixed roles stored as a dictionary with **frozenset keys**:\n   - `frozenset({'read'})` → `'Viewer'`\n   - `frozenset({'read', 'write'})` → `'Editor'`\n   - `frozenset({'read', 'write', 'delete'})` → `'Admin'`\n2. Read a comma-separated list of permissions for **User A**.\n3. Read a comma-separated list of permissions for **User B**.\n4. For each user: look up their role. If no match, print `'Unknown'`.\n5. Use `update()` to give User A all of User B's permissions, then look up the new role.\n6. Find the **intersection** of User A's original and User B's permissions (shared permissions), print sorted.\n7. Find permissions **only User B has** (difference B - A original), print sorted.\n8. Check using `isdisjoint()` whether the two original permission sets share nothing.",
+      "constraints": [
+        "Permission names are lowercase single words.",
+        "Each user has between 1 and 3 permissions, no duplicates per user.",
+        "Inputs are comma-separated with no extra spaces."
+      ],
+      "inputFormat": "Line 1: Comma-separated permissions for User A.\nLine 2: Comma-separated permissions for User B.",
+      "outputFormat": "Line 1: `User A role: <role>`\nLine 2: `User B role: <role>`\nLine 3: `Combined role: <role>` — role after A gains B's permissions\nLine 4: `Shared: <sorted list>` — permissions in both\nLine 5: `Only B: <sorted list>` — permissions only B has (empty list if none)\nLine 6: `Disjoint: <True/False>`",
+      "hint": "roles = {\n    frozenset({'read'}): 'Viewer',\n    frozenset({'read', 'write'}): 'Editor',\n    frozenset({'read', 'write', 'delete'}): 'Admin'\n}\nperms_a = set(input().split(','))\nperms_b = set(input().split(','))\nprint('User A role:', roles.get(frozenset(perms_a), 'Unknown'))\nprint('User B role:', roles.get(frozenset(perms_b), 'Unknown'))\ncombined = perms_a | perms_b\nprint('Combined role:', roles.get(frozenset(combined), 'Unknown'))\nprint('Shared:', sorted(perms_a & perms_b))\nprint('Only B:', sorted(perms_b - perms_a))\nprint('Disjoint:', perms_a.isdisjoint(perms_b))",
+      "testCases": [
+        {
+          "label": "Example 1 — viewer + editor, combined = admin",
+          "hidden": false,
+          "inputs": ["read", "read,write"],
+          "expected": [
+            "User A role: Viewer",
+            "User B role: Editor",
+            "Combined role: Editor",
+            "Shared: ['read']",
+            "Only B: ['write']",
+            "Disjoint: False"
+          ]
+        },
+        {
+          "label": "Example 2 — editor + admin, combined = admin",
+          "hidden": false,
+          "inputs": ["read,write", "read,write,delete"],
+          "expected": [
+            "User A role: Editor",
+            "User B role: Admin",
+            "Combined role: Admin",
+            "Shared: ['read', 'write']",
+            "Only B: ['delete']",
+            "Disjoint: False"
+          ]
+        },
+        {
+          "label": "Hidden: Both viewer, no difference",
+          "hidden": true,
+          "inputs": ["read", "read"],
+          "expected": [
+            "User A role: Viewer",
+            "User B role: Viewer",
+            "Combined role: Viewer",
+            "Shared: ['read']",
+            "Only B: []",
+            "Disjoint: False"
+          ]
+        },
+        {
+          "label": "Hidden: Unknown role A, known role B",
+          "hidden": true,
+          "inputs": ["write,delete", "read,write,delete"],
+          "expected": [
+            "User A role: Unknown",
+            "User B role: Admin",
+            "Combined role: Admin",
+            "Shared: ['delete', 'write']",
+            "Only B: ['read']",
+            "Disjoint: False"
+          ]
+        },
+        {
+          "label": "Hidden: Both unknown, disjoint",
+          "hidden": true,
+          "inputs": ["write", "delete"],
+          "expected": [
+            "User A role: Unknown",
+            "User B role: Unknown",
+            "Combined role: Unknown",
+            "Shared: []",
+            "Only B: ['delete']",
+            "Disjoint: True"
+          ]
+        }
       ]
     }
-  ]
-},
-    {
-  "id": "sets-5",
-  "title": "[new] Permission Role Mapper",
-  "difficulty": "hard",
-  "points": 20,
-  "passingPercent": 75,
-  "description": "You are building an access control system using **frozensets as dictionary keys**. The system maps sets of permissions to role names.\n\nYour program should:\n1. The system has three fixed roles stored as a dictionary with **frozenset keys**:\n   - `frozenset({'read'})` → `'Viewer'`\n   - `frozenset({'read', 'write'})` → `'Editor'`\n   - `frozenset({'read', 'write', 'delete'})` → `'Admin'`\n2. Read a comma-separated list of permissions for **User A**.\n3. Read a comma-separated list of permissions for **User B**.\n4. For each user: look up their role. If no match, print `'Unknown'`.\n5. Use `update()` to give User A all of User B's permissions, then look up the new role.\n6. Find the **intersection** of User A's original and User B's permissions (shared permissions), print sorted.\n7. Find permissions **only User B has** (difference B - A original), print sorted.\n8. Check using `isdisjoint()` whether the two original permission sets share nothing.",
-  "constraints": [
-    "Permission names are lowercase single words.",
-    "Each user has between 1 and 3 permissions, no duplicates per user.",
-    "Inputs are comma-separated with no extra spaces."
-  ],
-  "inputFormat": "Line 1: Comma-separated permissions for User A.\nLine 2: Comma-separated permissions for User B.",
-  "outputFormat": "Line 1: `User A role: <role>`\nLine 2: `User B role: <role>`\nLine 3: `Combined role: <role>` — role after A gains B's permissions\nLine 4: `Shared: <sorted list>` — permissions in both\nLine 5: `Only B: <sorted list>` — permissions only B has (empty list if none)\nLine 6: `Disjoint: <True/False>`",
-  "hint": "roles = {\n    frozenset({'read'}): 'Viewer',\n    frozenset({'read', 'write'}): 'Editor',\n    frozenset({'read', 'write', 'delete'}): 'Admin'\n}\nperms_a = set(input().split(','))\nperms_b = set(input().split(','))\nprint('User A role:', roles.get(frozenset(perms_a), 'Unknown'))\nprint('User B role:', roles.get(frozenset(perms_b), 'Unknown'))\ncombined = perms_a | perms_b\nprint('Combined role:', roles.get(frozenset(combined), 'Unknown'))\nprint('Shared:', sorted(perms_a & perms_b))\nprint('Only B:', sorted(perms_b - perms_a))\nprint('Disjoint:', perms_a.isdisjoint(perms_b))",
-  "testCases": [
-    {
-      "label": "Example 1 — viewer + editor, combined = admin",
-      "hidden": false,
-      "inputs": ["read", "read,write"],
-      "expected": [
-        "User A role: Viewer",
-        "User B role: Editor",
-        "Combined role: Editor",
-        "Shared: ['read']",
-        "Only B: ['write']",
-        "Disjoint: False"
-      ]
-    },
-    {
-      "label": "Example 2 — editor + admin, combined = admin",
-      "hidden": false,
-      "inputs": ["read,write", "read,write,delete"],
-      "expected": [
-        "User A role: Editor",
-        "User B role: Admin",
-        "Combined role: Admin",
-        "Shared: ['read', 'write']",
-        "Only B: ['delete']",
-        "Disjoint: False"
-      ]
-    },
-    {
-      "label": "Hidden: Both viewer, no difference",
-      "hidden": true,
-      "inputs": ["read", "read"],
-      "expected": [
-        "User A role: Viewer",
-        "User B role: Viewer",
-        "Combined role: Viewer",
-        "Shared: ['read']",
-        "Only B: []",
-        "Disjoint: False"
-      ]
-    },
-    {
-      "label": "Hidden: Unknown role A, known role B",
-      "hidden": true,
-      "inputs": ["write,delete", "read,write,delete"],
-      "expected": [
-        "User A role: Unknown",
-        "User B role: Admin",
-        "Combined role: Admin",
-        "Shared: ['delete', 'write']",
-        "Only B: ['read']",
-        "Disjoint: False"
-      ]
-    },
-    {
-      "label": "Hidden: Both unknown, disjoint",
-      "hidden": true,
-      "inputs": ["write", "delete"],
-      "expected": [
-        "User A role: Unknown",
-        "User B role: Unknown",
-        "Combined role: Unknown",
-        "Shared: []",
-        "Only B: ['delete']",
-        "Disjoint: True"
-      ]
-    }
-  ]
-}
   ]
 }
