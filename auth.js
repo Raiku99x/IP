@@ -6,6 +6,35 @@ const sbClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
 
+const ALLOWED_USERNAMES = [
+  'kyle', 'john', 'gian', 'vincent', 'angelieella', 'nicolle', 'danica',
+  'emerson', 'juvel', 'ericamae', 'ihbrielmhark', 'kiancharles', 'carina',
+  'joan', 'aleeya', 'efren', 'angelo', 'francymae', 'rollyjr', 'rolly',
+  'markemman', 'maomay', 'aubreyace', 'johnlhoel', 'edselfrank',
+  'edselfrankino', 'corinnemiles', 'johneric', 'iyezhajoy', 'michelleanne',
+  'elmermichael', 'justinreyz', 'juzzuaphillip', 'hertzjohn', 'jhaealjor'
+];
+
+const ERRORS = {
+  notOnList: [
+    "That's not your full first name — lowercase, no spaces. e.g. alex or maryjane",
+    "Name not recognized. Enter your first name exactly, lowercase, no spaces.",
+    "Check your spelling — use your full first name, lowercase, no spaces."
+  ],
+  alreadyTaken: [
+    "That username is already taken.",
+    "Someone already claimed that name. Are you sure that's yours?"
+  ],
+  emptyFields: [
+    "Please fill in all fields.",
+    "Don't leave anything blank!"
+  ]
+};
+
+function randomError(list) {
+  return list[Math.floor(Math.random() * list.length)];
+}
+
 async function initAuth() {
   const { data: { session } } = await sbClient.auth.getSession();
   if (session) {
@@ -37,9 +66,10 @@ async function handleLogin() {
   const email = document.getElementById('auth-email').value.trim();
   const password = document.getElementById('auth-password').value.trim();
   const errorEl = document.getElementById('auth-error');
+  errorEl.style.color = 'var(--crimson)';
   errorEl.textContent = '';
   if (!email || !password) {
-    errorEl.textContent = 'Please fill in all fields.';
+    errorEl.textContent = randomError(ERRORS.emptyFields);
     return;
   }
   const { error } = await sbClient.auth.signInWithPassword({ email, password });
@@ -51,26 +81,45 @@ async function handleLogin() {
 async function handleSignup() {
   const email = document.getElementById('auth-email').value.trim();
   const password = document.getElementById('auth-password').value.trim();
-  const name = document.getElementById('auth-name').value.trim();
+  const username = document.getElementById('auth-username').value.trim().toLowerCase();
   const errorEl = document.getElementById('auth-error');
+  errorEl.style.color = 'var(--crimson)';
   errorEl.textContent = '';
-  if (!email || !password || !name) {
-    errorEl.textContent = 'Please fill in all fields.';
+
+  if (!email || !password || !username) {
+    errorEl.textContent = randomError(ERRORS.emptyFields);
     return;
   }
   if (password.length < 6) {
     errorEl.textContent = 'Password must be at least 6 characters.';
     return;
   }
+  if (!ALLOWED_USERNAMES.includes(username)) {
+    errorEl.textContent = randomError(ERRORS.notOnList);
+    return;
+  }
+
+  const { data: existing } = await sbClient
+    .from('profiles')
+    .select('id')
+    .eq('username', username)
+    .maybeSingle();
+
+  if (existing) {
+    errorEl.textContent = randomError(ERRORS.alreadyTaken);
+    return;
+  }
+
   const { error } = await sbClient.auth.signUp({
     email,
     password,
-    options: { data: { full_name: name } }
+    options: { data: { full_name: username } }
   });
+
   if (error) {
     errorEl.textContent = error.message;
   } else {
-    document.getElementById('auth-error').style.color = 'var(--emerald)';
+    errorEl.style.color = 'var(--emerald)';
     errorEl.textContent = 'Account created! You are now logged in.';
   }
 }
@@ -80,21 +129,21 @@ async function handleLogout() {
 }
 
 function toggleAuthMode() {
-  const nameField = document.getElementById('auth-name-row');
+  const usernameField = document.getElementById('auth-username-row');
   const submitBtn = document.getElementById('auth-submit-btn');
   const titleEl = document.getElementById('auth-title');
   const switchEl = document.getElementById('auth-switch-text');
-  const isLogin = nameField.style.display === 'none';
+  const isLogin = usernameField.style.display === 'none';
   if (isLogin) {
-    nameField.style.display = 'flex';
+    usernameField.style.display = 'flex';
     submitBtn.textContent = 'Sign Up';
     titleEl.textContent = 'Create Account';
-    switchEl.innerHTML = 'Already have an account? <span onclick="toggleAuthMode()">Log In</span>';
+    switchEl.innerHTML = 'Already have an account? <span onclick="toggleAuthMode()" style="color:var(--gold);cursor:pointer;text-decoration:underline;">Log In</span>';
   } else {
-    nameField.style.display = 'none';
+    usernameField.style.display = 'none';
     submitBtn.textContent = 'Log In';
     titleEl.textContent = 'Welcome Back';
-    switchEl.innerHTML = 'No account yet? <span onclick="toggleAuthMode()">Sign Up</span>';
+    switchEl.innerHTML = 'No account yet? <span onclick="toggleAuthMode()" style="color:var(--gold);cursor:pointer;text-decoration:underline;">Sign Up</span>';
   }
   document.getElementById('auth-error').textContent = '';
 }
