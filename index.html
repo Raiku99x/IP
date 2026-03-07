@@ -643,7 +643,7 @@ body::before{
     <div class="hero-sub" id="dh-inst">…</div>
   </div>
   <div class="dash-body">
-    <div class="sec-label">Assigned Tomes</div>
+    <div class="sec-label">Assigned Scrolls</div>
     <div id="lab-list"></div>
     <div class="sec-label" style="margin-top:8px;">Practice Quizzes</div>
     <div id="quiz-list" class="quiz-grid"></div>
@@ -687,8 +687,8 @@ body::before{
     </div>
     <div class="grm-sec"><div class="grm-sec-t">The Task</div><div class="grm-desc" id="el-desc"></div></div>
     <div class="grm-sec"><div class="grm-sec-t">Constraints</div><ul class="grm-list" id="el-constraints"></ul></div>
-    <div class="grm-sec"><div class="grm-sec-t">Input Ritual</div><ul class="grm-list" id="el-infmt"></ul></div>
-    <div class="grm-sec"><div class="grm-sec-t">Expected Incantation</div><ul class="grm-list" id="el-outfmt"></ul></div>
+    <div class="grm-sec"><div class="grm-sec-t">Rune Inputs</div><ul class="grm-list" id="el-infmt"></ul></div>
+    <div class="grm-sec"><div class="grm-sec-t">Foretold Output</div><ul class="grm-list" id="el-outfmt"></ul></div>
     <div class="grm-sec"><div class="grm-sec-t">Demonstrations</div><div id="el-examples"></div></div>
     <div class="grm-sec">
       <button class="hint-btn" onclick="toggleHint(this)">⟡ Reveal Scroll</button>
@@ -758,7 +758,7 @@ body::before{
 
 <script>
 /* ===== SVG ICONS ===== */
-const SVG_LAB=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>`;
+const SVG_LAB=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3C6 3 5 3 5 4v1c0 .6-.4 1-1 1s-1 .4-1 1v10c0 .6.4 1 1 1s1 .4 1 1v1c0 1 1 1 1 1h13c1 0 1-1 1-1V4c0-1-1-1-1-1H6z"/><path d="M5 6h1M5 18h1" stroke-linecap="round"/><path d="M9 8h7M9 11h7M9 14h4" stroke-linecap="round"/><path d="M6 3c0 0 .5 1.5 0 3" stroke-linecap="round"/><path d="M6 18c0 0 .5-1.5 0-3" stroke-linecap="round"/></svg>`;
 const SVG_SNAKE=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="1.4" stroke-linecap="round"><path d="M7 8c0-2.2 1.8-4 4-4h2c2.2 0 4 1.8 4 4s-1.8 4-4 4H9c-2.2 0-4 1.8-4 4s1.8 4 4 4h2c1 0 2-.3 2.7-1"/><circle cx="16.5" cy="7" r="1.2" fill="var(--violet)"/></svg>`;
 const SVG_FORK=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="8"/><line x1="12" y1="8" x2="7" y2="14"/><line x1="12" y1="8" x2="17" y2="14"/><line x1="7" y1="14" x2="7" y2="21"/><line x1="17" y1="14" x2="17" y2="21"/></svg>`;
 const SVG_LIST=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="1.4" stroke-linecap="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4.5" cy="6" r="1.8" fill="var(--amethyst)" stroke="none"/><circle cx="4.5" cy="12" r="1.8" fill="var(--amethyst)" stroke="none"/><circle cx="4.5" cy="18" r="1.8" fill="var(--amethyst)" stroke="none"/></svg>`;
@@ -842,7 +842,7 @@ function initCM(){
     mode:'python',theme:'sly',lineNumbers:true,
     indentUnit:4,tabSize:4,indentWithTabs:false,
     autoCloseBrackets:true,matchBrackets:true,
-    placeholder:'# Write your Python incantation here…',
+    placeholder:'# Scribe your code here\u2026',
     extraKeys:{
       'Tab':c=>{if(c.somethingSelected())c.indentSelection('add');else c.replaceSelection('    ','end','*');},
       'Shift-Tab':c=>c.indentSelection('subtract'),
@@ -880,7 +880,7 @@ function showDash(){
 function renderDash(){
   if(!DATA)return;
   const c=DATA.course;
-  $('dh-name').textContent=c.name;
+  $('dh-name').textContent=c.name.replace(/^BSCS\s*\w+\s*[—–-]+\s*/i,'');
   $('dh-inst').textContent='✦ Instructor: '+c.instructor;
   $('nav-inst').textContent=c.instructor;
   $('l-course').textContent=c.name;
@@ -1569,7 +1569,7 @@ $('btn-submit').addEventListener('click',async()=>{setBusy(true);hideErr();const
 
 /* ===== INIT ===== */
 (async()=>{
-  $('load-bar').style.width='10%';$('load-txt').textContent='Loading tomes…';
+  $('load-bar').style.width='10%';$('load-txt').textContent='Loading scrolls…';
   await loadJSON();
   if(DATA){$('l-course').textContent=DATA.course.name;console.log('Loaded',DATA.labs.length,'labs');}
   $('load-bar').style.width='30%';initCM();
