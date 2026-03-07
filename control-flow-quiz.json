@@ -48,7 +48,7 @@
     {
       "id": "q6",
       "type": "true_false",
-      "question": "In Python, integers have unlimited precision — they can grow as large as your memory allows.",
+      "question": "In Python, integers have unlimited precision — they can grow as large as memory allows.",
       "answer": "True"
     },
 
@@ -134,52 +134,36 @@
     {
       "id": "q17",
       "type": "code_output",
-      "question": "What is the output?\n```\nx = 7\nstatus = \"Even\" if x % 2 == 0 else \"Odd\"\nprint(status)\n```",
-      "choices": ["Even", "True", "False", "Odd"],
-      "answer": "Odd"
-    },
-
-    {
-      "id": "q18",
-      "type": "code_output",
-      "question": "What does this print?\n```\ncount = 5\nwhile count > 0:\n    count -= 1\nprint(count)\n```",
+      "question": "What is the output?\n```\ncount = 5\nwhile count > 0:\n    count -= 1\nprint(count)\n```",
       "choices": ["5", "-1", "1", "0"],
       "answer": "0"
     },
 
     {
-      "id": "q19",
+      "id": "q18",
       "type": "code_output",
-      "question": "What is the output?\n```\nfor i in range(10, 0, -2):\n    print(i, end=' ')\n```",
+      "question": "What does this print?\n```\nfor i in range(10, 0, -2):\n    print(i, end=' ')\n```",
       "choices": ["2 4 6 8 10", "10 8 6 4 2", "10 8 6 4 2 0", "8 6 4 2"],
       "answer": "10 8 6 4 2"
     },
 
     {
-      "id": "q20",
+      "id": "q19",
       "type": "code_output",
-      "question": "What does this print?\n```\ntotal = 0\nfor i in range(1, 6):\n    total += i\nprint(total)\n```",
+      "question": "What is the output?\n```\ntotal = 0\nfor i in range(1, 6):\n    total += i\nprint(total)\n```",
       "choices": ["10", "15", "6", "21"],
       "answer": "15"
     },
 
     {
-      "id": "q21",
-      "type": "code_output",
-      "question": "What is the output?\n```\nfor char in \"Hi\":\n    print(char.upper(), end='')\n```",
-      "choices": ["hi", "Hi", "HI", "H I"],
-      "answer": "HI"
-    },
-
-    {
-      "id": "q22",
+      "id": "q20",
       "type": "true_false",
       "question": "A `for` loop's `else` block runs even if the loop was exited with a `break`.",
       "answer": "False"
     },
 
     {
-      "id": "q23",
+      "id": "q21",
       "type": "code_output",
       "question": "What does this print?\n```\nnum = 13\nfor i in range(2, num):\n    if num % i == 0:\n        print(\"Not prime\")\n        break\nelse:\n    print(\"Prime\")\n```",
       "choices": ["Not prime", "Prime", "Nothing", "Error"],
@@ -187,31 +171,7 @@
     },
 
     {
-      "id": "q24",
-      "type": "code_output",
-      "question": "What is the output?\n```\nnum = 9\nfor i in range(2, num):\n    if num % i == 0:\n        print(\"Not prime\")\n        break\nelse:\n    print(\"Prime\")\n```",
-      "choices": ["Prime", "Not prime", "Nothing", "Error"],
-      "answer": "Not prime"
-    },
-
-    {
-      "id": "q25",
-      "type": "code_output",
-      "question": "What does this print?\n```\nfor i in range(1, 3):\n    for j in range(1, 3):\n        print(i * j, end=' ')\n```",
-      "choices": ["1 2 3 4", "1 2 2 4", "1 4 2 3", "2 4 6"],
-      "answer": "1 2 2 4"
-    },
-
-    {
-      "id": "q26",
-      "type": "multiple_choice",
-      "question": "What does `range(5)` generate?",
-      "choices": ["1 to 5", "0 to 5", "0 to 4", "1 to 4"],
-      "answer": "0 to 4"
-    },
-
-    {
-      "id": "q27",
+      "id": "q22",
       "type": "code_output",
       "question": "What is the output?\n```\nfor i in range(3):\n    if i == 1:\n        continue\n    print(i, end=' ')\n```",
       "choices": ["0 1 2", "1 2", "0 2", "0 1"],
@@ -219,7 +179,7 @@
     },
 
     {
-      "id": "q28",
+      "id": "q23",
       "type": "code_output",
       "question": "What does this print?\n```\nfor i in range(5):\n    if i == 3:\n        break\nprint(i)\n```",
       "choices": ["4", "5", "2", "3"],
@@ -227,62 +187,62 @@
     },
 
     {
-      "id": "q29",
+      "id": "q24",
       "type": "code_output",
-      "question": "What is the output?\n```\ns = \"  Hello World  \"\nprint(s.strip().lower())\n```",
+      "question": "What is the output?\n```\nfor i in range(1, 3):\n    for j in range(1, 3):\n        print(i * j, end=' ')\n```",
+      "choices": ["1 2 3 4", "1 2 2 4", "1 4 2 3", "2 4 6"],
+      "answer": "1 2 2 4"
+    },
+
+    {
+      "id": "q25",
+      "type": "code_output",
+      "question": "What does this print?\n```\ns = \"  Hello World  \"\nprint(s.strip().lower())\n```",
       "choices": ["  hello world  ", "Hello World", "hello world", "HELLO WORLD"],
       "answer": "hello world"
     },
 
     {
-      "id": "q30",
+      "id": "q26",
       "type": "code_output",
-      "question": "What does this print?\n```\ns = \"hello world\"\nprint(s.title())\n```",
+      "question": "What is the output?\n```\ns = \"hello world\"\nprint(s.title())\n```",
       "choices": ["HELLO WORLD", "Hello world", "hello World", "Hello World"],
       "answer": "Hello World"
     },
 
     {
-      "id": "q31",
+      "id": "q27",
       "type": "code_output",
-      "question": "What is the output?\n```\ns = \"Hello World\"\nprint(s.swapcase())\n```",
+      "question": "What does this print?\n```\ns = \"Hello World\"\nprint(s.swapcase())\n```",
       "choices": ["hello world", "HELLO WORLD", "hELLO wORLD", "Hello World"],
       "answer": "hELLO wORLD"
     },
 
     {
-      "id": "q32",
+      "id": "q28",
       "type": "code_output",
-      "question": "What does this print?\n```\ns = \"hello world hello\"\nprint(s.count(\"hello\"))\n```",
+      "question": "What is the output?\n```\ns = \"hello world hello\"\nprint(s.count(\"hello\"))\n```",
       "choices": ["1", "3", "0", "2"],
       "answer": "2"
     },
 
     {
-      "id": "q33",
+      "id": "q29",
       "type": "code_output",
-      "question": "What is the output?\n```\ns = \"hello world\"\nprint(s.find(\"xyz\"))\n```",
+      "question": "What does this print?\n```\ns = \"hello world\"\nprint(s.find(\"xyz\"))\n```",
       "choices": ["0", "None", "False", "-1"],
       "answer": "-1"
     },
 
     {
-      "id": "q34",
-      "type": "code_output",
-      "question": "What does this print?\n```\nfilename = \"report_2024.txt\"\nprint(filename.startswith(\"report\") and filename.endswith(\".txt\"))\n```",
-      "choices": ["False", "None", "Error", "True"],
-      "answer": "True"
-    },
-
-    {
-      "id": "q35",
+      "id": "q30",
       "type": "true_false",
       "question": "`s.isdigit()` returns True if the string contains only numeric digit characters.",
       "answer": "True"
     },
 
     {
-      "id": "q36",
+      "id": "q31",
       "type": "code_output",
       "question": "What is the output?\n```\nprint(\"abc123\".isalpha())\n```",
       "choices": ["True", "None", "False", "Error"],
@@ -290,7 +250,7 @@
     },
 
     {
-      "id": "q37",
+      "id": "q32",
       "type": "code_output",
       "question": "What does this print?\n```\nprint(\"42\".zfill(5))\n```",
       "choices": ["42000", "00042", "  42 ", "42   "],
@@ -298,7 +258,7 @@
     },
 
     {
-      "id": "q38",
+      "id": "q33",
       "type": "code_output",
       "question": "What is the output?\n```\nval = 123.45678\nprint(f\"{val:.2f}\")\n```",
       "choices": ["123.45", "123.46", "123.4", "123.5"],
@@ -306,7 +266,7 @@
     },
 
     {
-      "id": "q39",
+      "id": "q34",
       "type": "code_output",
       "question": "What does this print?\n```\nval = 0.756\nprint(f\"{val:.1%}\")\n```",
       "choices": ["0.8%", "75.6%", "75%", "7.6%"],
@@ -314,7 +274,7 @@
     },
 
     {
-      "id": "q40",
+      "id": "q35",
       "type": "code_output",
       "question": "What is the output?\n```\nval = 123.46\nprint(f\"{val:>10.2f}\")\n```",
       "choices": ["123.46    ", "    123.46", "0000123.46", "123.46"],
@@ -322,7 +282,7 @@
     },
 
     {
-      "id": "q41",
+      "id": "q36",
       "type": "code_output",
       "question": "What does this print?\n```\nval = 123.46\nprint(f\"{val:08.2f}\")\n```",
       "choices": ["123.46  ", "  123.46", "00123.46", "123.4600"],
@@ -330,7 +290,7 @@
     },
 
     {
-      "id": "q42",
+      "id": "q37",
       "type": "multiple_choice",
       "question": "In f-string format specifiers, which alignment character centers the value?",
       "choices": ["<", ">", "^", "|"],
@@ -338,7 +298,7 @@
     },
 
     {
-      "id": "q43",
+      "id": "q38",
       "type": "code_output",
       "question": "What is the output?\n```\nname = \"Bob\"\npercent = 95.5\nprint(\"User %s scored %.1f%%\" % (name, percent))\n```",
       "choices": ["User Bob scored 95.5", "User Bob scored 95.5%", "User %s scored %.1f%", "User Bob scored 95.50%"],
@@ -346,7 +306,7 @@
     },
 
     {
-      "id": "q44",
+      "id": "q39",
       "type": "code_output",
       "question": "What does this print?\n```\nprint(\"Coordinates: {x}, {y}\".format(x=10, y=20))\n```",
       "choices": ["Coordinates: {x}, {y}", "Coordinates: x, y", "Coordinates: 10, 20", "Error"],
@@ -354,7 +314,7 @@
     },
 
     {
-      "id": "q45",
+      "id": "q40",
       "type": "code_output",
       "question": "What is the output?\n```\nfrom string import Template\nt = Template('Hello, $name!')\nprint(t.substitute(name='Charlie'))\n```",
       "choices": ["Hello, $name!", "Hello, name!", "Hello, Charlie!", "Error"],
@@ -362,7 +322,7 @@
     },
 
     {
-      "id": "q46",
+      "id": "q41",
       "type": "multiple_choice",
       "question": "Which string formatting style is recommended for untrusted/user-supplied format strings due to safety?",
       "choices": ["f-strings", "% operator", ".format()", "Template strings"],
@@ -370,7 +330,7 @@
     },
 
     {
-      "id": "q47",
+      "id": "q42",
       "type": "code_output",
       "question": "What does this print?\n```\nprint(f\"Escaping braces: {{}}\")\n```",
       "choices": ["Escaping braces: {{  }}", "Escaping braces: {{}}", "Escaping braces: {}", "Error"],
@@ -378,7 +338,7 @@
     },
 
     {
-      "id": "q48",
+      "id": "q43",
       "type": "code_output",
       "question": "What is the output?\n```\nprint(f\"Math: {2 * 5}\")\n```",
       "choices": ["Math: 2 * 5", "Math: {2 * 5}", "Math: 10", "Error"],
@@ -386,18 +346,58 @@
     },
 
     {
-      "id": "q49",
+      "id": "q44",
       "type": "true_false",
       "question": "f-strings were introduced in Python 3.6 and can evaluate expressions inside `{}`.",
       "answer": "True"
     },
 
     {
-      "id": "q50",
+      "id": "q45",
       "type": "code_output",
-      "question": "What does this print?\n```\nx = 10\nif x > 0:\n    print(\"Positive\")\n    if x > 100:\n        print(\"Huge!\")\nelif x == 0:\n    print(\"Zero\")\nelse:\n    print(\"Negative\")\n```",
+      "question": "What does this print?\n```\nfilename = \"report_2024.txt\"\nprint(filename.startswith(\"report\") and filename.endswith(\".txt\"))\n```",
+      "choices": ["False", "None", "Error", "True"],
+      "answer": "True"
+    },
+
+    {
+      "id": "q46",
+      "type": "code_output",
+      "question": "What is the output?\n```\nx = 10\nif x > 0:\n    print(\"Positive\")\n    if x > 100:\n        print(\"Huge!\")\nelif x == 0:\n    print(\"Zero\")\nelse:\n    print(\"Negative\")\n```",
       "choices": ["Positive\nHuge!", "Huge!", "Zero", "Positive"],
       "answer": "Positive"
+    },
+
+    {
+      "id": "q47",
+      "type": "code_output",
+      "question": "What does this print?\n```\npassword = \"\"\ncount = 0\nwhile len(password) < 3:\n    password = \"ab\" if count == 0 else \"abcd\"\n    count += 1\nprint(password)\n```",
+      "choices": ["ab", "abcd", "abababcd", "Error"],
+      "answer": "abcd"
+    },
+
+    {
+      "id": "q48",
+      "type": "multiple_choice",
+      "question": "What does `range(start, stop, step)` do when `step` is negative?",
+      "choices": ["Raises an error", "Generates an empty sequence", "Counts upward from start", "Counts downward from start"],
+      "answer": "Counts downward from start"
+    },
+
+    {
+      "id": "q49",
+      "type": "code_output",
+      "question": "What is the output?\n```\nfor char in \"Hi\":\n    print(char.upper(), end='')\n```",
+      "choices": ["hi", "Hi", "HI", "H I"],
+      "answer": "HI"
+    },
+
+    {
+      "id": "q50",
+      "type": "code_output",
+      "question": "What does this print?\n```\nprint(\"hello world\".replace(\"world\", \"Python\"))\n```",
+      "choices": ["hello world", "hello Python", "Python world", "Error"],
+      "answer": "hello Python"
     }
 
   ]

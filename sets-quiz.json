@@ -63,7 +63,7 @@
     {
       "id": "q8",
       "type": "true_false",
-      "question": "Sets support indexing — you can access a set item using `my_set[0]`.",
+      "question": "Sets support indexing — you can access an item using `my_set[0]`.",
       "answer": "False"
     },
 
@@ -118,7 +118,7 @@
     {
       "id": "q15",
       "type": "true_false",
-      "question": "`pop()` on a set always removes the last item added.",
+      "question": "`pop()` on a set always removes the **last** item added.",
       "answer": "False"
     },
 
@@ -179,21 +179,13 @@
 
     {
       "id": "q23",
-      "type": "multiple_choice",
-      "question": "What does the `^` operator return for two sets?",
-      "choices": ["Items in both sets", "Items in either set", "Items in one set but NOT the other", "Items only in the left set"],
-      "answer": "Items in one set but NOT the other"
-    },
-
-    {
-      "id": "q24",
       "type": "true_false",
       "question": "`st1 - st2` and `st2 - st1` always return the same result.",
       "answer": "False"
     },
 
     {
-      "id": "q25",
+      "id": "q24",
       "type": "code_output",
       "question": "What does this print?\n```\na = {1, 2, 3}\nb = {1, 2, 3, 4, 5}\nprint(a.issubset(b))\n```",
       "choices": ["False", "True", "None", "Error"],
@@ -201,7 +193,7 @@
     },
 
     {
-      "id": "q26",
+      "id": "q25",
       "type": "code_output",
       "question": "What does this print?\n```\na = {1, 2, 3}\nb = {4, 5, 6}\nprint(a.isdisjoint(b))\n```",
       "choices": ["False", "None", "Error", "True"],
@@ -209,23 +201,15 @@
     },
 
     {
-      "id": "q27",
-      "type": "code_output",
-      "question": "What does this print?\n```\nfruits = {'banana', 'orange', 'mango', 'lemon'}\nprint('apple' in fruits)\n```",
-      "choices": ["True", "None", "Error", "False"],
-      "answer": "False"
-    },
-
-    {
-      "id": "q28",
+      "id": "q26",
       "type": "multiple_choice",
-      "question": "What is the average time complexity of membership testing (`x in s`) for a Python set?",
+      "question": "What is the average time complexity of membership testing (`x in s`) for a Python **set**?",
       "choices": ["O(n)", "O(log n)", "O(n log n)", "O(1)"],
       "answer": "O(1)"
     },
 
     {
-      "id": "q29",
+      "id": "q27",
       "type": "code_output",
       "question": "What does this print?\n```\nnumbers = {25, 8, 47, 3, 61}\nprint(sorted(numbers))\n```",
       "choices": ["{3, 8, 25, 47, 61}", "[61, 47, 25, 8, 3]", "[3, 8, 25, 47, 61]", "(3, 8, 25, 47, 61)"],
@@ -233,14 +217,14 @@
     },
 
     {
-      "id": "q30",
+      "id": "q28",
       "type": "true_false",
       "question": "`sorted()` applied to a set returns a new sorted **set**.",
       "answer": "False"
     },
 
     {
-      "id": "q31",
+      "id": "q29",
       "type": "code_output",
       "question": "What does this print?\n```\nfruits = {'banana', 'orange', 'mango', 'lemon'}\nprint(max(fruits))\n```",
       "choices": ["banana", "mango", "lemon", "orange"],
@@ -248,27 +232,43 @@
     },
 
     {
+      "id": "q30",
+      "type": "code_output",
+      "question": "What does this print?\n```\nnumbers = {10, 20, 30, 40, 50}\nprint(sum(numbers))\n```",
+      "choices": ["100", "150", "50", "15"],
+      "answer": "150"
+    },
+
+    {
+      "id": "q31",
+      "type": "code_output",
+      "question": "What does this print?\n```\nscores = {85, 90, 78, 92}\nprint(all(score >= 75 for score in scores))\n```",
+      "choices": ["False", "None", "Error", "True"],
+      "answer": "True"
+    },
+
+    {
       "id": "q32",
       "type": "code_output",
-      "question": "What does this print?\n```\nprint(any({False, False, False}))\n```",
-      "choices": ["True", "None", "Error", "False"],
-      "answer": "False"
+      "question": "What does this print?\n```\nscores = {85, 60, 78, 92}\nprint(any(score < 75 for score in scores))\n```",
+      "choices": ["False", "None", "Error", "True"],
+      "answer": "True"
     },
 
     {
       "id": "q33",
       "type": "code_output",
-      "question": "What does this print?\n```\nprint(all({True, True, False}))\n```",
-      "choices": ["True", "None", "Error", "False"],
-      "answer": "False"
+      "question": "What does this print?\n```\nmy_set = set('hello')\nprint(len(my_set))\n```",
+      "choices": ["5", "3", "2", "4"],
+      "answer": "4"
     },
 
     {
       "id": "q34",
       "type": "code_output",
-      "question": "What does this print?\n```\nscores = {85, 90, 78, 92}\nprint(all(score >= 75 for score in scores))\n```",
-      "choices": ["False", "None", "Error", "True"],
-      "answer": "True"
+      "question": "What does this print?\n```\nmy_set = set((1, 2, 3, 2, 1))\nprint(my_set)\n```",
+      "choices": ["(1, 2, 3)", "[1, 2, 3]", "{1, 2, 3, 2, 1}", "{1, 2, 3}"],
+      "answer": "{1, 2, 3}"
     },
 
     {
@@ -289,29 +289,13 @@
 
     {
       "id": "q37",
-      "type": "code_output",
-      "question": "What does this print?\n```\nmy_set = set('hello')\nprint(len(my_set))\n```",
-      "choices": ["5", "3", "2", "4"],
-      "answer": "4"
-    },
-
-    {
-      "id": "q38",
-      "type": "code_output",
-      "question": "What does this print?\n```\nmy_set = set((1, 2, 3, 2, 1))\nprint(my_set)\n```",
-      "choices": ["(1, 2, 3)", "[1, 2, 3]", "{1, 2, 3, 2, 1}", "{1, 2, 3}"],
-      "answer": "{1, 2, 3}"
-    },
-
-    {
-      "id": "q39",
       "type": "true_false",
       "question": "A frozenset supports the `add()` method just like a regular set.",
       "answer": "False"
     },
 
     {
-      "id": "q40",
+      "id": "q38",
       "type": "code_output",
       "question": "What does this print?\n```\nfs = frozenset([1, 2, 3, 4, 5])\nprint(type(fs))\n```",
       "choices": ["<class 'set'>", "<class 'tuple'>", "<class 'list'>", "<class 'frozenset'>"],
@@ -319,7 +303,7 @@
     },
 
     {
-      "id": "q41",
+      "id": "q39",
       "type": "multiple_choice",
       "question": "Why can a frozenset be used as a dictionary key but a regular set cannot?",
       "choices": ["Frozensets are ordered", "Frozensets are immutable (hashable)", "Frozensets are faster", "Frozensets allow duplicates"],
@@ -327,7 +311,7 @@
     },
 
     {
-      "id": "q42",
+      "id": "q40",
       "type": "code_output",
       "question": "What does this print?\n```\nfs1 = frozenset({1, 2, 3})\nfs2 = frozenset({3, 4, 5})\nprint(fs1 & fs2)\n```",
       "choices": ["{3}", "frozenset({1, 2, 3, 4, 5})", "frozenset({3})", "Error"],
@@ -335,14 +319,14 @@
     },
 
     {
-      "id": "q43",
+      "id": "q41",
       "type": "true_false",
       "question": "A regular set can be stored as an element inside another set.",
       "answer": "False"
     },
 
     {
-      "id": "q44",
+      "id": "q42",
       "type": "code_output",
       "question": "What does this print?\n```\nname_list = ['Alice', 'Bob', 'Alice', 'Charlie', 'Bob', 'Alice']\nunique = set(name_list)\nprint(len(unique))\n```",
       "choices": ["6", "2", "3", "4"],
@@ -350,7 +334,7 @@
     },
 
     {
-      "id": "q45",
+      "id": "q43",
       "type": "code_output",
       "question": "What does this print?\n```\nmath = {'Alice', 'Bob', 'Charlie', 'Diana'}\nsci  = {'Charlie', 'Diana', 'Eve', 'Frank'}\nprint(len(math & sci))\n```",
       "choices": ["4", "6", "3", "2"],
@@ -358,7 +342,7 @@
     },
 
     {
-      "id": "q46",
+      "id": "q44",
       "type": "code_output",
       "question": "What does this print?\n```\nwords = 'the cat sat on the mat and the cat'.split()\nprint(len(set(words)))\n```",
       "choices": ["9", "8", "7", "6"],
@@ -366,15 +350,15 @@
     },
 
     {
-      "id": "q47",
+      "id": "q45",
       "type": "multiple_choice",
-      "question": "Which operation updates `st1` **in place**, keeping only items found in both `st1` and `st2`?",
+      "question": "Which operation updates `st1` **in place**, keeping only items found in **both** `st1` and `st2`?",
       "choices": ["st1 & st2", "st1.intersection(st2)", "st1.intersection_update(st2)", "st1.difference_update(st2)"],
       "answer": "st1.intersection_update(st2)"
     },
 
     {
-      "id": "q48",
+      "id": "q46",
       "type": "code_output",
       "question": "What does this print?\n```\nst = {1, 2, 3, 4}\nst.difference_update({3, 4, 5})\nprint(st)\n```",
       "choices": ["{3, 4}", "{1, 2, 3, 4, 5}", "{5}", "{1, 2}"],
@@ -382,7 +366,7 @@
     },
 
     {
-      "id": "q49",
+      "id": "q47",
       "type": "code_output",
       "question": "What does this print?\n```\nfruits = {'banana', 'orange', 'mango'}\ndel fruits\nprint(fruits)\n```",
       "choices": ["set()", "None", "{}", "NameError"],
@@ -390,9 +374,25 @@
     },
 
     {
+      "id": "q48",
+      "type": "code_output",
+      "question": "What does this print?\n```\nteam_a = {'Python', 'SQL', 'Excel'}\nteam_b = {'Java', 'SQL', 'PowerBI'}\nprint(len(team_a.union(team_b)))\n```",
+      "choices": ["3", "4", "5", "6"],
+      "answer": "5"
+    },
+
+    {
+      "id": "q49",
+      "type": "code_output",
+      "question": "What does this print?\n```\nvalid_users = {'alice', 'bob', 'charlie'}\nprint('bob' in valid_users)\n```",
+      "choices": ["False", "None", "Error", "True"],
+      "answer": "True"
+    },
+
+    {
       "id": "q50",
       "type": "multiple_choice",
-      "question": "Which of the following is the BEST reason to use a set instead of a list?",
+      "question": "Which is the BEST reason to use a set instead of a list?",
       "choices": ["You need to access items by index", "You need to maintain insertion order", "You need fast membership testing with no duplicates", "You need to store mutable items like other lists"],
       "answer": "You need fast membership testing with no duplicates"
     }

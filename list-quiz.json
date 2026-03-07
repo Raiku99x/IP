@@ -7,17 +7,18 @@
 
     {
       "id": "q1",
-      "type": "code_output",
-      "question": "What is the output?\n```\nfruits = ['banana', 'orange', 'mango', 'lemon']\nprint(fruits[-2])\n```",
-      "choices": ["orange", "mango", "lemon", "banana"],
-      "answer": "mango"
+      "type": "multiple_choice",
+      "question": "Which of the following correctly creates an **empty list**?",
+      "choices": ["lst = {}", "lst = ()", "lst = []", "lst = list"],
+      "answer": "lst = []"
     },
 
     {
       "id": "q2",
-      "type": "true_false",
-      "question": "`list2 = list1` creates an independent copy of list1, so changes to list2 will NOT affect list1.",
-      "answer": "False"
+      "type": "code_output",
+      "question": "What is the output?\n```\nfruits = ['banana', 'orange', 'mango', 'lemon']\nprint(fruits[-2])\n```",
+      "choices": ["orange", "mango", "lemon", "banana"],
+      "answer": "mango"
     },
 
     {
@@ -30,33 +31,33 @@
 
     {
       "id": "q4",
-      "type": "multiple_choice",
-      "question": "Which method removes the FIRST occurrence of an item in a list?",
-      "choices": ["pop()", "del", "remove()", "discard()"],
-      "answer": "remove()"
+      "type": "code_output",
+      "question": "What is the output?\n```\nfruits = ['banana', 'orange', 'mango', 'lemon']\nprint(fruits[-3:-1])\n```",
+      "choices": ["['banana', 'orange']", "['orange', 'mango']", "['mango', 'lemon']", "['orange', 'mango', 'lemon']"],
+      "answer": "['orange', 'mango']"
     },
 
     {
       "id": "q5",
-      "type": "code_output",
-      "question": "What is the output?\n```\nnums = [1, 2, 3, 4, 5]\nfirst, second, *rest = nums\nprint(rest)\n```",
-      "choices": ["[3, 4, 5]", "[1, 2]", "[2, 3, 4, 5]", "[3, 4]"],
-      "answer": "[3, 4, 5]"
-    },
-
-    {
-      "id": "q6",
       "type": "true_false",
-      "question": "The `sort()` method returns a new sorted list and does NOT modify the original.",
+      "question": "`list2 = list1` creates an independent copy — changes to `list2` will NOT affect `list1`.",
       "answer": "False"
     },
 
     {
-      "id": "q7",
+      "id": "q6",
       "type": "code_output",
-      "question": "What does this print?\n```\nages = [22, 19, 24, 25, 26, 24, 25, 24]\nprint(ages.count(24))\n```",
-      "choices": ["1", "2", "3", "4"],
-      "answer": "3"
+      "question": "What does this print?\n```\noriginal = [1, 2, [3, 4]]\nshallow = original.copy()\nshallow[2][0] = 'changed'\nprint(original)\n```",
+      "choices": ["[1, 2, [3, 4]]", "[1, 2, ['changed', 4]]", "['changed', 2, [3, 4]]", "Error"],
+      "answer": "[1, 2, ['changed', 4]]"
+    },
+
+    {
+      "id": "q7",
+      "type": "multiple_choice",
+      "question": "Which method removes the **first** occurrence of an item in a list?",
+      "choices": ["pop()", "del", "remove()", "discard()"],
+      "answer": "remove()"
     },
 
     {
@@ -69,75 +70,36 @@
 
     {
       "id": "q9",
-      "type": "multiple_choice",
-      "question": "What is the time complexity of `x in lst` for a Python list?",
-      "choices": ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
-      "answer": "O(n)"
+      "type": "code_output",
+      "question": "What does this print?\n```\nnums = [1, 2, 3, 4, 5]\nfirst, second, *rest = nums\nprint(rest)\n```",
+      "choices": ["[3, 4, 5]", "[1, 2]", "[2, 3, 4, 5]", "[3, 4]"],
+      "answer": "[3, 4, 5]"
     },
 
     {
       "id": "q10",
-      "type": "code_output",
-      "question": "What does this print?\n```\noriginal = [1, 2, [3, 4]]\nshallow = original.copy()\nshallow[2][0] = 'changed'\nprint(original)\n```",
-      "choices": ["[1, 2, [3, 4]]", "[1, 2, ['changed', 4]]", "['changed', 2, [3, 4]]", "Error"],
-      "answer": "[1, 2, ['changed', 4]]"
+      "type": "true_false",
+      "question": "The `sort()` method returns a new sorted list and does NOT modify the original.",
+      "answer": "False"
     },
 
     {
       "id": "q11",
       "type": "true_false",
-      "question": "`sorted(lst)` modifies the original list in place.",
-      "answer": "False"
+      "question": "`sorted()` returns a new list and leaves the original unchanged.",
+      "answer": "True"
     },
 
     {
       "id": "q12",
       "type": "code_output",
-      "question": "What is the output?\n```\nnums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nevens = [x for x in nums if x % 2 == 0]\nprint(evens)\n```",
-      "choices": ["[1, 3, 5, 7, 9]", "[2, 4, 6, 8, 10]", "[0, 2, 4, 6, 8, 10]", "[2, 4, 6, 8]"],
-      "answer": "[2, 4, 6, 8, 10]"
+      "question": "What is the output?\n```\nages = [22, 19, 24, 25, 26, 24, 25, 24]\nprint(ages.count(24))\n```",
+      "choices": ["1", "2", "3", "4"],
+      "answer": "3"
     },
 
     {
       "id": "q13",
-      "type": "multiple_choice",
-      "question": "Which of these is the SLOWEST operation on a large list?",
-      "choices": ["lst.append(x)", "lst[i]", "len(lst)", "lst.pop(0)"],
-      "answer": "lst.pop(0)"
-    },
-
-    {
-      "id": "q14",
-      "type": "code_output",
-      "question": "What does this print?\n```\nmatrix = [[1,2,3],[4,5,6],[7,8,9]]\nprint(matrix[1][2])\n```",
-      "choices": ["5", "6", "4", "8"],
-      "answer": "6"
-    },
-
-    {
-      "id": "q15",
-      "type": "fill_blank",
-      "question": "Complete the code to flatten a 2D list using list comprehension:\n```\nnested = [[1,2],[3,4],[5,6]]\nflat = [num for sublist in nested for num in ___]\n```",
-      "answer": "sublist"
-    },
-
-    {
-      "id": "q16",
-      "type": "code_output",
-      "question": "What is the output?\n```\nnames = ['Alice', 'Bob', 'Charlie']\nscores = [85, 92, 78]\ncombined = list(zip(names, scores))\nprint(combined[1])\n```",
-      "choices": ["('Alice', 85)", "('Bob', 92)", "['Bob', 92]", "('Charlie', 78)"],
-      "answer": "('Bob', 92)"
-    },
-
-    {
-      "id": "q17",
-      "type": "true_false",
-      "question": "`copy()` creates a deep copy — changes to nested lists inside the copy will NOT affect the original.",
-      "answer": "False"
-    },
-
-    {
-      "id": "q18",
       "type": "code_output",
       "question": "What does this print?\n```\nfruits = ['banana', 'orange', 'mango', 'lemon']\nfruits.insert(2, 'apple')\nprint(fruits[2])\n```",
       "choices": ["mango", "apple", "orange", "lemon"],
@@ -145,15 +107,39 @@
     },
 
     {
-      "id": "q19",
+      "id": "q14",
       "type": "multiple_choice",
-      "question": "What does `any([0, 0, 0, 1])` return?",
-      "choices": ["False", "True", "0", "1"],
-      "answer": "True"
+      "question": "What is the time complexity of `x in lst` for a Python list?",
+      "choices": ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+      "answer": "O(n)"
     },
 
     {
-      "id": "q20",
+      "id": "q15",
+      "type": "multiple_choice",
+      "question": "Which of these is the **slowest** operation on a large list?",
+      "choices": ["lst.append(x)", "lst[i]", "len(lst)", "lst.pop(0)"],
+      "answer": "lst.pop(0)"
+    },
+
+    {
+      "id": "q16",
+      "type": "code_output",
+      "question": "What is the output?\n```\nmatrix = [[1,2,3],[4,5,6],[7,8,9]]\nprint(matrix[1][2])\n```",
+      "choices": ["5", "6", "4", "8"],
+      "answer": "6"
+    },
+
+    {
+      "id": "q17",
+      "type": "code_output",
+      "question": "What does this print?\n```\nnames = ['Alice', 'Bob', 'Charlie']\nscores = [85, 92, 78]\ncombined = list(zip(names, scores))\nprint(combined[1])\n```",
+      "choices": ["('Alice', 85)", "('Bob', 92)", "['Bob', 92]", "('Charlie', 78)"],
+      "answer": "('Bob', 92)"
+    },
+
+    {
+      "id": "q18",
       "type": "code_output",
       "question": "What is the output?\n```\nnums = [3, 1, 4, 1, 5, 9]\nnums.sort(reverse=True)\nprint(nums[0])\n```",
       "choices": ["1", "3", "9", "5"],
@@ -161,14 +147,7 @@
     },
 
     {
-      "id": "q21",
-      "type": "fill_blank",
-      "question": "What method combines items from two lists element by element into pairs?\n```\nnames = ['Alice', 'Bob']\nscores = [90, 80]\npaired = list(___(names, scores))\n```",
-      "answer": "zip"
-    },
-
-    {
-      "id": "q22",
+      "id": "q19",
       "type": "code_output",
       "question": "What does this print?\n```\na = [1, 2, 3]\nb = a\nb.append(4)\nprint(len(a))\n```",
       "choices": ["3", "4", "1", "Error"],
@@ -176,14 +155,14 @@
     },
 
     {
-      "id": "q23",
+      "id": "q20",
       "type": "true_false",
       "question": "An empty list `[]` is considered truthy in Python.",
       "answer": "False"
     },
 
     {
-      "id": "q24",
+      "id": "q21",
       "type": "code_output",
       "question": "What is the output?\n```\nnumbers = [1, 2, 3, 4, 5]\nsquared = list(map(lambda x: x ** 2, numbers))\nprint(squared[3])\n```",
       "choices": ["9", "16", "25", "4"],
@@ -191,49 +170,230 @@
     },
 
     {
-      "id": "q25",
-      "type": "multiple_choice",
-      "question": "What does `all([1, 2, 3, 0])` return?",
-      "choices": ["True", "False", "0", "None"],
-      "answer": "False"
-    },
-
-    {
-      "id": "q26",
+      "id": "q22",
       "type": "code_output",
-      "question": "What does this print?\n```\nfruits = ['banana', 'orange', 'mango', 'lemon']\nprint(fruits[-3:-1])\n```",
-      "choices": ["['banana', 'orange']", "['orange', 'mango']", "['mango', 'lemon']", "['orange', 'mango', 'lemon']"],
-      "answer": "['orange', 'mango']"
+      "question": "What does this print?\n```\nnumbers = [1, 2, 3, 4, 5, 6]\nevens = list(filter(lambda x: x % 2 == 0, numbers))\nprint(evens)\n```",
+      "choices": ["[1, 3, 5]", "[2, 4, 6]", "[0, 2, 4, 6]", "[2, 4]"],
+      "answer": "[2, 4, 6]"
     },
 
     {
-      "id": "q27",
+      "id": "q23",
+      "type": "code_output",
+      "question": "What is the output?\n```\nnums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nevens = [x for x in nums if x % 2 == 0]\nprint(evens)\n```",
+      "choices": ["[1, 3, 5, 7, 9]", "[2, 4, 6, 8, 10]", "[0, 2, 4, 6, 8, 10]", "[2, 4, 6, 8]"],
+      "answer": "[2, 4, 6, 8, 10]"
+    },
+
+    {
+      "id": "q24",
       "type": "fill_blank",
-      "question": "Complete the code to get squares of only even numbers:\n```\nnums = [1,2,3,4,5,6]\nresult = [n**2 for n in nums if n % 2 ___ 0]\n```",
-      "answer": "=="
+      "question": "Complete the code to flatten a 2D list using list comprehension:\n```\nnested = [[1,2],[3,4],[5,6]]\nflat = [num for sublist in nested for num in ___]\n```",
+      "answer": "sublist"
     },
 
     {
-      "id": "q28",
+      "id": "q25",
       "type": "code_output",
-      "question": "What is the output?\n```\nstack = []\nstack.append('a')\nstack.append('b')\nstack.append('c')\nprint(stack.pop())\n```",
+      "question": "What does this print?\n```\nstack = []\nstack.append('a')\nstack.append('b')\nstack.append('c')\nprint(stack.pop())\n```",
       "choices": ["a", "b", "c", "Error"],
       "answer": "c"
     },
 
     {
-      "id": "q29",
+      "id": "q26",
       "type": "true_false",
       "question": "Using `pop(0)` repeatedly on a large list is efficient because it is an O(1) operation.",
       "answer": "False"
     },
 
     {
-      "id": "q30",
+      "id": "q27",
       "type": "code_output",
-      "question": "What does this print?\n```\nsentence = 'I love Python programming'\nwords = sentence.split()\nwords[2] = 'Java'\nprint(' '.join(words))\n```",
+      "question": "What is the output?\n```\nsentence = 'I love Python programming'\nwords = sentence.split()\nwords[2] = 'Java'\nprint(' '.join(words))\n```",
       "choices": ["I love Python programming", "I love Java programming", "['I', 'love', 'Java', 'programming']", "Error"],
       "answer": "I love Java programming"
+    },
+
+    {
+      "id": "q28",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = ['banana', 'orange', 'mango', 'lemon']\nfruits.reverse()\nprint(fruits[0])\n```",
+      "choices": ["banana", "orange", "mango", "lemon"],
+      "answer": "lemon"
+    },
+
+    {
+      "id": "q29",
+      "type": "multiple_choice",
+      "question": "What does `all([0, 1, 2, 3])` return?",
+      "choices": ["True", "False", "0", "None"],
+      "answer": "False"
+    },
+
+    {
+      "id": "q30",
+      "type": "code_output",
+      "question": "What is the output?\n```\nvalues = [0, 1, 2, 3]\nprint(any(values))\n```",
+      "choices": ["False", "0", "None", "True"],
+      "answer": "True"
+    },
+
+    {
+      "id": "q31",
+      "type": "code_output",
+      "question": "What does this print?\n```\nnum1 = [0, 1, 2, 3]\nnum2 = [4, 5, 6]\nnum1.extend(num2)\nprint(len(num1))\n```",
+      "choices": ["3", "4", "6", "7"],
+      "answer": "7"
+    },
+
+    {
+      "id": "q32",
+      "type": "true_false",
+      "question": "`copy()` creates a deep copy — changes to nested lists inside the copy will NOT affect the original.",
+      "answer": "False"
+    },
+
+    {
+      "id": "q33",
+      "type": "code_output",
+      "question": "What is the output?\n```\nmy_3d = [[[1,2],[3,4]],[[5,6],[7,8]]]\nprint(my_3d[1][0][1])\n```",
+      "choices": ["5", "7", "6", "3"],
+      "answer": "6"
+    },
+
+    {
+      "id": "q34",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = ['banana', 'orange', 'mango', 'lemon']\ndel fruits[1:3]\nprint(fruits)\n```",
+      "choices": ["['banana', 'lemon']", "['orange', 'mango']", "['banana', 'mango', 'lemon']", "['banana', 'orange', 'lemon']"],
+      "answer": "['banana', 'lemon']"
+    },
+
+    {
+      "id": "q35",
+      "type": "code_output",
+      "question": "What is the output?\n```\nfruits = ['banana', 'orange', 'mango', 'lemon']\nfruits.clear()\nprint(fruits)\n```",
+      "choices": ["None", "set()", "['banana', 'orange', 'mango', 'lemon']", "[]"],
+      "answer": "[]"
+    },
+
+    {
+      "id": "q36",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = ['banana', 'orange', 'mango', 'lemon']\nprint(fruits.index('orange'))\n```",
+      "choices": ["0", "1", "2", "3"],
+      "answer": "1"
+    },
+
+    {
+      "id": "q37",
+      "type": "code_output",
+      "question": "What is the output?\n```\nages = [22, 19, 24, 25, 26, 24, 25, 24]\nprint(ages.index(24))\n```",
+      "choices": ["0", "2", "5", "7"],
+      "answer": "2"
+    },
+
+    {
+      "id": "q38",
+      "type": "true_false",
+      "question": "`index()` returns the position of the **last** occurrence of a value in a list.",
+      "answer": "False"
+    },
+
+    {
+      "id": "q39",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = ['banana', 'orange', 'mango', 'lemon']\nfruits[0] = 'avocado'\nprint(fruits[0])\n```",
+      "choices": ["banana", "avocado", "orange", "Error"],
+      "answer": "avocado"
+    },
+
+    {
+      "id": "q40",
+      "type": "code_output",
+      "question": "What is the output?\n```\nlist_of_lists = [[1, 2, 3], [4, 5], [6, 7, 8]]\nflat = [num for sublist in list_of_lists for num in sublist]\nprint(len(flat))\n```",
+      "choices": ["3", "6", "8", "9"],
+      "answer": "8"
+    },
+
+    {
+      "id": "q41",
+      "type": "code_output",
+      "question": "What does this print?\n```\nnumbers = [10, 5, 8, 3, 12, 7]\nprint(min(numbers))\n```",
+      "choices": ["10", "5", "3", "7"],
+      "answer": "3"
+    },
+
+    {
+      "id": "q42",
+      "type": "code_output",
+      "question": "What is the output?\n```\nstudents = [['Alice', 90, 85, 88], ['Bob', 78, 82, 80]]\nprint(sum(students[0][1:]) / len(students[0][1:]))\n```",
+      "choices": ["87.0", "87.67", "88.0", "263"],
+      "answer": "87.67"
+    },
+
+    {
+      "id": "q43",
+      "type": "fill_blank",
+      "question": "What method combines items from two lists element by element into pairs?\n```\nnames = ['Alice', 'Bob']\nscores = [90, 80]\npaired = list(___(names, scores))\n```",
+      "answer": "zip"
+    },
+
+    {
+      "id": "q44",
+      "type": "code_output",
+      "question": "What does this print?\n```\nfruits = []\nif not fruits:\n    print('empty')\nelse:\n    print('has items')\n```",
+      "choices": ["has items", "None", "False", "empty"],
+      "answer": "empty"
+    },
+
+    {
+      "id": "q45",
+      "type": "code_output",
+      "question": "What is the output?\n```\ncsv = 'apple,banana,orange,mango'\nfruits = csv.split(',')\nprint(len(fruits))\n```",
+      "choices": ["1", "3", "4", "5"],
+      "answer": "4"
+    },
+
+    {
+      "id": "q46",
+      "type": "code_output",
+      "question": "What does this print?\n```\nwords = ['Hello', 'World', 'Python']\nprint('-'.join(words))\n```",
+      "choices": ["Hello World Python", "Hello-World-Python", "['Hello', 'World', 'Python']", "Error"],
+      "answer": "Hello-World-Python"
+    },
+
+    {
+      "id": "q47",
+      "type": "code_output",
+      "question": "What is the output?\n```\nsquares = [i ** 2 for i in range(6)]\nprint(squares)\n```",
+      "choices": ["[1, 4, 9, 16, 25]", "[0, 1, 4, 9, 16, 25]", "[0, 2, 4, 6, 8, 10]", "[1, 2, 3, 4, 5, 6]"],
+      "answer": "[0, 1, 4, 9, 16, 25]"
+    },
+
+    {
+      "id": "q48",
+      "type": "code_output",
+      "question": "What does this print?\n```\nnumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\neven_squares = [n**2 for n in numbers if n % 2 == 0]\nprint(even_squares)\n```",
+      "choices": ["[4, 16, 36, 64, 100]", "[2, 4, 6, 8, 10]", "[1, 4, 9, 16, 25]", "[4, 8, 12, 16, 20]"],
+      "answer": "[4, 16, 36, 64, 100]"
+    },
+
+    {
+      "id": "q49",
+      "type": "code_output",
+      "question": "What is the output?\n```\nnames = ['Alice', 'Bob', 'Anna', 'Charlie', 'Andrew']\na_names = list(filter(lambda n: n.startswith('A'), names))\nprint(a_names)\n```",
+      "choices": ["['Alice']", "['Alice', 'Andrew']", "['Alice', 'Anna', 'Andrew']", "['Anna', 'Andrew']"],
+      "answer": "['Alice', 'Anna', 'Andrew']"
+    },
+
+    {
+      "id": "q50",
+      "type": "multiple_choice",
+      "question": "If you frequently need to add or remove items from the **front** of a list efficiently, what should you use instead?",
+      "choices": ["A set", "A tuple", "collections.deque", "A dictionary"],
+      "answer": "collections.deque"
     }
 
   ]
