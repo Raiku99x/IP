@@ -239,7 +239,7 @@ body::before{
 #quiz-card-wrap{width:100%;max-width:620px;display:flex;flex-direction:column;gap:16px;}
 
 /* The question card itself */
-.q-card{background:var(--dungeon);border:1px solid var(--iron);border-radius:4px;overflow:hidden;transition:border-color .25s;}
+.q-card{background:var(--dungeon);border:1px solid var(--iron);border-radius:4px;overflow:hidden;transition:border-color .25s;position:relative;}
 .q-card.answered-correct{border-color:var(--serpent);box-shadow:0 0 16px rgba(26,107,48,0.12);}
 .q-card.answered-wrong{border-color:var(--blood);box-shadow:0 0 16px rgba(139,28,28,0.1);}
 
@@ -305,13 +305,19 @@ body::before{
 .q-feedback.no .why-btn{border-color:var(--blood);color:var(--crimson);font-weight:700;box-shadow:0 0 6px rgba(139,28,28,0.2);}
 .q-feedback.no .why-btn:hover{background:rgba(139,28,28,0.1);box-shadow:0 0 10px rgba(139,28,28,0.3);}
 
-/* WHY explanation box */
+/* WHY explanation box — slides up over the q-body (choices area) */
 .why-box{
-  display:none;padding:12px 18px;border-top:1px solid var(--stone);
+  display:none;
+  position:absolute;bottom:0;left:0;right:0;
+  padding:16px 18px 14px;
   font-family:var(--font-b);font-size:14px;color:var(--fog);line-height:1.7;
-  background:var(--void);
+  background:var(--dungeon);
+  border-top:1px solid var(--stone);
+  z-index:10;
+  transform:translateY(100%);
+  transition:transform .28s cubic-bezier(.22,.68,0,1.1);
 }
-.why-box.show{display:block;}
+.why-box.show{display:block;transform:translateY(0);}
 .why-box.loading{font-family:var(--font-m);font-size:10px;color:var(--mist);font-style:italic;letter-spacing:.04em;}
 .why-label{font-family:var(--font-m);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:6px;}
 #quiz-action-row{display:flex;justify-content:flex-end;gap:10px;}
@@ -1205,11 +1211,12 @@ function lockAndReveal(q,userAns,choicesDiv,fb,isLast,fillInp=null){
       ?`✦ Correct! <button class="why-btn" id="why-btn-q">WHY?</button>`
       :`✗ Wrong — correct answer: <span class="fb-ans">${escHtml(correctAns)}</span> <button class="why-btn" id="why-btn-q">WHY?</button>`;
 
-    // WHY box (hidden until clicked)
+    // WHY box — overlay inside the card, slides up over choices
     const whyBox=document.createElement('div');
     whyBox.className='why-box';
     whyBox.id='why-box-q';
-    fb.parentNode.insertBefore(whyBox, fb.nextSibling);
+    const qCard=$('quiz-q-slot').querySelector('.q-card');
+    if(qCard) qCard.appendChild(whyBox);
 
     // WHY button logic
     const whyBtn=fb.querySelector('#why-btn-q');
@@ -1225,14 +1232,18 @@ function lockAndReveal(q,userAns,choicesDiv,fb,isLast,fillInp=null){
       if(whyLoaded) return;
       whyLoaded=true;
       whyBox.classList.add('loading');
-      whyBox.innerHTML='<div class="why-label">Explanation</div>⏳ Consulting the grimoire...';
+      whyBox.innerHTML='<div class="why-label">Why?</div>⏳ Consulting the grimoire...';
       try{
         const prompt=isCorrect
           ?`A Python student just answered this question correctly.\nQuestion: ${q.question}\nCorrect answer: ${correctAns}\nExplain in 2-3 simple sentences WHY this is the correct answer. Write for a complete beginner. Be clear and direct.`
           :`A Python student just answered this question WRONG.\nQuestion: ${q.question}\nStudent answered: ${userAns}\nCorrect answer: ${correctAns}\nIn 2-3 simple sentences: first explain why the student's answer is wrong, then explain why the correct answer is right. Write for a complete beginner.`;
         const res=await fetch('https://api.anthropic.com/v1/messages',{
           method:'POST',
-          headers:{'Content-Type':'application/json'},
+          headers:{
+            'Content-Type':'application/json',
+            'anthropic-version':'2023-06-01',
+            'anthropic-dangerous-direct-browser-access':'true'
+          },
           body:JSON.stringify({
             model:'claude-sonnet-4-20250514',
             max_tokens:200,
@@ -1242,7 +1253,7 @@ function lockAndReveal(q,userAns,choicesDiv,fb,isLast,fillInp=null){
         const data=await res.json();
         const text=data.content?.[0]?.text||'Could not load explanation.';
         whyBox.classList.remove('loading');
-        whyBox.innerHTML=`<div class="why-label">Why?</div>${escHtml(text)}`;
+        whyBox.innerHTML=`<div class="why-label">Why?</div>${text}`;
       } catch(err){
         whyBox.classList.remove('loading');
         whyBox.innerHTML=`<div class="why-label">Why?</div>Could not load explanation — check your connection.`;
