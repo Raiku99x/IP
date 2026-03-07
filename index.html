@@ -230,39 +230,94 @@ body::before{
 .fill-confirm-btn:disabled{opacity:.35;cursor:not-allowed;}
 
 /* Feedback banner */
-.q-feedback{display:none;padding:10px 18px;font-family:var(--font-m);font-size:11px;border-top:1px solid var(--stone);align-items:center;gap:10px;line-height:1.5;}
+.q-feedback{display:none;padding:11px 18px;font-family:var(--font-m);font-size:11px;border-top:1px solid var(--stone);align-items:center;gap:10px;line-height:1.5;flex-wrap:wrap;}
 .q-feedback.show{display:flex;}
 .q-feedback.ok{color:var(--emerald);background:rgba(26,107,48,0.07);}
-.q-feedback.no{color:var(--crimson);background:rgba(139,28,28,0.07);}
+.q-feedback.no{color:var(--crimson);background:rgba(139,28,28,0.1);border-top:1px solid rgba(139,28,28,0.3);}
 .fb-ans{font-weight:700;margin-left:4px;}
 
-/* WHY button */
+/* ---- WHY button — correct (subtle) ---- */
 .why-btn{
-  font-family:var(--font-m);font-size:9px;letter-spacing:.12em;text-transform:uppercase;
-  padding:3px 9px;border-radius:2px;cursor:pointer;transition:all .15s;
+  font-family:var(--font-m);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  padding:5px 13px;border-radius:2px;cursor:pointer;
   white-space:nowrap;flex-shrink:0;margin-left:auto;
   border:1px solid;background:transparent;
+  transition:all .18s ease;
+  position:relative;
 }
-.q-feedback.ok .why-btn{border-color:rgba(26,107,48,0.35);color:rgba(30,128,56,0.6);}
-.q-feedback.ok .why-btn:hover{border-color:var(--serpent);color:var(--emerald);background:rgba(26,107,48,0.08);}
-.q-feedback.no .why-btn{border-color:var(--blood);color:var(--crimson);font-weight:700;box-shadow:0 0 6px rgba(139,28,28,0.2);}
-.q-feedback.no .why-btn:hover{background:rgba(139,28,28,0.1);box-shadow:0 0 10px rgba(139,28,28,0.3);}
-.why-btn.active-ok{border-color:var(--serpent)!important;color:var(--emerald)!important;background:rgba(26,107,48,0.08)!important;}
-.why-btn.active-no{border-color:var(--blood)!important;color:var(--crimson)!important;background:rgba(139,28,28,0.08)!important;}
+.q-feedback.ok .why-btn{
+  border-color:rgba(26,107,48,0.4);
+  color:rgba(30,128,56,0.7);
+  font-weight:500;
+}
+.q-feedback.ok .why-btn:hover{
+  border-color:var(--serpent);
+  color:var(--emerald);
+  background:rgba(26,107,48,0.08);
+}
 
-/* ===================== WHY BOX — slides down from feedback banner ===================== */
+/* ---- WHY button — WRONG (very noticeable) ---- */
+.q-feedback.no .why-btn{
+  border-color:var(--crimson);
+  color:#fff;
+  font-weight:700;
+  font-size:11px;
+  padding:6px 16px;
+  background:var(--blood);
+  box-shadow:0 0 0 2px rgba(139,28,28,0.25), 0 2px 10px rgba(139,28,28,0.4);
+  animation:why-pulse 1.8s ease-in-out infinite;
+  letter-spacing:.14em;
+}
+.q-feedback.no .why-btn:hover{
+  background:var(--crimson);
+  box-shadow:0 0 0 3px rgba(139,28,28,0.35), 0 4px 18px rgba(139,28,28,0.55);
+  transform:translateY(-1px);
+  animation:none;
+}
+@keyframes why-pulse{
+  0%,100%{box-shadow:0 0 0 2px rgba(139,28,28,0.25), 0 2px 10px rgba(139,28,28,0.4);}
+  50%{box-shadow:0 0 0 4px rgba(175,32,32,0.35), 0 4px 22px rgba(175,32,32,0.6);}
+}
+
+/* active states */
+.why-btn.active-ok{
+  border-color:var(--serpent)!important;
+  color:var(--emerald)!important;
+  background:rgba(26,107,48,0.1)!important;
+  animation:none!important;
+}
+.why-btn.active-no{
+  background:rgba(139,28,28,0.15)!important;
+  border-color:var(--blood)!important;
+  color:var(--crimson)!important;
+  font-size:10px!important;
+  box-shadow:none!important;
+  animation:none!important;
+}
+
+/* ===================== WHY BOX — slides down ===================== */
 .why-box{
   overflow:hidden;
   max-height:0;
   opacity:0;
   transition:max-height .4s cubic-bezier(.22,.68,0,1.05), opacity .3s ease;
-  border-top:0px solid transparent;
 }
 .why-box.open{
   max-height:500px;
   opacity:1;
+}
+/* wrong answer why-box gets a red-tinted left accent */
+.why-box.wrong-why{
+  border-left:3px solid var(--blood);
+  background:rgba(139,28,28,0.04);
+}
+.why-box.open.wrong-why{
+  border-top:1px solid rgba(139,28,28,0.2);
+}
+.why-box.open:not(.wrong-why){
   border-top:1px solid var(--stone);
 }
+
 .why-box-inner{
   padding:14px 18px 16px;
   font-family:var(--font-b);
@@ -272,9 +327,11 @@ body::before{
 }
 .why-label{
   font-family:var(--font-m);font-size:9px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--gold-dim);margin-bottom:8px;display:flex;align-items:center;gap:8px;
+  margin-bottom:8px;display:flex;align-items:center;gap:8px;
 }
-.why-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--iron),transparent);}
+.why-label.ok-lbl{color:var(--gold-dim);}
+.why-label.no-lbl{color:rgba(176,32,32,0.75);}
+.why-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,currentColor,transparent);opacity:.3;}
 
 /* Shimmer loading skeleton */
 .why-shimmer{
@@ -1204,7 +1261,7 @@ function lockAndReveal(q, userAns, choicesDiv, fb, isLast, card, fillInp=null){
     whyBtn.addEventListener('click', async ()=>{
       if(whyOpen){
         // Close
-        whyBox.classList.remove('open');
+        whyBox.classList.remove('open','wrong-why');
         whyBtn.textContent='WHY?';
         whyBtn.classList.remove('active-ok','active-no');
         whyOpen=false;
@@ -1216,6 +1273,7 @@ function lockAndReveal(q, userAns, choicesDiv, fb, isLast, card, fillInp=null){
       whyBtn.textContent='HIDE';
       whyBtn.classList.add(isCorrect?'active-ok':'active-no');
       whyBox.classList.add('open');
+      if(!isCorrect) whyBox.classList.add('wrong-why');
 
       if(whyLoaded) return; // already fetched
       whyLoaded=true;
@@ -1235,8 +1293,9 @@ function lockAndReveal(q, userAns, choicesDiv, fb, isLast, card, fillInp=null){
         ? `<span class="why-ai-badge">✦ AI</span>`
         : `<span class="why-fallback-badge">📖 Explanation</span>`;
 
+      const labelCls = isCorrect ? 'why-label ok-lbl' : 'why-label no-lbl';
       whyInner.innerHTML=`
-        <div class="why-label">Why? ${badge}</div>
+        <div class="${labelCls}">Why? ${badge}</div>
         <div>${escHtml(result.text).replace(/\n/g,'<br>')}</div>`;
     });
   }
