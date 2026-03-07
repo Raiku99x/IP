@@ -45,6 +45,9 @@ body::before{
 
 /* Crest SVG itself slowly rotates/breathes */
 .lc-crest{
+  width:108px;height:108px;
+  border-radius:50%;
+  object-fit:cover;
   animation:crestPulse 3s ease-in-out infinite;
   filter:drop-shadow(0 0 8px rgba(26,107,48,0.35));
 }
@@ -102,6 +105,7 @@ body::before{
 #topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.35;}
 .top-logo{display:flex;align-items:center;gap:10px;font-family:var(--font-d);font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:color .12s;}
 .top-logo:hover{color:var(--gold-bright);}
+.top-logo-img{width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid var(--gold-dim);}
 .tdiv{width:1px;height:24px;background:var(--iron);}
 .top-bc{display:flex;align-items:center;gap:8px;font-family:var(--font-m);font-size:11px;color:var(--mist);}
 .bc-i{cursor:pointer;transition:color .12s;}.bc-i:hover{color:var(--emerald);}.bc-i.active{color:var(--bone);cursor:default;}
