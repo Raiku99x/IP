@@ -1021,43 +1021,48 @@ window.addEventListener('resize',()=>{
 });
 
 /* ===== INIT ===== */
-(async()=>{
-  await initAuth();
+async function initHeavy(){
   const bar=$('load-bar');
   const txt=$('load-txt');
   const lcourse=$('l-course');
 
-  let pct = 0;
-  let stopped = false;
-  const CRAWL_DURATION = 9000;
-  const CRAWL_MAX = 80;
-  const startTime = performance.now();
+  $('loading-overlay').classList.remove('hidden');
+
+  let stopped=false;
+  const CRAWL_DURATION=9000;
+  const CRAWL_MAX=80;
+  const startTime=performance.now();
 
   function easedCrawl(){
-    if(stopped) return;
-    const elapsed = performance.now() - startTime;
-    const t = Math.min(elapsed / CRAWL_DURATION, 1);
-    const eased = 1 - Math.pow(1 - t, 3);
-    pct = eased * CRAWL_MAX;
-    bar.style.width = pct + '%';
-    if(pct < 20)       txt.textContent = 'Loading scrolls…';
-    else if(pct < 45)  txt.textContent = 'Preparing grimoire…';
-    else if(pct < 65)  txt.textContent = 'Summoning Python runtime…';
-    else               txt.textContent = 'Binding spells…';
-    if(pct < CRAWL_MAX - 0.1) requestAnimationFrame(easedCrawl);
+    if(stopped)return;
+    const elapsed=performance.now()-startTime;
+    const t=Math.min(elapsed/CRAWL_DURATION,1);
+    const eased=1-Math.pow(1-t,3);
+    const pct=eased*CRAWL_MAX;
+    bar.style.width=pct+'%';
+    if(pct<20)txt.textContent='Loading scrolls…';
+    else if(pct<45)txt.textContent='Preparing grimoire…';
+    else if(pct<65)txt.textContent='Summoning Python runtime…';
+    else txt.textContent='Binding spells…';
+    if(pct<CRAWL_MAX-0.1)requestAnimationFrame(easedCrawl);
   }
   requestAnimationFrame(easedCrawl);
 
-  lcourse.textContent = 'BSCS — Python Practice';
+  lcourse.textContent='BSCS — Python Practice';
   await loadJSON();
-  if(DATA){ lcourse.textContent = 'BSCS — Python Practice'; }
+  if(DATA){lcourse.textContent='BSCS — Python Practice';}
   initCM();
   await initPy();
 
-  stopped = true;
+  stopped=true;
   ['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=false);
-  bar.style.transition = 'width .6s ease';
-  bar.style.width = '100%';
-  txt.textContent = 'The dungeon is ready.';
-  setTimeout(()=>{ $('loading-overlay').classList.add('hidden'); showDash(); }, 700);
+  bar.style.transition='width .6s ease';
+  bar.style.width='100%';
+  txt.textContent='The dungeon is ready.';
+  setTimeout(()=>{$('loading-overlay').classList.add('hidden');showDash();},700);
+}
+
+(async()=>{
+  onAuthSuccess=initHeavy;
+  await initAuth();
 })();
