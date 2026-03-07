@@ -27,11 +27,13 @@
       <div style="font-family:var(--font-m);font-size:10px;color:var(--mist);margin-top:4px;">Slytherin Classroom</div>
     </div>
 
-    <!-- Name field (signup only) -->
-    <div id="auth-name-row" style="display:none;flex-direction:column;gap:5px;margin-bottom:12px;">
-      <label style="font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:var(--mist);">FULL NAME</label>
-      <input id="auth-name" type="text" placeholder="Your full name"
-        style="background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:10px 12px;font-family:var(--font-m);font-size:12px;color:var(--parchment);outline:none;"/>
+    <!-- Username field (signup only) -->
+    <div id="auth-username-row" style="display:none;flex-direction:column;gap:5px;margin-bottom:12px;">
+      <label style="font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:var(--mist);">USERNAME</label>
+      <input id="auth-username" type="text" placeholder="e.g. alex or maryjane"
+        style="background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:10px 12px;font-family:var(--font-m);font-size:12px;color:var(--parchment);outline:none;"
+        oninput="this.value=this.value.toLowerCase().replace(/[^a-z]/g,'')"/>
+      <div style="font-family:var(--font-m);font-size:10px;color:var(--mist);margin-top:2px;">Your first name only — lowercase, no spaces</div>
     </div>
 
     <!-- Email -->
@@ -52,7 +54,7 @@
     <div id="auth-error" style="font-family:var(--font-m);font-size:11px;color:var(--crimson);margin-bottom:12px;min-height:16px;"></div>
 
     <!-- Submit -->
-    <button id="auth-submit-btn" onclick="document.getElementById('auth-name-row').style.display==='none'?handleLogin():handleSignup()"
+    <button id="auth-submit-btn" onclick="document.getElementById('auth-username-row').style.display==='none'?handleLogin():handleSignup()"
       style="width:100%;padding:11px;border-radius:2px;border:1px solid var(--gold-dim);background:var(--gold-glow);color:var(--gold);font-family:var(--font-d);font-size:12px;font-weight:600;letter-spacing:.1em;cursor:pointer;">
       Log In
     </button>
