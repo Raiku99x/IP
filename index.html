@@ -690,6 +690,10 @@ body::before{
     <div class="grm-sec"><div class="grm-sec-t">Rune Inputs</div><ul class="grm-list" id="el-infmt"></ul></div>
     <div class="grm-sec"><div class="grm-sec-t">Foretold Output</div><ul class="grm-list" id="el-outfmt"></ul></div>
     <div class="grm-sec"><div class="grm-sec-t">Demonstrations</div><div id="el-examples"></div></div>
+    <div class="grm-sec">
+      <button class="hint-btn" onclick="toggleHint(this)">⟡ Reveal Scroll</button>
+      <div class="hint-box" id="el-hint"></div>
+    </div>
   </div>
 
   <div id="ed-center">
@@ -970,8 +974,13 @@ function openProb(prob,lab){
       <div><div class="ex-col-h">Input</div><div class="ex-col-v">${tc.inputs.join('\n')}</div></div>
       <div><div class="ex-col-h">Output</div><div class="ex-col-v out">${tc.expected.join('\n')}</div></div>
     </div></div>`).join('');
+  $('el-hint').textContent=prob.hint||'';$('el-hint').classList.remove('visible');
+  const hb=document.querySelector('.hint-btn');if(hb)hb.textContent='⟡ Reveal Scroll';
   setTimeout(()=>{cm.setValue(s.code||'');cm.clearHistory();cm.refresh();},20);
-  $('custom-in').value='';$('out-text').textContent='— Awaiting cast —';$('out-text').style.color='var(--mist)';
+  // Auto-fill first visible example input if custom input is empty or no TC picked
+  const firstEx=(prob.testCases||[]).find(tc=>!tc.hidden);
+  $('custom-in').value=firstEx?firstEx.inputs.join('\n'):'';
+  $('out-text').textContent='— Awaiting cast —';$('out-text').style.color='var(--mist)';
   hideErr();['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=!pyodide);
   renderTrials();renderVerdict();
 }
@@ -1578,6 +1587,11 @@ $('btn-run').addEventListener('click',async()=>{
   setBusy(true);hideErr();
   const code=cm.getValue();
   if(!code.trim()){showErr('The scroll is empty!');setBusy(false);return;}
+  // Auto-fill first example input if field is empty
+  if(!$('custom-in').value.trim()){
+    const firstEx=(activeProblem.testCases||[]).find(tc=>!tc.hidden);
+    if(firstEx)$('custom-in').value=firstEx.inputs.join('\n');
+  }
   const inp=$('custom-in').value.trim();
   const r=await runPy(code,inp?inp.split('\n'):[]);
   if(r.ok){$('out-text').textContent=r.lines.length?r.lines.join('\n'):'(no output)';$('out-text').style.color=r.lines.length?'var(--emerald)':'var(--gold)';}
