@@ -516,7 +516,7 @@ const SUPABASE_URL = 'https://oikumdcokfhrzuvgmxku.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9pa3VtZGNva2Zocnp1dmdteGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzA2NTYsImV4cCI6MjA4ODQ0NjY1Nn0.X_PzXZswIFPKZddV24rcSql6PbVoR0vmuKdn3Xh_qAQ';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let allSubs = [], allAttempts = [], currentTab = 'overview';
+let allSubs = [], allAttempts = [], allLabs = [], allQuizzes = [], currentTab = 'overview';
 let labSort = { col: 'submitted_at', dir: 'desc' }, quizSort = { col: 'attempted_at', dir: 'desc' };
 let labPage = 1, quizPage = 1;
 const PG = 25;
@@ -542,11 +542,13 @@ async function doLogout() { await sb.auth.signOut(); window.location.href = 'ind
 
 async function loadAll() {
   document.getElementById('content').innerHTML = '<div class="loading"><div class="spin"></div><div class="loading-txt">Fetching records…</div></div>';
-  const [{ data: s }, { data: a }] = await Promise.all([
+  const [{ data: s }, { data: a }, { data: l }, { data: q }] = await Promise.all([
     sb.from('lab_submissions').select('*').order('submitted_at', { ascending: false }),
-    sb.from('quiz_attempts').select('*').order('attempted_at', { ascending: false })
+    sb.from('quiz_attempts').select('*').order('attempted_at', { ascending: false }),
+    sb.from('labs').select('*').order('created_at', { ascending: false }),
+    sb.from('quizzes').select('*').order('created_at', { ascending: false })
   ]);
-  allSubs = s || []; allAttempts = a || []; labPage = 1; quizPage = 1;
+  allSubs = s || []; allAttempts = a || []; allLabs = l || []; allQuizzes = q || []; labPage = 1; quizPage = 1;
   document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
   render();
 }
@@ -606,9 +608,9 @@ function render() {
       <button class="tab ${currentTab === 'students' ? 'active' : ''}" onclick="sTab('students')">
         <svg class="ico" width="13" height="13"><use href="#ic-students"/></svg>Students
       </button>
-      <button class="tab ${currentTab === 'leaderboard' ? 'active' : ''}" onclick="sTab('leaderboard')">
-        <svg class="ico" width="13" height="13"><use href="#ic-trophy"/></svg>Leaderboard
-      </button>
+    <button class="tab ${currentTab === 'content' ? 'active' : ''}" onclick="sTab('content')">
+      <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Content
+    </button>
     </div>
     <div id="tc">${rTab()}</div>`;
 }
@@ -619,7 +621,8 @@ function rTab() {
   if (currentTab === 'labs') return rLabs();
   if (currentTab === 'quizzes') return rQuizzes();
   if (currentTab === 'students') return rStudents();
-  return rLeaderboard();
+  if (currentTab === 'leaderboard') return rLeaderboard();
+  return rContent();
 }
 function rT() { document.getElementById('tc').innerHTML = rTab(); }
 
@@ -1018,6 +1021,164 @@ function exportCSV(type) {
   a.click();
 }
 
+/* ── CONTENT ── */
+function rContent(){
+  const labRows=allLabs.map(l=>`
+    <tr>
+      <td class="ttr">${esc(l.title)}</td>
+      <td class="td-dim">${esc(l.filename||'—')}</td>
+      <td><span class="badge ${l.active?'b-pass':'b-fail'}">${l.active?'Active':'Hidden'}</span></td>
+      <td class="td-dim tnw">${fmtDate(l.created_at)}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="tb-btn" onclick="toggleActive('labs','${l.id}',${l.active})">${l.active?'Hide':'Show'}</button>
+          <button class="tb-btn danger" onclick="deleteContent('labs','${l.id}')">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('');
+
+  const quizRows=allQuizzes.map(q=>`
+    <tr>
+      <td class="ttr">${esc(q.title)}</td>
+      <td class="td-dim">${esc(q.filename||'—')}</td>
+      <td><span class="badge ${q.active?'b-pass':'b-fail'}">${q.active?'Active':'Hidden'}</span></td>
+      <td class="td-dim tnw">${fmtDate(q.created_at)}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="tb-btn" onclick="toggleActive('quizzes','${q.id}',${q.active})">${q.active?'Hide':'Show'}</button>
+          <button class="tb-btn danger" onclick="deleteContent('quizzes','${q.id}')">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('');
+
+  return `
+    <div class="section-card" style="margin-bottom:14px">
+      <div class="section-hd">
+        <div class="section-hd-left">
+          <div class="section-title">Upload Content</div>
+        </div>
+      </div>
+      <div style="padding:20px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <select class="filter-select" id="upload-type">
+            <option value="labs">Lab</option>
+            <option value="quizzes">Quiz</option>
+          </select>
+          <label style="display:flex;align-items:center;gap:8px;background:var(--stone);border:1px solid var(--iron2);border-radius:1px;padding:7px 14px;cursor:pointer;font-family:var(--font-m);font-size:11px;color:var(--parchment2);">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Choose JSON File
+            <input type="file" accept=".json" id="upload-file" style="display:none" onchange="handleFileSelect(this)"/>
+          </label>
+          <span id="upload-filename" style="font-family:var(--font-m);font-size:11px;color:var(--mist)">No file chosen</span>
+        </div>
+        <div id="upload-preview" style="display:none;background:var(--stone);border:1px solid var(--iron2);border-radius:1px;padding:12px;font-family:var(--font-m);font-size:11px;color:var(--parchment2)"></div>
+        <button class="btn-export" id="upload-btn" onclick="uploadContent()" style="display:none;align-self:flex-start">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload to Database
+        </button>
+        <div id="upload-msg" style="font-family:var(--font-m);font-size:11px;min-height:16px"></div>
+      </div>
+    </div>
+
+    <div class="section-card" style="margin-bottom:14px">
+      <div class="section-hd">
+        <div class="section-hd-left">
+          <div class="section-title">Labs</div>
+          <span class="section-count">${allLabs.length}</span>
+        </div>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Title</th><th>Filename</th><th>Status</th><th>Uploaded</th><th>Actions</th></tr></thead>
+        <tbody>${labRows||'<tr><td colspan="5"><div class="tbl-empty"><div class="tei">—</div>No labs uploaded yet</div></td></tr>'}</tbody>
+      </table></div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-hd">
+        <div class="section-hd-left">
+          <div class="section-title">Quizzes</div>
+          <span class="section-count">${allQuizzes.length}</span>
+        </div>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Title</th><th>Filename</th><th>Status</th><th>Uploaded</th><th>Actions</th></tr></thead>
+        <tbody>${quizRows||'<tr><td colspan="5"><div class="tbl-empty"><div class="tei">—</div>No quizzes uploaded yet</div></td></tr>'}</tbody>
+      </table></div>
+    </div>`;
+}
+
+let uploadedJSON=null;
+
+function handleFileSelect(input){
+  const file=input.files[0];
+  if(!file)return;
+  document.getElementById('upload-filename').textContent=file.name;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      uploadedJSON=JSON.parse(e.target.result);
+      const type=document.getElementById('upload-type').value;
+      const titleKey=type==='labs'?uploadedJSON.title:uploadedJSON.title;
+      const preview=document.getElementById('upload-preview');
+      preview.style.display='block';
+      preview.innerHTML=`
+        <div style="color:var(--gold);margin-bottom:6px">✦ Valid JSON detected</div>
+        <div>Title: <span style="color:var(--parchment)">${esc(uploadedJSON.title||'—')}</span></div>
+        <div>Type: <span style="color:var(--parchment)">${type==='labs'?'Lab ('+( uploadedJSON.problems?.length||0)+' problems)':'Quiz ('+(uploadedJSON.questions?.length||0)+' questions)'}</span></div>
+        <div>Filename: <span style="color:var(--parchment)">${esc(file.name)}</span></div>`;
+      document.getElementById('upload-btn').style.display='flex';
+      document.getElementById('upload-msg').textContent='';
+    }catch(err){
+      uploadedJSON=null;
+      document.getElementById('upload-preview').style.display='none';
+      document.getElementById('upload-btn').style.display='none';
+      document.getElementById('upload-msg').style.color='var(--crimson)';
+      document.getElementById('upload-msg').textContent='⚠ Invalid JSON file';
+    }
+  };
+  reader.readAsText(file);
+}
+
+async function uploadContent(){
+  if(!uploadedJSON)return;
+  const type=document.getElementById('upload-type').value;
+  const file=document.getElementById('upload-file');
+  const filename=file.files[0]?.name||'unknown.json';
+  const msg=document.getElementById('upload-msg');
+  msg.style.color='var(--mist)';
+  msg.textContent='Uploading…';
+  const {error}=await sb.from(type).insert({
+    title:uploadedJSON.title||filename,
+    filename:filename,
+    data:uploadedJSON,
+    active:true
+  });
+  if(error){
+    msg.style.color='var(--crimson)';
+    msg.textContent='⚠ Error: '+error.message;
+  }else{
+    msg.style.color='var(--emerald)';
+    msg.textContent='✦ Uploaded successfully!';
+    uploadedJSON=null;
+    document.getElementById('upload-file').value='';
+    document.getElementById('upload-filename').textContent='No file chosen';
+    document.getElementById('upload-preview').style.display='none';
+    document.getElementById('upload-btn').style.display='none';
+    await loadAll();
+  }
+}
+
+async function toggleActive(table,id,current){
+  await sb.from(table).update({active:!current}).eq('id',id);
+  await loadAll();
+}
+
+async function deleteContent(table,id){
+  if(!confirm('Delete this entry? This cannot be undone.'))return;
+  await sb.from(table).delete().eq('id',id);
+  await loadAll();
+}
+  
 function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 function fmtDate(iso) {
   if (!iso) return '—';
