@@ -6,15 +6,6 @@ const sbClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
 
-const ALLOWED_USERNAMES = [
-  'kyle', 'john', 'gian', 'vincent', 'angelieella', 'nicolle', 'danica',
-  'emerson', 'juvel', 'ericamae', 'ihbrielmhark', 'kiancharles', 'carina',
-  'joan', 'aleeya', 'efren', 'angelo', 'francymae', 'rollyjr', 'rolly',
-  'markemman', 'maomay', 'aubreyace', 'johnlhoel', 'edselfrank',
-  'edselfrankino', 'corinnemiles', 'johneric', 'iyezhajoy', 'michelleanne',
-  'elmermichael', 'justinreyz', 'juzzuaphillip', 'hertzjohn', 'jhaealjor'
-];
-
 const ERRORS = {
   notOnList: [
     "That's not your full first name — lowercase, no spaces. e.g. alex or maryjane",
@@ -98,11 +89,18 @@ async function handleSignup() {
     errorEl.textContent = 'Password must be at least 6 characters.';
     return;
   }
-  if (!ALLOWED_USERNAMES.includes(username)) {
+
+  // Check allowed_usernames via RPC (list stays hidden on server)
+  const { data: isAllowed, error: rpcError } = await sbClient.rpc('check_username_allowed', {
+    input_username: username
+  });
+
+  if (rpcError || !isAllowed) {
     errorEl.textContent = randomError(ERRORS.notOnList);
     return;
   }
 
+  // Check if username already taken in profiles
   const { data: existing } = await sbClient
     .from('profiles')
     .select('id')
