@@ -417,6 +417,183 @@
           ]
         }
       ]
+    },
+    {
+  "id": "tuples-5",
+  "title": "[new] Word Tuple Analyzer",
+  "difficulty": "medium",
+  "points": 20,
+  "passingPercent": 75,
+  "description": "You are building a word analysis tool using **tuple methods and built-in functions**.\n\nYour program should:\n1. Read a sentence from the user.\n2. Split it into words and store them as a **tuple**.\n3. Print the **total word count** and the **unique word count** (convert to set).\n4. Use `count()` to count how many times a queried word (read from input) appears.\n5. Use `index()` to find the **first position** of that word. If the word is not in the tuple, print `Not found` for index.\n6. Use `sorted()` to print words in **alphabetical order** (as a list).\n7. Use `reversed()` to print words in **reverse original order** (as a tuple).\n8. Print the `max()` and `min()` word alphabetically.",
+  "constraints": [
+    "The sentence contains only lowercase letters and spaces.",
+    "The sentence has between 3 and 15 words.",
+    "The query word is a single lowercase word."
+  ],
+  "inputFormat": "Line 1: A sentence (lowercase words separated by spaces).\nLine 2: A word to query.",
+  "outputFormat": "Line 1: `Total: <n>` — total word count.\nLine 2: `Unique: <n>` — unique word count.\nLine 3: `Count of <word>: <n>`\nLine 4: `Index of <word>: <n>` or `Index of <word>: Not found`\nLine 5: `Sorted: <list>`\nLine 6: `Reversed: <tuple>`\nLine 7: `Max: <word>`\nLine 8: `Min: <word>`",
+  "hint": "sentence = input()\nquery = input()\nwords = tuple(sentence.split())\nprint('Total:', len(words))\nprint('Unique:', len(set(words)))\nprint(f'Count of {query}:', words.count(query))\nif query in words:\n    print(f'Index of {query}:', words.index(query))\nelse:\n    print(f'Index of {query}: Not found')\nprint('Sorted:', sorted(words))\nprint('Reversed:', tuple(reversed(words)))\nprint('Max:', max(words))\nprint('Min:', min(words))",
+  "testCases": [
+    {
+      "label": "Example 1 — repeated word, query found",
+      "hidden": false,
+      "inputs": ["the cat sat on the mat", "the"],
+      "expected": [
+        "Total: 6",
+        "Unique: 5",
+        "Count of the: 2",
+        "Index of the: 0",
+        "Sorted: ['cat', 'mat', 'on', 'sat', 'the', 'the']",
+        "Reversed: ('mat', 'the', 'on', 'sat', 'cat', 'the')",
+        "Max: the",
+        "Min: cat"
+      ]
+    },
+    {
+      "label": "Example 2 — no duplicates, query not found",
+      "hidden": false,
+      "inputs": ["python is fun to learn", "java"],
+      "expected": [
+        "Total: 5",
+        "Unique: 5",
+        "Count of java: 0",
+        "Index of java: Not found",
+        "Sorted: ['fun', 'is', 'learn', 'python', 'to']",
+        "Reversed: ('learn', 'to', 'fun', 'is', 'python')",
+        "Max: to",
+        "Min: fun"
+      ]
+    },
+    {
+      "label": "Hidden: All same word",
+      "hidden": true,
+      "inputs": ["go go go go", "go"],
+      "expected": [
+        "Total: 4",
+        "Unique: 1",
+        "Count of go: 4",
+        "Index of go: 0",
+        "Sorted: ['go', 'go', 'go', 'go']",
+        "Reversed: ('go', 'go', 'go', 'go')",
+        "Max: go",
+        "Min: go"
+      ]
+    },
+    {
+      "label": "Hidden: Query is last word",
+      "hidden": true,
+      "inputs": ["i love python programming", "programming"],
+      "expected": [
+        "Total: 4",
+        "Unique: 4",
+        "Count of programming: 1",
+        "Index of programming: 3",
+        "Sorted: ['i', 'love', 'programming', 'python']",
+        "Reversed: ('programming', 'python', 'love', 'i')",
+        "Max: python",
+        "Min: i"
+      ]
+    },
+    {
+      "label": "Hidden: Three-word sentence, query not found",
+      "hidden": true,
+      "inputs": ["cats eat fish", "dog"],
+      "expected": [
+        "Total: 3",
+        "Unique: 3",
+        "Count of dog: 0",
+        "Index of dog: Not found",
+        "Sorted: ['cats', 'eat', 'fish']",
+        "Reversed: ('fish', 'eat', 'cats')",
+        "Max: fish",
+        "Min: cats"
+      ]
     }
+  ]
+},
+{
+  "id": "tuples-6",
+  "title": "[new] Student Report Card",
+  "difficulty": "hard",
+  "points": 35,
+  "passingPercent": 75,
+  "description": "You are building a student report card generator using advanced tuple operations. The program reads student data and produces a formatted summary.\n\nYour program should:\n1. Read **N** (number of students).\n2. For each student, read a line: `Name,score1,score2,score3`.\n3. Store each student as a **tuple** `(name, score1, score2, score3)`.\n4. Use a **function** `get_stats(scores_tuple)` that accepts a tuple of 3 scores and returns a tuple `(average, grade)` where average is rounded to 1 decimal and grade is `'A'` (>=90), `'B'` (>=80), `'C'` (>=70), `'D'` (>=60), or `'F'` (below 60).\n5. Use `zip()` to pair each student name with their computed `(average, grade)` tuple.\n6. Use `map()` to extract just the averages, then find the **highest and lowest** averages.\n7. Use `filter()` to get names of students who **passed** (grade != 'F').\n8. Unpack each student tuple using `*rest` to separate name from scores when computing stats.\n9. Print the report.",
+  "constraints": [
+    "N is between 2 and 6.",
+    "All scores are integers between 0 and 100.",
+    "Names are single words starting with uppercase."
+  ],
+  "inputFormat": "Line 1: Integer N.\nLines 2 to N+1: `Name,score1,score2,score3` (comma-separated, no spaces).",
+  "outputFormat": "One line per student: `<Name>: avg=<avg>, grade=<grade>`\n`Highest avg: <value>`\n`Lowest avg: <value>`\n`Passed: <tuple of names>`",
+  "hint": "def get_stats(scores):\n    avg = round(sum(scores) / len(scores), 1)\n    grade = 'A' if avg >= 90 else 'B' if avg >= 80 else 'C' if avg >= 70 else 'D' if avg >= 60 else 'F'\n    return (avg, grade)\nn = int(input())\nstudents = []\nfor _ in range(n):\n    parts = input().split(',')\n    name = parts[0]\n    scores = tuple(map(int, parts[1:]))\n    students.append((name,) + scores)\nresults = []\nfor s in students:\n    name, *rest = s\n    avg, grade = get_stats(tuple(rest))\n    results.append((name, avg, grade))\n    print(f'{name}: avg={avg}, grade={grade}')\naverages = list(map(lambda r: r[1], results))\nprint('Highest avg:', max(averages))\nprint('Lowest avg:', min(averages))\npassed = tuple(filter(lambda r: r[2] != 'F', results))\nprint('Passed:', tuple(r[0] for r in passed))",
+  "testCases": [
+    {
+      "label": "Example 1 — 3 students, all pass",
+      "hidden": false,
+      "inputs": ["3", "Alice,85,90,88", "Bob,70,75,72", "Charlie,92,95,98"],
+      "expected": [
+        "Alice: avg=87.7, grade=B",
+        "Bob: avg=72.3, grade=C",
+        "Charlie: avg=95.0, grade=A",
+        "Highest avg: 95.0",
+        "Lowest avg: 72.3",
+        "Passed: ('Alice', 'Bob', 'Charlie')"
+      ]
+    },
+    {
+      "label": "Example 2 — 4 students, one fails",
+      "hidden": false,
+      "inputs": ["4", "Juan,90,88,92", "Maria,55,50,58", "Pedro,75,80,78", "Ana,60,65,62"],
+      "expected": [
+        "Juan: avg=90.0, grade=A",
+        "Maria: avg=54.3, grade=F",
+        "Pedro: avg=77.7, grade=C",
+        "Ana: avg=62.3, grade=D",
+        "Highest avg: 90.0",
+        "Lowest avg: 54.3",
+        "Passed: ('Juan', 'Pedro', 'Ana')"
+      ]
+    },
+    {
+      "label": "Hidden: All fail",
+      "hidden": true,
+      "inputs": ["2", "Dan,40,45,42", "Eve,50,55,52"],
+      "expected": [
+        "Dan: avg=42.3, grade=F",
+        "Eve: avg=52.3, grade=F",
+        "Highest avg: 52.3",
+        "Lowest avg: 42.3",
+        "Passed: ()"
+      ]
+    },
+    {
+      "label": "Hidden: Tied averages",
+      "hidden": true,
+      "inputs": ["2", "Sam,80,80,80", "Jay,80,80,80"],
+      "expected": [
+        "Sam: avg=80.0, grade=B",
+        "Jay: avg=80.0, grade=B",
+        "Highest avg: 80.0",
+        "Lowest avg: 80.0",
+        "Passed: ('Sam', 'Jay')"
+      ]
+    },
+    {
+      "label": "Hidden: 5 students mixed grades",
+      "hidden": true,
+      "inputs": ["5", "Leo,95,98,97", "Mia,82,85,80", "Kai,70,68,74", "Nia,58,52,55", "Rex,63,67,65"],
+      "expected": [
+        "Leo: avg=96.7, grade=A",
+        "Mia: avg=82.3, grade=B",
+        "Kai: avg=70.7, grade=C",
+        "Nia: avg=55.0, grade=F",
+        "Rex: avg=65.0, grade=D",
+        "Highest avg: 96.7",
+        "Lowest avg: 55.0",
+        "Passed: ('Leo', 'Mia', 'Kai', 'Rex')"
+      ]
+    }
+  ]
+}
   ]
 }
