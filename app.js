@@ -992,6 +992,7 @@ window.addEventListener('resize',()=>{
 
 /* ===== INIT ===== */
 (async()=>{
+  await initAuth();
   const bar=$('load-bar');
   const txt=$('load-txt');
   const lcourse=$('l-course');
