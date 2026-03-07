@@ -690,10 +690,6 @@ body::before{
     <div class="grm-sec"><div class="grm-sec-t">Rune Inputs</div><ul class="grm-list" id="el-infmt"></ul></div>
     <div class="grm-sec"><div class="grm-sec-t">Foretold Output</div><ul class="grm-list" id="el-outfmt"></ul></div>
     <div class="grm-sec"><div class="grm-sec-t">Demonstrations</div><div id="el-examples"></div></div>
-    <div class="grm-sec">
-      <button class="hint-btn" onclick="toggleHint(this)">⟡ Reveal Scroll</button>
-      <div class="hint-box" id="el-hint"></div>
-    </div>
   </div>
 
   <div id="ed-center">
@@ -974,8 +970,6 @@ function openProb(prob,lab){
       <div><div class="ex-col-h">Input</div><div class="ex-col-v">${tc.inputs.join('\n')}</div></div>
       <div><div class="ex-col-h">Output</div><div class="ex-col-v out">${tc.expected.join('\n')}</div></div>
     </div></div>`).join('');
-  $('el-hint').textContent=prob.hint;$('el-hint').classList.remove('visible');
-  const hb=document.querySelector('.hint-btn');if(hb)hb.textContent='⟡ Reveal Scroll';
   setTimeout(()=>{cm.setValue(s.code||'');cm.clearHistory();cm.refresh();},20);
   $('custom-in').value='';$('out-text').textContent='— Awaiting cast —';$('out-text').style.color='var(--mist)';
   hideErr();['btn-run','btn-test','btn-submit'].forEach(id=>$(id).disabled=!pyodide);
@@ -1479,23 +1473,49 @@ function finishQuiz(){
 function renderTrials(){
   if(!activeProblem)return;
   const p=activeProblem,s=gs(p.id),res=s.tcResults,sub=s.submitted;
-  $('trials-list').innerHTML='';let pc=0,total=0;
+  $('trials-list').innerHTML='';
+  const visibleTCs=p.testCases.filter(tc=>!tc.hidden);
+  const hiddenTCs=p.testCases.filter(tc=>tc.hidden);
+  // Check if all visible TCs have passed
+  const allVisiblePassed=visibleTCs.length>0&&visibleTCs.every((tc,vi)=>{
+    const i=p.testCases.indexOf(tc);
+    return res?.[i]?.pass===true;
+  });
+  // Count for score display — visible only (or all if submitted)
+  let pc=0,total=0;
   p.testCases.forEach((tc,i)=>{
-    const r=res?.[i],isH=tc.hidden===true,rev=!isH||sub;
-    if(r?.pass&&rev)pc++;total++;
+    const isH=tc.hidden===true;
+    if(isH&&!sub&&!allVisiblePassed)return; // skip hidden if locked
+    total++;
+    if(res?.[i]?.pass)pc++;
+  });
+  // Render visible TCs always
+  p.testCases.forEach((tc,i)=>{
+    const isH=tc.hidden===true;
+    // Hidden: only show after all visible pass OR after submission
+    if(isH&&!sub&&!allVisiblePassed)return;
+    const r=res?.[i];
     const card=document.createElement('div');
     let cls='tc-card';
-    if(r&&rev)cls+=r.pass?' pass':' fail';
-    else if(isH&&!sub)cls+=' htc';
+    if(isH&&!sub)cls+=' htc'; // unlocked but not yet run
+    else if(r)cls+=r.pass?' pass':' fail';
     card.className=cls;
-    const bt=isH&&!sub?'🔒 Sealed':r?(r.pass?'✦ Pass':'✗ Fail'):'Pending';
-    card.innerHTML=`<div class="tc-top"><span class="tc-num">${i+1}</span><span class="tc-lbl">${tc.label}</span><span class="tc-badge">${bt}</span></div><div class="tc-sub">${isH&&!sub?'Revealed upon inscription':'Click to examine →'}</div>`;
-    card.addEventListener('click',()=>openModal(i));
+    const bt=isH&&!sub?'🔒 Sealed — click Inscribe to run':r?(r.pass?'✦ Pass':'✗ Fail'):'Pending';
+    const sub2=isH&&!sub?'Runs when you Inscribe':'Click to examine →';
+    card.innerHTML=`<div class="tc-top"><span class="tc-num">${i+1}</span><span class="tc-lbl">${tc.label}</span><span class="tc-badge">${bt}</span></div><div class="tc-sub">${sub2}</div>`;
+    if(!(isH&&!sub))card.addEventListener('click',()=>openModal(i));
     $('trials-list').appendChild(card);
   });
+  // If all visible passed but not yet submitted, show a hint row
+  if(allVisiblePassed&&!sub&&hiddenTCs.length>0){
+    const hint=document.createElement('div');
+    hint.style.cssText='font-family:var(--font-m);font-size:10px;color:var(--gold);text-align:center;padding:10px 8px;border:1px dashed var(--gold-dim);border-radius:3px;background:var(--gold-glow);letter-spacing:.05em;';
+    hint.textContent=`✦ ${hiddenTCs.length} sealed trial${hiddenTCs.length>1?'s':''} unlocked — Inscribe to reveal`;
+    $('trials-list').appendChild(hint);
+  }
   const sc=$('trials-score');
-  if(res){sc.textContent=`${pc}/${total}`;sc.style.color=pc===total?'var(--emerald)':pc>0?'var(--gold)':'var(--crimson)';}
-  else{sc.textContent=`0/${total}`;sc.style.color='var(--mist)';}
+  if(res&&total>0){sc.textContent=`${pc}/${total}`;sc.style.color=pc===total?'var(--emerald)':pc>0?'var(--gold)':'var(--crimson)';}
+  else{sc.textContent=`0/${visibleTCs.length}`;sc.style.color='var(--mist)';}
 }
 
 function renderVerdict(){
@@ -1556,16 +1576,28 @@ function flash(cls){$('ed-center').classList.add(cls);setTimeout(()=>$('ed-cente
 
 $('btn-run').addEventListener('click',async()=>{
   setBusy(true);hideErr();
-  const res=await runAllTCs();if(!res){setBusy(false);return;}renderTrials();
-  const inp=$('custom-in').value.trim()||activeProblem.testCases[0].inputs.join('\n');
-  $('custom-in').value=inp;
-  const r=await runPy(cm.getValue(),inp.split('\n'));
+  const code=cm.getValue();
+  if(!code.trim()){showErr('The scroll is empty!');setBusy(false);return;}
+  const inp=$('custom-in').value.trim();
+  const r=await runPy(code,inp?inp.split('\n'):[]);
   if(r.ok){$('out-text').textContent=r.lines.length?r.lines.join('\n'):'(no output)';$('out-text').style.color=r.lines.length?'var(--emerald)':'var(--gold)';}
   else{$('out-text').textContent='Error: '+r.error;$('out-text').style.color='var(--crimson)';showErr(r.error);}
   setBusy(false);flash('fg');
 });
-$('btn-test').addEventListener('click',async()=>{setBusy(true);hideErr();const res=await runVisibleTCs();if(res){renderTrials();flash('fg');}setBusy(false);});
-$('btn-submit').addEventListener('click',async()=>{setBusy(true);hideErr();const res=await runAllTCs();if(!res){setBusy(false);return;}gs(activeProblem.id).submitted=true;renderTrials();renderVerdict();setBusy(false);flash('fp');});
+$('btn-test').addEventListener('click',async()=>{
+  setBusy(true);hideErr();
+  const res=await runVisibleTCs();
+  if(res){renderTrials();flash('fg');}
+  setBusy(false);
+});
+$('btn-submit').addEventListener('click',async()=>{
+  setBusy(true);hideErr();
+  const res=await runAllTCs();
+  if(!res){setBusy(false);return;}
+  gs(activeProblem.id).submitted=true;
+  renderTrials();renderVerdict();
+  setBusy(false);flash('fp');
+});
 
 /* ===== INIT ===== */
 (async()=>{
