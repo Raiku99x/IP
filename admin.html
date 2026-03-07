@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin — Grimoire Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --bg:#0a0b0f;
+  --bg2:#0f1117;
+  --bg3:#141720;
+  --bg4:#1a1f2e;
+  --border:#1e2436;
+  --border2:#252d42;
+  --gold:#c9a84c;
+  --gold-dim:#6b5520;
+  --gold-glow:rgba(201,168,76,.06);
+  --violet:#8b6fcb;
+  --violet-dim:#3d2f6e;
+  --amethyst:#a78bfa;
+  --emerald:#4ade80;
+  --emerald-dim:#14532d;
+  --crimson:#f87171;
+  --crimson-dim:#7f1d1d;
+  --mist:#4a5568;
+  --mist2:#6b7280;
+  --text:#e2e8f0;
+  --text2:#94a3b8;
+  --font-d:'Cinzel',serif;
+  --font-m:'Share Tech Mono',monospace;
+  --font-b:'Inter',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-b);min-height:100vh;}
+
+/* ── GATE / LOGIN ── */
+#gate{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:12px;}
+.gate-title{font-family:var(--font-d);font-size:22px;color:var(--gold);letter-spacing:.12em;}
+.gate-sub{font-size:12px;color:var(--mist2);letter-spacing:.06em;}
+.gate-err{font-size:12px;color:var(--crimson);margin-top:4px;}
+
+/* ── TOP BAR ── */
+#topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;height:52px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
+}
+.tb-left{display:flex;align-items:center;gap:14px;}
+.tb-logo{font-family:var(--font-d);font-size:14px;color:var(--gold);letter-spacing:.1em;}
+.tb-badge{
+  font-family:var(--font-m);font-size:9px;
+  background:var(--gold-glow);border:1px solid var(--gold-dim);
+  color:var(--gold);padding:2px 8px;border-radius:2px;letter-spacing:.08em;
+}
+.tb-right{display:flex;align-items:center;gap:16px;}
+.tb-user{font-size:11px;color:var(--mist2);}
+.tb-logout{
+  font-family:var(--font-m);font-size:10px;
+  background:none;border:1px solid var(--border2);
+  color:var(--mist2);padding:4px 12px;border-radius:2px;cursor:pointer;
+  transition:color .2s,border-color .2s;
+}
+.tb-logout:hover{color:var(--crimson);border-color:var(--crimson);}
+
+/* ── LAYOUT ── */
+#shell{display:none;flex-direction:column;min-height:100vh;}
+#main{padding:28px 28px 48px;}
+
+/* ── SECTION HEADING ── */
+.sec-hd{
+  font-family:var(--font-d);font-size:11px;color:var(--gold);
+  letter-spacing:.2em;text-transform:uppercase;
+  margin-bottom:16px;padding-bottom:8px;
+  border-bottom:1px solid var(--border);
+}
+
+/* ── STATS ROW ── */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:32px;}
+.stat-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:4px;padding:18px 20px;
+  transition:border-color .2s;
+}
+.stat-card:hover{border-color:var(--border2);}
+.stat-n{font-family:var(--font-d);font-size:28px;font-weight:700;line-height:1;}
+.stat-l{font-family:var(--font-m);font-size:10px;color:var(--mist2);margin-top:6px;letter-spacing:.06em;}
+.gold-n{color:var(--gold);}
+.violet-n{color:var(--amethyst);}
+.green-n{color:var(--emerald);}
+.red-n{color:var(--crimson);}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--border);}
+.tab{
+  font-family:var(--font-m);font-size:10px;letter-spacing:.1em;
+  padding:9px 20px;cursor:pointer;color:var(--mist2);
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+  transition:color .2s,border-color .2s;
+  background:none;border-top:none;border-left:none;border-right:none;
+}
+.tab:hover{color:var(--text2);}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+/* ── FILTERS ── */
+.filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+.filter-input{
+  background:var(--bg2);border:1px solid var(--border2);
+  color:var(--text);font-family:var(--font-m);font-size:11px;
+  padding:6px 12px;border-radius:3px;outline:none;
+  transition:border-color .2s;
+}
+.filter-input:focus{border-color:var(--gold-dim);}
+.filter-input::placeholder{color:var(--mist);}
+.filter-select{
+  background:var(--bg2);border:1px solid var(--border2);
+  color:var(--text2);font-family:var(--font-m);font-size:11px;
+  padding:6px 10px;border-radius:3px;outline:none;cursor:pointer;
+}
+.filter-label{font-size:11px;color:var(--mist2);}
+.btn-export{
+  margin-left:auto;font-family:var(--font-m);font-size:10px;
+  background:var(--gold-glow);border:1px solid var(--gold-dim);
+  color:var(--gold);padding:6px 14px;border-radius:3px;cursor:pointer;
+  letter-spacing:.06em;transition:background .2s;
+}
+.btn-export:hover{background:rgba(201,168,76,.12);}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:4px;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead{background:var(--bg3);}
+th{
+  font-family:var(--font-m);font-size:9px;color:var(--mist2);
+  letter-spacing:.12em;padding:10px 14px;text-align:left;
+  border-bottom:1px solid var(--border);white-space:nowrap;
+  cursor:pointer;user-select:none;
+}
+th:hover{color:var(--text2);}
+th.sort-asc::after{content:' ↑';color:var(--gold);}
+th.sort-desc::after{content:' ↓';color:var(--gold);}
+td{
+  padding:9px 14px;border-bottom:1px solid var(--border);
+  color:var(--text2);vertical-align:middle;
+  max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--bg3);}
+.badge{
+  display:inline-block;font-family:var(--font-m);font-size:9px;
+  padding:2px 7px;border-radius:2px;letter-spacing:.06em;
+}
+.b-pass{background:rgba(74,222,128,.1);color:var(--emerald);border:1px solid rgba(74,222,128,.25);}
+.b-fail{background:rgba(248,113,113,.1);color:var(--crimson);border:1px solid rgba(248,113,113,.25);}
+.b-pct{background:var(--gold-glow);color:var(--gold);border:1px solid var(--gold-dim);}
+.user-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:var(--font-m);font-size:11px;color:var(--amethyst);
+}
+.user-dot{width:6px;height:6px;border-radius:50%;background:var(--amethyst);}
+.score-bar-wrap{display:flex;align-items:center;gap:8px;}
+.score-bar{height:4px;background:var(--border);border-radius:2px;width:60px;flex-shrink:0;}
+.score-bar-fill{height:100%;border-radius:2px;background:var(--emerald);}
+.score-bar-fill.mid{background:var(--gold);}
+.score-bar-fill.low{background:var(--crimson);}
+
+/* ── EMPTY ── */
+.tbl-empty{
+  text-align:center;padding:40px;
+  font-family:var(--font-m);font-size:11px;color:var(--mist);
+  letter-spacing:.08em;
+}
+
+/* ── PAGINATION ── */
+.pagination{display:flex;align-items:center;justify-content:space-between;margin-top:14px;}
+.pg-info{font-family:var(--font-m);font-size:10px;color:var(--mist2);}
+.pg-btns{display:flex;gap:4px;}
+.pg-btn{
+  background:var(--bg2);border:1px solid var(--border2);
+  color:var(--text2);font-family:var(--font-m);font-size:10px;
+  padding:4px 10px;border-radius:2px;cursor:pointer;
+  transition:border-color .2s,color .2s;
+}
+.pg-btn:hover:not(:disabled){border-color:var(--gold-dim);color:var(--gold);}
+.pg-btn:disabled{opacity:.35;cursor:default;}
+.pg-btn.active{border-color:var(--gold);color:var(--gold);}
+
+/* ── USER BREAKDOWN ── */
+.user-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;}
+.user-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:4px;padding:16px;
+  transition:border-color .2s;
+}
+.user-card:hover{border-color:var(--border2);}
+.uc-name{font-family:var(--font-m);font-size:12px;color:var(--amethyst);margin-bottom:10px;}
+.uc-row{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:6px;}
+.uc-val{color:var(--text);font-family:var(--font-m);}
+
+/* ── LOADING ── */
+.loading{
+  display:flex;align-items:center;justify-content:center;
+  padding:60px;flex-direction:column;gap:12px;
+}
+.spin{
+  width:24px;height:24px;border:2px solid var(--border2);
+  border-top-color:var(--gold);border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-txt{font-family:var(--font-m);font-size:11px;color:var(--mist);letter-spacing:.06em;}
+
+/* ── REFRESH ── */
+.tb-refresh{
+  font-family:var(--font-m);font-size:10px;
+  background:none;border:1px solid var(--border2);
+  color:var(--mist2);padding:4px 12px;border-radius:2px;cursor:pointer;
+  transition:color .2s,border-color .2s;
+}
+.tb-refresh:hover{color:var(--gold);border-color:var(--gold-dim);}
+</style>
+</head>
+<body>
+
+<!-- GATE (shown while checking auth) -->
+<div id="gate">
+  <div class="gate-title">✦ GRIMOIRE ADMIN</div>
+  <div class="gate-sub">Verifying credentials…</div>
+  <div class="gate-err" id="gate-err"></div>
+</div>
+
+<!-- MAIN SHELL -->
+<div id="shell">
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <div class="tb-left">
+      <span class="tb-logo">✦ GRIMOIRE</span>
+      <span class="tb-badge">ADMIN DASHBOARD</span>
+    </div>
+    <div class="tb-right">
+      <button class="tb-refresh" onclick="loadAll()">⟳ Refresh</button>
+      <span class="tb-user" id="tb-user"></span>
+      <button class="tb-logout" onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div id="main">
+    <div id="content">
+      <div class="loading"><div class="spin"></div><div class="loading-txt">Loading data…</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIGURE YOUR SUPABASE HERE
+// ══════════════════════════════════════════
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+// ══════════════════════════════════════════
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let allSubmissions = [];
+let allAttempts = [];
+let currentTab = 'labs';
+
+// sort state
+let labSort = { col: 'submitted_at', dir: 'desc' };
+let quizSort = { col: 'attempted_at', dir: 'desc' };
+
+// pagination
+let labPage = 1, quizPage = 1;
+const PAGE_SIZE = 20;
+
+// filters
+let labFilter = { user: '', problem: '', status: 'all' };
+let quizFilter = { user: '', quiz: '', status: 'all' };
+
+/* ── AUTH CHECK ── */
+async function init() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { showGateErr('Not logged in. Please log in to your main app first.'); return; }
+
+  const { data: adminRow } = await sb.from('admins').select('user_id').eq('user_id', session.user.id).single();
+  if (!adminRow) { showGateErr('Access denied — your account is not an admin.'); return; }
+
+  document.getElementById('tb-user').textContent = session.user.user_metadata?.full_name || session.user.email;
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('shell').style.display = 'flex';
+  await loadAll();
+}
+
+function showGateErr(msg) {
+  document.querySelector('#gate .gate-sub').textContent = '';
+  document.getElementById('gate-err').textContent = msg;
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  window.location.href = 'index.html';
+}
+
+/* ── DATA LOADING ── */
+async function loadAll() {
+  document.getElementById('content').innerHTML = '<div class="loading"><div class="spin"></div><div class="loading-txt">Loading grimoire records…</div></div>';
+
+  const [{ data: subs }, { data: attempts }] = await Promise.all([
+    sb.from('lab_submissions').select('*').order('submitted_at', { ascending: false }),
+    sb.from('quiz_attempts').select('*').order('attempted_at', { ascending: false })
+  ]);
+
+  allSubmissions = subs || [];
+  allAttempts = attempts || [];
+  labPage = 1; quizPage = 1;
+  render();
+}
+
+/* ── RENDER ── */
+function render() {
+  const uniqueUsers = new Set([...allSubmissions.map(s => s.username), ...allAttempts.map(a => a.username)]);
+  const passedSubs = allSubmissions.filter(s => s.passed).length;
+  const passedAttempts = allAttempts.filter(a => a.passed).length;
+
+  const html = `
+    <div class="sec-hd">Overview</div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-n gold-n">${uniqueUsers.size}</div><div class="stat-l">Total Students</div></div>
+      <div class="stat-card"><div class="stat-n violet-n">${allSubmissions.length}</div><div class="stat-l">Lab Submissions</div></div>
+      <div class="stat-card"><div class="stat-n green-n">${passedSubs}</div><div class="stat-l">Labs Passed</div></div>
+      <div class="stat-card"><div class="stat-n violet-n">${allAttempts.length}</div><div class="stat-l">Quiz Attempts</div></div>
+      <div class="stat-card"><div class="stat-n green-n">${passedAttempts}</div><div class="stat-l">Quizzes Passed</div></div>
+      <div class="stat-card"><div class="stat-n red-n">${allSubmissions.filter(s=>!s.passed).length + allAttempts.filter(a=>!a.passed).length}</div><div class="stat-l">Total Failures</div></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab ${currentTab==='labs'?'active':''}" onclick="switchTab('labs')">LAB SUBMISSIONS</button>
+      <button class="tab ${currentTab==='quizzes'?'active':''}" onclick="switchTab('quizzes')">QUIZ ATTEMPTS</button>
+      <button class="tab ${currentTab==='users'?'active':''}" onclick="switchTab('users')">BY STUDENT</button>
+    </div>
+
+    <div id="tab-content">${renderTab()}</div>
+  `;
+  document.getElementById('content').innerHTML = html;
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  labPage = 1; quizPage = 1;
+  render();
+}
+
+function renderTab() {
+  if (currentTab === 'labs') return renderLabsTab();
+  if (currentTab === 'quizzes') return renderQuizzesTab();
+  return renderUsersTab();
+}
+
+/* ── LABS TAB ── */
+function renderLabsTab() {
+  let rows = [...allSubmissions];
+
+  // filters
+  if (labFilter.user) rows = rows.filter(r => r.username.toLowerCase().includes(labFilter.user.toLowerCase()));
+  if (labFilter.problem) rows = rows.filter(r => (r.problem_title||'').toLowerCase().includes(labFilter.problem.toLowerCase()) || (r.lab_title||'').toLowerCase().includes(labFilter.problem.toLowerCase()));
+  if (labFilter.status !== 'all') rows = rows.filter(r => labFilter.status === 'pass' ? r.passed : !r.passed);
+
+  // sort
+  rows.sort((a, b) => {
+    let av = a[labSort.col], bv = b[labSort.col];
+    if (typeof av === 'string') av = av.toLowerCase(), bv = bv.toLowerCase();
+    if (av < bv) return labSort.dir === 'asc' ? -1 : 1;
+    if (av > bv) return labSort.dir === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const total = rows.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  labPage = Math.min(labPage, totalPages);
+  const paged = rows.slice((labPage - 1) * PAGE_SIZE, labPage * PAGE_SIZE);
+
+  return `
+    <div class="filters">
+      <input class="filter-input" placeholder="Search student…" style="width:160px" value="${labFilter.user}" oninput="labFilter.user=this.value;labPage=1;refreshTab()"/>
+      <input class="filter-input" placeholder="Search problem / lab…" style="width:200px" value="${labFilter.problem}" oninput="labFilter.problem=this.value;labPage=1;refreshTab()"/>
+      <select class="filter-select" onchange="labFilter.status=this.value;labPage=1;refreshTab()">
+        <option value="all" ${labFilter.status==='all'?'selected':''}>All</option>
+        <option value="pass" ${labFilter.status==='pass'?'selected':''}>Passed</option>
+        <option value="fail" ${labFilter.status==='fail'?'selected':''}>Failed</option>
+      </select>
+      <button class="btn-export" onclick="exportCSV('labs')">↓ Export CSV</button>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortLab('username')">Student</th>
+            <th onclick="sortLab('lab_title')">Lab</th>
+            <th onclick="sortLab('problem_title')">Problem</th>
+            <th onclick="sortLab('score')">Score</th>
+            <th onclick="sortLab('tc_passed')">Trials</th>
+            <th onclick="sortLab('passed')">Status</th>
+            <th onclick="sortLab('submitted_at')">Submitted</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${paged.length === 0
+            ? `<tr><td colspan="7"><div class="tbl-empty">✦ No records found</div></td></tr>`
+            : paged.map(r => {
+                const pct = r.max_score > 0 ? Math.round(r.score / r.max_score * 100) : 0;
+                const barCls = pct >= 70 ? '' : pct >= 40 ? 'mid' : 'low';
+                return `<tr>
+                  <td><span class="user-pill"><span class="user-dot"></span>${esc(r.username)}</span></td>
+                  <td title="${esc(r.lab_title)}">${esc(r.lab_title)}</td>
+                  <td title="${esc(r.problem_title)}">${esc(r.problem_title)}</td>
+                  <td>
+                    <div class="score-bar-wrap">
+                      <span>${r.score}/${r.max_score}</span>
+                      <div class="score-bar"><div class="score-bar-fill ${barCls}" style="width:${pct}%"></div></div>
+                      <span class="badge b-pct">${pct}%</span>
+                    </div>
+                  </td>
+                  <td>${r.tc_passed}/${r.tc_total}</td>
+                  <td><span class="badge ${r.passed?'b-pass':'b-fail'}">${r.passed?'✦ PASS':'✗ FAIL'}</span></td>
+                  <td>${fmtDate(r.submitted_at)}</td>
+                </tr>`;
+              }).join('')}
+        </tbody>
+      </table>
+    </div>
+    ${renderPagination(labPage, totalPages, total, 'labPage')}
+  `;
+}
+
+function sortLab(col) {
+  if (labSort.col === col) labSort.dir = labSort.dir === 'asc' ? 'desc' : 'asc';
+  else { labSort.col = col; labSort.dir = 'desc'; }
+  refreshTab();
+}
+
+/* ── QUIZZES TAB ── */
+function renderQuizzesTab() {
+  let rows = [...allAttempts];
+  if (quizFilter.user) rows = rows.filter(r => r.username.toLowerCase().includes(quizFilter.user.toLowerCase()));
+  if (quizFilter.quiz) rows = rows.filter(r => (r.quiz_title||'').toLowerCase().includes(quizFilter.quiz.toLowerCase()));
+  if (quizFilter.status !== 'all') rows = rows.filter(r => quizFilter.status === 'pass' ? r.passed : !r.passed);
+
+  rows.sort((a, b) => {
+    let av = a[quizSort.col], bv = b[quizSort.col];
+    if (typeof av === 'string') av = av.toLowerCase(), bv = bv.toLowerCase();
+    if (av < bv) return quizSort.dir === 'asc' ? -1 : 1;
+    if (av > bv) return quizSort.dir === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const total = rows.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  quizPage = Math.min(quizPage, totalPages);
+  const paged = rows.slice((quizPage - 1) * PAGE_SIZE, quizPage * PAGE_SIZE);
+
+  return `
+    <div class="filters">
+      <input class="filter-input" placeholder="Search student…" style="width:160px" value="${quizFilter.user}" oninput="quizFilter.user=this.value;quizPage=1;refreshTab()"/>
+      <input class="filter-input" placeholder="Search quiz…" style="width:200px" value="${quizFilter.quiz}" oninput="quizFilter.quiz=this.value;quizPage=1;refreshTab()"/>
+      <select class="filter-select" onchange="quizFilter.status=this.value;quizPage=1;refreshTab()">
+        <option value="all" ${quizFilter.status==='all'?'selected':''}>All</option>
+        <option value="pass" ${quizFilter.status==='pass'?'selected':''}>Passed</option>
+        <option value="fail" ${quizFilter.status==='fail'?'selected':''}>Failed</option>
+      </select>
+      <button class="btn-export" onclick="exportCSV('quizzes')">↓ Export CSV</button>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortQuiz('username')">Student</th>
+            <th onclick="sortQuiz('quiz_title')">Quiz</th>
+            <th onclick="sortQuiz('score')">Score</th>
+            <th onclick="sortQuiz('passed')">Status</th>
+            <th onclick="sortQuiz('attempted_at')">Attempted</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${paged.length === 0
+            ? `<tr><td colspan="5"><div class="tbl-empty">✦ No records found</div></td></tr>`
+            : paged.map(r => {
+                const pct = r.total > 0 ? Math.round(r.score / r.total * 100) : 0;
+                const barCls = pct >= 70 ? '' : pct >= 40 ? 'mid' : 'low';
+                return `<tr>
+                  <td><span class="user-pill"><span class="user-dot"></span>${esc(r.username)}</span></td>
+                  <td title="${esc(r.quiz_title)}">${esc(r.quiz_title)}</td>
+                  <td>
+                    <div class="score-bar-wrap">
+                      <span>${r.score}/${r.total}</span>
+                      <div class="score-bar"><div class="score-bar-fill ${barCls}" style="width:${pct}%"></div></div>
+                      <span class="badge b-pct">${pct}%</span>
+                    </div>
+                  </td>
+                  <td><span class="badge ${r.passed?'b-pass':'b-fail'}">${r.passed?'✦ PASS':'✗ FAIL'}</span></td>
+                  <td>${fmtDate(r.attempted_at)}</td>
+                </tr>`;
+              }).join('')}
+        </tbody>
+      </table>
+    </div>
+    ${renderPagination(quizPage, totalPages, total, 'quizPage')}
+  `;
+}
+
+function sortQuiz(col) {
+  if (quizSort.col === col) quizSort.dir = quizSort.dir === 'asc' ? 'desc' : 'asc';
+  else { quizSort.col = col; quizSort.dir = 'desc'; }
+  refreshTab();
+}
+
+/* ── USERS TAB ── */
+function renderUsersTab() {
+  const users = {};
+  allSubmissions.forEach(s => {
+    if (!users[s.username]) users[s.username] = { labs: [], quizzes: [] };
+    users[s.username].labs.push(s);
+  });
+  allAttempts.forEach(a => {
+    if (!users[a.username]) users[a.username] = { labs: [], quizzes: [] };
+    users[a.username].quizzes.push(a);
+  });
+
+  const cards = Object.entries(users).map(([name, data]) => {
+    const labTotal = data.labs.length;
+    const labPassed = data.labs.filter(l => l.passed).length;
+    const labPts = data.labs.reduce((a, l) => a + l.score, 0);
+    const labMaxPts = data.labs.reduce((a, l) => a + l.max_score, 0);
+    const quizTotal = data.quizzes.length;
+    const quizPassed = data.quizzes.filter(q => q.passed).length;
+    const lastActive = [...data.labs.map(l => l.submitted_at), ...data.quizzes.map(q => q.attempted_at)]
+      .sort().pop();
+
+    return `
+      <div class="user-card">
+        <div class="uc-name">◆ ${esc(name)}</div>
+        <div class="uc-row"><span>Lab submissions</span><span class="uc-val">${labTotal}</span></div>
+        <div class="uc-row"><span>Labs passed</span><span class="uc-val" style="color:var(--emerald)">${labPassed}</span></div>
+        <div class="uc-row"><span>Lab points</span><span class="uc-val">${labPts} / ${labMaxPts}</span></div>
+        <div class="uc-row"><span>Quiz attempts</span><span class="uc-val">${quizTotal}</span></div>
+        <div class="uc-row"><span>Quizzes passed</span><span class="uc-val" style="color:var(--emerald)">${quizPassed}</span></div>
+        <div class="uc-row"><span>Last active</span><span class="uc-val" style="font-size:10px;color:var(--mist2)">${lastActive ? fmtDate(lastActive) : '—'}</span></div>
+      </div>`;
+  });
+
+  if (cards.length === 0) return `<div class="tbl-empty">✦ No student data yet</div>`;
+
+  return `<div class="user-list">${cards.join('')}</div>`;
+}
+
+/* ── PAGINATION ── */
+function renderPagination(page, totalPages, total, varName) {
+  const start = (page - 1) * PAGE_SIZE + 1;
+  const end = Math.min(page * PAGE_SIZE, total);
+  const nums = [];
+  for (let i = Math.max(1, page - 2); i <= Math.min(totalPages, page + 2); i++) {
+    nums.push(`<button class="pg-btn${i===page?' active':''}" onclick="${varName}=${i};refreshTab()">${i}</button>`);
+  }
+  return `
+    <div class="pagination">
+      <span class="pg-info">Showing ${total===0?0:start}–${end} of ${total}</span>
+      <div class="pg-btns">
+        <button class="pg-btn" onclick="${varName}=Math.max(1,${varName}-1);refreshTab()" ${page<=1?'disabled':''}>‹</button>
+        ${nums.join('')}
+        <button class="pg-btn" onclick="${varName}=Math.min(${totalPages},${varName}+1);refreshTab()" ${page>=totalPages?'disabled':''}>›</button>
+      </div>
+    </div>`;
+}
+
+function refreshTab() {
+  document.getElementById('tab-content').innerHTML = renderTab();
+}
+
+/* ── EXPORT CSV ── */
+function exportCSV(type) {
+  let headers, rows;
+  if (type === 'labs') {
+    headers = ['username','lab_title','problem_title','score','max_score','tc_passed','tc_total','passed','submitted_at'];
+    rows = allSubmissions;
+  } else {
+    headers = ['username','quiz_title','score','total','passed','attempted_at'];
+    rows = allAttempts;
+  }
+  const csv = [headers.join(','), ...rows.map(r => headers.map(h => JSON.stringify(r[h] ?? '')).join(','))].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = `${type}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+/* ── HELPERS ── */
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) + ' ' +
+    d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+}
+
+/* ── BOOT ── */
+init();
+</script>
+</body>
+</html>
