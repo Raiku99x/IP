@@ -1,6 +1,4 @@
-/* ===== DISABLE COPY / PASTE + CONSOLE TRICKS ===== */
 (function() {
-  // Block copy, cut, paste on the whole page
   ['copy','cut','paste'].forEach(evt => {
     document.addEventListener(evt, e => {
       const tag = document.activeElement?.tagName;
@@ -10,10 +8,8 @@
     }, true);
   });
 
-  // Block right-click context menu
   document.addEventListener('contextmenu', e => e.preventDefault(), true);
 
-  // Nuke console methods so pasting via console is useless
   const noop = () => {};
   try {
     ['log','warn','error','info','debug','table','dir'].forEach(m => {
@@ -21,7 +17,6 @@
     });
   } catch(_) {}
 
-  // Detect DevTools open via size diff — if open, reload
   let devOpen = false;
   setInterval(() => {
     const threshold = 160;
