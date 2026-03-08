@@ -177,10 +177,18 @@ document.addEventListener('fullscreenchange',()=>{
   if(exit)exit.style.display=fs?'block':'none';
 });
 
-function openLbModal(){
-  // close dropdown
+async function openLbModal(){
   document.getElementById('user-dropdown-btn')?.classList.remove('open');
   document.getElementById('user-dropdown-menu')?.classList.remove('open');
+  const{data:s}=await sbClient.from('settings').select('value').eq('key','lb_enabled').single();
+  if(s&&s.value===false){
+    const toast=document.createElement('div');
+    toast.textContent='Leaderboard is currently disabled by your instructor.';
+    toast.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1208;border:1px solid var(--gold-dim);color:var(--gold);font-family:var(--font-m);font-size:11px;letter-spacing:.06em;padding:10px 20px;border-radius:3px;z-index:999999;box-shadow:0 4px 20px rgba(0,0,0,.5);pointer-events:none;';
+    document.body.appendChild(toast);
+    setTimeout(()=>toast.remove(),3000);
+    return;
+  }
   document.getElementById('lb-modal-overlay').style.display='flex';
   loadLbModal();
 }
