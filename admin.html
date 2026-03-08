@@ -590,8 +590,6 @@ async function saveExp(){
   else{msg.style.color='var(--green)';msg.textContent='✓ Saved!';const{data:p}=await sb.from('profiles').select('*').order('exp',{ascending:false});allProfiles=p||[];setTimeout(()=>{closeExpModal();rT();},700);}
 }
 
-}
-
 async function toggleLB(){
   lbEnabled=!lbEnabled;
   await sb.from('settings').upsert({key:'lb_enabled',value:lbEnabled});
