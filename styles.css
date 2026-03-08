@@ -195,7 +195,7 @@ body::before{
 
 @media (max-width: 700px) {
   .hero-rank-wrap {
-    right: 12px;
+    right: -12px;
     transform: translateY(-35%);
   }
   .hero-rank-icon {
