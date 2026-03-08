@@ -42,19 +42,19 @@ const QUIZ_ICONS={'quiz-pyreview-1':SVG_SNAKE,'quiz-controlflow-1':SVG_FORK,'qui
 
 
 const RANKS=[
-  {name:'Newbie II',  icon:'🐣', exp:0},
-  {name:'Newbie I',   icon:'🐣', exp:200},
-  {name:'Coder III',  icon:'💻', exp:500},
-  {name:'Coder II',   icon:'💻', exp:1000},
-  {name:'Coder I',    icon:'💻', exp:1800},
-  {name:'Developer III', icon:'🚀', exp:2800},
-  {name:'Developer II',  icon:'🚀', exp:4000},
-  {name:'Developer I',   icon:'🚀', exp:5500},
-  {name:'Legend IV',  icon:'👑', exp:6500},
-  {name:'Legend III', icon:'👑', exp:9000},
-  {name:'Legend II',  icon:'👑', exp:13000},
-  {name:'Legend I',   icon:'👑', exp:18000},
-  {name:'Sys Architect', icon:'👾', exp:25000},
+  {name:'Newbie II',     icon:'🐣', img:'rank-newbie.png',       exp:0},
+  {name:'Newbie I',      icon:'🐣', img:'rank-newbie.png',       exp:200},
+  {name:'Coder III',     icon:'💻', img:'rank-coder.png',        exp:500},
+  {name:'Coder II',      icon:'💻', img:'rank-coder.png',        exp:1000},
+  {name:'Coder I',       icon:'💻', img:'rank-coder.png',        exp:1800},
+  {name:'Developer III', icon:'🚀', img:'rank-developer.png',    exp:2800},
+  {name:'Developer II',  icon:'🚀', img:'rank-developer.png',    exp:4000},
+  {name:'Developer I',   icon:'🚀', img:'rank-developer.png',    exp:5500},
+  {name:'Legend IV',     icon:'👑', img:'rank-legend.png',       exp:6500},
+  {name:'Legend III',    icon:'👑', img:'rank-legend.png',       exp:9000},
+  {name:'Legend II',     icon:'👑', img:'rank-legend.png',       exp:13000},
+  {name:'Legend I',      icon:'👑', img:'rank-legend.png',       exp:18000},
+  {name:'Sys Architect', icon:'👾', img:'rank-sysarchitect.png', exp:25000},
 ];
 
 function getRank(exp){
@@ -201,7 +201,7 @@ function updateRankDisplay(exp){
 
   // hero
   const heroIcon=document.getElementById('hero-rank-icon');
-  if(heroIcon)heroIcon.textContent=rank.icon;
+  if(heroIcon)heroIcon.innerHTML=`<img src="${rank.img}" alt="${rank.name}" class="hero-rank-img">`;
   const heroName=document.getElementById('hero-rank-name');
   if(heroName)heroName.textContent=rank.name;
   const heroBar=document.getElementById('hero-rank-bar');
