@@ -189,6 +189,85 @@ document.addEventListener('fullscreenchange',()=>{
   if(exit)exit.style.display=fs?'block':'none';
 });
 
+function openLbModal(){
+  // close dropdown
+  document.getElementById('user-dropdown-btn')?.classList.remove('open');
+  document.getElementById('user-dropdown-menu')?.classList.remove('open');
+  document.getElementById('lb-modal-overlay').style.display='flex';
+  loadLbModal();
+}
+
+function closeLbModal(){
+  document.getElementById('lb-modal-overlay').style.display='none';
+}
+
+document.addEventListener('click',e=>{
+  const overlay=document.getElementById('lb-modal-overlay');
+  if(overlay&&e.target===overlay) closeLbModal();
+});
+
+async function loadLbModal(){
+  const list=document.getElementById('lb-modal-list');
+  list.innerHTML='<div style="font-family:var(--font-m);font-size:10px;color:var(--mist);padding:20px;text-align:center;">Summoning records…</div>';
+
+  const[{data:profiles},{data:labSubs},{data:quizAttempts}]=await Promise.all([
+    sbClient.from('profiles').select('id,exp').order('exp',{ascending:false}),
+    sbClient.from('lab_submissions').select('user_id,score,passed'),
+    sbClient.from('quiz_attempts').select('user_id,score,passed')
+  ]);
+
+  if(!profiles||!profiles.length){
+    list.innerHTML='<div style="font-family:var(--font-m);font-size:10px;color:var(--mist);padding:20px;text-align:center;">No data yet.</div>';
+    return;
+  }
+
+  const MEDALS=['🎖️','🥇','🥈','🥉'];
+  const ROW_COLORS=['rgba(201,168,76,0.08)','rgba(220,220,220,0.06)','rgba(205,127,50,0.06)','rgba(205,127,50,0.04)'];
+  const BORDER_COLORS=['var(--gold-dim)','rgba(180,180,180,0.3)','rgba(205,127,50,0.3)','rgba(205,127,50,0.2)'];
+
+  list.innerHTML=profiles.map((p,i)=>{
+    const isMe=currentUser&&p.id===currentUser.id;
+    const rank=getRank(p.exp||0);
+    const medal=i<4?MEDALS[i]:`<span style="font-size:10px;color:var(--mist);">#${i+1}</span>`;
+
+    // Lab stats for this user
+    const userLabs=(labSubs||[]).filter(s=>s.user_id===p.id);
+    const labPassed=userLabs.filter(s=>s.passed).length;
+    const labScore=userLabs.reduce((a,s)=>a+(s.score||0),0);
+
+    // Quiz stats for this user
+    const userQuizzes=(quizAttempts||[]).filter(a=>a.user_id===p.id);
+    const quizPassed=userQuizzes.filter(a=>a.passed).length;
+
+    const bg=isMe?'var(--gold-glow)':i<4?ROW_COLORS[i]:'var(--stone)';
+    const border=isMe?'var(--gold-dim)':i<4?BORDER_COLORS[i]:'var(--iron)';
+
+    return `<div style="display:grid;grid-template-columns:40px 70px 1fr 90px 80px 80px;align-items:center;gap:0;padding:10px 12px;border-radius:3px;border:1px solid ${border};background:${bg};">
+      <div style="font-size:16px;text-align:center;">${medal}</div>
+      <div style="font-family:var(--font-d);font-size:10px;color:${isMe?'var(--gold)':'var(--parchment)'};letter-spacing:.04em;">
+        User#${i+1}
+        ${isMe?'<div style="font-family:var(--font-m);font-size:8px;color:var(--gold);letter-spacing:.06em;">(you)</div>':''}
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <img src="${rank.img}" style="width:18px;height:18px;object-fit:contain;filter:drop-shadow(0 0 3px rgba(160,120,40,0.3));">
+        <span style="font-family:var(--font-m);font-size:9px;color:var(--mist);letter-spacing:.04em;">${rank.name}</span>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:var(--font-d);font-size:12px;font-weight:700;color:var(--gold);">${(p.exp||0).toLocaleString()}</div>
+        <div style="font-family:var(--font-m);font-size:8px;color:var(--mist);">EXP</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:var(--font-d);font-size:12px;color:var(--emerald);">${labPassed}</div>
+        <div style="font-family:var(--font-m);font-size:8px;color:var(--mist);">${labScore}pts</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:var(--font-d);font-size:12px;color:var(--violet);">${quizPassed}</div>
+        <div style="font-family:var(--font-m);font-size:8px;color:var(--mist);">passed</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 function toggleLeaderboard(){
   const panel=document.getElementById('lb-panel');
   const btn=document.getElementById('lb-toggle-btn');
