@@ -210,6 +210,13 @@ async function loadLbModal(){
   }
 
   const MEDALS=['🎖️','🥇','🥈','🥉'];
+const glowMap={
+  'Newbie':        'drop-shadow(0 0 3px rgba(180,100,30,0.3)) drop-shadow(0 0 6px rgba(180,100,30,0.15))',
+  'Coder':         'drop-shadow(0 0 5px rgba(200,200,210,0.55)) drop-shadow(0 0 12px rgba(200,200,210,0.25))',
+  'Developer':     'drop-shadow(0 0 8px rgba(220,140,40,0.7)) drop-shadow(0 0 18px rgba(220,140,40,0.35))',
+  'Legend':        'drop-shadow(0 0 10px rgba(40,180,220,0.85)) drop-shadow(0 0 22px rgba(40,180,220,0.45)) drop-shadow(0 0 38px rgba(40,180,220,0.2))',
+  'Sys Architect': 'drop-shadow(0 0 12px rgba(255,80,30,0.95)) drop-shadow(0 0 26px rgba(255,120,20,0.65)) drop-shadow(0 0 50px rgba(255,60,0,0.35))',
+};
   const ROW_COLORS=['rgba(201,168,76,0.08)','rgba(220,220,220,0.06)','rgba(205,127,50,0.06)','rgba(205,127,50,0.04)'];
   const BORDER_COLORS=['var(--gold-dim)','rgba(180,180,180,0.3)','rgba(205,127,50,0.3)','rgba(205,127,50,0.2)'];
 
@@ -233,11 +240,11 @@ async function loadLbModal(){
 return `<div style="display:grid;grid-template-columns:40px 70px 1fr 90px;align-items:center;gap:0;padding:10px 12px;border-radius:3px;border:1px solid ${border};background:${bg};">
       <div style="font-size:16px;text-align:center;">${medal}</div>
       <div style="font-family:var(--font-d);font-size:10px;color:${isMe?'var(--gold)':'var(--parchment)'};letter-spacing:.04em;">
-        User#${i+1}
+        User#${i}
         ${isMe?'<div style="font-family:var(--font-m);font-size:8px;color:var(--gold);letter-spacing:.06em;">(you)</div>':''}
       </div>
       <div style="display:flex;align-items:center;gap:6px;">
-        <img src="${rank.img}" style="width:18px;height:18px;object-fit:contain;filter:drop-shadow(0 0 3px rgba(160,120,40,0.3));">
+        <img src="${rank.img}" style="width:18px;height:18px;object-fit:contain;filter:${glowMap[Object.keys(glowMap).find(k=>rank.name.startsWith(k))||'Newbie']};">
         <span style="font-family:var(--font-m);font-size:9px;color:var(--mist);letter-spacing:.04em;">${rank.name}</span>
       </div>
       <div style="text-align:right;">
