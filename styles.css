@@ -184,7 +184,7 @@ body::before{
 }
 .hero-rank-wrap {
   position: absolute;
-  right: 20px;
+  right: 19px;
   top: 50%;
   transform: translateY(-40%);
   display: flex;
