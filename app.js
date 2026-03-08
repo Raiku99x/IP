@@ -690,9 +690,10 @@ function showQuestion(idx){
     inp.addEventListener('input',()=>btn.disabled=!inp.value.trim());
     inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&inp.value.trim())btn.click();});
     btn.addEventListener('click', async ()=>{
-          if(btn.disabled)return;
-          inp.disabled=true;btn.disabled=true;
-          await lockAndReveal(q,inp.value.trim(),null,fb,isLast,card,inp);
+      if(btn.disabled)return;
+      inp.disabled=true;btn.disabled=true;
+      await lockAndReveal(q,inp.value.trim(),null,fb,isLast,card,inp);
+    });
     row.appendChild(inp);row.appendChild(btn);
     body.appendChild(row);
     setTimeout(()=>inp.focus(),60);
