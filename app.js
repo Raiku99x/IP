@@ -183,7 +183,7 @@ async function openLbModal(){
   const{data:s}=await sbClient.from('settings').select('value').eq('key','lb_enabled').single();
   if(s&&s.value===false){
     const toast=document.createElement('div');
-    toast.textContent='Leaderboard is currently disabled by your instructor.';
+    toast.textContent="Does 'Leaderboard' actually exist/working? idk";
     toast.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1208;border:1px solid var(--gold-dim);color:var(--gold);font-family:var(--font-m);font-size:11px;letter-spacing:.06em;padding:10px 20px;border-radius:3px;z-index:999999;box-shadow:0 4px 20px rgba(0,0,0,.5);pointer-events:none;';
     document.body.appendChild(toast);
     setTimeout(()=>toast.remove(),3000);
