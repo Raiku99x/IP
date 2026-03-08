@@ -863,12 +863,12 @@ async function finishQuiz(){
   });
 
   // Update EXP
-  const expGained=correct*10;
+  const expGained=Math.min(correct,10);
+  await sbClient.rpc('add_exp', {amount: expGained});
   const{data:profile}=await sbClient.from('profiles').select('exp').eq('id',currentUser.id).single();
-  const newExp=(profile?.exp||0)+expGained;
-  const newRank=getRank(newExp).name;
-  await sbClient.from('profiles').update({exp:newExp,rank:newRank}).eq('id',currentUser.id);
-  updateRankDisplay(newExp);
+  const newRank=getRank(profile?.exp||0).name;
+  await sbClient.from('profiles').update({rank:newRank}).eq('id',currentUser.id);
+  updateRankDisplay(profile?.exp||0);
   
   $('quiz-prog-fill').style.width='100%';
   $('quiz-progress-text').textContent=`${total} / ${total}`;
@@ -1103,12 +1103,12 @@ $('btn-submit').addEventListener('click',async()=>{
     tc_total:res.length
   });
 
-  const expGained=pts*5;
+  const expGained=Math.min(pts,10);
+  await sbClient.rpc('add_exp', {amount: expGained});
   const{data:profile}=await sbClient.from('profiles').select('exp').eq('id',currentUser.id).single();
-  const newExp=(profile?.exp||0)+expGained;
-  const newRank=getRank(newExp).name;
-  await sbClient.from('profiles').update({exp:newExp,rank:newRank}).eq('id',currentUser.id);
-  updateRankDisplay(newExp);
+  const newRank=getRank(profile?.exp||0).name;
+  await sbClient.from('profiles').update({rank:newRank}).eq('id',currentUser.id);
+  updateRankDisplay(profile?.exp||0);
   
   const allPassed=res.every(r=>r.pass);
   if(allPassed){
