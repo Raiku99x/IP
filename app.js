@@ -254,7 +254,7 @@ return `<div style="display:grid;grid-template-columns:40px 70px 1fr 90px;align-
       </div>
       <div style="text-align:right;">
         <div style="font-family:var(--font-d);font-size:12px;font-weight:700;color:var(--gold);">${(p.exp||0).toLocaleString()}</div>
-        <div style="font-family:var(--font-m);font-size:8px;color:var(--mist);">EXP</div>
+        <div style="font-family:var(--font-m);font-size:8px;color:var(--mist);">Rank EXP</div>
       </div>
     </div>`;
   }).join('');
