@@ -382,8 +382,8 @@ let expModalProfile=null;
 async function init(){
   const{data:{session}}=await sb.auth.getSession();
   if(!session){showGateErr('Not logged in. Please log in via the main app first.');return;}
-  const{data:a}=await sb.from('admins').select('user_id').eq('user_id',session.user.id).single();
-  if(!a){showGateErr('Access denied — your account is not an admin.');return;}
+const{data:a,error:aErr}=await sb.from('admins').select('user_id').eq('user_id',session.user.id).maybeSingle();
+if(aErr||!a||a.user_id!==session.user.id){showGateErr('Access denied — your account is not an admin.');return;}
   document.getElementById('tb-user').textContent=session.user.user_metadata?.full_name||session.user.email;
   document.getElementById('gate').style.display='none';
   document.getElementById('shell').style.display='flex';
@@ -561,6 +561,13 @@ function closeExpModal(){document.getElementById('exp-modal').classList.remove('
 async function saveExp(){
   if(!expModalProfile)return;
   const newExp=parseInt(document.getElementById('exp-modal-val').value)||0;
+  if(newExp<0||newExp>999999){
+    document.getElementById('exp-modal-msg').style.color='var(--red)';
+    document.getElementById('exp-modal-msg').textContent='⚠ EXP must be between 0 and 999,999.';
+    return;
+  }
+  const cur=expModalProfile.exp||0;
+  if(Math.abs(newExp-cur)>5000&&!confirm(`You're changing EXP by ${Math.abs(newExp-cur).toLocaleString()} points. Are you sure?`))return;
   const rankOverride=document.getElementById('exp-modal-rank').value.trim()||getRank(newExp).name;
   const msg=document.getElementById('exp-modal-msg');
   msg.style.color='var(--muted)';msg.textContent='Saving…';
@@ -677,8 +684,9 @@ async function uploadContent(){
   else{msg.style.color='var(--green)';msg.textContent='✓ Uploaded!';uploadedJSON=null;document.getElementById('upload-file').value='';document.getElementById('upload-filename').textContent='No file chosen';document.getElementById('upload-preview').style.display='none';document.getElementById('upload-btn').style.display='none';await loadAll();}
 }
 async function toggleActive(table,id,current){await sb.from(table).update({active:!current}).eq('id',id);await loadAll();}
-async function deleteContent(table,id){if(!confirm('Delete this entry? This cannot be undone.'))return;await sb.from(table).delete().eq('id',id);await loadAll();}
-
+async function deleteContent(table,id){
+  const title=event?.target?.closest('tr')?.querySelector('td')?.textContent||'this entry';
+  if(!window.confirm(`Permanently delete "${title}"? This cannot be undone.`))return;
 function rPg(page,tp,tot,vn){
   const s=(page-1)*PG+1,e=Math.min(page*PG,tot);
   const nums=[];for(let i=Math.max(1,page-2);i<=Math.min(tp,page+2);i++)nums.push(`<button class="pg-btn${i===page?' active':''}" onclick="${vn}=${i};rT()">${i}</button>`);
