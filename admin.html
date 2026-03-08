@@ -686,7 +686,10 @@ async function uploadContent(){
 async function toggleActive(table,id,current){await sb.from(table).update({active:!current}).eq('id',id);await loadAll();}
 async function deleteContent(table,id){
   const title=event?.target?.closest('tr')?.querySelector('td')?.textContent||'this entry';
-  if(!window.confirm(`Permanently delete "${title}"? This cannot be undone.`))return;
+if(!window.confirm(`Permanently delete "${title}"? This cannot be undone.`))return;
+  await sb.from(table).delete().eq('id',id);
+  await loadAll();
+}
 function rPg(page,tp,tot,vn){
   const s=(page-1)*PG+1,e=Math.min(page*PG,tot);
   const nums=[];for(let i=Math.max(1,page-2);i<=Math.min(tp,page+2);i++)nums.push(`<button class="pg-btn${i===page?' active':''}" onclick="${vn}=${i};rT()">${i}</button>`);
