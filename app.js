@@ -96,12 +96,12 @@ async function loadJSON(){
   try{
     const [{data:labRows,error:labErr},{data:quizRows,error:quizErr}]=await Promise.all([
       sbClient.from('labs').select('data').eq('active',true).order('created_at'),
-      sbClient.from('quizzes').select('data').eq('active',true).order('created_at')
+      sbClient.rpc('get_quizzes_safe')
     ]);
     if(labErr)throw new Error(labErr.message);
     if(quizErr)throw new Error(quizErr.message);
     const labs=(labRows||[]).map(r=>r.data);
-    const quizzes=(quizRows||[]).map(r=>r.data);
+    const quizzes=quizRows||[];
     DATA={course:{name:'BSCS 1B — Python Practice',instructor:'Self-Study'},labs};
     QUIZDATA={quizzes};
   }catch(e){alert('Could not load content.\n\n'+e.message);}
@@ -674,7 +674,7 @@ function showQuestion(idx){
       const c=document.createElement('div');
       c.className='choice';c.dataset.val=ch;
       c.innerHTML=`<div class="choice-dot">◆</div><span class="choice-label">${escHtml(String(ch))}</span>`;
-      c.addEventListener('click',()=>{
+      c.addEventListener('click', async ()=>{
         if(c.classList.contains('locked'))return;
         lockAndReveal(q,ch,div,fb,isLast,card);
       });
@@ -689,11 +689,10 @@ function showQuestion(idx){
     btn.className='fill-confirm-btn';btn.textContent='Confirm';btn.disabled=true;
     inp.addEventListener('input',()=>btn.disabled=!inp.value.trim());
     inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&inp.value.trim())btn.click();});
-    btn.addEventListener('click',()=>{
-      if(btn.disabled)return;
-      inp.disabled=true;btn.disabled=true;
-      lockAndReveal(q,inp.value.trim(),null,fb,isLast,card,inp);
-    });
+    btn.addEventListener('click', async ()=>{
+          if(btn.disabled)return;
+          inp.disabled=true;btn.disabled=true;
+          await lockAndReveal(q,inp.value.trim(),null,fb,isLast,card,inp);
     row.appendChild(inp);row.appendChild(btn);
     body.appendChild(row);
     setTimeout(()=>inp.focus(),60);
@@ -732,9 +731,14 @@ Do NOT start with "Great job" or any filler praise. Just explain the concept.`;
   }
 }
 
-function lockAndReveal(q, userAns, choicesDiv, fb, isLast, card, fillInp=null){
-  const correctAns=q.answer.toString().trim();
-  const isCorrect=userAns.toLowerCase()===correctAns.toLowerCase();
+async function lockAndReveal(q, userAns, choicesDiv, fb, isLast, card, fillInp=null){
+  const{data:result}=await sbClient.rpc('check_answer',{
+    quiz_id: activeQuiz.id.toString(),
+    question_id: q.id.toString(),
+    user_answer: userAns
+  });
+  const correctAns=result?.correct_answer||'';
+  const isCorrect=result?.correct||false;
 
   qzResults.push({qid:q.id,correct:isCorrect,userAns,correctAns});
   quizState[activeQuiz.id].answers[q.id]=userAns;
