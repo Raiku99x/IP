@@ -377,6 +377,7 @@ let labSort={col:'submitted_at',dir:'desc'},quizSort={col:'attempted_at',dir:'de
 let labPage=1,quizPage=1;
 const PG=25;
 let labF={user:'',problem:'',status:'all'},quizF={user:'',quiz:'',status:'all'};
+let lbEnabled=true;
 let expModalProfile=null;
 
 async function init(){
@@ -402,6 +403,8 @@ async function loadAll(){
     sb.from('profiles').select('*').order('exp',{ascending:false})
   ]);
   allSubs=s||[];allAttempts=a||[];allLabs=l||[];allQuizzes=q||[];allProfiles=p||[];
+    const{data:lbSetting}=await sb.from('settings').select('value').eq('key','lb_enabled').single();
+    if(lbSetting)lbEnabled=lbSetting.value;
   labPage=1;quizPage=1;
   document.getElementById('last-updated').textContent='Updated '+new Date().toLocaleTimeString();
   render();
@@ -516,6 +519,7 @@ function rStudents(){
 }
 
 function rLeaderboard(){
+  if(!lbEnabled)return`<div class="section-card"><div style="text-align:center;padding:60px 20px;"><div style="font-size:32px;margin-bottom:12px;">🔒</div><div style="font-family:var(--font-b);font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px;">Leaderboard Disabled</div><div style="font-family:var(--font-m);font-size:11px;color:var(--muted);margin-bottom:20px;">The leaderboard is currently hidden from students.</div><button class="btn btn-green" onclick="toggleLB()">✓ Enable Leaderboard</button></div></div>`;
   const u={};
   allSubs.forEach(s=>{if(!u[s.username])u[s.username]={lpts:0,lmax:0,lpassed:0,ltotal:0,qtotal:0,qpassed:0,qpts:0,qmax:0};u[s.username].lpts+=(s.score||0);u[s.username].lmax+=(s.max_score||0);u[s.username].ltotal++;if(s.passed)u[s.username].lpassed++;});
   allAttempts.forEach(a=>{if(!u[a.username])u[a.username]={lpts:0,lmax:0,lpassed:0,ltotal:0,qtotal:0,qpassed:0,qpts:0,qmax:0};u[a.username].qtotal++;u[a.username].qpts+=(a.score||0);u[a.username].qmax+=(a.total||0);if(a.passed)u[a.username].qpassed++;});
@@ -529,7 +533,14 @@ function rLeaderboard(){
   const labRows=labR.map((u,i)=>`<div class="lb-row ${cl(i)}"><div class="lb-rank ${rc(i)}">${medal(i)}</div><div class="uav">${u.n.charAt(0).toUpperCase()}</div><div class="lb-info"><div class="lb-name">${esc(u.n)}</div><div class="lb-mini"><span class="badge b-pass">${u.lpassed} passed</span><span class="badge b-pct">${u.lpct}%</span><span class="badge b-muted">${u.ltotal} tries</span></div></div><div class="lb-score"><div class="lb-score-main lab">${u.lpts}</div><div class="lb-score-sub">pts</div></div></div>`).join('');
   const quizRows=quizR.map((u,i)=>`<div class="lb-row ${cl(i)}"><div class="lb-rank ${rc(i)}">${medal(i)}</div><div class="uav" style="background:var(--violet-lt);color:var(--violet);border-color:var(--violet-bd)">${u.n.charAt(0).toUpperCase()}</div><div class="lb-info"><div class="lb-name">${esc(u.n)}</div><div class="lb-mini"><span class="badge b-violet">${u.qtotal} attempts</span><span class="badge b-pct">${u.qpct}%</span></div></div><div class="lb-score"><div class="lb-score-main quiz">${u.qpassed}</div><div class="lb-score-sub">passed</div></div></div>`).join('');
   const comboRows=comboR.map((u,i)=>`<div class="combo-row ${cl(i)}"><div class="lb-rank ${rc(i)}">${medal(i)}</div><div class="uav">${u.n.charAt(0).toUpperCase()}</div><div style="font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--text);min-width:100px">${esc(u.n)}</div><div class="combo-stats"><span class="badge b-pct">${u.lpts} pts</span><span class="badge b-pass">${u.lpct}%</span><span class="badge b-violet">${u.qpassed}/${u.qtotal}</span><span class="badge b-blue">${u.qpct}%</span></div><div style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--green);flex-shrink:0">${u.combo}</div></div>`).join('');
-  return`<div class="lb-split"><div class="lb-card"><div class="lb-card-hd"><div class="lb-card-title">Lab Leaderboard</div><div class="lb-card-sub">Ranked by total lab points</div></div><div class="lb-list">${labRows||'<div class="tbl-empty">No lab data</div>'}</div></div><div class="lb-card"><div class="lb-card-hd"><div class="lb-card-title">Quiz Leaderboard</div><div class="lb-card-sub">Ranked by quizzes passed</div></div><div class="lb-list">${quizRows||'<div class="tbl-empty">No quiz data</div>'}</div></div></div>
+  return`
+  <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+    <button class="btn btn-red" onclick="toggleLB()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Disable Leaderboard
+    </button>
+  </div>
+  <div class="lb-split"><div class="lb-card"><div class="lb-card-hd"><div class="lb-card-title">Lab Leaderboard</div><div class="lb-card-sub">Ranked by total lab points</div></div><div class="lb-list">${labRows||'<div class="tbl-empty">No lab data</div>'}</div></div><div class="lb-card"><div class="lb-card-hd"><div class="lb-card-title">Quiz Leaderboard</div><div class="lb-card-sub">Ranked by quizzes passed</div></div><div class="lb-list">${quizRows||'<div class="tbl-empty">No quiz data</div>'}</div></div></div>
   <div class="section-card"><div class="section-hd"><div class="section-hd-left"><div class="section-title">Combined Ranking</div><span class="section-count">${comboR.length} students</span></div><span style="font-family:var(--font-m);font-size:9px;color:var(--muted)">lab pts + (quiz passes × 10)</span></div><div class="combo-lb">${comboRows||'<div class="tbl-empty">No data</div>'}</div></div>`;
 }
 
@@ -566,6 +577,11 @@ async function saveExp(){
     document.getElementById('exp-modal-msg').textContent='⚠ EXP must be between 0 and 999,999.';
     return;
   }
+async function toggleLB(){
+  lbEnabled=!lbEnabled;
+  await sb.from('settings').upsert({key:'lb_enabled',value:lbEnabled});
+  rT();
+}
   const cur=expModalProfile.exp||0;
   if(Math.abs(newExp-cur)>5000&&!confirm(`You're changing EXP by ${Math.abs(newExp-cur).toLocaleString()} points. Are you sure?`))return;
   const rankOverride=document.getElementById('exp-modal-rank').value.trim()||getRank(newExp).name;
