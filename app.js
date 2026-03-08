@@ -260,49 +260,6 @@ return `<div style="display:grid;grid-template-columns:40px 70px 1fr 90px;align-
   }).join('');
 }
 
-function toggleLeaderboard(){
-  const panel=document.getElementById('lb-panel');
-  const btn=document.getElementById('lb-toggle-btn');
-  const isOpen=panel.style.display!=='none';
-  if(isOpen){
-    panel.style.display='none';
-    btn.textContent='⬡ Leaderboard';
-  } else {
-    panel.style.display='block';
-    btn.textContent='✕ Close';
-    loadLeaderboard();
-  }
-}
-
-async function loadLeaderboard(){
-  const list=document.getElementById('lb-list');
-  list.innerHTML='<div style="font-family:var(--font-m);font-size:10px;color:var(--mist);padding:8px 4px;">Loading…</div>';
-  const{data:profiles}=await sbClient.from('profiles').select('id,exp').order('exp',{ascending:false});
-  if(!profiles||!profiles.length){
-    list.innerHTML='<div style="font-family:var(--font-m);font-size:10px;color:var(--mist);padding:8px 4px;">No data yet.</div>';
-    return;
-  }
-  const MEDALS=['🎖️','🥇','🥈','🥉'];
-  list.innerHTML=profiles.map((p,i)=>{
-    const isMe=currentUser&&p.id===currentUser.id;
-    const rank=getRank(p.exp||0);
-    const medal=i<4?MEDALS[i]:`<span style="font-family:var(--font-m);font-size:10px;color:var(--mist);">#${i+1}</span>`;
-    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:3px;border:1px solid ${isMe?'var(--gold-dim)':'var(--iron)'};background:${isMe?'var(--gold-glow)':'var(--stone)'};transition:all .15s;">
-      <div style="width:24px;text-align:center;font-size:14px;flex-shrink:0;">${medal}</div>
-      <div style="flex:1;min-width:0;">
-      <div style="font-family:var(--font-d);font-size:11px;color:${isMe?'var(--gold)':'var(--parchment)'};letter-spacing:.04em;">
-          User#${i+1}${isMe?' <span style="font-family:var(--font-m);font-size:8px;color:var(--gold);letter-spacing:.08em;">(you)</span>':''}
-        </div>
-        <div style="font-family:var(--font-m);font-size:9px;color:var(--mist);margin-top:1px;">${rank.name}</div>
-      </div>
-      <div style="text-align:right;flex-shrink:0;">
-        <div style="font-family:var(--font-d);font-size:13px;color:var(--gold);font-weight:700;">${(p.exp||0).toLocaleString()}</div>
-        <div style="font-family:var(--font-m);font-size:8px;color:var(--mist);">EXP</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
 function updateRankDisplay(exp){
   const rank=getRank(exp);
   const next=getNextRank(exp);
