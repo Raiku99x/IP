@@ -40,6 +40,34 @@ const SVG_RINGS=`<svg width="20" height="18" viewBox="0 0 26 18" fill="none" str
 const SVG_DEFAULT_QUIZ=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="1.4" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="var(--violet)"/></svg>`;
 const QUIZ_ICONS={'quiz-pyreview-1':SVG_SNAKE,'quiz-controlflow-1':SVG_FORK,'quiz-lists-1':SVG_LIST,'quiz-tuples-1':SVG_DIAMOND,'quiz-sets-1':SVG_RINGS};
 
+
+const RANKS=[
+  {name:'Newbie II',  icon:'🐣', exp:0},
+  {name:'Newbie I',   icon:'🐣', exp:200},
+  {name:'Coder III',  icon:'💻', exp:500},
+  {name:'Coder II',   icon:'💻', exp:1000},
+  {name:'Coder I',    icon:'💻', exp:1800},
+  {name:'Developer III', icon:'🚀', exp:2800},
+  {name:'Developer II',  icon:'🚀', exp:4000},
+  {name:'Developer I',   icon:'🚀', exp:5500},
+  {name:'Legend IV',  icon:'👑', exp:6500},
+  {name:'Legend III', icon:'👑', exp:9000},
+  {name:'Legend II',  icon:'👑', exp:13000},
+  {name:'Legend I',   icon:'👑', exp:18000},
+  {name:'Sys Architect', icon:'👾', exp:25000},
+];
+
+function getRank(exp){
+  let rank=RANKS[0];
+  for(const r of RANKS){ if(exp>=r.exp) rank=r; }
+  return rank;
+}
+
+function getNextRank(exp){
+  for(const r of RANKS){ if(exp<r.exp) return r; }
+  return null;
+}
+
 /* ===== CORE STATE ===== */
 let DATA=null,QUIZDATA=null,pyodide=null,cm=null,activeProblem=null,activeQuiz=null;
 const state={},quizState={};
@@ -160,6 +188,28 @@ document.addEventListener('fullscreenchange',()=>{
   if(enter)enter.style.display=fs?'none':'block';
   if(exit)exit.style.display=fs?'block':'none';
 });
+
+function updateRankDisplay(exp){
+  const rank=getRank(exp);
+  const next=getNextRank(exp);
+  const av=document.getElementById('user-avatar');
+  if(av)av.textContent=rank.icon;
+  const rankEl=document.getElementById('user-rank-display');
+  if(rankEl)rankEl.textContent=rank.name;
+  const expEl=document.getElementById('user-exp-display');
+  if(expEl)expEl.textContent=next?`${exp} / ${next.exp} EXP`:`${exp} EXP — MAX`;
+}
+
+async function loadUserExp(){
+  if(!currentUser)return;
+  const{data:profile}=await sbClient.from('profiles').select('exp,rank').eq('id',currentUser.id).single();
+  if(!profile){
+    await sbClient.from('profiles').upsert({id:currentUser.id,exp:0,rank:'Newbie II'});
+    updateRankDisplay(0);
+  } else {
+    updateRankDisplay(profile.exp||0);
+  }
+}
 
 /* ===== NAVIGATION ===== */
 function showDash(){
@@ -711,6 +761,14 @@ async function finishQuiz(){
     passed:pass
   });
 
+  // Update EXP
+  const expGained=correct*10;
+  const{data:profile}=await sbClient.from('profiles').select('exp').eq('id',currentUser.id).single();
+  const newExp=(profile?.exp||0)+expGained;
+  const newRank=getRank(newExp).name;
+  await sbClient.from('profiles').update({exp:newExp,rank:newRank}).eq('id',currentUser.id);
+  updateRankDisplay(newExp);
+  
   $('quiz-prog-fill').style.width='100%';
   $('quiz-progress-text').textContent=`${total} / ${total}`;
 
@@ -944,6 +1002,13 @@ $('btn-submit').addEventListener('click',async()=>{
     tc_total:res.length
   });
 
+  const expGained=pts*5;
+  const{data:profile}=await sbClient.from('profiles').select('exp').eq('id',currentUser.id).single();
+  const newExp=(profile?.exp||0)+expGained;
+  const newRank=getRank(newExp).name;
+  await sbClient.from('profiles').update({exp:newExp,rank:newRank}).eq('id',currentUser.id);
+  updateRankDisplay(newExp);
+  
   const allPassed=res.every(r=>r.pass);
   if(allPassed){
     const total=res.length;
@@ -1054,7 +1119,8 @@ async function initHeavy(){
   bar.style.transition='width .6s ease';
   bar.style.width='100%';
   txt.textContent='The dungeon is ready.';
-  setTimeout(()=>{$('loading-overlay').classList.add('hidden');showDash();},700);
+  await loadUserExp();
+  setTimeout(()=>{ $('loading-overlay').classList.add('hidden'); showDash(); }, 700);
 }
 
 (async()=>{
