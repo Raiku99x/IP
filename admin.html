@@ -3,469 +3,306 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Admin — Grimoire Dashboard</title>
+<title>Admin — Slytherin Classroom</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root {
-  /* Core palette — midtone parchment theme */
-  --void: #1e1c18;
-  --dungeon: #252219;
-  --stone: #2c2820;
-  --iron: #3a3528;
-  --iron2: #4a4435;
-  --mist: #8a8070;
-  --parchment: #e8e0d0;
-  --parchment2: #c8bfaa;
-  --scroll: #f0e8d8;
+:root{
+  --bg:#f6faf6;--bg2:#eef5ee;--surface:#fff;--surface2:#f4f9f4;
+  --border:#e0ebe0;--border2:#ccdccc;
+  --text:#141f14;--text2:#344834;--muted:#607860;--subtle:#98b098;
+  --green:#1a7a3c;--green2:#22a050;--green-lt:#e8f5ec;--green-bd:#9ecfb0;--green-dk:#0f5228;
+  --teal:#147a65;--teal-lt:#e5f3f0;--teal-bd:#8dc4ba;
+  --red:#b83232;--red-lt:#fdf0f0;--red-bd:#e0a8a8;
+  --amber:#a06010;--amber-lt:#fdf6ea;--amber-bd:#d4b070;
+  --blue:#1e5fa0;--blue-lt:#edf4fc;--blue-bd:#8ab8e0;
+  --violet:#6040a8;--violet-lt:#f0edf8;--violet-bd:#b0a0d8;
+  --font-d:'Instrument Serif',serif;
+  --font-b:'Plus Jakarta Sans',sans-serif;
+  --font-m:'JetBrains Mono',monospace;
+  --r:10px;--rs:6px;
+  --sh:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
+  --sh2:0 2px 8px rgba(0,0,0,.08),0 12px 32px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-b);font-size:14px;line-height:1.55;min-height:100vh}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:var(--subtle)}
 
-  /* Gold */
-  --gold: #c9a84c;
-  --gold-dim: #7a6030;
-  --gold-glow: rgba(201,168,76,.12);
-  --gold-bright: #e2c06a;
+/* GATE */
+#gate{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:10px}
+.gate-crest{font-family:var(--font-d);font-size:28px;color:var(--green)}
+.gate-crest em{font-style:italic;color:var(--green2)}
+.gate-sub{font-family:var(--font-m);font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.gate-err{font-family:var(--font-m);font-size:11px;color:var(--red);max-width:340px;text-align:center;padding:0 20px}
+.spin{width:22px;height:22px;border:2px solid var(--border2);border-top-color:var(--green);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading{display:flex;align-items:center;justify-content:center;padding:60px;flex-direction:column;gap:12px}
+.loading-txt{font-family:var(--font-m);font-size:10px;color:var(--muted);letter-spacing:.05em}
 
-  /* Emerald (pass) */
-  --emerald: #2a9d5c;
-  --emerald-dim: #1a5e38;
-  --emerald-glow: rgba(42,157,92,.12);
+/* TOPBAR */
+#topbar{display:flex;align-items:center;gap:10px;padding:0 24px;height:56px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 1px 0 var(--border),0 4px 20px rgba(26,122,60,.04)}
+.tb-logo{display:flex;align-items:center;gap:10px;font-family:var(--font-d);font-size:19px;color:var(--green);white-space:nowrap}
+.tb-logo-mark{width:28px;height:28px;border-radius:8px;background:var(--green-lt);border:1.5px solid var(--green-bd);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tb-logo-mark svg{width:14px;height:14px;stroke:var(--green);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tb-badge{font-family:var(--font-m);font-size:9px;font-weight:600;background:var(--green-lt);border:1px solid var(--green-bd);color:var(--green-dk);padding:2px 8px;border-radius:20px;letter-spacing:.1em;text-transform:uppercase}
+.tb-sep{flex:1}
+.tb-user{font-family:var(--font-m);font-size:11px;color:var(--muted);white-space:nowrap}
+.tb-btn{display:flex;align-items:center;gap:6px;font-family:var(--font-m);font-size:11px;font-weight:500;background:var(--surface);border:1px solid var(--border2);color:var(--text2);padding:6px 14px;border-radius:var(--rs);cursor:pointer;transition:all .15s;white-space:nowrap}
+.tb-btn:hover{border-color:var(--green-bd);color:var(--green);background:var(--green-lt)}
+.tb-btn.danger:hover{border-color:var(--red-bd);color:var(--red);background:var(--red-lt)}
+.tb-btn-text{display:none}
+@media(min-width:640px){.tb-btn-text{display:inline}}
 
-  /* Crimson (fail) */
-  --crimson: #c0392b;
-  --crimson-dim: #7a1f1a;
-  --crimson-glow: rgba(192,57,43,.12);
+/* SHELL */
+#shell{display:none;flex-direction:column;min-height:100vh}
+#main{padding:24px 20px 80px;max-width:1440px;margin:0 auto;width:100%}
+@media(min-width:768px){#main{padding:32px 32px 80px}}
+.page-title{font-family:var(--font-d);font-size:24px;color:var(--text)}
+.page-sub{font-family:var(--font-m);font-size:10px;color:var(--muted);letter-spacing:.04em;margin-top:2px;margin-bottom:24px}
 
-  /* Amethyst (violet accent) */
-  --amethyst: #7c5cbf;
-  --amethyst-dim: #3e2d6e;
-  --amethyst-glow: rgba(124,92,191,.12);
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:28px}
+@media(min-width:480px){.stats-row{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:960px){.stats-row{grid-template-columns:repeat(6,1fr)}}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 16px 14px;box-shadow:var(--sh);position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
+.sc-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.c-green .sc-bar{background:linear-gradient(90deg,var(--green),var(--green2))}
+.c-teal .sc-bar{background:linear-gradient(90deg,var(--teal),#1ca88e)}
+.c-blue .sc-bar{background:linear-gradient(90deg,var(--blue),#2e82d8)}
+.c-violet .sc-bar{background:linear-gradient(90deg,var(--violet),#8060c8)}
+.c-amber .sc-bar{background:linear-gradient(90deg,var(--amber),#c88030)}
+.c-red .sc-bar{background:linear-gradient(90deg,var(--red),#d84848)}
+.stat-n{font-family:var(--font-d);font-size:30px;line-height:1;margin:6px 0 4px}
+.stat-l{font-family:var(--font-m);font-size:9px;color:var(--muted);font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.stat-sub{font-family:var(--font-m);font-size:9px;color:var(--subtle);margin-top:2px}
+.cn-green{color:var(--green)}.cn-teal{color:var(--teal)}.cn-blue{color:var(--blue)}
+.cn-violet{color:var(--violet)}.cn-amber{color:var(--amber)}.cn-red{color:var(--red)}
 
-  /* Sapphire (blue) */
-  --sapphire: #3b7ec8;
-  --sapphire-glow: rgba(59,126,200,.12);
+/* TABS */
+.tabs-wrap{display:flex;gap:2px;margin-bottom:20px;overflow-x:auto;scrollbar-width:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:4px;box-shadow:var(--sh)}
+.tabs-wrap::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:6px;font-family:var(--font-b);font-size:12px;font-weight:500;padding:8px 14px;cursor:pointer;white-space:nowrap;color:var(--muted);background:none;border:none;border-radius:7px;transition:all .15s}
+.tab:hover{color:var(--text);background:var(--surface2)}
+.tab.active{color:var(--green-dk);background:var(--green-lt);font-weight:600}
+.tab svg{flex-shrink:0;opacity:.55}
+.tab.active svg{opacity:1;stroke:var(--green)}
 
-  /* Fonts */
-  --font-d: 'Cinzel', serif;
-  --font-b: 'Crimson Pro', serif;
-  --font-m: 'JetBrains Mono', monospace;
+/* SECTION CARD */
+.section-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:16px}
+.section-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap}
+.section-hd-left{display:flex;align-items:center;gap:10px}
+.section-title{font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--text)}
+.section-count{font-family:var(--font-m);font-size:10px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:2px 9px;border-radius:20px}
 
-  --shadow: 0 2px 12px rgba(0,0,0,.5), 0 1px 3px rgba(0,0,0,.3);
-  --shadow-gold: 0 0 20px rgba(201,168,76,.08);
-}
+/* FILTERS */
+.filters{display:flex;gap:8px;padding:12px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center;background:var(--surface2)}
+.filter-input{background:var(--surface);border:1px solid var(--border2);color:var(--text);font-family:var(--font-b);font-size:12px;padding:7px 12px;border-radius:var(--rs);outline:none;transition:all .15s;min-width:0;flex:1 1 140px}
+.filter-input:focus{border-color:var(--green-bd);box-shadow:0 0 0 3px var(--green-lt)}
+.filter-input::placeholder{color:var(--subtle)}
+.filter-select{background:var(--surface);border:1px solid var(--border2);color:var(--text2);font-family:var(--font-b);font-size:12px;padding:7px 10px;border-radius:var(--rs);outline:none;cursor:pointer;flex-shrink:0}
+.btn{display:flex;align-items:center;gap:6px;font-family:var(--font-b);font-size:11px;font-weight:600;padding:7px 14px;border-radius:var(--rs);cursor:pointer;transition:all .15s;white-space:nowrap;border:1px solid}
+.btn-green{background:var(--green-lt);border-color:var(--green-bd);color:var(--green-dk)}
+.btn-green:hover{background:var(--green);border-color:var(--green);color:#fff}
+.btn-red{background:var(--red-lt);border-color:var(--red-bd);color:var(--red)}
+.btn-red:hover{background:var(--red);border-color:var(--red);color:#fff}
+.btn-ghost{background:var(--surface);border-color:var(--border2);color:var(--text2)}
+.btn-ghost:hover{background:var(--surface2);border-color:var(--border);color:var(--text)}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:520px}
+thead{background:var(--surface2)}
+th{font-family:var(--font-m);font-size:9px;color:var(--muted);font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:10px 18px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:var(--text)}
+th.sort-on{color:var(--green)}
+th .sa{display:inline-block;margin-left:4px;opacity:.4}
+th.sort-on .sa{opacity:1;color:var(--green)}
+td{padding:11px 18px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.tbl-empty{text-align:center;padding:52px;font-family:var(--font-m);font-size:11px;color:var(--subtle)}
+.tei{font-size:26px;margin-bottom:8px;opacity:.35}
 
-body {
-  background: var(--void);
-  background-image:
-    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(201,168,76,.04) 0%, transparent 60%),
-    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23252c32' fill-opacity='0.3'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  color: var(--parchment);
-  font-family: var(--font-b);
-  font-size: 15px;
-  min-height: 100vh;
-}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-m);font-size:9px;font-weight:500;padding:3px 8px;border-radius:20px;letter-spacing:.04em;border:1px solid}
+.b-pass{background:var(--green-lt);color:var(--green-dk);border-color:var(--green-bd)}
+.b-fail{background:var(--red-lt);color:var(--red);border-color:var(--red-bd)}
+.b-pct{background:var(--amber-lt);color:var(--amber);border-color:var(--amber-bd)}
+.b-violet{background:var(--violet-lt);color:var(--violet);border-color:var(--violet-bd)}
+.b-blue{background:var(--blue-lt);color:var(--blue);border-color:var(--blue-bd)}
+.b-muted{background:var(--surface2);color:var(--muted);border-color:var(--border)}
 
-/* ─── SCROLLBAR ─── */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: var(--dungeon); }
-::-webkit-scrollbar-thumb { background: var(--iron2); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+/* USER PILL */
+.user-pill{display:inline-flex;align-items:center;gap:8px}
+.uav{width:26px;height:26px;border-radius:50%;background:var(--green-lt);border:1.5px solid var(--green-bd);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:11px;color:var(--green-dk);flex-shrink:0;text-transform:uppercase}
 
-/* ─── GATE ─── */
-#gate {
-  display: flex; align-items: center; justify-content: center;
-  min-height: 100vh; flex-direction: column; gap: 12px;
-}
-.gate-crest {
-  font-family: var(--font-d);
-  font-size: 28px; color: var(--gold); letter-spacing: .15em;
-  text-shadow: 0 0 30px rgba(201,168,76,.3);
-  margin-bottom: 4px;
-}
-.gate-sub { font-family: var(--font-m); font-size: 11px; color: var(--mist); letter-spacing: .1em; }
-.gate-err { font-family: var(--font-m); font-size: 11px; color: var(--crimson); max-width: 320px; text-align: center; padding: 0 16px; }
+/* SCORE BAR */
+.sw{display:flex;align-items:center;gap:7px}
+.sb{height:4px;background:var(--border);border-radius:4px;width:52px;flex-shrink:0;overflow:hidden}
+.sbf{height:100%;border-radius:4px}
+.fg{background:linear-gradient(90deg,var(--green),var(--green2))}
+.fo{background:linear-gradient(90deg,var(--amber),#c88030)}
+.fr{background:linear-gradient(90deg,var(--red),#d84848)}
+.tm{font-family:var(--font-m);font-size:11px;color:var(--muted)}
+.td-dim{font-family:var(--font-m);font-size:10px;color:var(--subtle)}
+.tnw{white-space:nowrap}
+.ttr{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* ─── TOPBAR ─── */
-#topbar {
-  display: flex; align-items: center; gap: 12px;
-  padding: 0 20px; height: 52px;
-  background: var(--dungeon);
-  border-bottom: 1px solid var(--iron2);
-  position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 1px 0 rgba(201,168,76,.08), 0 4px 20px rgba(0,0,0,.4);
-}
-.tb-logo {
-  font-family: var(--font-d); font-size: 13px; color: var(--gold);
-  letter-spacing: .12em; white-space: nowrap;
-  text-shadow: 0 0 16px rgba(201,168,76,.25);
-  display: flex; align-items: center; gap: 8px;
-}
-.tb-logo-sigil {
-  width: 24px; height: 24px; border: 1px solid var(--gold-dim);
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-size: 12px; flex-shrink: 0;
-}
-.tb-badge {
-  font-family: var(--font-m); font-size: 8px;
-  background: var(--gold-glow); border: 1px solid var(--gold-dim);
-  color: var(--gold); padding: 2px 8px; border-radius: 1px; letter-spacing: .1em;
-}
-.tb-sep { flex: 1; }
-.tb-user { font-family: var(--font-m); font-size: 10px; color: var(--mist); white-space: nowrap; }
-.tb-btn {
-  font-family: var(--font-m); font-size: 10px; font-weight: 500;
-  background: transparent; border: 1px solid var(--iron2);
-  color: var(--parchment2); padding: 5px 12px; border-radius: 1px;
-  cursor: pointer; transition: all .15s; white-space: nowrap; letter-spacing: .05em;
-  display: flex; align-items: center; gap: 6px;
-}
-.tb-btn:hover { border-color: var(--gold-dim); color: var(--gold); background: var(--gold-glow); }
-.tb-btn svg { flex-shrink: 0; }
-.tb-btn.danger:hover { border-color: var(--crimson-dim); color: var(--crimson); background: var(--crimson-glow); }
-.tb-btn-text { display: none; }
-@media (min-width: 640px) { .tb-btn-text { display: inline; } }
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--border);gap:10px;flex-wrap:wrap;background:var(--surface2)}
+.pg-info{font-family:var(--font-m);font-size:10px;color:var(--muted)}
+.pg-btns{display:flex;gap:4px}
+.pg-btn{background:var(--surface);border:1px solid var(--border2);color:var(--muted);font-family:var(--font-m);font-size:10px;padding:5px 10px;border-radius:var(--rs);cursor:pointer;transition:all .15s;min-width:32px;text-align:center}
+.pg-btn:hover:not(:disabled){border-color:var(--green-bd);color:var(--green);background:var(--green-lt)}
+.pg-btn:disabled{opacity:.35;cursor:default}
+.pg-btn.active{background:var(--green-lt);border-color:var(--green-bd);color:var(--green-dk);font-weight:600}
 
-/* ─── SHELL ─── */
-#shell { display: none; flex-direction: column; min-height: 100vh; }
-#main { padding: 20px 16px 64px; max-width: 1400px; margin: 0 auto; width: 100%; }
-@media (min-width: 768px) { #main { padding: 28px 28px 64px; } }
+/* TWO-COL */
+.two-col{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px}
+@media(min-width:900px){.two-col{grid-template-columns:1fr 1fr}}
 
-.page-header { margin-bottom: 20px; }
-.page-title {
-  font-family: var(--font-d); font-size: 17px; color: var(--gold);
-  letter-spacing: .1em; margin-bottom: 3px;
-  text-shadow: 0 0 20px rgba(201,168,76,.2);
-}
-.page-sub { font-family: var(--font-m); font-size: 10px; color: var(--mist); letter-spacing: .05em; }
+/* STUDENT GRID */
+.user-grid{display:grid;grid-template-columns:1fr;gap:14px;padding:20px}
+@media(min-width:540px){.user-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:900px){.user-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1200px){.user-grid{grid-template-columns:repeat(4,1fr)}}
+.user-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--sh);transition:box-shadow .2s,transform .15s}
+.user-card:hover{transform:translateY(-2px);box-shadow:var(--sh2);border-color:var(--green-bd)}
+.uc-hd{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.uc-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--green-lt),#d0eedc);border:2px solid var(--green-bd);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:17px;color:var(--green-dk);flex-shrink:0}
+.uc-name{font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--text)}
+.uc-sub{font-family:var(--font-m);font-size:9px;color:var(--muted);margin-top:2px}
+.uc-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:5px}
+.uc-val{font-family:var(--font-m);font-size:11px;color:var(--text);font-weight:600}
+.uc-sec{font-family:var(--font-m);font-size:9px;font-weight:600;color:var(--subtle);letter-spacing:.1em;text-transform:uppercase;margin:12px 0 7px;border-top:1px solid var(--border);padding-top:10px}
+.uc-bar{height:4px;background:var(--border);border-radius:4px;margin-top:4px;margin-bottom:10px;overflow:hidden}
+.uc-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--green2))}
+.uc-bar-fill.quiz{background:linear-gradient(90deg,var(--violet),#8060c8)}
+.uc-last{font-family:var(--font-m);font-size:9px;color:var(--subtle);margin-top:8px}
+.rank-chip{display:inline-flex;align-items:center;font-family:var(--font-m);font-size:9px;font-weight:600;padding:3px 9px;border-radius:20px;border:1px solid}
 
-/* ─── STAT CARDS ─── */
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px; margin-bottom: 24px;
-}
-@media (min-width: 480px) { .stats-row { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 900px) { .stats-row { grid-template-columns: repeat(6, 1fr); } }
+/* EXP GRID */
+.exp-grid{display:grid;grid-template-columns:1fr;gap:12px;padding:18px}
+@media(min-width:600px){.exp-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1000px){.exp-grid{grid-template-columns:repeat(3,1fr)}}
+.exp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--sh);transition:box-shadow .15s}
+.exp-card:hover{box-shadow:var(--sh2);border-color:var(--green-bd)}
+.exp-card-hd{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.exp-av{width:34px;height:34px;border-radius:50%;background:var(--green-lt);border:2px solid var(--green-bd);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:15px;color:var(--green-dk);flex-shrink:0}
+.exp-name{font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--text)}
+.exp-num{font-family:var(--font-d);font-size:24px;color:var(--green)}
+.exp-progress{height:5px;background:var(--border);border-radius:4px;overflow:hidden;margin:6px 0 4px}
+.exp-progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--green2));transition:width .4s ease}
+.exp-next{font-family:var(--font-m);font-size:9px;color:var(--subtle)}
 
-.stat-card {
-  background: var(--dungeon);
-  border: 1px solid var(--iron2);
-  border-top: 2px solid transparent;
-  border-radius: 2px;
-  padding: 14px 16px;
-  box-shadow: var(--shadow);
-  position: relative; overflow: hidden;
-  transition: transform .2s, box-shadow .2s;
-}
-.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow), var(--shadow-gold); }
-.stat-card::after {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,.02) 0%, transparent 60%);
-  pointer-events: none;
-}
-.stat-card.c-gold { border-top-color: var(--gold); }
-.stat-card.c-violet { border-top-color: var(--amethyst); }
-.stat-card.c-green { border-top-color: var(--emerald); }
-.stat-card.c-red { border-top-color: var(--crimson); }
-.stat-card.c-blue { border-top-color: var(--sapphire); }
-.stat-n {
-  font-family: var(--font-d); font-size: 26px; font-weight: 700;
-  line-height: 1; margin-bottom: 5px;
-}
-@media (min-width: 900px) { .stat-n { font-size: 30px; } }
-.stat-l { font-family: var(--font-m); font-size: 9px; color: var(--mist); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
-.stat-sub { font-family: var(--font-m); font-size: 9px; color: var(--iron2); margin-top: 3px; }
-.cn-gold { color: var(--gold); text-shadow: 0 0 12px rgba(201,168,76,.3); }
-.cn-violet { color: var(--amethyst); }
-.cn-green { color: var(--emerald); }
-.cn-red { color: var(--crimson); }
-.cn-blue { color: var(--sapphire); }
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(20,31,20,.3);z-index:999;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);width:440px;max-width:100%;box-shadow:var(--sh2);animation:mopen .18s ease;overflow:hidden}
+@keyframes mopen{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
+.modal-hd{display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);gap:10px;background:var(--surface2)}
+.modal-title{font-family:var(--font-b);font-size:14px;font-weight:600;color:var(--text);flex:1}
+.modal-close{width:28px;height:28px;border-radius:var(--rs);border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.modal-close:hover{border-color:var(--red-bd);color:var(--red);background:var(--red-lt)}
+.modal-body{padding:20px;display:flex;flex-direction:column;gap:14px}
+.modal-field label{font-family:var(--font-m);font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:5px}
+.modal-input{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:var(--font-m);font-size:13px;padding:9px 12px;border-radius:var(--rs);outline:none;transition:all .15s}
+.modal-input:focus{border-color:var(--green-bd);box-shadow:0 0 0 3px var(--green-lt)}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;background:var(--surface2)}
 
-/* ─── TABS ─── */
-.tabs-wrap {
-  display: flex; gap: 2px; margin-bottom: 16px;
-  overflow-x: auto; -webkit-overflow-scrolling: touch;
-  padding-bottom: 2px;
-  scrollbar-width: none;
-  border-bottom: 1px solid var(--iron2);
-}
-.tabs-wrap::-webkit-scrollbar { display: none; }
-.tab {
-  font-family: var(--font-m); font-size: 10px; letter-spacing: .08em;
-  padding: 9px 14px; cursor: pointer;
-  color: var(--mist); background: none; border: none;
-  border-bottom: 2px solid transparent;
-  transition: all .15s; white-space: nowrap;
-  display: flex; align-items: center; gap: 7px;
-}
-.tab:hover { color: var(--parchment); }
-.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
-.tab svg { flex-shrink: 0; opacity: .7; }
-.tab.active svg { opacity: 1; }
+/* SECURITY */
+.sec-row{display:flex;align-items:flex-start;gap:14px;padding:13px 20px;border-bottom:1px solid var(--border);transition:background .1s}
+.sec-row:last-child{border-bottom:none}
+.sec-row:hover{background:var(--surface2)}
+.sec-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.dot-red{background:var(--red);box-shadow:0 0 0 3px var(--red-lt)}
+.dot-amber{background:var(--amber);box-shadow:0 0 0 3px var(--amber-lt)}
+.dot-green{background:var(--green);box-shadow:0 0 0 3px var(--green-lt)}
+.sec-body{flex:1;min-width:0}
+.sec-title{font-family:var(--font-b);font-size:13px;font-weight:500;color:var(--text)}
+.sec-sub{font-family:var(--font-m);font-size:10px;color:var(--muted);margin-top:2px}
+.sec-meta{font-family:var(--font-m);font-size:9px;color:var(--subtle);flex-shrink:0;padding-top:2px;white-space:nowrap}
 
-/* ─── SECTION CARD ─── */
-.section-card {
-  background: var(--dungeon);
-  border: 1px solid var(--iron2);
-  border-radius: 2px;
-  box-shadow: var(--shadow);
-  overflow: hidden; margin-bottom: 14px;
-}
-.section-hd {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 18px; border-bottom: 1px solid var(--iron2);
-  background: var(--stone); gap: 10px; flex-wrap: wrap;
-}
-.section-hd-left { display: flex; align-items: center; gap: 10px; }
-.section-title {
-  font-family: var(--font-d); font-size: 11px; color: var(--parchment);
-  letter-spacing: .08em;
-}
-.section-count {
-  font-family: var(--font-m); font-size: 9px;
-  background: var(--iron); border: 1px solid var(--iron2);
-  color: var(--mist); padding: 2px 8px; border-radius: 1px;
-}
+/* TIMELINE */
+.timeline{padding:20px}
+.tl-item{display:flex;gap:14px}
+.tl-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.tl-dot{width:10px;height:10px;border-radius:50%;border:2px solid;flex-shrink:0}
+.tl-dot.lab{background:var(--green-lt);border-color:var(--green)}
+.tl-dot.quiz{background:var(--violet-lt);border-color:var(--violet)}
+.tl-line{width:1px;flex:1;background:var(--border);margin:3px 0;min-height:20px}
+.tl-item:last-child .tl-line{display:none}
+.tl-body{padding-bottom:18px;flex:1;min-width:0}
+.tl-name{font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--text)}
+.tl-detail{font-family:var(--font-b);font-size:12px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tl-time{font-family:var(--font-m);font-size:9px;color:var(--subtle);margin-top:3px}
+.tl-badges{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
 
-/* ─── FILTERS ─── */
-.filters {
-  display: flex; gap: 8px; padding: 12px 16px;
-  border-bottom: 1px solid var(--iron2);
-  flex-wrap: wrap; align-items: center;
-}
-.filter-input {
-  background: var(--stone); border: 1px solid var(--iron2);
-  color: var(--parchment); font-family: var(--font-m);
-  font-size: 11px; padding: 7px 11px; border-radius: 1px;
-  outline: none; transition: border-color .15s;
-  min-width: 0; flex: 1 1 140px;
-}
-.filter-input:focus { border-color: var(--gold-dim); }
-.filter-input::placeholder { color: var(--iron2); }
-.filter-select {
-  background: var(--stone); border: 1px solid var(--iron2);
-  color: var(--parchment2); font-family: var(--font-m);
-  font-size: 11px; padding: 7px 10px; border-radius: 1px;
-  outline: none; cursor: pointer; flex-shrink: 0;
-}
-.btn-export {
-  font-family: var(--font-m); font-size: 10px; font-weight: 500;
-  background: var(--gold-glow); border: 1px solid var(--gold-dim);
-  color: var(--gold); padding: 7px 14px; border-radius: 1px;
-  cursor: pointer; transition: all .15s; letter-spacing: .06em;
-  display: flex; align-items: center; gap: 6px; white-space: nowrap;
-}
-.btn-export:hover { background: rgba(201,168,76,.18); }
+/* QUIZ EDITOR */
+.quiz-editor-wrap{padding:16px;display:flex;flex-direction:column;gap:10px}
+.qi-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);overflow:hidden}
+.qi-hd{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;transition:background .12s;user-select:none}
+.qi-hd:hover{background:var(--border)}
+.qi-hd-title{font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--text);flex:1}
+.qi-hd-count{font-family:var(--font-m);font-size:10px;color:var(--muted)}
+.qi-hd-chev{font-size:11px;color:var(--subtle);transition:transform .2s}
+.qi-wrap.open .qi-hd-chev{transform:rotate(90deg)}
+.qi-body{display:none;padding:0 16px 14px}
+.qi-wrap.open .qi-body{display:block}
+.q-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:13px;margin-bottom:8px}
+.q-row:last-child{margin-bottom:0}
+.q-num{font-family:var(--font-m);font-size:9px;color:var(--muted);letter-spacing:.06em;margin-bottom:5px}
+.q-text{font-family:var(--font-b);font-size:13px;color:var(--text2);margin-bottom:8px;line-height:1.6}
+.q-code{font-family:var(--font-m);font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:9px 12px;margin-bottom:8px;white-space:pre;overflow-x:auto;color:var(--text2)}
+.q-choices{margin-bottom:10px}
+.q-choice{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;color:var(--text2)}
+.q-choice-lbl{font-family:var(--font-m);font-size:9px;color:var(--subtle);width:16px;flex-shrink:0}
+.q-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.q-field label{font-family:var(--font-m);font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:4px}
+.q-input{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:var(--font-m);font-size:11px;padding:7px 10px;border-radius:var(--rs);outline:none;transition:all .15s}
+.q-input:focus{border-color:var(--green-bd);box-shadow:0 0 0 2px var(--green-lt)}
+.q-save-row{margin-top:8px;display:flex;align-items:center;gap:10px}
+.q-save-msg{font-family:var(--font-m);font-size:10px}
 
-/* ─── TABLE ─── */
-.tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 520px; }
-thead { background: var(--stone); }
-th {
-  font-family: var(--font-m); font-size: 9px; color: var(--mist);
-  font-weight: 500; letter-spacing: .08em; text-transform: uppercase;
-  padding: 10px 16px; text-align: left;
-  border-bottom: 1px solid var(--iron2); white-space: nowrap;
-  cursor: pointer; user-select: none;
-}
-th:hover { color: var(--parchment); }
-th.sort-on { color: var(--gold); }
-th .sa { display: inline-block; margin-left: 4px; opacity: .4; font-size: 9px; }
-th.sort-on .sa { opacity: 1; color: var(--gold); }
-td {
-  padding: 10px 16px; border-bottom: 1px solid rgba(37,44,50,.7);
-  color: var(--parchment2); vertical-align: middle;
-}
-tr:last-child td { border-bottom: none; }
-tr:hover td { background: rgba(201,168,76,.03); }
-.tbl-empty { text-align: center; padding: 48px; font-family: var(--font-m); font-size: 11px; color: var(--mist); }
-.tei { font-size: 24px; margin-bottom: 8px; opacity: .4; }
-
-/* ─── BADGES ─── */
-.badge {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-family: var(--font-m); font-size: 9px; font-weight: 500;
-  padding: 3px 8px; border-radius: 1px; letter-spacing: .04em;
-}
-.b-pass { background: var(--emerald-glow); color: var(--emerald); border: 1px solid var(--emerald-dim); }
-.b-fail { background: var(--crimson-glow); color: var(--crimson); border: 1px solid var(--crimson-dim); }
-.b-pct { background: var(--gold-glow); color: var(--gold); border: 1px solid var(--gold-dim); }
-.b-violet { background: var(--amethyst-glow); color: var(--amethyst); border: 1px solid var(--amethyst-dim); }
-.b-blue { background: var(--sapphire-glow); color: var(--sapphire); border: 1px solid rgba(59,126,200,.3); }
-
-/* ─── USER PILL ─── */
-.user-pill { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--parchment); }
-.uav {
-  width: 24px; height: 24px; border-radius: 50%;
-  background: var(--amethyst-glow); border: 1px solid var(--amethyst-dim);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-d); font-size: 10px; color: var(--amethyst);
-  font-weight: 700; flex-shrink: 0; text-transform: uppercase;
-}
-
-/* ─── SCORE BAR ─── */
-.sw { display: flex; align-items: center; gap: 7px; }
-.sb { height: 3px; background: var(--iron); border-radius: 2px; width: 50px; flex-shrink: 0; }
-.sbf { height: 100%; border-radius: 2px; }
-.fg { background: linear-gradient(90deg, var(--emerald), #3dba74); }
-.fo { background: linear-gradient(90deg, var(--gold), var(--gold-bright)); }
-.fr { background: linear-gradient(90deg, var(--crimson), #e05a4b); }
-.tm { font-family: var(--font-m); font-size: 11px; color: var(--mist); }
-.td-dim { font-family: var(--font-m); font-size: 10px; color: var(--mist); }
-.tnw { white-space: nowrap; }
-.ttr { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-/* ─── PAGINATION ─── */
-.pagination {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 16px; border-top: 1px solid var(--iron2);
-  gap: 10px; flex-wrap: wrap;
-}
-.pg-info { font-family: var(--font-m); font-size: 10px; color: var(--mist); }
-.pg-btns { display: flex; gap: 4px; flex-wrap: wrap; }
-.pg-btn {
-  background: var(--stone); border: 1px solid var(--iron2);
-  color: var(--mist); font-family: var(--font-m);
-  font-size: 10px; padding: 5px 10px; border-radius: 1px;
-  cursor: pointer; transition: all .15s; min-width: 32px; text-align: center;
-}
-.pg-btn:hover:not(:disabled) { border-color: var(--gold-dim); color: var(--gold); background: var(--gold-glow); }
-.pg-btn:disabled { opacity: .3; cursor: default; }
-.pg-btn.active { background: var(--gold-glow); border-color: var(--gold-dim); color: var(--gold); }
-
-/* ─── STUDENT GRID ─── */
-.user-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px; padding: 16px;
-}
-@media (min-width: 540px) { .user-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 900px) { .user-grid { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 1200px) { .user-grid { grid-template-columns: repeat(4, 1fr); } }
-
-.user-card {
-  background: var(--stone); border: 1px solid var(--iron2);
-  border-radius: 2px; padding: 16px;
-  box-shadow: var(--shadow); transition: box-shadow .2s, transform .15s;
-}
-.user-card:hover { transform: translateY(-1px); box-shadow: var(--shadow), var(--shadow-gold); }
-.uc-hd {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 14px; padding-bottom: 12px;
-  border-bottom: 1px solid var(--iron2);
-}
-.uc-av {
-  width: 34px; height: 34px; border-radius: 50%;
-  background: var(--amethyst-glow); border: 1px solid var(--amethyst-dim);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-d); font-size: 14px; color: var(--amethyst);
-  font-weight: 700; flex-shrink: 0;
-}
-.uc-name { font-family: var(--font-d); font-size: 12px; color: var(--parchment); letter-spacing: .05em; }
-.uc-sub { font-family: var(--font-m); font-size: 9px; color: var(--mist); margin-top: 2px; }
-.uc-row {
-  display: flex; justify-content: space-between; align-items: center;
-  font-size: 12px; color: var(--mist); margin-bottom: 5px;
-}
-.uc-val { font-family: var(--font-m); font-size: 11px; color: var(--parchment); font-weight: 600; }
-.uc-sec {
-  font-family: var(--font-m); font-size: 8px; font-weight: 700;
-  color: var(--iron2); letter-spacing: .1em; text-transform: uppercase;
-  margin: 10px 0 5px; border-top: 1px solid var(--iron); padding-top: 8px;
-}
-.uc-bar { height: 3px; background: var(--iron); border-radius: 2px; margin-top: 4px; margin-bottom: 8px; }
-.uc-bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--gold), var(--gold-bright)); }
-.uc-bar-fill.quiz { background: linear-gradient(90deg, var(--amethyst), #9b7de8); }
-.uc-last { font-family: var(--font-m); font-size: 9px; color: var(--iron2); margin-top: 6px; }
-
-/* ─── LEADERBOARD ─── */
-.lb-split { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 14px; }
-@media (min-width: 800px) { .lb-split { grid-template-columns: 1fr 1fr; } }
-
-.lb-card { background: var(--dungeon); border: 1px solid var(--iron2); border-radius: 2px; box-shadow: var(--shadow); overflow: hidden; }
-.lb-card-hd { padding: 14px 18px; border-bottom: 1px solid var(--iron2); }
-.lb-card-hd.lab { background: linear-gradient(135deg, rgba(201,168,76,.06), transparent); }
-.lb-card-hd.quiz { background: linear-gradient(135deg, rgba(124,92,191,.06), transparent); }
-.lb-card-title { font-family: var(--font-d); font-size: 12px; letter-spacing: .08em; color: var(--parchment); }
-.lb-card-sub { font-family: var(--font-m); font-size: 9px; color: var(--mist); margin-top: 3px; }
-
-.lb-list { padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
-.lb-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px; border-radius: 2px;
-  background: var(--stone); border: 1px solid var(--iron2);
-  transition: all .15s;
-}
-.lb-row:hover { border-color: var(--iron); background: var(--iron); }
-.lb-row.top1 { background: rgba(201,168,76,.06); border-color: var(--gold-dim); }
-.lb-row.top2 { background: rgba(156,163,175,.04); border-color: rgba(156,163,175,.2); }
-.lb-row.top3 { background: rgba(205,127,50,.05); border-color: rgba(205,127,50,.25); }
-.lb-rank { font-family: var(--font-d); font-size: 14px; font-weight: 700; width: 28px; text-align: center; flex-shrink: 0; }
-.r1 { color: var(--gold); text-shadow: 0 0 10px rgba(201,168,76,.4); }
-.r2 { color: #9ca3af; }
-.r3 { color: #cd7f32; }
-.rn { color: var(--iron2); }
-.lb-info { flex: 1; min-width: 0; }
-.lb-name { font-family: var(--font-d); font-weight: 600; font-size: 12px; color: var(--parchment); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: .04em; }
-.lb-detail { font-family: var(--font-m); font-size: 9px; color: var(--mist); margin-top: 2px; }
-.lb-mini { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px; }
-.lb-score { text-align: right; flex-shrink: 0; }
-.lb-score-main { font-family: var(--font-d); font-size: 18px; font-weight: 700; }
-.lb-score-main.lab { color: var(--gold); text-shadow: 0 0 10px rgba(201,168,76,.3); }
-.lb-score-main.quiz { color: var(--amethyst); }
-.lb-score-sub { font-family: var(--font-m); font-size: 8px; color: var(--mist); margin-top: 1px; text-align: right; }
-
-.combo-lb { padding: 14px; }
-.combo-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px; border-radius: 2px; margin-bottom: 5px;
-  border: 1px solid var(--iron2); background: var(--stone); transition: all .15s;
-  flex-wrap: wrap;
-}
-.combo-row:hover { border-color: var(--iron); background: var(--iron); }
-.combo-row.top1 { background: rgba(201,168,76,.06); border-color: var(--gold-dim); }
-.combo-row.top2 { background: rgba(156,163,175,.04); border-color: rgba(156,163,175,.2); }
-.combo-row.top3 { background: rgba(205,127,50,.05); border-color: rgba(205,127,50,.25); }
-.combo-stats { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; flex: 1; min-width: 0; }
-
-/* ─── OVERVIEW TWO-COL ─── */
-.two-col { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
-@media (min-width: 900px) { .two-col { grid-template-columns: 1fr 1fr; } }
-
-/* ─── LOADING ─── */
-.loading {
-  display: flex; align-items: center; justify-content: center;
-  padding: 64px; flex-direction: column; gap: 14px;
-}
-.spin {
-  width: 26px; height: 26px;
-  border: 1px solid var(--iron2);
-  border-top-color: var(--gold);
-  border-radius: 50%;
-  animation: spin .7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-txt { font-family: var(--font-m); font-size: 10px; color: var(--mist); letter-spacing: .08em; }
-
-/* ─── SVG ICON HELPERS ─── */
-.ico { display: inline-block; vertical-align: middle; flex-shrink: 0; }
-
-/* ─── DIVIDER RUNE ─── */
-.rune-div {
-  text-align: center; color: var(--iron2);
-  font-family: var(--font-d); font-size: 12px;
-  letter-spacing: .3em; margin: 4px 0;
-  user-select: none;
-}
+/* LEADERBOARD */
+.lb-split{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px}
+@media(min-width:800px){.lb-split{grid-template-columns:1fr 1fr}}
+.lb-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.lb-card-hd{padding:14px 18px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.lb-card-title{font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--text)}
+.lb-card-sub{font-family:var(--font-m);font-size:9px;color:var(--muted);margin-top:3px}
+.lb-list{padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.lb-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--rs);background:var(--surface2);border:1px solid var(--border);transition:all .15s}
+.lb-row:hover{border-color:var(--border2);background:var(--bg2)}
+.lb-row.top1{background:var(--amber-lt);border-color:var(--amber-bd)}
+.lb-row.top2{background:#f5f5f5;border-color:#d0d0d0}
+.lb-row.top3{background:#fdf6f0;border-color:#e8c8a8}
+.lb-rank{font-family:var(--font-d);font-size:15px;font-weight:700;width:26px;text-align:center;flex-shrink:0}
+.r1{color:var(--amber)}.r2{color:#888}.r3{color:#b07040}.rn{color:var(--subtle)}
+.lb-info{flex:1;min-width:0}
+.lb-name{font-family:var(--font-b);font-weight:600;font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-mini{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.lb-score{text-align:right;flex-shrink:0}
+.lb-score-main{font-family:var(--font-d);font-size:20px;font-weight:700}
+.lb-score-main.lab{color:var(--green)}.lb-score-main.quiz{color:var(--violet)}
+.lb-score-sub{font-family:var(--font-m);font-size:8px;color:var(--muted)}
+.combo-lb{padding:14px}
+.combo-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--rs);margin-bottom:6px;border:1px solid var(--border);background:var(--surface2);flex-wrap:wrap;transition:all .15s}
+.combo-row:hover{background:var(--bg2);border-color:var(--border2)}
+.combo-row.top1{background:var(--amber-lt);border-color:var(--amber-bd)}
+.combo-stats{display:flex;gap:5px;flex-wrap:wrap;flex:1;align-items:center}
 </style>
 </head>
 <body>
 
 <div id="gate">
-  <div class="gate-crest">✦ GRIMOIRE</div>
-  <div class="gate-sub">ADMIN SANCTUM</div>
+  <div class="gate-crest">Slytherin <em>Admin</em></div>
+  <div class="gate-sub">Instructor Sanctum · BSCS Python Practice</div>
   <div class="gate-err" id="gate-err"></div>
   <div class="loading" id="gate-loading"><div class="spin"></div><div class="loading-txt">Verifying credentials…</div></div>
 </div>
@@ -473,720 +310,391 @@ tr:hover td { background: rgba(201,168,76,.03); }
 <div id="shell">
   <div id="topbar">
     <div class="tb-logo">
-      <span class="tb-logo-sigil">✦</span>
-      GRIMOIRE
+      <div class="tb-logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      Classroom
     </div>
-    <span class="tb-badge">ADMIN</span>
+    <span class="tb-badge">Admin</span>
     <div class="tb-sep"></div>
     <span class="tb-user" id="tb-user"></span>
-    <button class="tb-btn" onclick="loadAll()" title="Refresh">
-      <!-- Refresh icon -->
-      <svg class="ico" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+    <button class="tb-btn" onclick="loadAll()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
       <span class="tb-btn-text">Refresh</span>
     </button>
-    <button class="tb-btn danger" onclick="doLogout()" title="Sign Out">
-      <!-- Logout icon -->
-      <svg class="ico" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    <button class="tb-btn danger" onclick="doLogout()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       <span class="tb-btn-text">Sign Out</span>
     </button>
   </div>
   <div id="main">
-    <div class="page-header">
-      <div class="page-title">Dashboard</div>
-      <div class="page-sub" id="last-updated">—</div>
+    <div class="page-title">Dashboard</div>
+    <div class="page-sub" id="last-updated">—</div>
+    <div id="content"><div class="loading"><div class="spin"></div><div class="loading-txt">Loading…</div></div></div>
+  </div>
+</div>
+
+<!-- EXP MODAL -->
+<div class="modal-overlay" id="exp-modal">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title" id="exp-modal-title">Edit EXP</div>
+      <button class="modal-close" onclick="closeExpModal()">✕</button>
     </div>
-    <div id="content">
-      <div class="loading"><div class="spin"></div><div class="loading-txt">Loading…</div></div>
+    <div class="modal-body">
+      <div class="modal-field"><label>Student</label><div style="font-family:var(--font-b);font-size:15px;font-weight:600;color:var(--text)" id="exp-modal-name"></div></div>
+      <div class="modal-field"><label>Current EXP</label><div style="font-family:var(--font-d);font-size:22px;color:var(--green)" id="exp-modal-cur"></div></div>
+      <div class="modal-field"><label>New EXP Value</label><input class="modal-input" id="exp-modal-val" type="number" min="0" max="999999" placeholder="Enter new EXP…"/></div>
+      <div class="modal-field"><label>Rank Override (blank = auto)</label><input class="modal-input" id="exp-modal-rank" type="text" placeholder="e.g. Sys Architect"/></div>
+      <div id="exp-modal-msg" style="font-family:var(--font-m);font-size:11px;min-height:14px"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeExpModal()">Cancel</button>
+      <button class="btn btn-green" onclick="saveExp()">Save Changes</button>
     </div>
   </div>
 </div>
 
-<!-- SVG ICON DEFS -->
-<svg style="display:none">
-  <symbol id="ic-overview" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-  <symbol id="ic-lab" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v11.5a3.5 3.5 0 0 0 7 0V3"/><line x1="6" y1="3" x2="18" y2="3"/></svg>
-  <symbol id="ic-quiz" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-  <symbol id="ic-students" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-  <symbol id="ic-trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 22 12 17 16 22"/><line x1="12" y1="17" x2="12" y2="11"/><path d="M18 5H6l1 7a5 5 0 0 0 10 0z"/><path d="M5 5H3a2 2 0 0 0 0 4h2"/><path d="M19 5h2a2 2 0 0 0 0 4h-2"/></svg>
-  <symbol id="ic-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-</svg>
-
 <script>
-const SUPABASE_URL = 'https://oikumdcokfhrzuvgmxku.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9pa3VtZGNva2Zocnp1dmdteGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzA2NTYsImV4cCI6MjA4ODQ0NjY1Nn0.X_PzXZswIFPKZddV24rcSql6PbVoR0vmuKdn3Xh_qAQ';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_URL='https://oikumdcokfhrzuvgmxku.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9pa3VtZGNva2Zocnp1dmdteGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzA2NTYsImV4cCI6MjA4ODQ0NjY1Nn0.X_PzXZswIFPKZddV24rcSql6PbVoR0vmuKdn3Xh_qAQ';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
-let allSubs = [], allAttempts = [], allLabs = [], allQuizzes = [], currentTab = 'overview';
-let labSort = { col: 'submitted_at', dir: 'desc' }, quizSort = { col: 'attempted_at', dir: 'desc' };
-let labPage = 1, quizPage = 1;
-const PG = 25;
-let labF = { user: '', problem: '', status: 'all' }, quizF = { user: '', quiz: '', status: 'all' };
+const RANKS=[{name:'Newbie II',exp:0},{name:'Newbie I',exp:200},{name:'Coder III',exp:500},{name:'Coder II',exp:1000},{name:'Coder I',exp:1800},{name:'Developer III',exp:2800},{name:'Developer II',exp:4000},{name:'Developer I',exp:5500},{name:'Legend IV',exp:6500},{name:'Legend III',exp:9000},{name:'Legend II',exp:13000},{name:'Legend I',exp:18000},{name:'Sys Architect',exp:25000}];
+function getRank(exp){let r=RANKS[0];for(const x of RANKS){if(exp>=x.exp)r=x;}return r;}
+function getNext(exp){for(const r of RANKS){if(exp<r.exp)return r;}return null;}
+function rankStyle(name){
+  if(name.includes('Sys'))return{bg:'var(--violet-lt)',bd:'var(--violet-bd)',tx:'var(--violet)'};
+  if(name.includes('Legend'))return{bg:'var(--amber-lt)',bd:'var(--amber-bd)',tx:'var(--amber)'};
+  if(name.includes('Dev'))return{bg:'var(--teal-lt)',bd:'var(--teal-bd)',tx:'var(--teal)'};
+  if(name.includes('Coder'))return{bg:'var(--blue-lt)',bd:'var(--blue-bd)',tx:'var(--blue)'};
+  return{bg:'var(--green-lt)',bd:'var(--green-bd)',tx:'var(--green)'};
+}
 
-async function init() {
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) { showGateErr('Not logged in. Please log in via the main app first.'); return; }
-  const { data: a } = await sb.from('admins').select('user_id').eq('user_id', session.user.id).single();
-  if (!a) { showGateErr('Access denied — your account is not an admin.'); return; }
-  document.getElementById('tb-user').textContent = session.user.user_metadata?.full_name || session.user.email;
-  document.getElementById('gate').style.display = 'none';
-  document.getElementById('shell').style.display = 'flex';
+let allSubs=[],allAttempts=[],allLabs=[],allQuizzes=[],allProfiles=[];
+let currentTab='overview';
+let labSort={col:'submitted_at',dir:'desc'},quizSort={col:'attempted_at',dir:'desc'};
+let labPage=1,quizPage=1;
+const PG=25;
+let labF={user:'',problem:'',status:'all'},quizF={user:'',quiz:'',status:'all'};
+let expModalProfile=null;
+
+async function init(){
+  const{data:{session}}=await sb.auth.getSession();
+  if(!session){showGateErr('Not logged in. Please log in via the main app first.');return;}
+  const{data:a}=await sb.from('admins').select('user_id').eq('user_id',session.user.id).single();
+  if(!a){showGateErr('Access denied — your account is not an admin.');return;}
+  document.getElementById('tb-user').textContent=session.user.user_metadata?.full_name||session.user.email;
+  document.getElementById('gate').style.display='none';
+  document.getElementById('shell').style.display='flex';
   await loadAll();
 }
+function showGateErr(m){document.getElementById('gate-loading').style.display='none';document.getElementById('gate-err').textContent=m;}
+async function doLogout(){await sb.auth.signOut();window.location.href='index.html';}
 
-function showGateErr(m) {
-  document.getElementById('gate-loading').style.display = 'none';
-  document.getElementById('gate-err').textContent = m;
-}
-
-async function doLogout() { await sb.auth.signOut(); window.location.href = 'index.html'; }
-
-async function loadAll() {
-  document.getElementById('content').innerHTML = '<div class="loading"><div class="spin"></div><div class="loading-txt">Fetching records…</div></div>';
-  const [{ data: s }, { data: a }, { data: l }, { data: q }] = await Promise.all([
-    sb.from('lab_submissions').select('*').order('submitted_at', { ascending: false }),
-    sb.from('quiz_attempts').select('*').order('attempted_at', { ascending: false }),
-    sb.from('labs').select('*').order('created_at', { ascending: false }),
-    sb.from('quizzes').select('*').order('created_at', { ascending: false })
+async function loadAll(){
+  document.getElementById('content').innerHTML='<div class="loading"><div class="spin"></div><div class="loading-txt">Fetching records…</div></div>';
+  const[{data:s},{data:a},{data:l},{data:q},{data:p}]=await Promise.all([
+    sb.from('lab_submissions').select('*').order('submitted_at',{ascending:false}),
+    sb.from('quiz_attempts').select('*').order('attempted_at',{ascending:false}),
+    sb.from('labs').select('*').order('created_at',{ascending:false}),
+    sb.from('quizzes').select('*').order('created_at',{ascending:false}),
+    sb.from('profiles').select('*').order('exp',{ascending:false})
   ]);
-  allSubs = s || []; allAttempts = a || []; allLabs = l || []; allQuizzes = q || []; labPage = 1; quizPage = 1;
-  document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+  allSubs=s||[];allAttempts=a||[];allLabs=l||[];allQuizzes=q||[];allProfiles=p||[];
+  labPage=1;quizPage=1;
+  document.getElementById('last-updated').textContent='Updated '+new Date().toLocaleTimeString();
   render();
 }
 
-function render() {
-  const uU = new Set([...allSubs.map(s => s.username), ...allAttempts.map(a => a.username)]);
-  const pS = allSubs.filter(s => s.passed).length;
-  const pA = allAttempts.filter(a => a.passed).length;
-  const lRate = allSubs.length ? Math.round(pS / allSubs.length * 100) : 0;
-  const qRate = allAttempts.length ? Math.round(pA / allAttempts.length * 100) : 0;
-  const totalPts = allSubs.reduce((acc, s) => acc + (s.score || 0), 0);
-
-  document.getElementById('content').innerHTML = `
+function render(){
+  const uU=new Set([...allSubs.map(s=>s.username),...allAttempts.map(a=>a.username)]);
+  const pS=allSubs.filter(s=>s.passed).length,pA=allAttempts.filter(a=>a.passed).length;
+  const lRate=allSubs.length?Math.round(pS/allSubs.length*100):0;
+  const qRate=allAttempts.length?Math.round(pA/allAttempts.length*100):0;
+  const totalPts=allSubs.reduce((acc,s)=>acc+(s.score||0),0);
+  const tabs=[
+    ['overview','Overview','<path d="M3 3h7v7H3z"/><path d="M14 3h7v7h-7z"/><path d="M14 14h7v7h-7z"/><path d="M3 14h7v7H3z"/>'],
+    ['labs','Labs','<path d="M9 3v11.5a3.5 3.5 0 0 0 7 0V3"/><line x1="6" y1="3" x2="18" y2="3"/>'],
+    ['quizzes','Quizzes','<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>'],
+    ['students','Students','<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'],
+    ['leaderboard','Leaderboard','<polyline points="8 22 12 17 16 22"/><line x1="12" y1="17" x2="12" y2="11"/><path d="M18 5H6l1 7a5 5 0 0 0 10 0z"/>'],
+    ['exp','EXP Manager','<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>'],
+    ['activity','Activity','<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'],
+    ['security','Security','<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'],
+    ['quizeditor','Quiz Editor','<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>'],
+    ['content','Content','<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>'],
+  ];
+  document.getElementById('content').innerHTML=`
     <div class="stats-row">
-      <div class="stat-card c-gold">
-        <div class="stat-n cn-gold">${uU.size}</div>
-        <div class="stat-l">Students</div>
-        <div class="stat-sub">enrolled</div>
-      </div>
-      <div class="stat-card c-violet">
-        <div class="stat-n cn-violet">${allSubs.length}</div>
-        <div class="stat-l">Lab Submissions</div>
-        <div class="stat-sub">${lRate}% pass rate</div>
-      </div>
-      <div class="stat-card c-green">
-        <div class="stat-n cn-green">${pS}</div>
-        <div class="stat-l">Labs Passed</div>
-        <div class="stat-sub">of ${allSubs.length}</div>
-      </div>
-      <div class="stat-card c-violet">
-        <div class="stat-n cn-violet">${allAttempts.length}</div>
-        <div class="stat-l">Quiz Attempts</div>
-        <div class="stat-sub">${qRate}% pass rate</div>
-      </div>
-      <div class="stat-card c-green">
-        <div class="stat-n cn-green">${pA}</div>
-        <div class="stat-l">Quizzes Passed</div>
-        <div class="stat-sub">of ${allAttempts.length}</div>
-      </div>
-      <div class="stat-card c-blue">
-        <div class="stat-n cn-blue">${totalPts}</div>
-        <div class="stat-l">Total Points</div>
-        <div class="stat-sub">lab score sum</div>
-      </div>
+      <div class="stat-card c-green"><div class="sc-bar"></div><div class="stat-n cn-green">${uU.size}</div><div class="stat-l">Students</div><div class="stat-sub">enrolled</div></div>
+      <div class="stat-card c-blue"><div class="sc-bar"></div><div class="stat-n cn-blue">${allSubs.length}</div><div class="stat-l">Lab Submissions</div><div class="stat-sub">${lRate}% pass rate</div></div>
+      <div class="stat-card c-teal"><div class="sc-bar"></div><div class="stat-n cn-teal">${pS}</div><div class="stat-l">Labs Passed</div><div class="stat-sub">of ${allSubs.length}</div></div>
+      <div class="stat-card c-violet"><div class="sc-bar"></div><div class="stat-n cn-violet">${allAttempts.length}</div><div class="stat-l">Quiz Attempts</div><div class="stat-sub">${qRate}% pass rate</div></div>
+      <div class="stat-card c-teal"><div class="sc-bar"></div><div class="stat-n cn-teal">${pA}</div><div class="stat-l">Quizzes Passed</div><div class="stat-sub">of ${allAttempts.length}</div></div>
+      <div class="stat-card c-amber"><div class="sc-bar"></div><div class="stat-n cn-amber">${totalPts}</div><div class="stat-l">Total Points</div><div class="stat-sub">lab score sum</div></div>
     </div>
-
-    <div class="tabs-wrap">
-      <button class="tab ${currentTab === 'overview' ? 'active' : ''}" onclick="sTab('overview')">
-        <svg class="ico" width="13" height="13"><use href="#ic-overview"/></svg>Overview
-      </button>
-      <button class="tab ${currentTab === 'labs' ? 'active' : ''}" onclick="sTab('labs')">
-        <svg class="ico" width="13" height="13"><use href="#ic-lab"/></svg>Labs
-      </button>
-      <button class="tab ${currentTab === 'quizzes' ? 'active' : ''}" onclick="sTab('quizzes')">
-        <svg class="ico" width="13" height="13"><use href="#ic-quiz"/></svg>Quizzes
-      </button>
-      <button class="tab ${currentTab === 'students' ? 'active' : ''}" onclick="sTab('students')">
-        <svg class="ico" width="13" height="13"><use href="#ic-students"/></svg>Students
-      </button>
-    <button class="tab ${currentTab === 'content' ? 'active' : ''}" onclick="sTab('content')">
-      <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Content
-    </button>
-    </div>
+    <div class="tabs-wrap">${tabs.map(([t,l,ic])=>`<button class="tab ${currentTab===t?'active':''}" onclick="sTab('${t}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${ic}</svg>${l}</button>`).join('')}</div>
     <div id="tc">${rTab()}</div>`;
 }
 
-function sTab(t) { currentTab = t; labPage = 1; quizPage = 1; render(); }
-function rTab() {
-  if (currentTab === 'overview') return rOverview();
-  if (currentTab === 'labs') return rLabs();
-  if (currentTab === 'quizzes') return rQuizzes();
-  if (currentTab === 'students') return rStudents();
-  if (currentTab === 'leaderboard') return rLeaderboard();
+function sTab(t){currentTab=t;labPage=1;quizPage=1;render();}
+function rTab(){
+  if(currentTab==='overview')return rOverview();
+  if(currentTab==='labs')return rLabs();
+  if(currentTab==='quizzes')return rQuizzes();
+  if(currentTab==='students')return rStudents();
+  if(currentTab==='leaderboard')return rLeaderboard();
+  if(currentTab==='exp')return rExp();
+  if(currentTab==='activity')return rActivity();
+  if(currentTab==='security')return rSecurity();
+  if(currentTab==='quizeditor')return rQuizEditor();
   return rContent();
 }
-function rT() { document.getElementById('tc').innerHTML = rTab(); }
+function rT(){document.getElementById('tc').innerHTML=rTab();}
 
-/* ── OVERVIEW ── */
-function rOverview() {
-  const pc = {};
-  allSubs.forEach(s => {
-    const k = s.problem_title || '?';
-    if (!pc[k]) pc[k] = { t: 0, p: 0, pts: 0 };
-    pc[k].t++; if (s.passed) pc[k].p++; pc[k].pts += (s.score || 0);
-  });
-  const qc = {};
-  allAttempts.forEach(a => {
-    const k = a.quiz_title || '?';
-    if (!qc[k]) qc[k] = { t: 0, p: 0 };
-    qc[k].t++; if (a.passed) qc[k].p++;
-  });
-  const recent = [
-    ...allSubs.slice(0, 8).map(s => ({ type: 'lab', name: s.username, item: s.problem_title, passed: s.passed, time: s.submitted_at })),
-    ...allAttempts.slice(0, 8).map(a => ({ type: 'quiz', name: a.username, item: a.quiz_title, passed: a.passed, time: a.attempted_at }))
-  ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 12);
+function rOverview(){
+  const pc={};allSubs.forEach(s=>{const k=s.problem_title||'?';if(!pc[k])pc[k]={t:0,p:0,pts:0};pc[k].t++;if(s.passed)pc[k].p++;pc[k].pts+=(s.score||0);});
+  const qc={};allAttempts.forEach(a=>{const k=a.quiz_title||'?';if(!qc[k])qc[k]={t:0,p:0};qc[k].t++;if(a.passed)qc[k].p++;});
+  const recent=[...allSubs.slice(0,8).map(s=>({type:'lab',name:s.username,item:s.problem_title,passed:s.passed,time:s.submitted_at})),...allAttempts.slice(0,8).map(a=>({type:'quiz',name:a.username,item:a.quiz_title,passed:a.passed,time:a.attempted_at}))].sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,12);
+  const pRows=Object.entries(pc).sort((a,b)=>b[1].t-a[1].t).slice(0,10).map(([n,d])=>{const r=d.t>0?Math.round(d.p/d.t*100):0,bc=r>=70?'fg':r>=40?'fo':'fr';return`<tr><td class="ttr" title="${esc(n)}">${esc(n)}</td><td><span class="badge b-violet">${d.t}</span></td><td><span class="badge b-pass">${d.p}</span></td><td class="tm">${d.pts}</td><td><div class="sw"><div class="sb"><div class="sbf ${bc}" style="width:${r}%"></div></div><span class="badge b-pct">${r}%</span></div></td></tr>`;}).join('');
+  const qRows=Object.entries(qc).sort((a,b)=>b[1].t-a[1].t).map(([n,d])=>{const r=d.t>0?Math.round(d.p/d.t*100):0,bc=r>=70?'fg':r>=40?'fo':'fr';return`<tr><td class="ttr" title="${esc(n)}">${esc(n)}</td><td><span class="badge b-violet">${d.t}</span></td><td><span class="badge b-pass">${d.p}</span></td><td><div class="sw"><div class="sb"><div class="sbf ${bc}" style="width:${r}%"></div></div><span class="badge b-pct">${r}%</span></div></td></tr>`;}).join('');
+  const actRows=recent.map(r=>`<tr><td><span class="user-pill"><span class="uav">${r.name.charAt(0).toUpperCase()}</span>${esc(r.name)}</span></td><td><span class="badge ${r.type==='lab'?'b-blue':'b-violet'}">${r.type==='lab'?'Lab':'Quiz'}</span></td><td class="ttr" title="${esc(r.item)}">${esc(r.item)}</td><td><span class="badge ${r.passed?'b-pass':'b-fail'}">${r.passed?'Pass':'Fail'}</span></td><td class="td-dim tnw">${fmtDate(r.time)}</td></tr>`).join('');
+  return`<div class="two-col"><div class="section-card"><div class="section-hd"><div class="section-title">Lab Problems</div></div><div class="tbl-wrap"><table><thead><tr><th>Problem</th><th>Attempts</th><th>Passed</th><th>Pts</th><th>Rate</th></tr></thead><tbody>${pRows||`<tr><td colspan="5"><div class="tbl-empty"><div class="tei">📋</div>No lab data</div></td></tr>`}</tbody></table></div></div><div class="section-card"><div class="section-hd"><div class="section-title">Quiz Overview</div></div><div class="tbl-wrap"><table><thead><tr><th>Quiz</th><th>Attempts</th><th>Passed</th><th>Rate</th></tr></thead><tbody>${qRows||`<tr><td colspan="4"><div class="tbl-empty"><div class="tei">📋</div>No quiz data</div></td></tr>`}</tbody></table></div></div></div>
+  <div class="section-card"><div class="section-hd"><div class="section-title">Recent Activity</div></div><div class="tbl-wrap"><table><thead><tr><th>Student</th><th>Type</th><th>Item</th><th>Result</th><th>Time</th></tr></thead><tbody>${actRows||`<tr><td colspan="5"><div class="tbl-empty"><div class="tei">📋</div>No activity</div></td></tr>`}</tbody></table></div></div>`;
+}
 
-  const pRows = Object.entries(pc).sort((a, b) => b[1].t - a[1].t).slice(0, 10).map(([n, d]) => {
-    const r = d.t > 0 ? Math.round(d.p / d.t * 100) : 0, bc = r >= 70 ? 'fg' : r >= 40 ? 'fo' : 'fr';
-    return `<tr>
-      <td class="ttr" title="${esc(n)}">${esc(n)}</td>
-      <td><span class="badge b-violet">${d.t}</span></td>
-      <td><span class="badge b-pass">${d.p}</span></td>
-      <td class="tm">${d.pts}</td>
-      <td><div class="sw"><div class="sb"><div class="sbf ${bc}" style="width:${r}%"></div></div><span class="badge b-pct">${r}%</span></div></td>
-    </tr>`;
+function rLabs(){
+  let rows=[...allSubs];
+  if(labF.user)rows=rows.filter(r=>r.username.toLowerCase().includes(labF.user.toLowerCase()));
+  if(labF.problem)rows=rows.filter(r=>(r.problem_title||'').toLowerCase().includes(labF.problem.toLowerCase())||(r.lab_title||'').toLowerCase().includes(labF.problem.toLowerCase()));
+  if(labF.status!=='all')rows=rows.filter(r=>labF.status==='pass'?r.passed:!r.passed);
+  rows.sort((a,b)=>{let av=a[labSort.col]??'',bv=b[labSort.col]??'';if(typeof av==='string'){av=av.toLowerCase();bv=bv.toLowerCase();}return labSort.dir==='asc'?(av<bv?-1:av>bv?1:0):(av>bv?-1:av<bv?1:0);});
+  const tot=rows.length,tp=Math.max(1,Math.ceil(tot/PG));labPage=Math.min(labPage,tp);
+  const pg=rows.slice((labPage-1)*PG,labPage*PG);
+  const ths=[['username','Student'],['lab_title','Lab'],['problem_title','Problem'],['score','Score'],['tc_passed','Trials'],['passed','Status'],['submitted_at','Submitted']];
+  return`<div class="section-card"><div class="section-hd"><div class="section-hd-left"><div class="section-title">Lab Submissions</div><span class="section-count">${tot}</span></div><button class="btn btn-green" onclick="exportCSV('labs')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button></div>
+  <div class="filters"><input class="filter-input" placeholder="Search student…" value="${labF.user}" oninput="labF.user=this.value;labPage=1;rT()"/><input class="filter-input" placeholder="Search problem / lab…" value="${labF.problem}" oninput="labF.problem=this.value;labPage=1;rT()"/><select class="filter-select" onchange="labF.status=this.value;labPage=1;rT()"><option value="all" ${labF.status==='all'?'selected':''}>All</option><option value="pass" ${labF.status==='pass'?'selected':''}>Passed</option><option value="fail" ${labF.status==='fail'?'selected':''}>Failed</option></select></div>
+  <div class="tbl-wrap"><table><thead><tr>${ths.map(([c,l])=>`<th onclick="sLab('${c}')" class="${labSort.col===c?'sort-on':''}">${l}<span class="sa">${labSort.col===c?(labSort.dir==='asc'?'↑':'↓'):'↕'}</span></th>`).join('')}</tr></thead><tbody>${pg.length===0?`<tr><td colspan="7"><div class="tbl-empty"><div class="tei">🔍</div>No records match</div></td></tr>`:pg.map(r=>{const p=r.max_score>0?Math.round(r.score/r.max_score*100):0,bc=p>=70?'fg':p>=40?'fo':'fr';return`<tr><td><span class="user-pill"><span class="uav">${(r.username||'?').charAt(0).toUpperCase()}</span>${esc(r.username)}</span></td><td class="ttr" title="${esc(r.lab_title)}">${esc(r.lab_title)}</td><td class="ttr" title="${esc(r.problem_title)}">${esc(r.problem_title)}</td><td><div class="sw"><span class="tm">${r.score}/${r.max_score}</span><div class="sb"><div class="sbf ${bc}" style="width:${p}%"></div></div><span class="badge b-pct">${p}%</span></div></td><td class="tm">${r.tc_passed}/${r.tc_total}</td><td><span class="badge ${r.passed?'b-pass':'b-fail'}">${r.passed?'Pass':'Fail'}</span></td><td class="td-dim tnw">${fmtDate(r.submitted_at)}</td></tr>`;}).join('')}</tbody></table></div>${rPg(labPage,tp,tot,'labPage')}</div>`;
+}
+function sLab(c){labSort=labSort.col===c?{col:c,dir:labSort.dir==='asc'?'desc':'asc'}:{col:c,dir:'desc'};rT();}
+
+function rQuizzes(){
+  let rows=[...allAttempts];
+  if(quizF.user)rows=rows.filter(r=>r.username.toLowerCase().includes(quizF.user.toLowerCase()));
+  if(quizF.quiz)rows=rows.filter(r=>(r.quiz_title||'').toLowerCase().includes(quizF.quiz.toLowerCase()));
+  if(quizF.status!=='all')rows=rows.filter(r=>quizF.status==='pass'?r.passed:!r.passed);
+  rows.sort((a,b)=>{let av=a[quizSort.col]??'',bv=b[quizSort.col]??'';if(typeof av==='string'){av=av.toLowerCase();bv=bv.toLowerCase();}return quizSort.dir==='asc'?(av<bv?-1:av>bv?1:0):(av>bv?-1:av<bv?1:0);});
+  const tot=rows.length,tp=Math.max(1,Math.ceil(tot/PG));quizPage=Math.min(quizPage,tp);
+  const pg=rows.slice((quizPage-1)*PG,quizPage*PG);
+  const ths=[['username','Student'],['quiz_title','Quiz'],['score','Score'],['passed','Status'],['attempted_at','Attempted']];
+  return`<div class="section-card"><div class="section-hd"><div class="section-hd-left"><div class="section-title">Quiz Attempts</div><span class="section-count">${tot}</span></div><button class="btn btn-green" onclick="exportCSV('quizzes')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button></div>
+  <div class="filters"><input class="filter-input" placeholder="Search student…" value="${quizF.user}" oninput="quizF.user=this.value;quizPage=1;rT()"/><input class="filter-input" placeholder="Search quiz…" value="${quizF.quiz}" oninput="quizF.quiz=this.value;quizPage=1;rT()"/><select class="filter-select" onchange="quizF.status=this.value;quizPage=1;rT()"><option value="all" ${quizF.status==='all'?'selected':''}>All</option><option value="pass" ${quizF.status==='pass'?'selected':''}>Passed</option><option value="fail" ${quizF.status==='fail'?'selected':''}>Failed</option></select></div>
+  <div class="tbl-wrap"><table><thead><tr>${ths.map(([c,l])=>`<th onclick="sQuiz('${c}')" class="${quizSort.col===c?'sort-on':''}">${l}<span class="sa">${quizSort.col===c?(quizSort.dir==='asc'?'↑':'↓'):'↕'}</span></th>`).join('')}</tr></thead><tbody>${pg.length===0?`<tr><td colspan="5"><div class="tbl-empty"><div class="tei">🔍</div>No records match</div></td></tr>`:pg.map(r=>{const p=r.total>0?Math.round(r.score/r.total*100):0,bc=p>=70?'fg':p>=40?'fo':'fr';return`<tr><td><span class="user-pill"><span class="uav">${(r.username||'?').charAt(0).toUpperCase()}</span>${esc(r.username)}</span></td><td class="ttr" title="${esc(r.quiz_title)}">${esc(r.quiz_title)}</td><td><div class="sw"><span class="tm">${r.score}/${r.total}</span><div class="sb"><div class="sbf ${bc}" style="width:${p}%"></div></div><span class="badge b-pct">${p}%</span></div></td><td><span class="badge ${r.passed?'b-pass':'b-fail'}">${r.passed?'Pass':'Fail'}</span></td><td class="td-dim tnw">${fmtDate(r.attempted_at)}</td></tr>`;}).join('')}</tbody></table></div>${rPg(quizPage,tp,tot,'quizPage')}</div>`;
+}
+function sQuiz(c){quizSort=quizSort.col===c?{col:c,dir:quizSort.dir==='asc'?'desc':'asc'}:{col:c,dir:'desc'};rT();}
+
+function rStudents(){
+  const u={};
+  allSubs.forEach(s=>{if(!u[s.username])u[s.username]={labs:[],quizzes:[]};u[s.username].labs.push(s);});
+  allAttempts.forEach(a=>{if(!u[a.username])u[a.username]={labs:[],quizzes:[]};u[a.username].quizzes.push(a);});
+  if(!Object.keys(u).length)return`<div class="section-card"><div class="tbl-empty"><div class="tei">👥</div>No student data yet</div></div>`;
+  const cards=Object.entries(u).sort((a,b)=>a[0].localeCompare(b[0])).map(([name,d])=>{
+    const lt=d.labs.length,lp=d.labs.filter(l=>l.passed).length;
+    const lpts=d.labs.reduce((a,l)=>a+(l.score||0),0),lmax=d.labs.reduce((a,l)=>a+(l.max_score||0),0);
+    const lpct=lmax>0?Math.round(lpts/lmax*100):0;
+    const qt=d.quizzes.length,qp=d.quizzes.filter(q=>q.passed).length;
+    const qpct=qt>0?Math.round(qp/qt*100):0;
+    const uProbs=new Set(d.labs.map(l=>l.problem_id)).size;
+    const uQuiz=new Set(d.quizzes.map(q=>q.quiz_id)).size;
+    const last=[...d.labs.map(l=>l.submitted_at),...d.quizzes.map(q=>q.attempted_at)].filter(Boolean).sort().pop();
+    const prof=allProfiles.find(p=>p.username===name);
+    const exp=prof?.exp||0;const rank=getRank(exp);const rs=rankStyle(rank.name);
+    return`<div class="user-card"><div class="uc-hd"><div class="uc-av">${name.charAt(0).toUpperCase()}</div><div style="flex:1;min-width:0"><div class="uc-name">${esc(name)}</div><div class="uc-sub">${lt+qt} activities</div></div><span class="rank-chip" style="background:${rs.bg};border-color:${rs.bd};color:${rs.tx}">${rank.name}</span></div><div class="uc-row"><span>EXP</span><span class="uc-val" style="color:var(--green)">${exp.toLocaleString()}</span></div><div class="uc-sec">Labs</div><div class="uc-row"><span>Submissions</span><span class="uc-val">${lt}</span></div><div class="uc-row"><span>Unique problems</span><span class="uc-val">${uProbs}</span></div><div class="uc-row"><span>Passed</span><span class="uc-val" style="color:var(--green)">${lp} / ${lt}</span></div><div class="uc-row"><span>Points</span><span class="uc-val">${lpts} / ${lmax}</span></div><div class="uc-bar"><div class="uc-bar-fill" style="width:${lpct}%"></div></div><div class="uc-sec">Quizzes</div><div class="uc-row"><span>Attempts</span><span class="uc-val">${qt}</span></div><div class="uc-row"><span>Unique quizzes</span><span class="uc-val">${uQuiz}</span></div><div class="uc-row"><span>Passed</span><span class="uc-val" style="color:var(--violet)">${qp} / ${qt}</span></div><div class="uc-bar"><div class="uc-bar-fill quiz" style="width:${qpct}%"></div></div><div class="uc-last">Last active: ${last?fmtDate(last):'Never'}</div></div>`;
   }).join('');
-
-  const qRows = Object.entries(qc).sort((a, b) => b[1].t - a[1].t).map(([n, d]) => {
-    const r = d.t > 0 ? Math.round(d.p / d.t * 100) : 0, bc = r >= 70 ? 'fg' : r >= 40 ? 'fo' : 'fr';
-    return `<tr>
-      <td class="ttr" title="${esc(n)}">${esc(n)}</td>
-      <td><span class="badge b-violet">${d.t}</span></td>
-      <td><span class="badge b-pass">${d.p}</span></td>
-      <td><div class="sw"><div class="sb"><div class="sbf ${bc}" style="width:${r}%"></div></div><span class="badge b-pct">${r}%</span></div></td>
-    </tr>`;
-  }).join('');
-
-  const actRows = recent.map(r => `<tr>
-    <td><span class="user-pill"><span class="uav">${r.name.charAt(0).toUpperCase()}</span>${esc(r.name)}</span></td>
-    <td><span class="badge ${r.type === 'lab' ? 'b-violet' : 'b-pct'}">${r.type === 'lab' ? 'Lab' : 'Quiz'}</span></td>
-    <td class="ttr" title="${esc(r.item)}">${esc(r.item)}</td>
-    <td><span class="badge ${r.passed ? 'b-pass' : 'b-fail'}">${r.passed ? 'Pass' : 'Fail'}</span></td>
-    <td class="td-dim tnw">${fmtDate(r.time)}</td>
-  </tr>`).join('');
-
-  return `
-    <div class="two-col">
-      <div class="section-card">
-        <div class="section-hd">
-          <div class="section-title">Lab Problems</div>
-        </div>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr><th>Problem</th><th>Attempts</th><th>Passed</th><th>Pts</th><th>Rate</th></tr></thead>
-            <tbody>${pRows || '<tr><td colspan="5"><div class="tbl-empty"><div class="tei">—</div>No lab data</div></td></tr>'}</tbody>
-          </table>
-        </div>
-      </div>
-      <div class="section-card">
-        <div class="section-hd">
-          <div class="section-title">Quiz Attempts</div>
-        </div>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr><th>Quiz</th><th>Attempts</th><th>Passed</th><th>Rate</th></tr></thead>
-            <tbody>${qRows || '<tr><td colspan="4"><div class="tbl-empty"><div class="tei">—</div>No quiz data</div></td></tr>'}</tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div class="section-card">
-      <div class="section-hd"><div class="section-title">Recent Activity</div></div>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>Student</th><th>Type</th><th>Item</th><th>Result</th><th>Time</th></tr></thead>
-          <tbody>${actRows || '<tr><td colspan="5"><div class="tbl-empty"><div class="tei">—</div>No activity</div></td></tr>'}</tbody>
-        </table>
-      </div>
-    </div>`;
+  return`<div class="user-grid">${cards}</div>`;
 }
 
-/* ── LABS ── */
-function rLabs() {
-  let rows = [...allSubs];
-  if (labF.user) rows = rows.filter(r => r.username.toLowerCase().includes(labF.user.toLowerCase()));
-  if (labF.problem) rows = rows.filter(r => (r.problem_title || '').toLowerCase().includes(labF.problem.toLowerCase()) || (r.lab_title || '').toLowerCase().includes(labF.problem.toLowerCase()));
-  if (labF.status !== 'all') rows = rows.filter(r => labF.status === 'pass' ? r.passed : !r.passed);
-  rows.sort((a, b) => {
-    let av = a[labSort.col] ?? '', bv = b[labSort.col] ?? '';
-    if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
-    return labSort.dir === 'asc' ? (av < bv ? -1 : av > bv ? 1 : 0) : (av > bv ? -1 : av < bv ? 1 : 0);
+function rLeaderboard(){
+  const u={};
+  allSubs.forEach(s=>{if(!u[s.username])u[s.username]={lpts:0,lmax:0,lpassed:0,ltotal:0,qtotal:0,qpassed:0,qpts:0,qmax:0};u[s.username].lpts+=(s.score||0);u[s.username].lmax+=(s.max_score||0);u[s.username].ltotal++;if(s.passed)u[s.username].lpassed++;});
+  allAttempts.forEach(a=>{if(!u[a.username])u[a.username]={lpts:0,lmax:0,lpassed:0,ltotal:0,qtotal:0,qpassed:0,qpts:0,qmax:0};u[a.username].qtotal++;u[a.username].qpts+=(a.score||0);u[a.username].qmax+=(a.total||0);if(a.passed)u[a.username].qpassed++;});
+  if(!Object.keys(u).length)return`<div class="section-card"><div class="tbl-empty"><div class="tei">🏆</div>No data yet</div></div>`;
+  const labR=Object.entries(u).filter(([,d])=>d.ltotal>0).map(([n,d])=>({n,...d,lpct:d.lmax>0?Math.round(d.lpts/d.lmax*100):0})).sort((a,b)=>b.lpts-a.lpts||b.lpassed-a.lpassed);
+  const quizR=Object.entries(u).filter(([,d])=>d.qtotal>0).map(([n,d])=>({n,...d,qpct:d.qmax>0?Math.round(d.qpts/d.qmax*100):0})).sort((a,b)=>b.qpassed-a.qpassed||b.qpct-a.qpct);
+  const comboR=Object.entries(u).map(([n,d])=>({n,...d,lpct:d.lmax>0?Math.round(d.lpts/d.lmax*100):0,qpct:d.qmax>0?Math.round(d.qpts/d.qmax*100):0,combo:d.lpts+(d.qpassed*10)})).sort((a,b)=>b.combo-a.combo);
+  const medal=i=>i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}`;
+  const rc=i=>i===0?'r1':i===1?'r2':i===2?'r3':'rn';
+  const cl=i=>i===0?'top1':i===1?'top2':i===2?'top3':'';
+  const labRows=labR.map((u,i)=>`<div class="lb-row ${cl(i)}"><div class="lb-rank ${rc(i)}">${medal(i)}</div><div class="uav">${u.n.charAt(0).toUpperCase()}</div><div class="lb-info"><div class="lb-name">${esc(u.n)}</div><div class="lb-mini"><span class="badge b-pass">${u.lpassed} passed</span><span class="badge b-pct">${u.lpct}%</span><span class="badge b-muted">${u.ltotal} tries</span></div></div><div class="lb-score"><div class="lb-score-main lab">${u.lpts}</div><div class="lb-score-sub">pts</div></div></div>`).join('');
+  const quizRows=quizR.map((u,i)=>`<div class="lb-row ${cl(i)}"><div class="lb-rank ${rc(i)}">${medal(i)}</div><div class="uav" style="background:var(--violet-lt);color:var(--violet);border-color:var(--violet-bd)">${u.n.charAt(0).toUpperCase()}</div><div class="lb-info"><div class="lb-name">${esc(u.n)}</div><div class="lb-mini"><span class="badge b-violet">${u.qtotal} attempts</span><span class="badge b-pct">${u.qpct}%</span></div></div><div class="lb-score"><div class="lb-score-main quiz">${u.qpassed}</div><div class="lb-score-sub">passed</div></div></div>`).join('');
+  const comboRows=comboR.map((u,i)=>`<div class="combo-row ${cl(i)}"><div class="lb-rank ${rc(i)}">${medal(i)}</div><div class="uav">${u.n.charAt(0).toUpperCase()}</div><div style="font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--text);min-width:100px">${esc(u.n)}</div><div class="combo-stats"><span class="badge b-pct">${u.lpts} pts</span><span class="badge b-pass">${u.lpct}%</span><span class="badge b-violet">${u.qpassed}/${u.qtotal}</span><span class="badge b-blue">${u.qpct}%</span></div><div style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--green);flex-shrink:0">${u.combo}</div></div>`).join('');
+  return`<div class="lb-split"><div class="lb-card"><div class="lb-card-hd"><div class="lb-card-title">Lab Leaderboard</div><div class="lb-card-sub">Ranked by total lab points</div></div><div class="lb-list">${labRows||'<div class="tbl-empty">No lab data</div>'}</div></div><div class="lb-card"><div class="lb-card-hd"><div class="lb-card-title">Quiz Leaderboard</div><div class="lb-card-sub">Ranked by quizzes passed</div></div><div class="lb-list">${quizRows||'<div class="tbl-empty">No quiz data</div>'}</div></div></div>
+  <div class="section-card"><div class="section-hd"><div class="section-hd-left"><div class="section-title">Combined Ranking</div><span class="section-count">${comboR.length} students</span></div><span style="font-family:var(--font-m);font-size:9px;color:var(--muted)">lab pts + (quiz passes × 10)</span></div><div class="combo-lb">${comboRows||'<div class="tbl-empty">No data</div>'}</div></div>`;
+}
+
+/* ── NEW: EXP MANAGER ── */
+function rExp(){
+  if(!allProfiles.length)return`<div class="section-card"><div class="tbl-empty"><div class="tei">⭐</div>No profiles found</div></div>`;
+  const cards=allProfiles.map((p,i)=>{
+    const exp=p.exp||0;const rank=getRank(exp);const next=getNext(exp);
+    const rs=rankStyle(rank.name);
+    const pct=next?Math.round((exp-rank.exp)/(next.exp-rank.exp)*100):100;
+    const medal=i===0?'🥇 ':i===1?'🥈 ':i===2?'🥉 ':'';
+    return`<div class="exp-card"><div class="exp-card-hd"><div class="exp-av">${(p.username||'?').charAt(0).toUpperCase()}</div><div style="flex:1;min-width:0"><div class="exp-name">${medal}${esc(p.username||'Unknown')}</div><span class="rank-chip" style="background:${rs.bg};border-color:${rs.bd};color:${rs.tx};font-size:9px;margin-top:3px;display:inline-flex">${rank.name}</span></div><button class="btn btn-green" style="font-size:10px;padding:5px 10px" onclick="openExpModal('${p.id}')">Edit</button></div><div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px"><div class="exp-num">${exp.toLocaleString()}</div><span style="font-family:var(--font-m);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">EXP</span></div><div class="exp-progress"><div class="exp-progress-fill" style="width:${pct}%"></div></div><div class="exp-next">${next?`${pct}% to ${next.name} (${next.exp.toLocaleString()} EXP)`:'Max rank achieved'}</div></div>`;
+  }).join('');
+  return`<div class="section-card"><div class="section-hd"><div class="section-hd-left"><div class="section-title">EXP & Rank Manager</div><span class="section-count">${allProfiles.length} students</span></div><span style="font-family:var(--font-m);font-size:10px;color:var(--muted)">Direct override — bypasses add_exp rate limit</span></div><div class="exp-grid">${cards}</div></div>`;
+}
+function openExpModal(id){
+  const p=allProfiles.find(x=>x.id===id);if(!p)return;
+  expModalProfile=p;
+  const exp=p.exp||0;const rank=getRank(exp);
+  document.getElementById('exp-modal-title').textContent='Edit EXP — '+esc(p.username||'?');
+  document.getElementById('exp-modal-name').textContent=p.username||'Unknown';
+  document.getElementById('exp-modal-cur').textContent=exp.toLocaleString()+' EXP';
+  document.getElementById('exp-modal-val').value=exp;
+  document.getElementById('exp-modal-rank').value=p.rank||rank.name;
+  document.getElementById('exp-modal-msg').textContent='';
+  document.getElementById('exp-modal').classList.add('open');
+}
+function closeExpModal(){document.getElementById('exp-modal').classList.remove('open');expModalProfile=null;}
+async function saveExp(){
+  if(!expModalProfile)return;
+  const newExp=parseInt(document.getElementById('exp-modal-val').value)||0;
+  const rankOverride=document.getElementById('exp-modal-rank').value.trim()||getRank(newExp).name;
+  const msg=document.getElementById('exp-modal-msg');
+  msg.style.color='var(--muted)';msg.textContent='Saving…';
+  const{error}=await sb.from('profiles').update({exp:newExp,rank:rankOverride}).eq('id',expModalProfile.id);
+  if(error){msg.style.color='var(--red)';msg.textContent='⚠ Error: '+error.message;}
+  else{msg.style.color='var(--green)';msg.textContent='✓ Saved!';const{data:p}=await sb.from('profiles').select('*').order('exp',{ascending:false});allProfiles=p||[];setTimeout(()=>{closeExpModal();rT();},700);}
+}
+
+/* ── NEW: ACTIVITY TIMELINE ── */
+function rActivity(){
+  const all=[...allSubs.map(s=>({type:'lab',name:s.username,item:s.problem_title,sub:s.lab_title,passed:s.passed,score:s.score,max:s.max_score,time:s.submitted_at})),...allAttempts.map(a=>({type:'quiz',name:a.username,item:a.quiz_title,sub:null,passed:a.passed,score:a.score,max:a.total,time:a.attempted_at}))].sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,80);
+  if(!all.length)return`<div class="section-card"><div class="tbl-empty"><div class="tei">📊</div>No activity yet</div></div>`;
+  const rows=all.map(r=>{const pct=r.max>0?Math.round(r.score/r.max*100):0;return`<div class="tl-item"><div class="tl-left"><div class="tl-dot ${r.type}"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-name">${esc(r.name)}</div><div class="tl-detail">${r.type==='lab'?'Lab':'Quiz'}: ${esc(r.item)}${r.sub?' · '+esc(r.sub):''}</div><div class="tl-badges"><span class="badge ${r.type==='lab'?'b-blue':'b-violet'}">${r.type==='lab'?'Lab':'Quiz'}</span><span class="badge ${r.passed?'b-pass':'b-fail'}">${r.passed?'Pass':'Fail'}</span><span class="badge b-pct">${r.score}/${r.max} · ${pct}%</span></div><div class="tl-time">${fmtDate(r.time)}</div></div></div>`;}).join('');
+  return`<div class="section-card"><div class="section-hd"><div class="section-hd-left"><div class="section-title">Student Activity Timeline</div><span class="section-count">Last 80 events</span></div></div><div class="timeline">${rows}</div></div>`;
+}
+
+/* ── NEW: SECURITY LOG ── */
+function rSecurity(){
+  const events=[];
+  const actMap={};
+  allSubs.forEach(s=>{if(!actMap[s.username])actMap[s.username]={subs:0};actMap[s.username].subs++;});
+  allAttempts.forEach(a=>{if(!actMap[a.username])actMap[a.username]={subs:0};actMap[a.username].subs++;});
+  allProfiles.forEach(p=>{
+    const exp=p.exp||0,act=actMap[p.username]||{subs:0},maxExp=act.subs*10;
+    if(exp>maxExp&&act.subs>0&&exp>50)events.push({level:'amber',title:`Suspicious EXP — ${esc(p.username)}`,sub:`${exp.toLocaleString()} EXP with only ${act.subs} submissions (max expected ~${maxExp})`,time:new Date().toISOString()});
   });
-  const tot = rows.length, tp = Math.max(1, Math.ceil(tot / PG));
-  labPage = Math.min(labPage, tp);
-  const pg = rows.slice((labPage - 1) * PG, labPage * PG);
-  const ths = [['username', 'Student'], ['lab_title', 'Lab'], ['problem_title', 'Problem'], ['score', 'Score'], ['tc_passed', 'Trials'], ['passed', 'Status'], ['submitted_at', 'Submitted']];
-  return `<div class="section-card">
-    <div class="section-hd">
-      <div class="section-hd-left">
-        <div class="section-title">Lab Submissions</div>
-        <span class="section-count">${tot}</span>
-      </div>
-      <button class="btn-export" onclick="exportCSV('labs')">
-        <svg class="ico" width="12" height="12"><use href="#ic-download"/></svg> Export CSV
-      </button>
-    </div>
-    <div class="filters">
-      <input class="filter-input" placeholder="Search student…" value="${labF.user}" oninput="labF.user=this.value;labPage=1;rT()"/>
-      <input class="filter-input" placeholder="Search problem / lab…" value="${labF.problem}" oninput="labF.problem=this.value;labPage=1;rT()"/>
-      <select class="filter-select" onchange="labF.status=this.value;labPage=1;rT()">
-        <option value="all" ${labF.status === 'all' ? 'selected' : ''}>All</option>
-        <option value="pass" ${labF.status === 'pass' ? 'selected' : ''}>Passed</option>
-        <option value="fail" ${labF.status === 'fail' ? 'selected' : ''}>Failed</option>
-      </select>
-    </div>
-    <div class="tbl-wrap"><table>
-      <thead><tr>${ths.map(([c, l]) => `<th onclick="sLab('${c}')" class="${labSort.col === c ? 'sort-on' : ''}">${l}<span class="sa">${labSort.col === c ? (labSort.dir === 'asc' ? '↑' : '↓') : '↕'}</span></th>`).join('')}</tr></thead>
-      <tbody>${pg.length === 0
-        ? `<tr><td colspan="7"><div class="tbl-empty"><div class="tei">—</div>No records match</div></td></tr>`
-        : pg.map(r => {
-          const p = r.max_score > 0 ? Math.round(r.score / r.max_score * 100) : 0;
-          const bc = p >= 70 ? 'fg' : p >= 40 ? 'fo' : 'fr';
-          return `<tr>
-            <td><span class="user-pill"><span class="uav">${(r.username || '?').charAt(0).toUpperCase()}</span>${esc(r.username)}</span></td>
-            <td class="ttr" title="${esc(r.lab_title)}">${esc(r.lab_title)}</td>
-            <td class="ttr" title="${esc(r.problem_title)}">${esc(r.problem_title)}</td>
-            <td><div class="sw"><span class="tm">${r.score}/${r.max_score}</span><div class="sb"><div class="sbf ${bc}" style="width:${p}%"></div></div><span class="badge b-pct">${p}%</span></div></td>
-            <td class="tm">${r.tc_passed}/${r.tc_total}</td>
-            <td><span class="badge ${r.passed ? 'b-pass' : 'b-fail'}">${r.passed ? 'Pass' : 'Fail'}</span></td>
-            <td class="td-dim tnw">${fmtDate(r.submitted_at)}</td>
-          </tr>`;
-        }).join('')}
-      </tbody>
-    </table></div>
-    ${rPg(labPage, tp, tot, 'labPage')}
-  </div>`;
+  const byUser={};
+  [...allSubs,...allAttempts].forEach(s=>{const n=s.username,t=new Date(s.submitted_at||s.attempted_at).getTime();if(!byUser[n])byUser[n]=[];byUser[n].push(t);});
+  Object.entries(byUser).forEach(([name,times])=>{times.sort();for(let i=1;i<times.length;i++){if(times[i]-times[i-1]<2000){events.push({level:'red',title:`Rapid submissions — ${esc(name)}`,sub:'Multiple submissions < 2s apart (possible scripted attempt)',time:new Date(times[i]).toISOString()});break;}}});
+  allAttempts.filter(a=>a.score===a.total&&a.total>=8&&a.passed).forEach(a=>events.push({level:'green',title:`Perfect score — ${esc(a.username)}`,sub:`${a.quiz_title}: ${a.score}/${a.total} (100%)`,time:a.attempted_at}));
+  if(!events.length)events.push({level:'green',title:'No anomalies detected',sub:'All EXP and submission activity looks normal',time:new Date().toISOString()});
+  const dotCls={red:'dot-red',amber:'dot-amber',green:'dot-green'};
+  const lblCls={red:'b-fail',amber:'b-pct',green:'b-pass'};
+  const lblTxt={red:'High Risk',amber:'Warning',green:'Normal'};
+  const sorted=events.sort((a,b)=>({red:0,amber:1,green:2}[a.level]-{red:0,amber:1,green:2}[b.level]));
+  const redN=events.filter(e=>e.level==='red').length,amberN=events.filter(e=>e.level==='amber').length;
+  return`<div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px"><div class="stat-card c-red"><div class="sc-bar"></div><div class="stat-n cn-red">${redN}</div><div class="stat-l">High Risk</div></div><div class="stat-card c-amber"><div class="sc-bar"></div><div class="stat-n cn-amber">${amberN}</div><div class="stat-l">Warnings</div></div><div class="stat-card c-green"><div class="sc-bar"></div><div class="stat-n cn-green">${events.filter(e=>e.level==='green').length}</div><div class="stat-l">Normal</div></div></div>
+  <div class="section-card"><div class="section-hd"><div class="section-hd-left"><div class="section-title">Security Log</div><span class="section-count">${events.length} events</span></div><span style="font-family:var(--font-m);font-size:10px;color:var(--muted)">Auto-detected from submission patterns</span></div>${sorted.map(e=>`<div class="sec-row"><div class="sec-dot ${dotCls[e.level]}"></div><div class="sec-body"><div class="sec-title">${e.title}</div><div class="sec-sub">${e.sub}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="badge ${lblCls[e.level]}">${lblTxt[e.level]}</span><span class="sec-meta">${fmtDate(e.time)}</span></div></div>`).join('')}</div>`;
 }
-function sLab(c) { labSort = labSort.col === c ? { col: c, dir: labSort.dir === 'asc' ? 'desc' : 'asc' } : { col: c, dir: 'desc' }; rT(); }
 
-/* ── QUIZZES ── */
-function rQuizzes() {
-  let rows = [...allAttempts];
-  if (quizF.user) rows = rows.filter(r => r.username.toLowerCase().includes(quizF.user.toLowerCase()));
-  if (quizF.quiz) rows = rows.filter(r => (r.quiz_title || '').toLowerCase().includes(quizF.quiz.toLowerCase()));
-  if (quizF.status !== 'all') rows = rows.filter(r => quizF.status === 'pass' ? r.passed : !r.passed);
-  rows.sort((a, b) => {
-    let av = a[quizSort.col] ?? '', bv = b[quizSort.col] ?? '';
-    if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
-    return quizSort.dir === 'asc' ? (av < bv ? -1 : av > bv ? 1 : 0) : (av > bv ? -1 : av < bv ? 1 : 0);
-  });
-  const tot = rows.length, tp = Math.max(1, Math.ceil(tot / PG));
-  quizPage = Math.min(quizPage, tp);
-  const pg = rows.slice((quizPage - 1) * PG, quizPage * PG);
-  const ths = [['username', 'Student'], ['quiz_title', 'Quiz'], ['score', 'Score'], ['passed', 'Status'], ['attempted_at', 'Attempted']];
-  return `<div class="section-card">
-    <div class="section-hd">
-      <div class="section-hd-left">
-        <div class="section-title">Quiz Attempts</div>
-        <span class="section-count">${tot}</span>
-      </div>
-      <button class="btn-export" onclick="exportCSV('quizzes')">
-        <svg class="ico" width="12" height="12"><use href="#ic-download"/></svg> Export CSV
-      </button>
-    </div>
-    <div class="filters">
-      <input class="filter-input" placeholder="Search student…" value="${quizF.user}" oninput="quizF.user=this.value;quizPage=1;rT()"/>
-      <input class="filter-input" placeholder="Search quiz…" value="${quizF.quiz}" oninput="quizF.quiz=this.value;quizPage=1;rT()"/>
-      <select class="filter-select" onchange="quizF.status=this.value;quizPage=1;rT()">
-        <option value="all" ${quizF.status === 'all' ? 'selected' : ''}>All</option>
-        <option value="pass" ${quizF.status === 'pass' ? 'selected' : ''}>Passed</option>
-        <option value="fail" ${quizF.status === 'fail' ? 'selected' : ''}>Failed</option>
-      </select>
-    </div>
-    <div class="tbl-wrap"><table>
-      <thead><tr>${ths.map(([c, l]) => `<th onclick="sQuiz('${c}')" class="${quizSort.col === c ? 'sort-on' : ''}">${l}<span class="sa">${quizSort.col === c ? (quizSort.dir === 'asc' ? '↑' : '↓') : '↕'}</span></th>`).join('')}</tr></thead>
-      <tbody>${pg.length === 0
-        ? `<tr><td colspan="5"><div class="tbl-empty"><div class="tei">—</div>No records match</div></td></tr>`
-        : pg.map(r => {
-          const p = r.total > 0 ? Math.round(r.score / r.total * 100) : 0;
-          const bc = p >= 70 ? 'fg' : p >= 40 ? 'fo' : 'fr';
-          return `<tr>
-            <td><span class="user-pill"><span class="uav">${(r.username || '?').charAt(0).toUpperCase()}</span>${esc(r.username)}</span></td>
-            <td class="ttr" title="${esc(r.quiz_title)}">${esc(r.quiz_title)}</td>
-            <td><div class="sw"><span class="tm">${r.score}/${r.total}</span><div class="sb"><div class="sbf ${bc}" style="width:${p}%"></div></div><span class="badge b-pct">${p}%</span></div></td>
-            <td><span class="badge ${r.passed ? 'b-pass' : 'b-fail'}">${r.passed ? 'Pass' : 'Fail'}</span></td>
-            <td class="td-dim tnw">${fmtDate(r.attempted_at)}</td>
-          </tr>`;
-        }).join('')}
-      </tbody>
-    </table></div>
-    ${rPg(quizPage, tp, tot, 'quizPage')}
-  </div>`;
-}
-function sQuiz(c) { quizSort = quizSort.col === c ? { col: c, dir: quizSort.dir === 'asc' ? 'desc' : 'asc' } : { col: c, dir: 'desc' }; rT(); }
-
-/* ── STUDENTS ── */
-function rStudents() {
-  const u = {};
-  allSubs.forEach(s => { if (!u[s.username]) u[s.username] = { labs: [], quizzes: [] }; u[s.username].labs.push(s); });
-  allAttempts.forEach(a => { if (!u[a.username]) u[a.username] = { labs: [], quizzes: [] }; u[a.username].quizzes.push(a); });
-  if (!Object.keys(u).length) return `<div class="section-card"><div class="tbl-empty"><div class="tei">—</div>No student data yet</div></div>`;
-
-  const cards = Object.entries(u).sort((a, b) => a[0].localeCompare(b[0])).map(([name, d]) => {
-    const lt = d.labs.length, lp = d.labs.filter(l => l.passed).length;
-    const lpts = d.labs.reduce((a, l) => a + (l.score || 0), 0);
-    const lmax = d.labs.reduce((a, l) => a + (l.max_score || 0), 0);
-    const lpct = lmax > 0 ? Math.round(lpts / lmax * 100) : 0;
-    const qt = d.quizzes.length, qp = d.quizzes.filter(q => q.passed).length;
-    const qpct = qt > 0 ? Math.round(qp / qt * 100) : 0;
-    const uProbs = new Set(d.labs.map(l => l.problem_id)).size;
-    const uQuiz = new Set(d.quizzes.map(q => q.quiz_id)).size;
-    const last = [...d.labs.map(l => l.submitted_at), ...d.quizzes.map(q => q.attempted_at)].filter(Boolean).sort().pop();
-    return `<div class="user-card">
-      <div class="uc-hd">
-        <div class="uc-av">${name.charAt(0).toUpperCase()}</div>
-        <div>
-          <div class="uc-name">${esc(name)}</div>
-          <div class="uc-sub">${lt + qt} activities</div>
-        </div>
-      </div>
-      <div class="uc-sec">Labs</div>
-      <div class="uc-row"><span>Submissions</span><span class="uc-val">${lt}</span></div>
-      <div class="uc-row"><span>Unique problems</span><span class="uc-val">${uProbs}</span></div>
-      <div class="uc-row"><span>Passed</span><span class="uc-val" style="color:var(--emerald)">${lp} / ${lt}</span></div>
-      <div class="uc-row"><span>Points</span><span class="uc-val">${lpts} / ${lmax}</span></div>
-      <div class="uc-bar"><div class="uc-bar-fill" style="width:${lpct}%"></div></div>
-      <div class="uc-sec">Quizzes</div>
-      <div class="uc-row"><span>Attempts</span><span class="uc-val">${qt}</span></div>
-      <div class="uc-row"><span>Unique quizzes</span><span class="uc-val">${uQuiz}</span></div>
-      <div class="uc-row"><span>Passed</span><span class="uc-val" style="color:var(--amethyst)">${qp} / ${qt}</span></div>
-      <div class="uc-bar"><div class="uc-bar-fill quiz" style="width:${qpct}%"></div></div>
-      <div class="uc-last">Last active: ${last ? fmtDate(last) : 'Never'}</div>
-    </div>`;
+/* ── NEW: QUIZ EDITOR ── */
+function rQuizEditor(){
+  if(!allQuizzes.length)return`<div class="section-card"><div class="tbl-empty"><div class="tei">📝</div>No quizzes found</div></div>`;
+  const items=allQuizzes.map(q=>{
+    const questions=(q.data?.questions||[]);
+    const qRows=questions.map((question,qi)=>{
+      let qText=question.question||'',qCode='';
+      const cm=qText.match(/^([\s\S]*?)```[\w]*\n?([\s\S]*?)```([\s\S]*)$/);
+      if(cm){qText=(cm[1]+cm[3]).trim();qCode=cm[2].trim();}
+      const choiceHtml=(question.choices||[]).map((c,ci)=>`<div class="q-choice"><span class="q-choice-lbl">${String.fromCharCode(65+ci)}.</span><span>${esc(String(c))}</span>${String(c).toLowerCase()===String(question.answer||'').toLowerCase()?'<span class="badge b-pass" style="margin-left:auto">✓ correct</span>':''}</div>`).join('');
+      return`<div class="q-row"><div class="q-num">Q${qi+1} · ${question.type||'multiple_choice'}</div><div class="q-text">${esc(qText)}</div>${qCode?`<div class="q-code">${esc(qCode)}</div>`:''}${choiceHtml?`<div class="q-choices">${choiceHtml}</div>`:''}<div class="q-fields"><div class="q-field"><label>Correct Answer</label><input class="q-input" id="ans-${q.id}-${qi}" value="${esc(String(question.answer||''))}"/></div><div class="q-field"><label>Explanation</label><input class="q-input" id="exp-${q.id}-${qi}" value="${esc(String(question.explanation||''))}"/></div></div><div class="q-save-row"><button class="btn btn-green" style="font-size:10px;padding:5px 12px" onclick="saveAnswer('${q.id}',${qi})">Save</button><span class="q-save-msg" id="msg-${q.id}-${qi}"></span></div></div>`;
+    }).join('');
+    return`<div class="qi-wrap" id="qe-${q.id}"><div class="qi-hd" onclick="toggleQI('${q.id}')"><div class="qi-hd-title">${esc(q.title)}</div><span class="qi-hd-count">${questions.length} questions</span><span class="qi-hd-chev">›</span></div><div class="qi-body">${qRows}</div></div>`;
   }).join('');
-  return `<div class="user-grid">${cards}</div>`;
+  return`<div class="section-card"><div class="section-hd"><div class="section-hd-left"><div class="section-title">Quiz Answer Editor</div><span class="section-count">${allQuizzes.length} quizzes</span></div><span style="font-family:var(--font-m);font-size:10px;color:var(--muted)">Changes save directly to database</span></div><div class="quiz-editor-wrap">${items}</div></div>`;
+}
+function toggleQI(id){const el=document.getElementById('qe-'+id);if(el)el.classList.toggle('open');}
+async function saveAnswer(quizId,qIdx){
+  const ansEl=document.getElementById(`ans-${quizId}-${qIdx}`);
+  const expEl=document.getElementById(`exp-${quizId}-${qIdx}`);
+  const msgEl=document.getElementById(`msg-${quizId}-${qIdx}`);
+  const quiz=allQuizzes.find(q=>q.id===quizId);
+  if(!quiz||!ansEl)return;
+  msgEl.style.color='var(--muted)';msgEl.textContent='Saving…';
+  const newData=JSON.parse(JSON.stringify(quiz.data));
+  newData.questions[qIdx].answer=ansEl.value.trim();
+  if(expEl)newData.questions[qIdx].explanation=expEl.value.trim();
+  const{error}=await sb.from('quizzes').update({data:newData}).eq('id',quizId);
+  if(error){msgEl.style.color='var(--red)';msgEl.textContent='⚠ '+error.message;}
+  else{msgEl.style.color='var(--green)';msgEl.textContent='✓ Saved!';quiz.data=newData;setTimeout(()=>{msgEl.textContent='';},2000);}
 }
 
-/* ── LEADERBOARD ── */
-function rLeaderboard() {
-  const u = {};
-  allSubs.forEach(s => {
-    if (!u[s.username]) u[s.username] = { lpts: 0, lmax: 0, lpassed: 0, ltotal: 0, qtotal: 0, qpassed: 0, qpts: 0, qmax: 0 };
-    u[s.username].lpts += (s.score || 0);
-    u[s.username].lmax += (s.max_score || 0);
-    u[s.username].ltotal++;
-    if (s.passed) u[s.username].lpassed++;
-  });
-  allAttempts.forEach(a => {
-    if (!u[a.username]) u[a.username] = { lpts: 0, lmax: 0, lpassed: 0, ltotal: 0, qtotal: 0, qpassed: 0, qpts: 0, qmax: 0 };
-    u[a.username].qtotal++;
-    u[a.username].qpts += (a.score || 0);
-    u[a.username].qmax += (a.total || 0);
-    if (a.passed) u[a.username].qpassed++;
-  });
-  if (!Object.keys(u).length) return `<div class="section-card"><div class="tbl-empty"><div class="tei">—</div>No data yet</div></div>`;
-
-  const labRanked = Object.entries(u)
-    .filter(([, d]) => d.ltotal > 0)
-    .map(([n, d]) => ({ n, ...d, lpct: d.lmax > 0 ? Math.round(d.lpts / d.lmax * 100) : 0 }))
-    .sort((a, b) => b.lpts - a.lpts || b.lpassed - a.lpassed);
-
-  const quizRanked = Object.entries(u)
-    .filter(([, d]) => d.qtotal > 0)
-    .map(([n, d]) => ({ n, ...d, qpct: d.qmax > 0 ? Math.round(d.qpts / d.qmax * 100) : 0 }))
-    .sort((a, b) => b.qpassed - a.qpassed || b.qpct - a.qpct);
-
-  const comboRanked = Object.entries(u)
-    .map(([n, d]) => ({
-      n, ...d,
-      lpct: d.lmax > 0 ? Math.round(d.lpts / d.lmax * 100) : 0,
-      qpct: d.qmax > 0 ? Math.round(d.qpts / d.qmax * 100) : 0,
-      combo: d.lpts + (d.qpassed * 10)
-    }))
-    .sort((a, b) => b.combo - a.combo);
-
-  const medal = i => i === 0 ? '▲' : i === 1 ? '◈' : i === 2 ? '◇' : `${i + 1}`;
-
-  const labRows = labRanked.map((u, i) => {
-    const rc = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : 'rn';
-    const cls = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
-    return `<div class="lb-row ${cls}">
-      <div class="lb-rank ${rc}">${medal(i)}</div>
-      <div class="uav">${u.n.charAt(0).toUpperCase()}</div>
-      <div class="lb-info">
-        <div class="lb-name">${esc(u.n)}</div>
-        <div class="lb-mini">
-          <span class="badge b-pass">${u.lpassed} passed</span>
-          <span class="badge b-pct">${u.lpct}%</span>
-          <span class="badge b-violet">${u.ltotal} tries</span>
-        </div>
-      </div>
-      <div class="lb-score">
-        <div class="lb-score-main lab">${u.lpts}</div>
-        <div class="lb-score-sub">pts</div>
-      </div>
-    </div>`;
-  }).join('');
-
-  const quizRows = quizRanked.map((u, i) => {
-    const rc = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : 'rn';
-    const cls = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
-    return `<div class="lb-row ${cls}">
-      <div class="lb-rank ${rc}">${medal(i)}</div>
-      <div class="uav" style="background:var(--amethyst-glow);color:var(--amethyst);border-color:var(--amethyst-dim)">${u.n.charAt(0).toUpperCase()}</div>
-      <div class="lb-info">
-        <div class="lb-name">${esc(u.n)}</div>
-        <div class="lb-mini">
-          <span class="badge b-violet">${u.qtotal} attempts</span>
-          <span class="badge b-pct">${u.qpct}% score</span>
-        </div>
-      </div>
-      <div class="lb-score">
-        <div class="lb-score-main quiz">${u.qpassed}</div>
-        <div class="lb-score-sub">passed</div>
-      </div>
-    </div>`;
-  }).join('');
-
-  const comboRows = comboRanked.map((u, i) => {
-    const rc = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : 'rn';
-    const cls = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
-    return `<div class="combo-row ${cls}">
-      <div class="lb-rank ${rc}">${medal(i)}</div>
-      <div class="uav">${u.n.charAt(0).toUpperCase()}</div>
-      <div style="font-family:var(--font-d);font-size:11px;color:var(--parchment);min-width:100px;letter-spacing:.04em">${esc(u.n)}</div>
-      <div class="combo-stats">
-        <span class="badge b-pct">${u.lpts} pts</span>
-        <span class="badge b-pass">${u.lpct}%</span>
-        <span class="badge b-violet">${u.qpassed}/${u.qtotal}</span>
-        <span class="badge b-blue">${u.qpct}%</span>
-      </div>
-      <div style="font-family:var(--font-d);font-size:17px;font-weight:700;color:var(--gold);flex-shrink:0;text-shadow:0 0 10px rgba(201,168,76,.3)">${u.combo}</div>
-    </div>`;
-  }).join('');
-
-  return `
-    <div class="lb-split">
-      <div class="lb-card">
-        <div class="lb-card-hd lab">
-          <div class="lb-card-title">Lab Leaderboard</div>
-          <div class="lb-card-sub">Ranked by total lab points earned</div>
-        </div>
-        <div class="lb-list">${labRows || '<div class="tbl-empty"><div class="tei">—</div>No lab data</div>'}</div>
-      </div>
-      <div class="lb-card">
-        <div class="lb-card-hd quiz">
-          <div class="lb-card-title">Quiz Leaderboard</div>
-          <div class="lb-card-sub">Ranked by quizzes passed, then avg score</div>
-        </div>
-        <div class="lb-list">${quizRows || '<div class="tbl-empty"><div class="tei">—</div>No quiz data</div>'}</div>
-      </div>
-    </div>
-    <div class="section-card">
-      <div class="section-hd">
-        <div class="section-hd-left">
-          <div class="section-title">Combined Ranking</div>
-          <span class="section-count">${comboRanked.length} students</span>
-        </div>
-        <span style="font-family:var(--font-m);font-size:9px;color:var(--mist)">lab pts + (quiz passes × 10)</span>
-      </div>
-      <div class="combo-lb">${comboRows || '<div class="tbl-empty"><div class="tei">—</div>No data yet</div>'}</div>
-    </div>`;
-}
-
-/* ── PAGINATION ── */
-function rPg(page, tp, tot, vn) {
-  const s = (page - 1) * PG + 1, e = Math.min(page * PG, tot);
-  const nums = [];
-  for (let i = Math.max(1, page - 2); i <= Math.min(tp, page + 2); i++)
-    nums.push(`<button class="pg-btn${i === page ? ' active' : ''}" onclick="${vn}=${i};rT()">${i}</button>`);
-  return `<div class="pagination">
-    <span class="pg-info">Showing ${tot === 0 ? 0 : s}–${e} of ${tot}</span>
-    <div class="pg-btns">
-      <button class="pg-btn" onclick="${vn}=Math.max(1,${vn}-1);rT()" ${page <= 1 ? 'disabled' : ''}>‹</button>
-      ${nums.join('')}
-      <button class="pg-btn" onclick="${vn}=Math.min(${tp},${vn}+1);rT()" ${page >= tp ? 'disabled' : ''}>›</button>
-    </div>
-  </div>`;
-}
-
-/* ── EXPORT ── */
-function exportCSV(type) {
-  let h, r;
-  if (type === 'labs') { h = ['username', 'lab_title', 'problem_title', 'score', 'max_score', 'tc_passed', 'tc_total', 'passed', 'submitted_at']; r = allSubs; }
-  else { h = ['username', 'quiz_title', 'score', 'total', 'passed', 'attempted_at']; r = allAttempts; }
-  const csv = [h.join(','), ...r.map(row => h.map(k => JSON.stringify(row[k] ?? '')).join(','))].join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-  a.download = `${type}_${new Date().toISOString().slice(0, 10)}.csv`;
-  a.click();
-}
-
-/* ── CONTENT ── */
 function rContent(){
-  const labRows=allLabs.map(l=>`
-    <tr>
-      <td class="ttr">${esc(l.title)}</td>
-      <td class="td-dim">${esc(l.filename||'—')}</td>
-      <td><span class="badge ${l.active?'b-pass':'b-fail'}">${l.active?'Active':'Hidden'}</span></td>
-      <td class="td-dim tnw">${fmtDate(l.created_at)}</td>
-      <td>
-        <div style="display:flex;gap:6px">
-          <button class="tb-btn" onclick="toggleActive('labs','${l.id}',${l.active})">${l.active?'Hide':'Show'}</button>
-          <button class="tb-btn danger" onclick="deleteContent('labs','${l.id}')">Delete</button>
-        </div>
-      </td>
-    </tr>`).join('');
-
-  const quizRows=allQuizzes.map(q=>`
-    <tr>
-      <td class="ttr">${esc(q.title)}</td>
-      <td class="td-dim">${esc(q.filename||'—')}</td>
-      <td><span class="badge ${q.active?'b-pass':'b-fail'}">${q.active?'Active':'Hidden'}</span></td>
-      <td class="td-dim tnw">${fmtDate(q.created_at)}</td>
-      <td>
-        <div style="display:flex;gap:6px">
-          <button class="tb-btn" onclick="toggleActive('quizzes','${q.id}',${q.active})">${q.active?'Hide':'Show'}</button>
-          <button class="tb-btn danger" onclick="deleteContent('quizzes','${q.id}')">Delete</button>
-        </div>
-      </td>
-    </tr>`).join('');
-
-  return `
-    <div class="section-card" style="margin-bottom:14px">
-      <div class="section-hd">
-        <div class="section-hd-left">
-          <div class="section-title">Upload Content</div>
-        </div>
-      </div>
-      <div style="padding:20px;display:flex;flex-direction:column;gap:14px">
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <select class="filter-select" id="upload-type">
-            <option value="labs">Lab</option>
-            <option value="quizzes">Quiz</option>
-          </select>
-          <label style="display:flex;align-items:center;gap:8px;background:var(--stone);border:1px solid var(--iron2);border-radius:1px;padding:7px 14px;cursor:pointer;font-family:var(--font-m);font-size:11px;color:var(--parchment2);">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Choose JSON File
-            <input type="file" accept=".json" id="upload-file" style="display:none" onchange="handleFileSelect(this)"/>
-          </label>
-          <span id="upload-filename" style="font-family:var(--font-m);font-size:11px;color:var(--mist)">No file chosen</span>
-        </div>
-        <div id="upload-preview" style="display:none;background:var(--stone);border:1px solid var(--iron2);border-radius:1px;padding:12px;font-family:var(--font-m);font-size:11px;color:var(--parchment2)"></div>
-        <button class="btn-export" id="upload-btn" onclick="uploadContent()" style="display:none;align-self:flex-start">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          Upload to Database
-        </button>
-        <div id="upload-msg" style="font-family:var(--font-m);font-size:11px;min-height:16px"></div>
-      </div>
-    </div>
-
-    <div class="section-card" style="margin-bottom:14px">
-      <div class="section-hd">
-        <div class="section-hd-left">
-          <div class="section-title">Labs</div>
-          <span class="section-count">${allLabs.length}</span>
-        </div>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Title</th><th>Filename</th><th>Status</th><th>Uploaded</th><th>Actions</th></tr></thead>
-        <tbody>${labRows||'<tr><td colspan="5"><div class="tbl-empty"><div class="tei">—</div>No labs uploaded yet</div></td></tr>'}</tbody>
-      </table></div>
-    </div>
-
-    <div class="section-card">
-      <div class="section-hd">
-        <div class="section-hd-left">
-          <div class="section-title">Quizzes</div>
-          <span class="section-count">${allQuizzes.length}</span>
-        </div>
-      </div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>Title</th><th>Filename</th><th>Status</th><th>Uploaded</th><th>Actions</th></tr></thead>
-        <tbody>${quizRows||'<tr><td colspan="5"><div class="tbl-empty"><div class="tei">—</div>No quizzes uploaded yet</div></td></tr>'}</tbody>
-      </table></div>
-    </div>`;
+  const labRows=allLabs.map(l=>`<tr><td class="ttr">${esc(l.title)}</td><td class="td-dim">${esc(l.filename||'—')}</td><td><span class="badge ${l.active?'b-pass':'b-fail'}">${l.active?'Active':'Hidden'}</span></td><td class="td-dim tnw">${fmtDate(l.created_at)}</td><td><div style="display:flex;gap:6px"><button class="btn btn-ghost" style="font-size:10px;padding:5px 10px" onclick="toggleActive('labs','${l.id}',${l.active})">${l.active?'Hide':'Show'}</button><button class="btn btn-red" style="font-size:10px;padding:5px 10px" onclick="deleteContent('labs','${l.id}')">Delete</button></div></td></tr>`).join('');
+  const quizRows=allQuizzes.map(q=>`<tr><td class="ttr">${esc(q.title)}</td><td class="td-dim">${esc(q.filename||'—')}</td><td><span class="badge ${q.active?'b-pass':'b-fail'}">${q.active?'Active':'Hidden'}</span></td><td class="td-dim tnw">${fmtDate(q.created_at)}</td><td><div style="display:flex;gap:6px"><button class="btn btn-ghost" style="font-size:10px;padding:5px 10px" onclick="toggleActive('quizzes','${q.id}',${q.active})">${q.active?'Hide':'Show'}</button><button class="btn btn-red" style="font-size:10px;padding:5px 10px" onclick="deleteContent('quizzes','${q.id}')">Delete</button></div></td></tr>`).join('');
+  return`<div class="section-card" style="margin-bottom:16px"><div class="section-hd"><div class="section-title">Upload Content</div></div><div style="padding:20px;display:flex;flex-direction:column;gap:14px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><select class="filter-select" id="upload-type"><option value="labs">Lab</option><option value="quizzes">Quiz</option></select><label style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--rs);padding:7px 14px;cursor:pointer;font-family:var(--font-b);font-size:12px;color:var(--text2)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Choose JSON File<input type="file" accept=".json" id="upload-file" style="display:none" onchange="handleFileSelect(this)"/></label><span id="upload-filename" style="font-family:var(--font-m);font-size:11px;color:var(--muted)">No file chosen</span></div><div id="upload-preview" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:12px;font-family:var(--font-m);font-size:11px;color:var(--text2)"></div><button class="btn btn-green" id="upload-btn" onclick="uploadContent()" style="display:none;align-self:flex-start"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload to Database</button><div id="upload-msg" style="font-family:var(--font-m);font-size:11px;min-height:16px"></div></div></div>
+  <div class="section-card" style="margin-bottom:16px"><div class="section-hd"><div class="section-hd-left"><div class="section-title">Labs</div><span class="section-count">${allLabs.length}</span></div></div><div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Filename</th><th>Status</th><th>Uploaded</th><th>Actions</th></tr></thead><tbody>${labRows||`<tr><td colspan="5"><div class="tbl-empty"><div class="tei">📋</div>No labs uploaded yet</div></td></tr>`}</tbody></table></div></div>
+  <div class="section-card"><div class="section-hd"><div class="section-hd-left"><div class="section-title">Quizzes</div><span class="section-count">${allQuizzes.length}</span></div></div><div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Filename</th><th>Status</th><th>Uploaded</th><th>Actions</th></tr></thead><tbody>${quizRows||`<tr><td colspan="5"><div class="tbl-empty"><div class="tei">📋</div>No quizzes uploaded yet</div></td></tr>`}</tbody></table></div></div>`;
 }
 
 let uploadedJSON=null;
-
 function handleFileSelect(input){
-  const file=input.files[0];
-  if(!file)return;
+  const file=input.files[0];if(!file)return;
   document.getElementById('upload-filename').textContent=file.name;
   const reader=new FileReader();
   reader.onload=e=>{
     try{
       uploadedJSON=JSON.parse(e.target.result);
       const type=document.getElementById('upload-type').value;
-      const titleKey=type==='labs'?uploadedJSON.title:uploadedJSON.title;
       const preview=document.getElementById('upload-preview');
       preview.style.display='block';
-      preview.innerHTML=`
-        <div style="color:var(--gold);margin-bottom:6px">✦ Valid JSON detected</div>
-        <div>Title: <span style="color:var(--parchment)">${esc(uploadedJSON.title||'—')}</span></div>
-        <div>Type: <span style="color:var(--parchment)">${type==='labs'?'Lab ('+( uploadedJSON.problems?.length||0)+' problems)':'Quiz ('+(uploadedJSON.questions?.length||0)+' questions)'}</span></div>
-        <div>Filename: <span style="color:var(--parchment)">${esc(file.name)}</span></div>`;
+      preview.innerHTML=`<div style="color:var(--green);margin-bottom:6px;font-weight:600">✓ Valid JSON</div><div>Title: <strong>${esc(uploadedJSON.title||'—')}</strong></div><div>Type: <strong>${type==='labs'?'Lab ('+(uploadedJSON.problems?.length||0)+' problems)':'Quiz ('+(uploadedJSON.questions?.length||0)+' questions)'}</strong></div>`;
       document.getElementById('upload-btn').style.display='flex';
       document.getElementById('upload-msg').textContent='';
     }catch(err){
       uploadedJSON=null;
       document.getElementById('upload-preview').style.display='none';
       document.getElementById('upload-btn').style.display='none';
-      document.getElementById('upload-msg').style.color='var(--crimson)';
+      document.getElementById('upload-msg').style.color='var(--red)';
       document.getElementById('upload-msg').textContent='⚠ Invalid JSON file';
     }
   };
   reader.readAsText(file);
 }
-
 async function uploadContent(){
   if(!uploadedJSON)return;
   const type=document.getElementById('upload-type').value;
   const file=document.getElementById('upload-file');
   const filename=file.files[0]?.name||'unknown.json';
   const msg=document.getElementById('upload-msg');
-  msg.style.color='var(--mist)';
-  msg.textContent='Uploading…';
-  const {error}=await sb.from(type).insert({
-    title:uploadedJSON.title||filename,
-    filename:filename,
-    data:uploadedJSON,
-    active:true
-  });
-  if(error){
-    msg.style.color='var(--crimson)';
-    msg.textContent='⚠ Error: '+error.message;
-  }else{
-    msg.style.color='var(--emerald)';
-    msg.textContent='✦ Uploaded successfully!';
-    uploadedJSON=null;
-    document.getElementById('upload-file').value='';
-    document.getElementById('upload-filename').textContent='No file chosen';
-    document.getElementById('upload-preview').style.display='none';
-    document.getElementById('upload-btn').style.display='none';
-    await loadAll();
-  }
+  msg.style.color='var(--muted)';msg.textContent='Uploading…';
+  const{error}=await sb.from(type).insert({title:uploadedJSON.title||filename,filename,data:uploadedJSON,active:true});
+  if(error){msg.style.color='var(--red)';msg.textContent='⚠ Error: '+error.message;}
+  else{msg.style.color='var(--green)';msg.textContent='✓ Uploaded!';uploadedJSON=null;document.getElementById('upload-file').value='';document.getElementById('upload-filename').textContent='No file chosen';document.getElementById('upload-preview').style.display='none';document.getElementById('upload-btn').style.display='none';await loadAll();}
 }
+async function toggleActive(table,id,current){await sb.from(table).update({active:!current}).eq('id',id);await loadAll();}
+async function deleteContent(table,id){if(!confirm('Delete this entry? This cannot be undone.'))return;await sb.from(table).delete().eq('id',id);await loadAll();}
 
-async function toggleActive(table,id,current){
-  await sb.from(table).update({active:!current}).eq('id',id);
-  await loadAll();
+function rPg(page,tp,tot,vn){
+  const s=(page-1)*PG+1,e=Math.min(page*PG,tot);
+  const nums=[];for(let i=Math.max(1,page-2);i<=Math.min(tp,page+2);i++)nums.push(`<button class="pg-btn${i===page?' active':''}" onclick="${vn}=${i};rT()">${i}</button>`);
+  return`<div class="pagination"><span class="pg-info">Showing ${tot===0?0:s}–${e} of ${tot}</span><div class="pg-btns"><button class="pg-btn" onclick="${vn}=Math.max(1,${vn}-1);rT()" ${page<=1?'disabled':''}>‹</button>${nums.join('')}<button class="pg-btn" onclick="${vn}=Math.min(${tp},${vn}+1);rT()" ${page>=tp?'disabled':''}>›</button></div></div>`;
 }
+function exportCSV(type){
+  let h,r;
+  if(type==='labs'){h=['username','lab_title','problem_title','score','max_score','tc_passed','tc_total','passed','submitted_at'];r=allSubs;}
+  else{h=['username','quiz_title','score','total','passed','attempted_at'];r=allAttempts;}
+  const csv=[h.join(','),...r.map(row=>h.map(k=>JSON.stringify(row[k]??'')).join(','))].join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`${type}_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtDate(iso){if(!iso)return'—';const d=new Date(iso);return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});}
 
-async function deleteContent(table,id){
-  if(!confirm('Delete this entry? This cannot be undone.'))return;
-  await sb.from(table).delete().eq('id',id);
-  await loadAll();
-}
-  
-function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-function fmtDate(iso) {
-  if (!iso) return '—';
-  const d = new Date(iso);
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' +
-    d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-}
-
+document.getElementById('exp-modal').addEventListener('click',e=>{if(e.target===document.getElementById('exp-modal'))closeExpModal();});
 init();
 </script>
 </body>
