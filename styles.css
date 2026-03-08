@@ -138,8 +138,8 @@ body::before{
   text-align: center;
 }
 .hero-rank-img {
-  width: 52px;
-  height: 52px;
+  width: 36px;
+  height: 36px;
   object-fit: contain;
   filter: drop-shadow(0 0 6px rgba(160,120,40,0.4));
   display: block;
