@@ -40,7 +40,7 @@
     }
   }, 1000);
 })();
-
+}
 /* ===== SVG ICONS ===== */
 const SVG_LAB=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4c0-1 .7-1.5 1.5-1.5S9 3 9 4v1H6V4z"/><path d="M9 4h9.5C19.3 4 20 4.7 20 5.5S19.3 7 18.5 7H9"/><path d="M9 4v14"/><path d="M9 18H5.5C4.7 18 4 18.7 4 19.5S4.7 21 5.5 21H18c1 0 1.5-.7 1.5-1.5V7"/><path d="M9 20.5c0 .3.2.5.5.5"/><path d="M5.5 21c-.8 0-1.5-.7-1.5-1.5V5.5C4 4.7 4.7 4 5.5 4"/><line x1="12" y1="9" x2="17" y2="9"/><line x1="12" y1="12" x2="17" y2="12"/><line x1="12" y1="15" x2="15" y2="15"/></svg>`;
 const SVG_SNAKE=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="1.4" stroke-linecap="round"><path d="M7 8c0-2.2 1.8-4 4-4h2c2.2 0 4 1.8 4 4s-1.8 4-4 4H9c-2.2 0-4 1.8-4 4s1.8 4 4 4h2c1 0 2-.3 2.7-1"/><circle cx="16.5" cy="7" r="1.2" fill="var(--violet)"/></svg>`;
