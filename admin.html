@@ -301,8 +301,10 @@ tr:hover td{background:var(--surface2)}
 <body>
 
 <div style="text-align:center;">
-  <div style="font-family:var(--font-d);font-size:48px;font-weight:900;color:var(--gold);letter-spacing:.1em;">404</div>
-  <div style="font-family:var(--font-m);font-size:10px;letter-spacing:.2em;color:var(--mist);margin-top:8px;">PAGE NOT FOUND</div>
+  <div style="font-family:var(--font-d);font-size:48px;font-weight:900;color:var(--green);letter-spacing:.1em;">404</div>
+  <div style="font-family:var(--font-m);font-size:10px;letter-spacing:.2em;color:var(--muted);margin-top:8px;">PAGE NOT FOUND</div>
+  <div style="font-family:var(--font-m);font-size:11px;color:var(--red);margin-top:10px;" id="gate-err"></div>
+  <a href="https://youtu.be/8Fey680pHCk?si=9ewSnI4eD__CACPY" target="_blank" style="font-family:var(--font-m);font-size:11px;color:var(--muted);margin-top:16px;display:inline-block;letter-spacing:.06em;text-decoration:underline;text-underline-offset:3px;">Request Admin Access</a>
 </div>
 
 <div id="shell">
@@ -387,7 +389,7 @@ if(aErr||!a||a.user_id!==session.user.id){showGateErr('Access denied — your ac
   document.getElementById('shell').style.display='flex';
   await loadAll();
 }
-function showGateErr(m){document.getElementById('gate-loading').style.display='none';document.getElementById('gate-err').textContent=m;}
+function showGateErr(m){document.getElementById('gate-err').textContent=m;}
 async function doLogout(){await sb.auth.signOut();window.location.href='index.html';}
 
 async function loadAll(){
