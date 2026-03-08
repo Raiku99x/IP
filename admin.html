@@ -386,7 +386,6 @@ async function init(){
 const{data:a,error:aErr}=await sb.from('admins').select('user_id').eq('user_id',session.user.id).maybeSingle();
 if(aErr||!a||a.user_id!==session.user.id){showGateErr('Access denied — your account is not an admin.');return;}
   document.getElementById('tb-user').textContent=session.user.user_metadata?.full_name||session.user.email;
-  document.getElementById('gate').style.display='none';
   document.getElementById('shell').style.display='flex';
   await loadAll();
 }
