@@ -579,10 +579,6 @@ async function saveExp(){
     document.getElementById('exp-modal-msg').textContent='⚠ EXP must be between 0 and 999,999.';
     return;
   }
-async function toggleLB(){
-  lbEnabled=!lbEnabled;
-  await sb.from('settings').upsert({key:'lb_enabled',value:lbEnabled});
-  rT();
 }
   const cur=expModalProfile.exp||0;
   if(Math.abs(newExp-cur)>5000&&!confirm(`You're changing EXP by ${Math.abs(newExp-cur).toLocaleString()} points. Are you sure?`))return;
@@ -594,6 +590,13 @@ async function toggleLB(){
   else{msg.style.color='var(--green)';msg.textContent='✓ Saved!';const{data:p}=await sb.from('profiles').select('*').order('exp',{ascending:false});allProfiles=p||[];setTimeout(()=>{closeExpModal();rT();},700);}
 }
 
+}
+
+async function toggleLB(){
+  lbEnabled=!lbEnabled;
+  await sb.from('settings').upsert({key:'lb_enabled',value:lbEnabled});
+  rT();
+}
 /* ── NEW: ACTIVITY TIMELINE ── */
 function rActivity(){
   const all=[...allSubs.map(s=>({type:'lab',name:s.username,item:s.problem_title,sub:s.lab_title,passed:s.passed,score:s.score,max:s.max_score,time:s.submitted_at})),...allAttempts.map(a=>({type:'quiz',name:a.username,item:a.quiz_title,sub:null,passed:a.passed,score:a.score,max:a.total,time:a.attempted_at}))].sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,80);
