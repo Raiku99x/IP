@@ -15,6 +15,59 @@
 <link rel="stylesheet" href="styles.css"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
 <style>
+#wn-overlay{display:none;position:fixed;inset:0;background:rgba(20,14,6,.55);z-index:99999;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:16px;}
+#wn-modal{background:var(--dungeon);border:1px solid var(--gold-dim);border-radius:6px;width:560px;max-width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 0 60px rgba(138,99,24,0.18),0 24px 64px rgba(0,0,0,.45);animation:wnOpen .22s ease;overflow:hidden;position:relative;}
+#wn-modal::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(160,120,40,0.07),transparent);}
+@keyframes wnOpen{from{opacity:0;transform:scale(.95) translateY(12px);}to{opacity:1;transform:none;}}
+.wn-hd{padding:18px 22px 14px;border-bottom:1px solid var(--iron);flex-shrink:0;background:var(--stone);position:relative;overflow:hidden;}
+.wn-hd::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);opacity:.5;}
+.wn-hd-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;}
+.wn-hd-left{display:flex;align-items:center;gap:10px;}
+.wn-logo{width:32px;height:32px;border-radius:50%;background:var(--gold-glow);border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.wn-title{font-family:var(--font-d);font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;}
+.wn-sub{font-family:var(--font-m);font-size:9px;color:var(--mist);margin-top:2px;letter-spacing:.05em;}
+.wn-close{width:28px;height:28px;border-radius:3px;border:1px solid var(--iron);background:transparent;color:var(--mist);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0;}
+.wn-close:hover{border-color:var(--blood);color:var(--crimson);background:rgba(139,28,28,.08);}
+.wn-tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;}
+.wn-tabs::-webkit-scrollbar{display:none;}
+.wn-tab{font-family:var(--font-m);font-size:9px;letter-spacing:.08em;padding:6px 13px;border-radius:3px;cursor:pointer;border:1px solid transparent;color:var(--mist);background:transparent;transition:all .15s;white-space:nowrap;flex-shrink:0;}
+.wn-tab:hover{color:var(--gold);background:var(--gold-glow);}
+.wn-tab.active{color:var(--gold);background:var(--gold-glow);border-color:var(--gold-dim);font-weight:600;}
+.wn-body{overflow-y:auto;flex:1;padding:22px 24px 20px;}
+.wn-body::-webkit-scrollbar{width:3px;}
+.wn-body::-webkit-scrollbar-track{background:var(--stone);}
+.wn-body::-webkit-scrollbar-thumb{background:var(--iron);}
+.wn-panel{display:none;}.wn-panel.active{display:block;}
+.wn-ver-hd{margin-bottom:18px;}
+.wn-ver-tag{display:inline-flex;align-items:center;gap:7px;font-family:var(--font-m);font-size:9px;letter-spacing:.1em;padding:3px 10px;border-radius:20px;border:1px solid var(--gold-dim);color:var(--gold);background:var(--gold-glow);margin-bottom:8px;}
+.wn-ver-title{font-family:var(--font-d);font-size:17px;font-weight:700;color:var(--parchment);letter-spacing:.04em;margin-bottom:4px;}
+.wn-ver-date{font-family:var(--font-m);font-size:10px;color:var(--mist);letter-spacing:.05em;}
+.wn-ver-desc{font-family:var(--font-b);font-size:13px;color:var(--fog);line-height:1.75;margin-bottom:18px;padding:12px 14px;background:var(--stone);border-left:2px solid var(--gold-dim);border-radius:0 3px 3px 0;}
+.wn-features{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.wn-feat{background:var(--stone);border:1px solid var(--iron);border-radius:4px;padding:14px;transition:border-color .15s,transform .15s;position:relative;overflow:hidden;}
+.wn-feat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:4px 4px 0 0;}
+.wn-feat.c-gold::before{background:linear-gradient(90deg,var(--gold),var(--gold-dim));}
+.wn-feat.c-green::before{background:linear-gradient(90deg,var(--venom),var(--emerald));}
+.wn-feat.c-violet::before{background:linear-gradient(90deg,var(--amethyst),var(--violet));}
+.wn-feat.c-red::before{background:linear-gradient(90deg,var(--blood),var(--crimson));}
+.wn-feat.c-teal::before{background:linear-gradient(90deg,#147a65,#1ca88e);}
+.wn-feat.c-amber::before{background:linear-gradient(90deg,#a06010,#c88030);}
+.wn-feat:hover{border-color:var(--gold-dim);transform:translateY(-2px);}
+.wn-feat-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:10px;flex-shrink:0;background:var(--dungeon);border:1px solid var(--iron);}
+.wn-feat-name{font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--parchment);margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+.new-badge{font-family:var(--font-m);font-size:7px;letter-spacing:.08em;padding:2px 6px;border-radius:20px;background:#b83232;color:#fff;text-transform:uppercase;flex-shrink:0;}
+.wn-feat-desc{font-family:var(--font-b);font-size:12px;color:var(--mist);line-height:1.65;}
+.wn-humor{text-align:center;padding:20px 10px;}
+.humor-sigil{font-size:48px;margin-bottom:14px;animation:hFloat 3s ease-in-out infinite;}
+@keyframes hFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.humor-title{font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--gold);letter-spacing:.08em;margin-bottom:4px;}
+.humor-sub{font-family:var(--font-b);font-style:italic;font-size:14px;color:var(--fog);line-height:1.4;margin-bottom:18px;}
+.humor-note{font-family:var(--font-m);font-size:10px;color:var(--mist);letter-spacing:.06em;line-height:1.7;background:var(--stone);border:1px solid var(--iron);border-radius:4px;padding:12px 16px;max-width:380px;margin:0 auto;text-align:left;}
+.humor-note span{color:var(--gold);}
+.wn-ft{padding:14px 22px;border-top:1px solid var(--iron);display:flex;align-items:center;justify-content:space-between;background:var(--stone);flex-shrink:0;gap:10px;flex-wrap:wrap;}
+.wn-ft-info{font-family:var(--font-m);font-size:9px;color:var(--mist);letter-spacing:.05em;}
+.wn-got-it{font-family:var(--font-m);font-size:10px;font-weight:500;padding:8px 22px;border-radius:3px;border:1px solid var(--gold-dim);background:var(--gold-glow);color:var(--gold);cursor:pointer;letter-spacing:.08em;transition:all .14s;display:flex;align-items:center;gap:7px;}
+.wn-got-it:hover{background:rgba(138,99,24,.2);box-shadow:0 0 10px var(--gold-glow);}
 .user-dropdown-wrap{position:relative;}
 .user-dropdown-btn{display:flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--iron);border-radius:2px;padding:4px 9px;cursor:pointer;font-family:var(--font-m);font-size:11px;color:var(--parchment);letter-spacing:.05em;transition:border-color .2s;}
 .user-dropdown-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
@@ -469,5 +522,203 @@ All original content created and published on this platform by the platform crea
     </div>
   </div>
 </div>
+
+<div id="wn-overlay">
+  <div id="wn-modal">
+
+    <!-- HEADER -->
+    <div class="wn-hd">
+      <div class="wn-hd-top">
+        <div class="wn-hd-left">
+          <div class="wn-logo">🐍</div>
+          <div>
+            <div class="wn-title">What's New</div>
+            <div class="wn-sub">Slytherin Classroom · PythonPractice</div>
+          </div>
+        </div>
+        <button class="wn-close" onclick="closeWN()">✕</button>
+      </div>
+
+      <!-- VERSION TABS -->
+      <div class="wn-tabs">
+        <button class="wn-tab active" onclick="switchTab(0)">v1.3.1 · Latest</button>
+        <button class="wn-tab" onclick="switchTab(1)">v1.3.0</button>
+        <button class="wn-tab" onclick="switchTab(2)">v1.1.5</button>
+        <button class="wn-tab" onclick="switchTab(3)">v1.0.0</button>
+        <button class="wn-tab" onclick="switchTab(4)">v0.1.0</button>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="wn-body">
+
+      <!-- v0.0.4 — HUMOR -->
+      <div class="wn-panel active" id="panel-0">
+        <div class="wn-humor">
+          <div class="humor-sigil">🫥</div>
+          <div class="wn-ver-tag" style="display:inline-flex;margin-bottom:12px;">v1.3.1 · Latest Release · March 2026</div>
+          <div class="humor-title">Walang Bago.</div>
+          <div class="humor-sub" style="margin-top:4px;">Ikaw parin.</div>
+          <div class="humor-note">
+            <span>📋 Patch Notes:</span><br/>
+            · Fixed: nothing<br/>
+            · Added: nothing<br/>
+            · Removed: your excuses<br/>
+            · Known issue: ikaw pa rin ang may pinakamaraming failed submissions<br/>
+            · Next update: kapag natapos mo na ang lahat ng labs
+          </div>
+        </div>
+      </div>
+
+      <!-- v0.0.3 — WHY Button + Quiz improvements -->
+      <div class="wn-panel" id="panel-1">
+        <div class="wn-ver-hd">
+          <div class="wn-ver-tag">v1.3.0 · March 2026</div>
+          <div class="wn-ver-title">AI Explanations & Quiz Polish</div>
+          <div class="wn-ver-date">Released March 2026 · Latest Update</div>
+        </div>
+        <div class="wn-ver-desc">
+          Introducing the <strong>WHY? Button</strong> — powered by Claude AI. Every answer now comes with a real explanation so you actually learn, not just retry blindly. Plus quality-of-life improvements across the quiz experience.
+        </div>
+        <div class="wn-features">
+          <div class="wn-feat c-violet">
+            <div class="wn-feat-ico">🤖</div>
+            <div class="wn-feat-name">WHY? Button <span class="new-badge">New</span></div>
+            <div class="wn-feat-desc">Get an AI-powered explanation after every quiz answer — correct or wrong. Powered by Claude.</div>
+          </div>
+          <div class="wn-feat c-red">
+            <div class="wn-feat-ico">📖</div>
+            <div class="wn-feat-name">Answer Review <span class="new-badge">New</span></div>
+            <div class="wn-feat-desc">After finishing a quiz, expand any question to see what you answered vs. what was correct — side by side.</div>
+          </div>
+          <div class="wn-feat c-teal">
+            <div class="wn-feat-ico">🧠</div>
+            <div class="wn-feat-name">Smarter Feedback <span class="new-badge">New</span></div>
+            <div class="wn-feat-desc">Wrong answers now pulse red with a WHY? prompt — so you never walk away without understanding the concept.</div>
+          </div>
+          <div class="wn-feat c-amber">
+            <div class="wn-feat-ico">⚡</div>
+            <div class="wn-feat-name">Fill in the Blank <span class="new-badge">New</span></div>
+            <div class="wn-feat-desc">New question type added — type your answer directly and confirm. Press Enter to submit fast.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- v0.0.2 — EXP + Leaderboard -->
+      <div class="wn-panel" id="panel-2">
+        <div class="wn-ver-hd">
+          <div class="wn-ver-tag">v1.1.5 · March 2026</div>
+          <div class="wn-ver-title">EXP, Ranks & Leaderboard</div>
+          <div class="wn-ver-date">Released March 2026</div>
+        </div>
+        <div class="wn-ver-desc">
+          The grind is now <strong>rewarded</strong>. Every lab submission and quiz attempt earns you EXP. Climb the ranks from Newbie all the way to Sys Architect — and compete on the leaderboard.
+        </div>
+        <div class="wn-features">
+          <div class="wn-feat c-gold">
+            <div class="wn-feat-ico">⭐</div>
+            <div class="wn-feat-name">EXP System <span class="new-badge">New</span></div>
+            <div class="wn-feat-desc">Earn EXP for every lab and quiz submission. Points stack up — keep submitting, keep climbing.</div>
+          </div>
+          <div class="wn-feat c-violet">
+            <div class="wn-feat-ico">👑</div>
+            <div class="wn-feat-name">Rank Progression <span class="new-badge">New</span></div>
+            <div class="wn-feat-desc">13 ranks from Newbie II to Sys Architect. Your rank badge shows on the dashboard and leaderboard.</div>
+          </div>
+          <div class="wn-feat c-green">
+            <div class="wn-feat-ico">🏆</div>
+            <div class="wn-feat-name">Leaderboard <span class="new-badge">New</span></div>
+            <div class="wn-feat-desc">Anonymous EXP rankings with gold, silver, bronze tiers. Know where you stand without exposing names.</div>
+          </div>
+          <div class="wn-feat c-teal">
+            <div class="wn-feat-ico">📈</div>
+            <div class="wn-feat-name">Rank Progress Bar <span class="new-badge">New</span></div>
+            <div class="wn-feat-desc">See exactly how close you are to your next rank — a live progress bar sits right on your dashboard hero.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- v0.0.1 — Foundation -->
+      <div class="wn-panel" id="panel-3">
+        <div class="wn-ver-hd">
+          <div class="wn-ver-tag">v1.0.0 · March 2026</div>
+          <div class="wn-ver-title">The Dungeon Opens</div>
+          <div class="wn-ver-date">Released March 2026</div>
+        </div>
+        <div class="wn-ver-desc">
+          First release. The classroom is open. Login, pick a lab, cast your code, and submit. Quizzes with instant feedback included. Everything is tracked — every keystroke, every submission.
+        </div>
+        <div class="wn-features">
+          <div class="wn-feat c-green">
+            <div class="wn-feat-ico">🧪</div>
+            <div class="wn-feat-name">Python Lab Editor <span class="new-badge">New</span></div>
+            <div class="wn-feat-desc">Full in-browser Python IDE with CodeMirror, test cases, hidden trials, and instant verdict on submission.</div>
+          </div>
+          <div class="wn-feat c-violet">
+            <div class="wn-feat-ico">📝</div>
+            <div class="wn-feat-name">Quiz System <span class="new-badge">New</span></div>
+            <div class="wn-feat-desc">One-at-a-time quiz flow with multiple choice, true/false, code output, and fill-in-the-blank types.</div>
+          </div>
+          <div class="wn-feat c-gold">
+            <div class="wn-feat-ico">⚙️</div>
+            <div class="wn-feat-name">Quiz Settings <span class="new-badge">New</span></div>
+            <div class="wn-feat-desc">Set number of questions (15, 30, 50), toggle answer reveal mode, and enable question randomization.</div>
+          </div>
+          <div class="wn-feat c-red">
+            <div class="wn-feat-ico">🔐</div>
+            <div class="wn-feat-name">Auth & Access Control <span class="new-badge">New</span></div>
+            <div class="wn-feat-desc">Login with Gmail. Signup restricted to allowed usernames only. T&C acceptance required to proceed.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- v0.0.0 — SKELETON -->
+      <div class="wn-panel" id="panel-4">
+        <div class="wn-ver-hd">
+          <div class="wn-ver-tag">v0.1.0 · February 2026</div>
+          <div class="wn-ver-title">The Bare Bones</div>
+          <div class="wn-ver-date">February 2026 · Where it all began</div>
+        </div>
+        <div class="wn-ver-desc">
+          It started with nothing. Just a blank HTML file and a dream. No EXP. No quizzes. No WHY? button. Just the raw skeleton of what would become the Slytherin Classroom.
+        </div>
+        <div class="wn-features">
+          <div class="wn-feat c-green">
+            <div class="wn-feat-ico">🦴</div>
+            <div class="wn-feat-name">Basic Auth</div>
+            <div class="wn-feat-desc">Login and signup with Gmail. That's it. You could get in. That was the whole update.</div>
+          </div>
+          <div class="wn-feat c-gold">
+            <div class="wn-feat-ico">🏚️</div>
+            <div class="wn-feat-name">Dashboard Shell</div>
+            <div class="wn-feat-desc">A mostly empty dashboard. The topbar existed. The breadcrumbs existed. Nothing else worked yet.</div>
+          </div>
+          <div class="wn-feat c-violet">
+            <div class="wn-feat-ico">🐍</div>
+            <div class="wn-feat-name">Pyodide Loaded</div>
+            <div class="wn-feat-desc">Python ran in the browser for the first time. No test cases, no trials. Just a textarea and a run button.</div>
+          </div>
+          <div class="wn-feat c-amber">
+            <div class="wn-feat-ico">🌑</div>
+            <div class="wn-feat-name">Database Connected</div>
+            <div class="wn-feat-desc">Backend hooked up. Tables existed but were mostly empty. The dungeon had walls but no furniture.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="wn-ft">
+      <div class="wn-ft-info">Slytherin Classroom <span style="color:var(--gold-dim)">v1.3.1</span> · BSCS Python Practice</div>
+      <button class="wn-got-it" onclick="closeWN()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Got it!
+      </button>
+    </div>
+
+  </div>
+</div>
+  
 </body>
 </html>
