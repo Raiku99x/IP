@@ -192,12 +192,42 @@ document.addEventListener('fullscreenchange',()=>{
 function updateRankDisplay(exp){
   const rank=getRank(exp);
   const next=getNextRank(exp);
-  const av=document.getElementById('user-avatar');
-  if(av)av.textContent=rank.icon;
+
+  // dropdown
   const rankEl=document.getElementById('user-rank-display');
   if(rankEl)rankEl.textContent=rank.name;
   const expEl=document.getElementById('user-exp-display');
   if(expEl)expEl.textContent=next?`${exp} / ${next.exp} EXP`:`${exp} EXP — MAX`;
+
+  // hero
+  const heroIcon=document.getElementById('hero-rank-icon');
+  if(heroIcon)heroIcon.textContent=rank.icon;
+  const heroName=document.getElementById('hero-rank-name');
+  if(heroName)heroName.textContent=rank.name;
+  const heroBar=document.getElementById('hero-rank-bar');
+  if(heroBar){
+    const prev=RANKS.find(r=>r.exp<=exp&&(!next||r.exp<next.exp))||RANKS[0];
+    const pct=next?Math.round((exp-rank.exp)/(next.exp-rank.exp)*100):100;
+    heroBar.style.width=pct+'%';
+  }
+
+  // topbar avatar back to first letter
+  const av=document.getElementById('user-avatar');
+  if(av&&currentUser){
+    const name=currentUser.user_metadata?.full_name||'?';
+    av.textContent=name.charAt(0).toUpperCase();
+  }
+
+  // overall rank position
+  updateOverallPosition();
+}
+
+async function updateOverallPosition(){
+  const{data:profiles}=await sbClient.from('profiles').select('id,exp').order('exp',{ascending:false});
+  if(!profiles)return;
+  const pos=profiles.findIndex(p=>p.id===currentUser.id)+1;
+  const circle=document.getElementById('hero-rank-circle');
+  if(circle)circle.textContent=pos||'?';
 }
 
 async function loadUserExp(){
