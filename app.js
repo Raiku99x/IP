@@ -1226,7 +1226,12 @@ async function initHeavy(){
   bar.style.width='100%';
   txt.textContent='The dungeon is ready.';
   await loadUserExp();
-  setTimeout(()=>{ $('loading-overlay').classList.add('hidden'); showDash(); }, 700);
+  setTimeout(()=>{
+  $('loading-overlay').classList.add('hidden');
+  showDash();
+  const wn = document.getElementById('wn-overlay');
+  wn.style.display = 'flex';
+}, 700);
 }
 
 (async()=>{
