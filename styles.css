@@ -132,6 +132,54 @@ body::before{
 .sec-label{font-family:var(--font-d);font-size:10px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:6px;display:flex;align-items:center;gap:12px;}
 .sec-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--iron),transparent);}
 
+.hero-rank-icon {
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: 6px;
+  text-align: center;
+}
+.hero-rank-name {
+  font-family: var(--font-m);
+  font-size: 11px;
+  letter-spacing: .12em;
+  color: var(--parchment2);
+  text-align: center;
+  margin-bottom: 10px;
+}
+.hero-rank-bar-wrap {
+  width: 120px;
+  height: 3px;
+  background: rgba(0,0,0,.25);
+  border-radius: 2px;
+  margin: 0 auto 10px;
+  overflow: hidden;
+}
+.hero-rank-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+  border-radius: 2px;
+  transition: width .6s ease;
+  width: 0%;
+}
+.hero-rank-position {
+  text-align: center;
+  margin-bottom: 14px;
+}
+.hero-rank-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--gold-dim);
+  background: var(--gold-glow);
+  font-family: var(--font-d);
+  font-size: 10px;
+  color: var(--gold);
+  font-weight: 700;
+}
+
 /* Tome (lab card) */
 .tome{background:var(--dungeon);border:1px solid var(--iron);border-radius:4px;overflow:hidden;transition:border-color .15s,box-shadow .15s;position:relative;}
 .tome::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--emerald);}
