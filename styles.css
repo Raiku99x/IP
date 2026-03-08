@@ -123,7 +123,7 @@ body::before{
 #view-dashboard.active{display:flex;}
 .dash-hero{padding:14px 32px;background:linear-gradient(160deg,var(--dungeon) 55%,var(--stone));border-bottom:1px solid var(--iron);position:relative;overflow:hidden;min-height:0;flex-shrink:0;}
 .dash-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 120% at 88% 40%,rgba(160,120,40,0.08),transparent);pointer-events:none;}
-.dash-hero::after{content:'⬡';position:absolute;right:32px;top:50%;transform:translateY(-50%);font-size:80px;color:rgba(184,170,140,0.2);line-height:1;pointer-events:none;z-index:0;}
+.dash-hero::after{display:none;}
 .hero-tag{font-family:var(--font-m);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--emerald);margin-bottom:3px;display:flex;align-items:center;gap:8px;position:relative;z-index:1;}
 .hero-tag::before{content:'';width:16px;height:1px;background:var(--emerald);}
 .hero-title{font-family:var(--font-d);font-size:20px;font-weight:900;color:var(--parchment);letter-spacing:.04em;line-height:1.2;margin-bottom:0;position:relative;z-index:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:calc(100% - 120px);}
@@ -150,7 +150,7 @@ body::before{
   letter-spacing: .12em;
   color: var(--parchment2);
   text-align: center;
-  margin-bottom: 8px;
+  margin-bottom: 3px;
 }
 .hero-rank-bar-wrap {
   width: 90px;
