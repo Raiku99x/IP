@@ -259,8 +259,19 @@ function updateRankDisplay(exp){
   if(expEl)expEl.textContent=next?`${exp} / ${next.exp} EXP`:`${exp} EXP — MAX`;
 
   // hero
+  
   const heroIcon=document.getElementById('hero-rank-icon');
-  if(heroIcon)heroIcon.innerHTML=`<img src="${rank.img}" alt="${rank.name}" class="hero-rank-img">`;
+  if(heroIcon){
+  const glowMap={
+    'Newbie':        'drop-shadow(0 0 3px rgba(180,100,30,0.3)) drop-shadow(0 0 6px rgba(180,100,30,0.15))',
+    'Coder':         'drop-shadow(0 0 5px rgba(200,200,210,0.55)) drop-shadow(0 0 12px rgba(200,200,210,0.25))',
+    'Developer':     'drop-shadow(0 0 8px rgba(220,140,40,0.7)) drop-shadow(0 0 18px rgba(220,140,40,0.35))',
+    'Legend':        'drop-shadow(0 0 10px rgba(40,180,220,0.85)) drop-shadow(0 0 22px rgba(40,180,220,0.45)) drop-shadow(0 0 38px rgba(40,180,220,0.2))',
+    'Sys Architect': 'drop-shadow(0 0 12px rgba(255,80,30,0.95)) drop-shadow(0 0 26px rgba(255,120,20,0.65)) drop-shadow(0 0 50px rgba(255,60,0,0.35))',
+  };
+  const tier=Object.keys(glowMap).find(k=>rank.name.startsWith(k))||'Newbie';
+  heroIcon.innerHTML=`<img src="${rank.img}" alt="${rank.name}" class="hero-rank-img" style="filter:${glowMap[tier]};">`;
+}
   const heroName=document.getElementById('hero-rank-name');
   if(heroName)heroName.textContent=rank.name;
   const heroBar=document.getElementById('hero-rank-bar');
