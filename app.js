@@ -242,7 +242,7 @@ async function loadLbModal(){
     const bg=isMe?'var(--gold-glow)':i<4?ROW_COLORS[i]:'var(--stone)';
     const border=isMe?'var(--gold-dim)':i<4?BORDER_COLORS[i]:'var(--iron)';
 
-    return `<div style="display:grid;grid-template-columns:40px 70px 1fr 90px 80px 80px;align-items:center;gap:0;padding:10px 12px;border-radius:3px;border:1px solid ${border};background:${bg};">
+return `<div style="display:grid;grid-template-columns:40px 70px 1fr 90px;align-items:center;gap:0;padding:10px 12px;border-radius:3px;border:1px solid ${border};background:${bg};">
       <div style="font-size:16px;text-align:center;">${medal}</div>
       <div style="font-family:var(--font-d);font-size:10px;color:${isMe?'var(--gold)':'var(--parchment)'};letter-spacing:.04em;">
         User#${i+1}
@@ -255,14 +255,6 @@ async function loadLbModal(){
       <div style="text-align:right;">
         <div style="font-family:var(--font-d);font-size:12px;font-weight:700;color:var(--gold);">${(p.exp||0).toLocaleString()}</div>
         <div style="font-family:var(--font-m);font-size:8px;color:var(--mist);">EXP</div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-family:var(--font-d);font-size:12px;color:var(--emerald);">${labPassed}</div>
-        <div style="font-family:var(--font-m);font-size:8px;color:var(--mist);">${labScore}pts</div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-family:var(--font-d);font-size:12px;color:var(--violet);">${quizPassed}</div>
-        <div style="font-family:var(--font-m);font-size:8px;color:var(--mist);">passed</div>
       </div>
     </div>`;
   }).join('');
