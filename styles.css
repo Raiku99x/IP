@@ -133,25 +133,25 @@ body::before{
 .sec-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--iron),transparent);}
 
 .hero-rank-icon {
-  font-size: 48px;
+  font-size: 44px;
   line-height: 1;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   text-align: center;
 }
 .hero-rank-name {
   font-family: var(--font-m);
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: .12em;
   color: var(--parchment2);
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 .hero-rank-bar-wrap {
-  width: 120px;
-  height: 3px;
+  width: 90px;
+  height: 2px;
   background: rgba(0,0,0,.25);
   border-radius: 2px;
-  margin: 0 auto 10px;
+  margin: 0 auto 8px;
   overflow: hidden;
 }
 .hero-rank-bar {
@@ -163,21 +163,34 @@ body::before{
 }
 .hero-rank-position {
   text-align: center;
-  margin-bottom: 14px;
 }
 .hero-rank-circle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   border: 1px solid var(--gold-dim);
   background: var(--gold-glow);
   font-family: var(--font-d);
-  font-size: 10px;
+  font-size: 9px;
   color: var(--gold);
   font-weight: 700;
+}
+
+.dash-hero {
+  position: relative;
+}
+.hero-rank-wrap {
+  position: absolute;
+  right: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
 }
 
 /* Tome (lab card) */
