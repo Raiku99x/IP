@@ -579,7 +579,6 @@ async function saveExp(){
     document.getElementById('exp-modal-msg').textContent='⚠ EXP must be between 0 and 999,999.';
     return;
   }
-}
   const cur=expModalProfile.exp||0;
   if(Math.abs(newExp-cur)>5000&&!confirm(`You're changing EXP by ${Math.abs(newExp-cur).toLocaleString()} points. Are you sure?`))return;
   const rankOverride=document.getElementById('exp-modal-rank').value.trim()||getRank(newExp).name;
