@@ -193,6 +193,15 @@ body::before{
   z-index: 1;
 }
 
+@media (max-width: 700px) {
+  .hero-rank-wrap {
+    right: 8px;
+    transform: translateY(-35%);
+  }
+  .hero-rank-icon {
+    font-size: 26px;
+  }
+}
 /* Tome (lab card) */
 .tome{background:var(--dungeon);border:1px solid var(--iron);border-radius:4px;overflow:hidden;transition:border-color .15s,box-shadow .15s;position:relative;}
 .tome::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--emerald);}
