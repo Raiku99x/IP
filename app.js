@@ -203,7 +203,6 @@ document.addEventListener('click',e=>{
 });
 
 async function loadLbModal(){
-async function loadLbModal(){
   const{data:s}=await sbClient.from('settings').select('value').eq('key','lb_enabled').single();
   if(s&&s.value===false){
     document.getElementById('lb-modal-overlay').style.display='none';
