@@ -413,8 +413,7 @@ async function loadAll(){
 }
 
 function render(){
-  const uU=new Set([...allSubs.map(s=>s.username),...allAttempts.map(a=>a.username)]);
-  const pS=allSubs.filter(s=>s.passed).length,pA=allAttempts.filter(a=>a.passed).length;
+  const uU=new Set([...allProfiles.map(p=>p.username),...allSubs.map(s=>s.username),...allAttempts.map(a=>a.username)]);  const pS=allSubs.filter(s=>s.passed).length,pA=allAttempts.filter(a=>a.passed).length;
   const lRate=allSubs.length?Math.round(pS/allSubs.length*100):0;
   const qRate=allAttempts.length?Math.round(pA/allAttempts.length*100):0;
   const totalPts=allSubs.reduce((acc,s)=>acc+(s.score||0),0);
