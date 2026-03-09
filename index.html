@@ -444,6 +444,18 @@ All original content created and published on this platform by the platform crea
   </button>
 </div>
 
+<!-- RANK UP POPUP -->
+<div id="rankup-overlay" style="display:none;position:fixed;inset:0;background:rgba(10,7,3,.75);z-index:999998;align-items:center;justify-content:center;backdrop-filter:blur(8px);opacity:0;transition:opacity .3s ease;">
+  <div id="rankup-modal" style="background:var(--dungeon);border:1px solid var(--gold-dim);border-radius:6px;width:340px;max-width:calc(100%% - 32px);padding:36px 28px;text-align:center;box-shadow:0 0 80px rgba(138,99,24,0.25),0 24px 64px rgba(0,0,0,.6);position:relative;overflow:hidden;transform:scale(.88) translateY(20px);transition:transform .35s cubic-bezier(.175,.885,.32,1.275);">
+    <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 80%% 50%% at 50%% 0%%,rgba(160,120,40,0.09),transparent);"></div>
+    <div style="font-family:var(--font-m);font-size:9px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;margin-bottom:18px;opacity:.8;">✦ Rank Up ✦</div>
+    <div style="margin-bottom:16px;"><img id="rankup-img" src="" alt="" style="width:80px;height:80px;object-fit:contain;transition:filter .3s;"/></div>
+    <div style="font-family:var(--font-m);font-size:9px;letter-spacing:.12em;color:var(--mist);text-transform:uppercase;margin-bottom:6px;">You are now</div>
+    <div id="rankup-name" style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--gold);letter-spacing:.08em;text-shadow:0 0 24px rgba(138,99,24,0.5);margin-bottom:20px;"></div>
+    <button onclick="closeRankUp()" style="font-family:var(--font-m);font-size:10px;font-weight:500;padding:9px 28px;border-radius:3px;border:1px solid var(--gold-dim);background:var(--gold-glow);color:var(--gold);cursor:pointer;letter-spacing:.1em;transition:all .14s;">✦ Onward</button>
+  </div>
+</div>
+<style>#rankup-overlay.rankup-show{opacity:1;}#rankup-overlay.rankup-show #rankup-modal{transform:scale(1) translateY(0);}</style>
 <script src="auth.js"></script>
 <script src="app.js"></script>
 <script>
