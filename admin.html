@@ -503,6 +503,7 @@ function rStudents(){
   const u={};
   allSubs.forEach(s=>{if(!u[s.username])u[s.username]={labs:[],quizzes:[]};u[s.username].labs.push(s);});
   allAttempts.forEach(a=>{if(!u[a.username])u[a.username]={labs:[],quizzes:[]};u[a.username].quizzes.push(a);});
+  allProfiles.forEach(p=>{if(!u[p.username])u[p.username]={labs:[],quizzes:[]};});  
   if(!Object.keys(u).length)return`<div class="section-card"><div class="tbl-empty"><div class="tei">👥</div>No student data yet</div></div>`;
   const cards=Object.entries(u).sort((a,b)=>a[0].localeCompare(b[0])).map(([name,d])=>{
     const lt=d.labs.length,lp=d.labs.filter(l=>l.passed).length;
