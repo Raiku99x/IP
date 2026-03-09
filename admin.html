@@ -2,733 +2,755 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Slytherin Classroom</title>
-<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/display/placeholder.min.js"></script>
-<link rel="stylesheet" href="styles.css"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin — Slytherin Classroom</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-#wn-overlay{display:none;position:fixed;inset:0;background:rgba(20,14,6,.55);z-index:99999;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:16px;}
-#wn-modal{background:var(--dungeon);border:1px solid var(--gold-dim);border-radius:6px;width:560px;max-width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 0 60px rgba(138,99,24,0.18),0 24px 64px rgba(0,0,0,.45);animation:wnOpen .22s ease;overflow:hidden;position:relative;}
-#wn-modal::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(160,120,40,0.07),transparent);}
-@keyframes wnOpen{from{opacity:0;transform:scale(.95) translateY(12px);}to{opacity:1;transform:none;}}
-.wn-hd{padding:18px 22px 14px;border-bottom:1px solid var(--iron);flex-shrink:0;background:var(--stone);position:relative;overflow:hidden;}
-.wn-hd::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);opacity:.5;}
-.wn-hd-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;}
-.wn-hd-left{display:flex;align-items:center;gap:10px;}
-.wn-logo{width:32px;height:32px;border-radius:50%;background:var(--gold-glow);border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
-.wn-title{font-family:var(--font-d);font-size:17px;font-weight:900;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;text-shadow:0 0 20px rgba(138,99,24,0.4);}
-.wn-sub{font-family:var(--font-m);font-size:9px;color:var(--mist);margin-top:2px;letter-spacing:.05em;}
-.wn-close{width:28px;height:28px;border-radius:3px;border:1px solid var(--iron);background:transparent;color:var(--mist);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0;}
-.wn-close:hover{border-color:var(--blood);color:var(--crimson);background:rgba(139,28,28,.08);}
-.wn-tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;}
-.wn-tabs::-webkit-scrollbar{display:none;}
-.wn-tab{font-family:var(--font-m);font-size:9px;letter-spacing:.08em;padding:6px 13px;border-radius:3px;cursor:pointer;border:1px solid transparent;color:var(--mist);background:transparent;transition:all .15s;white-space:nowrap;flex-shrink:0;}
-.wn-tab:hover{color:var(--gold);background:var(--gold-glow);}
-.wn-tab.active{color:var(--gold);background:var(--gold-glow);border-color:var(--gold-dim);font-weight:600;}
-.wn-body{overflow-y:auto;flex:1;padding:22px 24px 20px;}
-.wn-body::-webkit-scrollbar{width:3px;}
-.wn-body::-webkit-scrollbar-track{background:var(--stone);}
-.wn-body::-webkit-scrollbar-thumb{background:var(--iron);}
-.wn-panel{display:none;}.wn-panel.active{display:block;}
-.wn-ver-hd{margin-bottom:18px;}
-.wn-ver-tag{display:inline-flex;align-items:center;gap:7px;font-family:var(--font-m);font-size:9px;letter-spacing:.1em;padding:3px 10px;border-radius:20px;border:1px solid var(--gold-dim);color:var(--gold);background:var(--gold-glow);margin-bottom:8px;}
-.wn-ver-title{font-family:var(--font-d);font-size:17px;font-weight:700;color:var(--parchment);letter-spacing:.04em;margin-bottom:4px;}
-.wn-ver-date{font-family:var(--font-m);font-size:10px;color:var(--mist);letter-spacing:.05em;}
-.wn-ver-desc{font-family:var(--font-b);font-size:13px;color:var(--fog);line-height:1.75;margin-bottom:18px;padding:12px 14px;background:var(--stone);border-left:2px solid var(--gold-dim);border-radius:0 3px 3px 0;}
-.wn-features{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.wn-feat{background:var(--stone);border:1px solid var(--iron);border-radius:4px;padding:14px;transition:border-color .15s,transform .15s;position:relative;overflow:hidden;}
-.wn-feat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:4px 4px 0 0;}
-.wn-feat.c-gold::before{background:linear-gradient(90deg,var(--gold),var(--gold-dim));}
-.wn-feat.c-green::before{background:linear-gradient(90deg,var(--venom),var(--emerald));}
-.wn-feat.c-violet::before{background:linear-gradient(90deg,var(--amethyst),var(--violet));}
-.wn-feat.c-red::before{background:linear-gradient(90deg,var(--blood),var(--crimson));}
-.wn-feat.c-teal::before{background:linear-gradient(90deg,#147a65,#1ca88e);}
-.wn-feat.c-amber::before{background:linear-gradient(90deg,#a06010,#c88030);}
-.wn-feat:hover{border-color:var(--gold-dim);transform:translateY(-2px);}
-.wn-feat-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:10px;flex-shrink:0;background:var(--dungeon);border:1px solid var(--iron);}
-.wn-feat-ico i{font-size:16px;color:var(--fog);}
-.wn-feat-name{font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--parchment);margin-bottom:4px;display:flex;align-items:center;gap:6px;}
-.new-badge{font-family:var(--font-m);font-size:7px;letter-spacing:.08em;padding:2px 6px;border-radius:20px;background:#b83232;color:#fff;text-transform:uppercase;flex-shrink:0;}
-.wn-feat-desc{font-family:var(--font-b);font-size:12px;color:var(--mist);line-height:1.65;}
-.wn-humor{text-align:center;padding:8px 10px;}
-.humor-sigil{font-size:48px;margin-bottom:14px;animation:hFloat 3s ease-in-out infinite;}
-@keyframes hFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
-.humor-title{font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--gold);letter-spacing:.08em;margin-bottom:4px;}
-.humor-sub{font-family:var(--font-b);font-style:italic;font-size:14px;color:var(--fog);line-height:1.4;margin-bottom:18px;}
-.humor-note{font-family:var(--font-m);font-size:10px;color:var(--mist);letter-spacing:.06em;line-height:1.7;background:var(--stone);border:1px solid var(--iron);border-radius:4px;padding:12px 16px;max-width:380px;margin:0 auto;text-align:left;}
-.humor-note span{color:var(--gold);}
-.wn-ft{padding:14px 22px;border-top:1px solid var(--iron);display:flex;align-items:center;justify-content:space-between;background:var(--stone);flex-shrink:0;gap:10px;flex-wrap:wrap;}
-.wn-ft-info{font-family:var(--font-m);font-size:9px;color:var(--mist);letter-spacing:.05em;}
-.wn-got-it{font-family:var(--font-m);font-size:10px;font-weight:500;padding:8px 22px;border-radius:3px;border:1px solid var(--gold-dim);background:var(--gold-glow);color:var(--gold);cursor:pointer;letter-spacing:.08em;transition:all .14s;display:flex;align-items:center;gap:7px;}
-.wn-got-it:hover{background:rgba(138,99,24,.2);box-shadow:0 0 10px var(--gold-glow);}
-.user-dropdown-wrap{position:relative;}
-.user-dropdown-btn{display:flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--iron);border-radius:2px;padding:4px 9px;cursor:pointer;font-family:var(--font-m);font-size:11px;color:var(--parchment);letter-spacing:.05em;transition:border-color .2s;}
-.user-dropdown-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
-.user-dropdown-btn .u-av{width:22px;height:22px;border-radius:50%;background:var(--gold-glow);border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:11px;color:var(--gold);flex-shrink:0;text-transform:uppercase;}
-.user-dropdown-btn .u-chev{font-size:9px;color:var(--mist);transition:transform .2s;}
-.user-dropdown-btn.open .u-chev{transform:rotate(180deg);}
-.user-dropdown-menu{display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--dungeon);border:1px solid var(--gold-dim);border-radius:3px;box-shadow:0 8px 24px rgba(0,0,0,.5);min-width:150px;z-index:9999;overflow:hidden;}
-.user-dropdown-menu.open{display:block;}
-.dd-email{font-family:var(--font-m);font-size:9px;color:var(--mist);padding:10px 14px 7px;border-bottom:1px solid var(--iron);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px;}
-.user-dropdown-menu button{width:100%;background:transparent;border:none;padding:10px 14px;font-family:var(--font-m);font-size:11px;color:var(--crimson);cursor:pointer;text-align:left;letter-spacing:.05em;transition:background .15s;}
-.user-dropdown-menu button:hover{background:rgba(139,0,0,.18);color:var(--parchment);}
+:root{
+  --bg:#f6faf6;--bg2:#eef5ee;--surface:#fff;--surface2:#f4f9f4;
+  --border:#e0ebe0;--border2:#ccdccc;
+  --text:#141f14;--text2:#344834;--muted:#607860;--subtle:#98b098;
+  --green:#1a7a3c;--green2:#22a050;--green-lt:#e8f5ec;--green-bd:#9ecfb0;--green-dk:#0f5228;
+  --teal:#147a65;--teal-lt:#e5f3f0;--teal-bd:#8dc4ba;
+  --red:#b83232;--red-lt:#fdf0f0;--red-bd:#e0a8a8;
+  --amber:#a06010;--amber-lt:#fdf6ea;--amber-bd:#d4b070;
+  --blue:#1e5fa0;--blue-lt:#edf4fc;--blue-bd:#8ab8e0;
+  --violet:#6040a8;--violet-lt:#f0edf8;--violet-bd:#b0a0d8;
+  --font-d:'Instrument Serif',serif;
+  --font-b:'Plus Jakarta Sans',sans-serif;
+  --font-m:'JetBrains Mono',monospace;
+  --r:10px;--rs:6px;
+  --sh:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
+  --sh2:0 2px 8px rgba(0,0,0,.08),0 12px 32px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-b);font-size:14px;line-height:1.55;min-height:100vh}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:var(--subtle)}
 
-/* ── T&C CHECKBOX ── */
-.tc-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;}
-.tc-checkbox-wrap{position:relative;flex-shrink:0;margin-top:2px;}
-.tc-checkbox-wrap input[type=checkbox]{opacity:0;position:absolute;inset:0;cursor:pointer;width:16px;height:16px;margin:0;}
-.tc-checkbox-box{width:16px;height:16px;border:1px solid var(--iron);border-radius:2px;background:var(--stone);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;transition:all .15s;pointer-events:none;}
-.tc-checkbox-wrap input:checked + .tc-checkbox-box{background:var(--gold-glow);border-color:var(--gold-dim);color:var(--gold);}
-.tc-label{font-family:var(--font-m);font-size:10px;color:var(--mist);line-height:1.6;}
-.tc-link{color:var(--gold);cursor:pointer;text-decoration:underline;text-underline-offset:2px;transition:color .12s;}
-.tc-link:hover{color:var(--gold-bright);}
+/* GATE */
+#gate{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:10px}
+.gate-crest{font-family:var(--font-d);font-size:28px;color:var(--green)}
+.gate-crest em{font-style:italic;color:var(--green2)}
+.gate-sub{font-family:var(--font-m);font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.gate-err{font-family:var(--font-m);font-size:11px;color:var(--red);max-width:340px;text-align:center;padding:0 20px}
+.spin{width:22px;height:22px;border:2px solid var(--border2);border-top-color:var(--green);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading{display:flex;align-items:center;justify-content:center;padding:60px;flex-direction:column;gap:12px}
+.loading-txt{font-family:var(--font-m);font-size:10px;color:var(--muted);letter-spacing:.05em}
 
-/* ── T&C MODAL ── */
-#tc-modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,8,4,.78);z-index:199999;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px);}
-#tc-modal-overlay.open{display:flex;}
-#tc-modal{background:var(--dungeon);border:1px solid var(--gold-dim);border-radius:4px;width:520px;max-width:100%;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 0 60px rgba(138,99,24,0.2),0 24px 64px rgba(0,0,0,.5);animation:tcOpen .18s ease;}
-@keyframes tcOpen{from{opacity:0;transform:scale(.96) translateY(10px);}to{opacity:1;transform:none;}}
-.tc-modal-hd{padding:18px 22px 14px;border-bottom:1px solid var(--iron);flex-shrink:0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
-.tc-modal-title{font-family:var(--font-d);font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;}
-.tc-modal-sub{font-family:var(--font-m);font-size:9px;color:var(--mist);margin-top:3px;letter-spacing:.04em;}
-.tc-modal-close{width:26px;height:26px;border-radius:2px;border:1px solid var(--iron);background:transparent;color:var(--mist);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s;}
-.tc-modal-close:hover{border-color:var(--blood);color:var(--crimson);}
-.tc-modal-body{overflow-y:auto;padding:18px 22px 20px;flex:1;}
-.tc-section{margin-bottom:18px;}
-.tc-section:last-child{margin-bottom:0;}
-.tc-section-title{font-family:var(--font-d);font-size:11px;font-weight:600;color:var(--gold-dim);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
-.tc-section-title::after{content:'';flex:1;height:1px;background:var(--iron);opacity:.4;}
-.tc-section-body{font-family:var(--font-b);font-size:13px;color:var(--fog);line-height:1.75;}
-.tc-modal-ft{padding:14px 22px;border-top:1px solid var(--iron);flex-shrink:0;display:flex;justify-content:flex-end;background:var(--stone);}
-.tc-accept-btn{font-family:var(--font-m);font-size:10px;font-weight:500;padding:8px 20px;border-radius:2px;border:1px solid var(--gold-dim);background:var(--gold-glow);color:var(--gold);cursor:pointer;letter-spacing:.08em;transition:all .14s;}
-.tc-accept-btn:hover{background:rgba(138,99,24,.2);box-shadow:0 0 10px var(--gold-glow);}
+/* TOPBAR */
+#topbar{display:flex;align-items:center;gap:10px;padding:0 24px;height:56px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 1px 0 var(--border),0 4px 20px rgba(26,122,60,.04)}
+.tb-logo{display:flex;align-items:center;gap:10px;font-family:var(--font-d);font-size:19px;color:var(--green);white-space:nowrap}
+.tb-logo-mark{width:28px;height:28px;border-radius:8px;background:var(--green-lt);border:1.5px solid var(--green-bd);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tb-logo-mark svg{width:14px;height:14px;stroke:var(--green);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tb-badge{font-family:var(--font-m);font-size:9px;font-weight:600;background:var(--green-lt);border:1px solid var(--green-bd);color:var(--green-dk);padding:2px 8px;border-radius:20px;letter-spacing:.1em;text-transform:uppercase}
+.tb-sep{flex:1}
+.tb-user{font-family:var(--font-m);font-size:11px;color:var(--muted);white-space:nowrap}
+.tb-btn{display:flex;align-items:center;gap:6px;font-family:var(--font-m);font-size:11px;font-weight:500;background:var(--surface);border:1px solid var(--border2);color:var(--text2);padding:6px 14px;border-radius:var(--rs);cursor:pointer;transition:all .15s;white-space:nowrap}
+.tb-btn:hover{border-color:var(--green-bd);color:var(--green);background:var(--green-lt)}
+.tb-btn.danger:hover{border-color:var(--red-bd);color:var(--red);background:var(--red-lt)}
+.tb-btn-text{display:none}
+@media(min-width:640px){.tb-btn-text{display:inline}}
 
-@keyframes tcShake{0%,100%{transform:translateX(0);}20%{transform:translateX(-6px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
-.tc-modal-body::selection,.tc-modal-body *::selection{background:transparent;}
+/* SHELL */
+#shell{display:none;flex-direction:column;min-height:100vh}
+#main{padding:24px 20px 80px;max-width:1440px;margin:0 auto;width:100%}
+@media(min-width:768px){#main{padding:32px 32px 80px}}
+.page-title{font-family:var(--font-d);font-size:24px;color:var(--text)}
+.page-sub{font-family:var(--font-m);font-size:10px;color:var(--muted);letter-spacing:.04em;margin-top:2px;margin-bottom:24px}
+
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:28px}
+@media(min-width:480px){.stats-row{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:960px){.stats-row{grid-template-columns:repeat(6,1fr)}}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 16px 14px;box-shadow:var(--sh);position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
+.sc-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.c-green .sc-bar{background:linear-gradient(90deg,var(--green),var(--green2))}
+.c-teal .sc-bar{background:linear-gradient(90deg,var(--teal),#1ca88e)}
+.c-blue .sc-bar{background:linear-gradient(90deg,var(--blue),#2e82d8)}
+.c-violet .sc-bar{background:linear-gradient(90deg,var(--violet),#8060c8)}
+.c-amber .sc-bar{background:linear-gradient(90deg,var(--amber),#c88030)}
+.c-red .sc-bar{background:linear-gradient(90deg,var(--red),#d84848)}
+.stat-n{font-family:var(--font-d);font-size:30px;line-height:1;margin:6px 0 4px}
+.stat-l{font-family:var(--font-m);font-size:9px;color:var(--muted);font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.stat-sub{font-family:var(--font-m);font-size:9px;color:var(--subtle);margin-top:2px}
+.cn-green{color:var(--green)}.cn-teal{color:var(--teal)}.cn-blue{color:var(--blue)}
+.cn-violet{color:var(--violet)}.cn-amber{color:var(--amber)}.cn-red{color:var(--red)}
+
+/* TABS */
+.tabs-wrap{display:flex;gap:2px;margin-bottom:20px;overflow-x:auto;scrollbar-width:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:4px;box-shadow:var(--sh)}
+.tabs-wrap::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:6px;font-family:var(--font-b);font-size:12px;font-weight:500;padding:8px 14px;cursor:pointer;white-space:nowrap;color:var(--muted);background:none;border:none;border-radius:7px;transition:all .15s}
+.tab:hover{color:var(--text);background:var(--surface2)}
+.tab.active{color:var(--green-dk);background:var(--green-lt);font-weight:600}
+.tab svg{flex-shrink:0;opacity:.55}
+.tab.active svg{opacity:1;stroke:var(--green)}
+
+/* SECTION CARD */
+.section-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:16px}
+.section-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap}
+.section-hd-left{display:flex;align-items:center;gap:10px}
+.section-title{font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--text)}
+.section-count{font-family:var(--font-m);font-size:10px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:2px 9px;border-radius:20px}
+
+/* FILTERS */
+.filters{display:flex;gap:8px;padding:12px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center;background:var(--surface2)}
+.filter-input{background:var(--surface);border:1px solid var(--border2);color:var(--text);font-family:var(--font-b);font-size:12px;padding:7px 12px;border-radius:var(--rs);outline:none;transition:all .15s;min-width:0;flex:1 1 140px}
+.filter-input:focus{border-color:var(--green-bd);box-shadow:0 0 0 3px var(--green-lt)}
+.filter-input::placeholder{color:var(--subtle)}
+.filter-select{background:var(--surface);border:1px solid var(--border2);color:var(--text2);font-family:var(--font-b);font-size:12px;padding:7px 10px;border-radius:var(--rs);outline:none;cursor:pointer;flex-shrink:0}
+.btn{display:flex;align-items:center;gap:6px;font-family:var(--font-b);font-size:11px;font-weight:600;padding:7px 14px;border-radius:var(--rs);cursor:pointer;transition:all .15s;white-space:nowrap;border:1px solid}
+.btn-green{background:var(--green-lt);border-color:var(--green-bd);color:var(--green-dk)}
+.btn-green:hover{background:var(--green);border-color:var(--green);color:#fff}
+.btn-red{background:var(--red-lt);border-color:var(--red-bd);color:var(--red)}
+.btn-red:hover{background:var(--red);border-color:var(--red);color:#fff}
+.btn-ghost{background:var(--surface);border-color:var(--border2);color:var(--text2)}
+.btn-ghost:hover{background:var(--surface2);border-color:var(--border);color:var(--text)}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:520px}
+thead{background:var(--surface2)}
+th{font-family:var(--font-m);font-size:9px;color:var(--muted);font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:10px 18px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:var(--text)}
+th.sort-on{color:var(--green)}
+th .sa{display:inline-block;margin-left:4px;opacity:.4}
+th.sort-on .sa{opacity:1;color:var(--green)}
+td{padding:11px 18px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.tbl-empty{text-align:center;padding:52px;font-family:var(--font-m);font-size:11px;color:var(--subtle)}
+.tei{font-size:26px;margin-bottom:8px;opacity:.35}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-m);font-size:9px;font-weight:500;padding:3px 8px;border-radius:20px;letter-spacing:.04em;border:1px solid}
+.b-pass{background:var(--green-lt);color:var(--green-dk);border-color:var(--green-bd)}
+.b-fail{background:var(--red-lt);color:var(--red);border-color:var(--red-bd)}
+.b-pct{background:var(--amber-lt);color:var(--amber);border-color:var(--amber-bd)}
+.b-violet{background:var(--violet-lt);color:var(--violet);border-color:var(--violet-bd)}
+.b-blue{background:var(--blue-lt);color:var(--blue);border-color:var(--blue-bd)}
+.b-muted{background:var(--surface2);color:var(--muted);border-color:var(--border)}
+
+/* USER PILL */
+.user-pill{display:inline-flex;align-items:center;gap:8px}
+.uav{width:26px;height:26px;border-radius:50%;background:var(--green-lt);border:1.5px solid var(--green-bd);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:11px;color:var(--green-dk);flex-shrink:0;text-transform:uppercase}
+
+/* SCORE BAR */
+.sw{display:flex;align-items:center;gap:7px}
+.sb{height:4px;background:var(--border);border-radius:4px;width:52px;flex-shrink:0;overflow:hidden}
+.sbf{height:100%;border-radius:4px}
+.fg{background:linear-gradient(90deg,var(--green),var(--green2))}
+.fo{background:linear-gradient(90deg,var(--amber),#c88030)}
+.fr{background:linear-gradient(90deg,var(--red),#d84848)}
+.tm{font-family:var(--font-m);font-size:11px;color:var(--muted)}
+.td-dim{font-family:var(--font-m);font-size:10px;color:var(--subtle)}
+.tnw{white-space:nowrap}
+.ttr{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--border);gap:10px;flex-wrap:wrap;background:var(--surface2)}
+.pg-info{font-family:var(--font-m);font-size:10px;color:var(--muted)}
+.pg-btns{display:flex;gap:4px}
+.pg-btn{background:var(--surface);border:1px solid var(--border2);color:var(--muted);font-family:var(--font-m);font-size:10px;padding:5px 10px;border-radius:var(--rs);cursor:pointer;transition:all .15s;min-width:32px;text-align:center}
+.pg-btn:hover:not(:disabled){border-color:var(--green-bd);color:var(--green);background:var(--green-lt)}
+.pg-btn:disabled{opacity:.35;cursor:default}
+.pg-btn.active{background:var(--green-lt);border-color:var(--green-bd);color:var(--green-dk);font-weight:600}
+
+/* TWO-COL */
+.two-col{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px}
+@media(min-width:900px){.two-col{grid-template-columns:1fr 1fr}}
+
+/* STUDENT GRID */
+.user-grid{display:grid;grid-template-columns:1fr;gap:14px;padding:20px}
+@media(min-width:540px){.user-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:900px){.user-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1200px){.user-grid{grid-template-columns:repeat(4,1fr)}}
+.user-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--sh);transition:box-shadow .2s,transform .15s}
+.user-card:hover{transform:translateY(-2px);box-shadow:var(--sh2);border-color:var(--green-bd)}
+.uc-hd{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.uc-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--green-lt),#d0eedc);border:2px solid var(--green-bd);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:17px;color:var(--green-dk);flex-shrink:0}
+.uc-name{font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--text)}
+.uc-sub{font-family:var(--font-m);font-size:9px;color:var(--muted);margin-top:2px}
+.uc-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:5px}
+.uc-val{font-family:var(--font-m);font-size:11px;color:var(--text);font-weight:600}
+.uc-sec{font-family:var(--font-m);font-size:9px;font-weight:600;color:var(--subtle);letter-spacing:.1em;text-transform:uppercase;margin:12px 0 7px;border-top:1px solid var(--border);padding-top:10px}
+.uc-bar{height:4px;background:var(--border);border-radius:4px;margin-top:4px;margin-bottom:10px;overflow:hidden}
+.uc-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--green2))}
+.uc-bar-fill.quiz{background:linear-gradient(90deg,var(--violet),#8060c8)}
+.uc-last{font-family:var(--font-m);font-size:9px;color:var(--subtle);margin-top:8px}
+.rank-chip{display:inline-flex;align-items:center;font-family:var(--font-m);font-size:9px;font-weight:600;padding:3px 9px;border-radius:20px;border:1px solid}
+
+/* EXP GRID */
+.exp-grid{display:grid;grid-template-columns:1fr;gap:12px;padding:18px}
+@media(min-width:600px){.exp-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1000px){.exp-grid{grid-template-columns:repeat(3,1fr)}}
+.exp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--sh);transition:box-shadow .15s}
+.exp-card:hover{box-shadow:var(--sh2);border-color:var(--green-bd)}
+.exp-card-hd{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.exp-av{width:34px;height:34px;border-radius:50%;background:var(--green-lt);border:2px solid var(--green-bd);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:15px;color:var(--green-dk);flex-shrink:0}
+.exp-name{font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--text)}
+.exp-num{font-family:var(--font-d);font-size:24px;color:var(--green)}
+.exp-progress{height:5px;background:var(--border);border-radius:4px;overflow:hidden;margin:6px 0 4px}
+.exp-progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--green2));transition:width .4s ease}
+.exp-next{font-family:var(--font-m);font-size:9px;color:var(--subtle)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(20,31,20,.3);z-index:999;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);width:440px;max-width:100%;box-shadow:var(--sh2);animation:mopen .18s ease;overflow:hidden}
+@keyframes mopen{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
+.modal-hd{display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);gap:10px;background:var(--surface2)}
+.modal-title{font-family:var(--font-b);font-size:14px;font-weight:600;color:var(--text);flex:1}
+.modal-close{width:28px;height:28px;border-radius:var(--rs);border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.modal-close:hover{border-color:var(--red-bd);color:var(--red);background:var(--red-lt)}
+.modal-body{padding:20px;display:flex;flex-direction:column;gap:14px}
+.modal-field label{font-family:var(--font-m);font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:5px}
+.modal-input{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:var(--font-m);font-size:13px;padding:9px 12px;border-radius:var(--rs);outline:none;transition:all .15s}
+.modal-input:focus{border-color:var(--green-bd);box-shadow:0 0 0 3px var(--green-lt)}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;background:var(--surface2)}
+
+/* SECURITY */
+.sec-row{display:flex;align-items:flex-start;gap:14px;padding:13px 20px;border-bottom:1px solid var(--border);transition:background .1s}
+.sec-row:last-child{border-bottom:none}
+.sec-row:hover{background:var(--surface2)}
+.sec-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.dot-red{background:var(--red);box-shadow:0 0 0 3px var(--red-lt)}
+.dot-amber{background:var(--amber);box-shadow:0 0 0 3px var(--amber-lt)}
+.dot-green{background:var(--green);box-shadow:0 0 0 3px var(--green-lt)}
+.sec-body{flex:1;min-width:0}
+.sec-title{font-family:var(--font-b);font-size:13px;font-weight:500;color:var(--text)}
+.sec-sub{font-family:var(--font-m);font-size:10px;color:var(--muted);margin-top:2px}
+.sec-meta{font-family:var(--font-m);font-size:9px;color:var(--subtle);flex-shrink:0;padding-top:2px;white-space:nowrap}
+
+/* TIMELINE */
+.timeline{padding:20px}
+.tl-item{display:flex;gap:14px}
+.tl-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.tl-dot{width:10px;height:10px;border-radius:50%;border:2px solid;flex-shrink:0}
+.tl-dot.lab{background:var(--green-lt);border-color:var(--green)}
+.tl-dot.quiz{background:var(--violet-lt);border-color:var(--violet)}
+.tl-line{width:1px;flex:1;background:var(--border);margin:3px 0;min-height:20px}
+.tl-item:last-child .tl-line{display:none}
+.tl-body{padding-bottom:18px;flex:1;min-width:0}
+.tl-name{font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--text)}
+.tl-detail{font-family:var(--font-b);font-size:12px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tl-time{font-family:var(--font-m);font-size:9px;color:var(--subtle);margin-top:3px}
+.tl-badges{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
+
+/* QUIZ EDITOR */
+.quiz-editor-wrap{padding:16px;display:flex;flex-direction:column;gap:10px}
+.qi-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);overflow:hidden}
+.qi-hd{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;transition:background .12s;user-select:none}
+.qi-hd:hover{background:var(--border)}
+.qi-hd-title{font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--text);flex:1}
+.qi-hd-count{font-family:var(--font-m);font-size:10px;color:var(--muted)}
+.qi-hd-chev{font-size:11px;color:var(--subtle);transition:transform .2s}
+.qi-wrap.open .qi-hd-chev{transform:rotate(90deg)}
+.qi-body{display:none;padding:0 16px 14px}
+.qi-wrap.open .qi-body{display:block}
+.q-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:13px;margin-bottom:8px}
+.q-row:last-child{margin-bottom:0}
+.q-num{font-family:var(--font-m);font-size:9px;color:var(--muted);letter-spacing:.06em;margin-bottom:5px}
+.q-text{font-family:var(--font-b);font-size:13px;color:var(--text2);margin-bottom:8px;line-height:1.6}
+.q-code{font-family:var(--font-m);font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:9px 12px;margin-bottom:8px;white-space:pre;overflow-x:auto;color:var(--text2)}
+.q-choices{margin-bottom:10px}
+.q-choice{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;color:var(--text2)}
+.q-choice-lbl{font-family:var(--font-m);font-size:9px;color:var(--subtle);width:16px;flex-shrink:0}
+.q-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.q-field label{font-family:var(--font-m);font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:4px}
+.q-input{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:var(--font-m);font-size:11px;padding:7px 10px;border-radius:var(--rs);outline:none;transition:all .15s}
+.q-input:focus{border-color:var(--green-bd);box-shadow:0 0 0 2px var(--green-lt)}
+.q-save-row{margin-top:8px;display:flex;align-items:center;gap:10px}
+.q-save-msg{font-family:var(--font-m);font-size:10px}
+
+/* LEADERBOARD */
+.lb-split{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px}
+@media(min-width:800px){.lb-split{grid-template-columns:1fr 1fr}}
+.lb-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.lb-card-hd{padding:14px 18px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.lb-card-title{font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--text)}
+.lb-card-sub{font-family:var(--font-m);font-size:9px;color:var(--muted);margin-top:3px}
+.lb-list{padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.lb-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--rs);background:var(--surface2);border:1px solid var(--border);transition:all .15s}
+.lb-row:hover{border-color:var(--border2);background:var(--bg2)}
+.lb-row.top1{background:var(--amber-lt);border-color:var(--amber-bd)}
+.lb-row.top2{background:#f5f5f5;border-color:#d0d0d0}
+.lb-row.top3{background:#fdf6f0;border-color:#e8c8a8}
+.lb-rank{font-family:var(--font-d);font-size:15px;font-weight:700;width:26px;text-align:center;flex-shrink:0}
+.r1{color:var(--amber)}.r2{color:#888}.r3{color:#b07040}.rn{color:var(--subtle)}
+.lb-info{flex:1;min-width:0}
+.lb-name{font-family:var(--font-b);font-weight:600;font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-mini{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.lb-score{text-align:right;flex-shrink:0}
+.lb-score-main{font-family:var(--font-d);font-size:20px;font-weight:700}
+.lb-score-main.lab{color:var(--green)}.lb-score-main.quiz{color:var(--violet)}
+.lb-score-sub{font-family:var(--font-m);font-size:8px;color:var(--muted)}
+.combo-lb{padding:14px}
+.combo-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--rs);margin-bottom:6px;border:1px solid var(--border);background:var(--surface2);flex-wrap:wrap;transition:all .15s}
+.combo-row:hover{background:var(--bg2);border-color:var(--border2)}
+.combo-row.top1{background:var(--amber-lt);border-color:var(--amber-bd)}
+.combo-stats{display:flex;gap:5px;flex-wrap:wrap;flex:1;align-items:center}
 </style>
-<script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 <body>
 
-<!-- AUTH OVERLAY -->
-<div id="auth-overlay" style="display:none;position:fixed;inset:0;background:var(--void);z-index:99999;align-items:center;justify-content:center;font-family:var(--font-b);">
-  <div style="background:var(--dungeon);border:1px solid var(--gold-dim);border-radius:4px;padding:40px 36px;width:380px;max-width:calc(100% - 32px);box-shadow:0 0 40px var(--gold-glow);">
-    <div style="text-align:center;margin-bottom:20px;">
-      <img src="logo.png" style="width:64px;height:64px;border-radius:50%;border:1px solid var(--gold-dim);"/>
-      <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--gold);letter-spacing:.1em;margin-top:10px;" id="auth-title">Welcome Back</div>
-      <div style="font-family:var(--font-m);font-size:10px;color:var(--mist);margin-top:4px;">Slytherin Classroom</div>
-    </div>
-    <div id="auth-username-row" style="display:none;flex-direction:column;gap:5px;margin-bottom:12px;">
-      <label style="font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:var(--mist);">USERNAME</label>
-      <input id="auth-username" type="text" placeholder="e.g. alex or maryjane"
-        style="background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:10px 12px;font-family:var(--font-m);font-size:12px;color:var(--parchment);outline:none;"
-        oninput="this.value=this.value.toLowerCase().replace(/[^a-z]/g,'')"/>
-      <div style="font-family:var(--font-m);font-size:10px;color:var(--mist);margin-top:2px;">Your first name only — lowercase, no spaces</div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
-      <label style="font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:var(--mist);">EMAIL</label>
-      <input id="auth-email" type="email" placeholder="you@gmail.com"
-        style="background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:10px 12px;font-family:var(--font-m);font-size:12px;color:var(--parchment);outline:none;"/>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:18px;">
-      <label style="font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:var(--mist);">PASSWORD</label>
-      <input id="auth-password" type="password" placeholder="••••••••"
-        style="background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:10px 12px;font-family:var(--font-m);font-size:12px;color:var(--parchment);outline:none;"/>
-    </div>
+<div id="gate" style="text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:10px;">
+  <div style="font-family:var(--font-d);font-size:48px;font-weight:900;color:var(--green);letter-spacing:.1em;">404</div>
+  <div style="font-family:var(--font-m);font-size:10px;letter-spacing:.2em;color:var(--muted);margin-top:8px;">PAGE NOT FOUND</div>
+  <div style="font-family:var(--font-m);font-size:11px;color:var(--red);margin-top:10px;" id="gate-err"></div>
+  <a href="https://youtu.be/8Fey680pHCk?si=9ewSnI4eD__CACPY" target="_blank" style="font-family:var(--font-m);font-size:11px;color:var(--blue);margin-top:16px;display:inline-block;letter-spacing:.06em;text-decoration:underline;text-underline-offset:3px;">Request Admin Access</a>
+</div>
 
-    <!-- ── T&C CHECKBOX ── -->
-    <div class="tc-row" id="tc-checkbox-row">
-      <label class="tc-checkbox-wrap">
-        <input type="checkbox" id="tc-checkbox" onchange="onTCCheck()"/>
-        <div class="tc-checkbox-box">✓</div>
-      </label>
-      <div class="tc-label">
-        I have read and agree to the
-        <span class="tc-link" onclick="openTCModal()">Terms &amp; Conditions</span>
+<div id="shell">
+  <div id="topbar">
+    <div class="tb-logo">
+      <div class="tb-logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
       </div>
+      Classroom
     </div>
-
-    <div id="auth-error" style="font-family:var(--font-m);font-size:11px;color:var(--crimson);margin-bottom:12px;min-height:16px;"></div>
-    <button id="auth-submit-btn" onclick="handleAuthSubmit()"
-      style="width:100%;padding:11px;border-radius:2px;border:1px solid var(--gold-dim);background:var(--gold-glow);color:var(--gold);font-family:var(--font-d);font-size:12px;font-weight:600;letter-spacing:.1em;cursor:pointer;opacity:.45;transition:opacity .15s;">
-      Log In
+    <span class="tb-badge">Admin</span>
+    <div class="tb-sep"></div>
+    <span class="tb-user" id="tb-user"></span>
+    <button class="tb-btn" onclick="loadAll()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      <span class="tb-btn-text">Refresh</span>
     </button>
-    <div id="auth-switch-text" style="text-align:center;font-family:var(--font-m);font-size:11px;color:var(--mist);margin-top:16px;">
-      No account yet? <span onclick="toggleAuthMode()" style="color:var(--gold);cursor:pointer;text-decoration:underline;">Sign Up</span>
-    </div>
+    <button class="tb-btn danger" onclick="doLogout()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span class="tb-btn-text">Sign Out</span>
+    </button>
+  </div>
+  <div id="main">
+    <div class="page-title">Dashboard</div>
+    <div class="page-sub" id="last-updated">—</div>
+    <div id="content"><div class="loading"><div class="spin"></div><div class="loading-txt">Loading…</div></div></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     T&C MODAL
-══════════════════════════════════════════════ -->
-<div id="tc-modal-overlay">
-  <div id="tc-modal">
-    <div class="tc-modal-hd">
-      <div>
-        <div class="tc-modal-title">Terms &amp; Conditions</div>
-        <div class="tc-modal-sub">Slytherin Classroom · BSCS Python Practice · Please read carefully before proceeding</div>
-      </div>
-      <button class="tc-modal-close" onclick="closeTCModal()">✕</button>
+<!-- EXP MODAL -->
+<div class="modal-overlay" id="exp-modal">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title" id="exp-modal-title">Edit EXP</div>
+      <button class="modal-close" onclick="closeExpModal()">✕</button>
     </div>
-    <div class="tc-modal-body" style="user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;">
-<div class="tc-section">
-  <div class="tc-section-title">Real Name Required</div>
-  <div class="tc-section-body">
-You must register and use your real, full legal name exactly as it appears on your official school enrollment records and government-issued identification. Nicknames, aliases, shortened versions of your name, usernames, pen names, stage names, or any form of identity misrepresentation — whether intentional or accidental — are strictly, explicitly, and unconditionally prohibited on this platform at all times. It is your complete and sole responsibility to ensure that the name you provide during registration is accurate, truthful, verifiable, and entirely consistent with your official academic records maintained by your educational institution. Any account discovered to be operating under a false, incomplete, fabricated, or misleading name will be subject to immediate and irreversible account suspension, total score nullification across all labs and quizzes, permanent removal of all earned EXP, and formal reporting to the course instructor without any prior warning, grace period, or right of appeal. By registering on this platform, you irrevocably affirm that the name you have provided is your true, legal, and complete identity as recognized by your academic institution.</div>
-</div>
-<div class="tc-section">
-  <div class="tc-section-title">Educational Use Only</div>
-  <div class="tc-section-body">This platform exists exclusively, solely, and without exception for the purpose of supporting enrolled BSCS students in their Python programming coursework and directly related academic activities as formally prescribed by the course curriculum and academic calendar. Any and all use of this platform outside of its clearly defined and intended academic scope is strictly prohibited. Prohibited uses include, but are not limited to: any form of commercial exploitation, unauthorized redistribution of platform content, reverse engineering of platform systems, automated scraping or data harvesting, unauthorized API access, use for entertainment or recreational purposes unrelated to coursework, sharing of platform access with non-enrolled individuals, and any other non-academic, unauthorized, or inappropriate use that falls outside the express purpose of this platform. Violation of this provision — regardless of intent or degree — may result in permanent and irrevocable account termination, formal academic reporting to course faculty, and any additional consequences deemed appropriate by the platform creator or assigned course instructor at their sole and absolute discretion.</div>
-</div>
-<div class="tc-section">
-  <div class="tc-section-title">Academic Integrity</div>
-  <div class="tc-section-body">The absolute integrity of all academic work submitted through this platform is of the utmost and non-negotiable importance. All code submitted through the lab editor, all answers provided during quiz sessions, and all activities completed and recorded on this platform must represent solely your own original, independent, and unaided intellectual work and creative effort. You are strictly, explicitly, and without exception prohibited from: copying code in whole or in part from any other student enrolled in this or any other course; sharing your own solutions, code, or quiz answers with any other student whether directly or indirectly; submitting AI-generated, automatically produced, or algorithmically assisted code as your own original work without explicit prior authorization; referencing, reproducing, or adapting any unauthorized external materials, solutions, or resources; collaborating with other students on individual assignments without explicit written permission; and engaging in any other form of academic dishonesty, misconduct, or integrity violation as defined by your institution's academic policies. Every single submission made on this platform — without exception — is automatically, instantaneously, and permanently logged with your full account identity, registered email address, submission timestamp, session metadata, and complete activity history. This comprehensive log data may be accessed, reviewed, cross-referenced, and used as formal evidence in any academic integrity investigation initiated at any time, with or without prior notice to you.</div>
-</div>
-<div class="tc-section">
-  <div class="tc-section-title">Activity Monitoring & Logging</div>
-  <div class="tc-section-body">By accessing, registering on, and using this platform in any capacity whatsoever, you explicitly, voluntarily, knowingly, and irrevocably consent to the full, continuous, comprehensive, and automatic monitoring, recording, and long-term storage of all your activities conducted on this platform without limitation. The scope of monitoring includes, but is in no way limited to: every login and logout event and its associated timestamp; every line of code typed, edited, deleted, or submitted in the code editor environment; every quiz question viewed, attempted, answered, skipped, or revisited; every lab submission initiated, completed, or abandoned; every EXP gain or loss event and its triggering action; every page load, navigation event, and session duration; every button click, input field interaction, and UI element engagement; and every other conceivable interaction you have with any component of this platform during any session. All collected activity data is stored securely, comprehensively, and indefinitely in a protected database environment. This data may be accessed, reviewed, analyzed, exported, and acted upon by authorized individuals at any time, for any legitimate academic purpose, without prior notice, explanation, or additional consent beyond what is established in this agreement.</div>
-</div>
-<div class="tc-section">
-  <div class="tc-section-title">Account Responsibility</div>
-  <div class="tc-section-body">
-Your account on this platform is your sole, exclusive, and non-transferable personal responsibility from the precise moment it is created through registration until such time as it is officially and permanently deactivated by you or by an authorized administrator. Under absolutely no circumstances are you permitted to share your login credentials — including but not limited to your registered email address, password, or any other authentication information — with any other person, entity, or system, regardless of your relationship with that person or your stated reason for doing so. Any and all activity that occurs under your account at any time — whether performed directly by you or by any other individual who has obtained access to your credentials through your deliberate sharing, negligent handling, or any other means — is considered exclusively, fully, and irrevocably your personal legal and academic responsibility. The platform creator, as a student developer operating this platform in a non-commercial academic capacity, bears absolutely zero liability for any consequences — academic, personal, technical, or otherwise — arising from unauthorized access to your account resulting from your failure, for any reason, to maintain the complete security and strict confidentiality of your login information at all times.</div>
-</div>
-<div class="tc-section">
-  <div class="tc-section-title">Privacy Policy</div>
-  <div class="tc-section-body">This platform necessarily collects, stores, processes, and retains certain categories of personal and academic data as an integral and unavoidable part of its normal operation and intended academic function. The categories of data collected include, but are not expressly limited to: your full registered name, email address, submitted code across all lab exercises, quiz responses and scores, accumulated EXP points and rank progression history, login timestamps, session duration and frequency data, and any and all other information generated, recorded, or derived through your use of any feature of this platform at any time. All data collected is gathered solely for legitimate, defined, and transparent academic purposes within the formal scope of this course and will under no circumstances be sold, rented, traded, licensed, shared without authorization, or disclosed in any form to any unauthorized third party. All collected data is maintained in a secured database environment protected by reasonable and appropriate technical safeguards commensurate with the academic nature of this platform. You expressly acknowledge and accept that no digital data storage or transmission system can be guaranteed to be completely secure or error-free under all possible circumstances, and you voluntarily accept this platform as provided with respect to all aspects of data security and integrity.</div>
-</div>
-<div class="tc-section">
-  <div class="tc-section-title">Limitation of Liability</div>
-  <div class="tc-section-body">The creator of this platform, operating solely in the capacity of a student developer and not as a commercial entity, professional software developer, or academic institution, provides this platform entirely on a best-effort, as-is basis with absolutely no warranties, guarantees, representations, or assurances of any kind — whether express, implied, statutory, or otherwise — regarding the platform's performance, availability, accuracy, reliability, completeness, or fitness for any particular purpose. The platform creator shall not, under any circumstances, be held personally, academically, financially, or legally liable for any data loss, technical malfunction, system error, incorrect score calculation, submission failure, grading discrepancy, prolonged downtime, security breach, unauthorized data access, or any other technical, academic, or personal issue of any nature that may arise from or in connection with your use of, inability to use, or reliance upon this platform or any of its features or content. You expressly acknowledge and agree that you use this platform entirely at your own risk, with full awareness of its student-developed, non-commercial nature, and with no expectation of the reliability standards associated with professionally developed commercial software platforms.
-</div>
-</div>
-<div class="tc-section">
-  <div class="tc-section-title">Prohibited Conduct</div>
-  <div class="tc-section-body">In addition to all other restrictions outlined throughout this document, you are hereby explicitly, formally, and without exception prohibited from engaging in any of the following categories of conduct while using this platform, whether such conduct is directed at the platform itself, at other users, at the platform creator, or at any third party: attempting to gain unauthorized access to any account, database, system component, or administrative feature of this platform through any technical, social, or deceptive means; intentionally introducing malicious code, scripts, exploits, or any other harmful technical elements into the platform environment; systematically and deliberately attempting to disrupt, degrade, overload, or otherwise interfere with the normal operation and availability of the platform for other users; harvesting, scraping, extracting, or otherwise collecting any data belonging to other users of the platform without their explicit consent; impersonating any other user, the platform creator, or any other individual in any context within or related to this platform; and engaging in any form of harassment, intimidation, or hostile communication directed at any individual in connection with this platform or its academic context. Any violation of this section will be treated with the utmost seriousness and may result in immediate and permanent account termination without appeal.</div>
-</div>
-<div class="tc-section">
-  <div class="tc-section-title">Disclaimer & Inspiration</div>
-  <div class="tc-section-body">
-This platform was independently conceived, designed, developed, and deployed entirely from scratch by a BSCS student as a personal academic project. The idea of building a classroom-style platform was inspired by Sir Ibo's Python Classroom — a quiz and learning platform used by students in this course. As a student who regularly used that platform for quizzes and coursework, the experience of interacting with it as an end user sparked the personal motivation to build something similar as a project. However, it must be made explicitly and unambiguously clear that absolutely no part of Sir Ibo's actual source code, web structure, database architecture, backend logic, frontend styling, design system, layout, or any other technical implementation was copied, reproduced, referenced, extracted, or adapted in the construction of this platform in any way whatsoever. This platform was constructed entirely and independently from the ground up — every line of code, every design choice, every system, and every feature was written and built personally by the student creator without replicating or deriving from Sir Ibo's actual technical work. The only connection between the two platforms is the general concept of an online classroom environment for Python learners, which is not an idea unique to or owned by any single party. All genuine credit and respect is given to Sir Ibo for creating a platform that inspired this independent work. This platform is not affiliated with, endorsed by, or in any way officially connected to Sir Ibo or his platform.</div>
-</div>
-<div class="tc-section">
-  <div class="tc-section-title">Intellectual Property</div>
-  <div class="tc-section-body">
-All original content created and published on this platform by the platform creator — including but not limited to the platform's unique visual design, interface layout, custom graphics, original written content, quiz questions, lab problem sets, EXP and ranking systems, and all other creative and functional elements developed independently by the student creator — is and remains the exclusive intellectual property of the platform creator, protected by all applicable intellectual property laws and principles to the fullest extent permissible. You are granted a strictly limited, non-exclusive, non-transferable, revocable license to access and use this platform and its content solely for your own personal academic purposes within the scope of this course and for no other purpose whatsoever. You are explicitly prohibited from reproducing, distributing, publicly displaying, modifying, creating derivative works from, or otherwise exploiting any content or element of this platform without the express prior written permission of the platform creator. Any unauthorized use of platform content constitutes a violation of this agreement and may give rise to appropriate legal and academic remedies.</div>
-</div>
-<div class="tc-section">
-  <div class="tc-section-title">NT (No Need to Read, Just Scroll)</div>
-  <div class="tc-section-body">Okay, real talk — if you have somehow made it all the way down here to section eleven of fourteen, you deserve some kind of academic award that does not currently exist but absolutely should. The overwhelming statistical majority of people who have encountered this document have already clicked accept somewhere around section two or three, possibly even section one, and are right now either already logged in practicing Python or are deeply regretting their life choices in a completely unrelated context. This section exists purely and solely to acknowledge the universal, timeless, and thoroughly documented human truth that nobody — not a single person in the entire recorded history of the internet — has ever genuinely read every word of a terms and conditions document before accepting it, and this platform is not even remotely an exception to that ironclad rule of human behavior. If you are reading this, you are statistically anomalous. You are an outlier. You are the type of person who reads the nutrition facts on snack packaging and actually processes the information. The core message of this entire document, stripped of all its elaborate legal-sounding language, is simply this: be honest, use your real name, do your own work, keep your account secure, respect the platform, and acknowledge that Sir Ibo deserves credit for the inspiration behind this project. That is genuinely all there is to it. Everything else is just the same message repeated in increasingly formal and intimidating language. Now please, for the love of Python, scroll down, click accept, and go finish your labs.</div>
-</div>
-<div class="tc-section">
-  <div class="tc-section-title">Termination & Suspension</div>
-  <div class="tc-section-body">The platform creator reserves the full, unconditional, and unilateral right to suspend, restrict, or permanently terminate your access to this platform and your account at any time, for any reason, with or without prior notice, and with or without providing any explanation or justification for such action. Grounds for termination or suspension include, but are not expressly limited to: any violation of any provision of these Terms & Conditions; any behavior deemed by the platform creator to be harmful, disruptive, dishonest, or otherwise contrary to the academic spirit and purpose of this platform; any attempt to circumvent, manipulate, or exploit any system, feature, or safeguard of this platform; any conduct that reflects negatively upon the platform, the platform creator, or the academic community in which this platform operates; and any other action or pattern of behavior that the platform creator, in their sole and absolute judgment, determines to be inconsistent with the intended use and values of this platform. Upon termination or suspension of your account, all associated data, scores, EXP, and submission records may be retained, modified, or deleted entirely at the sole discretion of the platform creator, with no obligation to restore, transfer, or compensate for any lost academic progress or records whatsoever.</div>
-</div>
-<div class="tc-section">
-  <div class="tc-section-title">Governing Principles & Dispute Resolution</div>
-  <div class="tc-section-body">In the event of any dispute, disagreement, confusion, or conflict arising from or in any way related to your use of this platform, these Terms & Conditions, or any action taken by the platform creator in connection with your account or academic performance on this platform, you agree that all such matters shall first and foremost be addressed through direct, good-faith, and respectful communication between yourself and the platform creator, with the sincere and mutual goal of reaching a fair, reasonable, and amicable resolution without the need for formal escalation. You further agree that this platform, being an academic student project operating within the context of a formal educational institution, is ultimately subject to the overarching academic policies, dispute resolution procedures, and disciplinary frameworks of the institution in which both you and the platform creator are enrolled. Any matter that cannot be resolved through direct communication may be escalated to the course instructor or appropriate institutional authority in accordance with established academic procedures. You expressly waive any right to pursue legal action against the platform creator in their personal capacity as a student developer for any matter arising from the normal academic operation of this platform.</div>
-</div>
-<div class="tc-section">
-  <div class="tc-section-title">Acceptance of All Terms</div>
-  <div class="tc-section-body">By checking the acceptance box presented below this document and proceeding to access and use this platform in any capacity whatsoever, you hereby solemnly, voluntarily, formally, and with full legal and academic consciousness confirm and declare all of the following entirely without reservation, qualification, or exception: that you have read this entire document from its very first word to its very last in its complete, unabridged, and unmodified form; that you have fully, completely, accurately, and without any misunderstanding comprehended all provisions, clauses, obligations, restrictions, prohibitions, acknowledgments, and declarations contained within this document; that you voluntarily, knowingly, freely, and without any form of coercion, duress, misrepresentation, confusion, or reservation of any kind whatsoever agree to be unconditionally, irrevocably, and permanently bound by every single term, condition, policy, disclaimer, and provision set forth in this document in its entirety; that you are of sufficient age, maturity, intellectual capacity, and legal standing to enter into this binding agreement; that you have had the full and reasonable opportunity to seek clarification on any aspect of this document prior to accepting it; and that you unconditionally accept all academic, technical, personal, and any other consequences — whether anticipated or unanticipated — that may result from any violation of any part of these terms on your part at any time during your use of this platform. Failure to comply with any provision of these terms, at any time, for any reason, and under any circumstance, may result in academic penalties, permanent account suspension, total and irrevocable score and EXP forfeiture, formal disciplinary reporting to course faculty and institutional authorities, or any other consequence deemed appropriate and proportionate at the sole, absolute, and final discretion of the platform creator or course instructor, with no right of appeal, reversal, or compensation of any kind.</div>
-</div>
+    <div class="modal-body">
+      <div class="modal-field"><label>Student</label><div style="font-family:var(--font-b);font-size:15px;font-weight:600;color:var(--text)" id="exp-modal-name"></div></div>
+      <div class="modal-field"><label>Current EXP</label><div style="font-family:var(--font-d);font-size:22px;color:var(--green)" id="exp-modal-cur"></div></div>
+      <div class="modal-field"><label>New EXP Value</label><input class="modal-input" id="exp-modal-val" type="number" min="0" max="999999" placeholder="Enter new EXP…"/></div>
+      <div class="modal-field"><label>Rank Override (blank = auto)</label><input class="modal-input" id="exp-modal-rank" type="text" placeholder="e.g. Sys Architect"/></div>
+      <div id="exp-modal-msg" style="font-family:var(--font-m);font-size:11px;min-height:14px"></div>
     </div>
-    <div class="tc-modal-ft">
-      <button class="tc-accept-btn" onclick="acceptAndClose()">✓ I Understand &amp; Accept</button>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeExpModal()">Cancel</button>
+      <button class="btn btn-green" onclick="saveExp()">Save Changes</button>
     </div>
-  </div>
-</div>
-
-<!-- LOADING OVERLAY -->
-<div id="loading-overlay" class="hidden">
-  <div class="lc"><img src="logo.png" class="lc-crest" alt="Slytherin Classroom" width="108" height="108"/></div>
-  <div class="lt"><span>Slytherin</span><span>Classroom</span></div>
-  <div class="ls" id="l-course">Preparing the dungeon…</div>
-  <div class="lb"><div class="lbf" id="load-bar"></div></div>
-  <div class="lst" id="load-txt">Summoning Python runtime…</div>
-</div>
-
-<div id="topbar">
-  <div class="top-logo" onclick="showDash()">
-    <img src="logo.png" alt="Slytherin Classroom" class="top-logo-img"/>
-    Slytherin Classroom
-  </div>
-  <div class="tdiv"></div>
-  <div class="top-bc" id="breadcrumb"></div>
-  <div class="top-sp"></div>
-  <button id="fullscreen-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen">
-    <svg id="fs-icon-enter" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
-    <svg id="fs-icon-exit" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg>
-  </button>
-  <div class="top-u">
-    <div class="user-dropdown-wrap" id="user-dropdown-wrap">
-      <button class="user-dropdown-btn" id="user-dropdown-btn" onclick="toggleUserDropdown()">
-        <div class="u-av" id="user-avatar">?</div>
-        <span id="user-username-display">…</span>
-        <span class="u-chev">▾</span>
-      </button>
-      <div class="user-dropdown-menu" id="user-dropdown-menu">
-        <div class="dd-email" id="user-email-display"></div>
-        <div style="padding:8px 14px;border-bottom:1px solid var(--iron);display:flex;flex-direction:column;gap:3px;">
-          <div style="font-family:var(--font-m);font-size:10px;color:var(--gold);letter-spacing:.05em;" id="user-rank-display">Bronze</div>
-          <div style="font-family:var(--font-m);font-size:9px;color:var(--mist);" id="user-exp-display">0 / 30 EXP</div>
-        </div>
-        <button onclick="openLbModal()" style="color:var(--gold)!important;">⬡ Leaderboard</button>
-        <button onclick="handleLogout()">↩ Log out</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- DASHBOARD -->
-<div id="view-dashboard">
-  <div class="dash-hero">
-    <div class="hero-rank-wrap">
-      <div class="hero-rank-icon" id="hero-rank-icon">✕</div>
-      <div class="hero-rank-name" id="hero-rank-name">BRONZE</div>
-      <div class="hero-rank-bar-wrap"><div class="hero-rank-bar" id="hero-rank-bar"></div></div>
-    </div>
-    <div class="hero-tag">Active Term</div>
-    <div class="hero-title" id="dh-name">…</div>
-    <div class="hero-sub" id="dh-inst">…</div>
-  </div>
-  <div class="dash-body">
-    <div class="sec-label">Assigned Scrolls</div>
-    <div id="lab-list"></div>
-    <div class="sec-label" style="margin-top:8px;">Practice Quizzes</div>
-    <div id="quiz-list" class="quiz-grid"></div>
-  </div>
-</div>
-
-<!-- QUIZ VIEW -->
-<div id="view-quiz">
-  <div id="quiz-topbar">
-    <div id="quiz-title-bar">Quiz</div>
-    <div id="quiz-progress-text"></div>
-    <button id="quiz-exit-btn" onclick="confirmLeaveQuiz()">✕ Exit Quiz</button>
-  </div>
-  <div id="quiz-prog-bar"><div id="quiz-prog-fill" style="width:0%"></div></div>
-  <div id="quiz-stage">
-    <div id="quiz-card-wrap">
-      <div id="quiz-q-slot"></div>
-      <div id="quiz-action-row"><button id="quiz-next-btn">Next →</button></div>
-    </div>
-  </div>
-  <div id="quiz-results"><div class="res-outer"><div class="res-inner" id="quiz-res-inner"></div></div></div>
-</div>
-
-<!-- EDITOR VIEW -->
-<div id="view-editor">
-  <div id="grimoire">
-    <div class="grm-hd">
-      <div class="grm-back" onclick="showDash()">← Return to Hall</div>
-      <div class="grm-glyphs"><span class="glyph" id="el-diff"></span><span class="glyph gp" id="el-pts"></span></div>
-      <div class="grm-title" id="el-title"></div>
-      <div class="grm-meta" id="el-meta"></div>
-    </div>
-    <div class="grm-sec"><div class="grm-sec-t">The Task</div><div class="grm-desc" id="el-desc"></div></div>
-    <div class="grm-sec"><div class="grm-sec-t">Constraints</div><ul class="grm-list" id="el-constraints"></ul></div>
-    <div class="grm-sec"><div class="grm-sec-t">Rune Inputs</div><ul class="grm-list" id="el-infmt"></ul></div>
-    <div class="grm-sec"><div class="grm-sec-t">Foretold Output</div><ul class="grm-list" id="el-outfmt"></ul></div>
-    <div class="grm-sec"><div class="grm-sec-t">Demonstrations</div><div id="el-examples"></div></div>
-  </div>
-  <div id="ed-center">
-    <div id="spell-bar">
-      <button id="mob-exit-btn" onclick="showDash()" style="display:none;font-family:var(--font-m);font-size:10px;font-weight:500;padding:6px 14px;border-radius:2px;border:1px solid var(--blood);background:0 0;color:var(--crimson);cursor:pointer;letter-spacing:.05em;transition:.15s;flex-shrink:0;white-space:nowrap;">← Exit</button>
-        <span class="sf" id="ed-fname">incantation.py</span>
-      <button class="cbtn" id="btn-run" disabled><i class="ph-bold ph-play"></i> Cast</button>
-      <button class="cbtn" id="btn-test" disabled><i class="ph-bold ph-lightning"></i> Trial</button>
-      <button class="cbtn" id="btn-submit" disabled>✦ Inscribe</button>
-    </div>
-    <div id="ed-wrap">
-      <div id="ed-container"><div id="cm-mount"></div></div>
-      <div id="err-banner"><div id="err-text"></div></div>
-      <div id="io-row">
-        <div class="io-pane" id="io-pane-input">
-          <div class="io-lbl">Custom Input <button class="io-expand-btn" id="io-expand-input" onclick="toggleIoPane('input')" title="Expand">⤢</button></div>
-          <textarea id="custom-in" placeholder="Enter incantation lines…"></textarea>
-        </div>
-        <div class="io-pane" id="io-pane-output">
-          <div class="io-lbl">Output <button class="io-expand-btn" id="io-expand-output" onclick="toggleIoPane('output')" title="Expand">⤢</button></div>
-          <div id="out-box"><div id="out-text">— Awaiting cast —</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div id="trials-panel">
-    <div id="trials-hd"><span class="trials-t">Trials</span><span id="trials-score"></span></div>
-    <div id="trials-list"></div>
-    <div id="verdict-area">
-      <div class="vd-t" id="vd-text"></div>
-      <div class="vd-pts" id="vd-pts"></div>
-      <div class="vd-sub" id="vd-sub"></div>
-    </div>
-  </div>
-</div>
-
-<div id="modal-overlay">
-  <div id="modal">
-    <div id="modal-hd">
-      <div id="modal-title">Trial #1</div>
-      <div id="modal-badge" class="pending">Pending</div>
-      <button id="modal-close">✕</button>
-    </div>
-    <div id="modal-body">
-      <div><div class="m-lbl">Input</div><div class="m-val inp" id="m-inp"></div></div>
-      <div><div class="m-lbl">Expected Output</div><div class="m-val exp" id="m-exp"></div></div>
-      <div><div class="m-lbl">Your Output</div><div class="m-val none" id="m-got">Not yet cast.</div></div>
-    </div>
-  </div>
-</div>
-
-<div id="congrats-overlay">
-  <div id="congrats-modal">
-    <div id="cgr-success-view">
-      <div class="cgr-sigil">✦</div>
-      <div class="cgr-title">Code Inscribed — All Trials Passed</div>
-      <div class="cgr-pts" id="cgr-pts"></div>
-      <div class="cgr-sub" id="cgr-sub"></div>
-      <div class="cgr-divider"></div>
-      <div class="cgr-btns">
-        <button class="cgr-btn cgr-btn-hall" id="cgr-btn-hall">⬡ Return to Hall</button>
-        <button class="cgr-btn cgr-btn-retake" id="cgr-btn-retake">↺ Retake the Trial</button>
-      </div>
-    </div>
-    <div id="cgr-warn-view" style="display:none">
-      <div class="cgr-warn-sigil">⚠</div>
-      <div class="cgr-warn-title">This Cannot Be Undone</div>
-      <div class="cgr-warn-sub">Retaking will shatter your inscribed record.<br>Your score, your passed trials — all wiped from the grimoire.<br>Are you certain you wish to begin again?</div>
-      <div class="cgr-divider"></div>
-      <div class="cgr-btns">
-        <button class="cgr-btn cgr-btn-cancel" id="cgr-btn-cancel">✕ Keep My Record</button>
-        <button class="cgr-btn cgr-btn-danger" id="cgr-btn-confirm-retake">⚔ Retake the Trial</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="exit-confirm-overlay" style="display:none">
-  <div id="exit-confirm-modal">
-    <div class="ecm-sigil">✗</div>
-    <div class="ecm-title">Abandon Quiz?</div>
-    <div class="ecm-sub">Your current progress will be lost<br>and cannot be recovered.</div>
-    <div class="ecm-divider"></div>
-    <div class="ecm-btns">
-      <button class="ecm-btn ecm-exit" onclick="exitConfirmYes()">Exit Quiz</button>
-      <button class="ecm-btn ecm-stay" onclick="exitConfirmNo()">Keep Going</button>
-    </div>
-  </div>
-</div>
-
-<div id="mob-editor-nav">
-  <button class="mob-nav-btn" id="mob-btn-problem" onclick="mobTab('problem')">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-    Problem
-  </button>
-  <button class="mob-nav-btn active" id="mob-btn-code" onclick="mobTab('code')">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-    Code
-  </button>
-  <button class="mob-nav-btn" id="mob-btn-trials" onclick="mobTab('trials')">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-    Trials
-  </button>
-</div>
-
-<script src="auth.js"></script>
-<script src="app.js"></script>
-<script>
-  /* ── DROPDOWN ── */
-  document.addEventListener('click', function(e) {
-    const wrap = document.getElementById('user-dropdown-wrap');
-    if (wrap && !wrap.contains(e.target)) {
-      document.getElementById('user-dropdown-btn')?.classList.remove('open');
-      document.getElementById('user-dropdown-menu')?.classList.remove('open');
-    }
-  });
-  function toggleUserDropdown() {
-    document.getElementById('user-dropdown-btn').classList.toggle('open');
-    document.getElementById('user-dropdown-menu').classList.toggle('open');
-  }
-
-  /* ── T&C LOGIC ── */
-  function openTCModal() {
-    document.getElementById('tc-modal-overlay').classList.add('open');
-  }
-  function closeTCModal() {
-    document.getElementById('tc-modal-overlay').classList.remove('open');
-  }
-  function acceptAndClose() {
-    document.getElementById('tc-checkbox').checked = true;
-    onTCCheck();
-    closeTCModal();
-  }
-  function onTCCheck() {
-    const checked = document.getElementById('tc-checkbox').checked;
-    document.getElementById('auth-submit-btn').style.opacity = checked ? '1' : '0.45';
-    if (checked) {
-      const err = document.getElementById('auth-error');
-      if (err.textContent.toLowerCase().includes('terms')) err.textContent = '';
-    }
-  }
-  function handleAuthSubmit() {
-    const cb = document.getElementById('tc-checkbox');
-    if (!cb.checked) {
-      const err = document.getElementById('auth-error');
-      err.style.color = 'var(--crimson)';
-      err.textContent = 'Please accept the Terms & Conditions to continue.';
-      const row = document.getElementById('tc-checkbox-row');
-      row.style.animation = 'none';
-      void row.offsetHeight;
-      row.style.animation = 'tcShake .35s ease';
-      return;
-    }
-    const isLogin = document.getElementById('auth-username-row').style.display === 'none';
-    if (isLogin) { handleLogin(); } else { handleSignup(); }
-  }
-  document.getElementById('tc-modal-overlay').addEventListener('click', function(e) {
-    if (e.target === this) closeTCModal();
-  });
-</script>
-
-<!-- LEADERBOARD MODAL -->
-<div id="lb-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(44,34,24,.6);z-index:9998;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:16px;">
-  <div id="lb-modal" style="background:var(--dungeon);border:1px solid var(--gold-dim);border-radius:4px;width:560px;max-width:100%;max-height:82vh;display:flex;flex-direction:column;box-shadow:0 0 40px var(--gold-glow),0 20px 60px rgba(0,0,0,.4);animation:ma .2s ease;overflow:hidden;">
-    <div style="padding:16px 20px;border-bottom:1px solid var(--iron);background:var(--stone);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-      <div>
-        <div style="font-family:var(--font-d);font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.1em;">⬡ LEADERBOARD</div>
-        <div style="font-family:var(--font-m);font-size:9px;color:var(--mist);margin-top:2px;letter-spacing:.06em;">Ranked by total EXP — names hidden</div>
-      </div>
-      <button onclick="closeLbModal()" style="width:28px;height:28px;border-radius:2px;border:1px solid var(--iron);background:transparent;color:var(--mist);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .12s;" onmouseover="this.style.borderColor='var(--blood)';this.style.color='var(--crimson)'" onmouseout="this.style.borderColor='var(--iron)';this.style.color='var(--mist)'">✕</button>
-    </div>
-    <div style="display:grid;grid-template-columns:40px 70px 1fr 90px;gap:0;padding:8px 16px;border-bottom:1px solid var(--iron);background:var(--stone);flex-shrink:0;">
-      <div style="font-family:var(--font-m);font-size:8px;letter-spacing:.1em;color:var(--mist);text-transform:uppercase;">#</div>
-      <div style="font-family:var(--font-m);font-size:8px;letter-spacing:.1em;color:var(--mist);text-transform:uppercase;">User</div>
-      <div style="font-family:var(--font-m);font-size:8px;letter-spacing:.1em;color:var(--mist);text-transform:uppercase;">Rank</div>
-      <div style="font-family:var(--font-m);font-size:8px;letter-spacing:.1em;color:var(--mist);text-transform:uppercase;text-align:right;">Total Rank EXP</div>
-    </div>
-    <div id="lb-modal-list" style="overflow-y:auto;flex:1;padding:10px 12px;display:flex;flex-direction:column;gap:5px;">
-      <div style="font-family:var(--font-m);font-size:10px;color:var(--mist);padding:20px;text-align:center;">Loading…</div>
-    </div>
-  </div>
-</div>
-
-<div id="wn-overlay">
-  <div id="wn-modal">
-
-    <!-- HEADER -->
-    <div class="wn-hd">
-      <div class="wn-hd-top">
-        <div class="wn-hd-left">
-          <div class="wn-logo"><img src="logo.png" style="width:20px;height:20px;border-radius:50%;object-fit:cover;"></div>
-          <div>
-            <div class="wn-title">What's New</div>
-            <div class="wn-sub">Slytherin Classroom · PythonPractice</div>
-          </div>
-        </div>
-        <button class="wn-close" onclick="closeWN()">✕</button>
-      </div>
-
-      <!-- VERSION TABS -->
-      <div class="wn-tabs">
-        <button class="wn-tab active" onclick="switchTab(0)">v1.3.1 · Latest</button>
-        <button class="wn-tab" onclick="switchTab(1)">v1.3.0</button>
-        <button class="wn-tab" onclick="switchTab(2)">v1.1.5</button>
-        <button class="wn-tab" onclick="switchTab(3)">v1.0.0</button>
-        <button class="wn-tab" onclick="switchTab(4)">v0.1.0</button>
-      </div>
-    </div>
-
-    <!-- BODY -->
-    <div class="wn-body">
-
-      <!-- v1.3.1 — HUMOR -->
-      <div class="wn-panel active" id="panel-0">
-        <div class="wn-humor">
-          <div class="humor-sigil">🫥</div>
-          <div class="wn-ver-tag" style="display:inline-flex;margin-bottom:12px;">v1.3.1 · Latest Release · March 2026</div>
-          <div class="humor-title">Walang Bago.</div>
-          <div class="humor-sub" style="margin-top:4px;">Ikaw parin.</div>
-          <div class="humor-note">
-            <span><i class="ph-bold ph-clipboard-text"></i> Patch Notes:</span><br/>
-            · Fixed: nothing<br/>
-            · Added: nothing<br/>
-            · Removed: your excuses<br/>
-            · Known issue: ikaw pa rin ang may pinakamaraming failed submissions<br/>
-            · Next update: kapag natapos mo na ang lahat ng labs
-          </div>
-        </div>
-      </div>
-
-      <!-- v1.3.0 — WHY Button + Quiz improvements -->
-      <div class="wn-panel" id="panel-1">
-        <div class="wn-ver-hd">
-          <div class="wn-ver-tag">v1.3.0 · March 2026</div>
-          <div class="wn-ver-title">AI Explanations & Quiz Polish</div>
-          <div class="wn-ver-date">Released March 2026 · Latest Update</div>
-        </div>
-        <div class="wn-ver-desc">
-          Introducing the <strong>WHY? Button</strong> — powered by Claude AI. Every answer now comes with a real explanation so you actually learn, not just retry blindly. Plus quality-of-life improvements across the quiz experience.
-        </div>
-        <div class="wn-features">
-          <div class="wn-feat c-violet">
-            <div class="wn-feat-ico"><i class="ph-bold ph-sparkle"></i></div>
-            <div class="wn-feat-name">WHY? Button <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">Get an AI-powered explanation after every quiz answer — correct or wrong. Powered by Claude.</div>
-          </div>
-          <div class="wn-feat c-red">
-            <div class="wn-feat-ico"><i class="ph-bold ph-book-open"></i></div>
-            <div class="wn-feat-name">Answer Review <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">After finishing a quiz, expand any question to see what you answered vs. what was correct — side by side.</div>
-          </div>
-          <div class="wn-feat c-teal">
-            <div class="wn-feat-ico"><i class="ph-bold ph-brain"></i></div>
-            <div class="wn-feat-name">Smarter Feedback <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">Wrong answers now pulse red with a WHY? prompt — so you never walk away without understanding the concept.</div>
-          </div>
-          <div class="wn-feat c-amber">
-            <div class="wn-feat-ico"><i class="ph-bold ph-pencil-line"></i></div>
-            <div class="wn-feat-name">Fill in the Blank <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">New question type added — type your answer directly and confirm. Press Enter to submit fast.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- v1.1.5 — EXP + Leaderboard -->
-      <div class="wn-panel" id="panel-2">
-        <div class="wn-ver-hd">
-          <div class="wn-ver-tag">v1.1.5 · March 2026</div>
-          <div class="wn-ver-title">EXP, Ranks & Leaderboard</div>
-          <div class="wn-ver-date">Released March 2026</div>
-        </div>
-        <div class="wn-ver-desc">
-          The grind is now <strong>rewarded</strong>. Every lab submission and quiz attempt earns you EXP. Climb the ranks from Bronze all the way to Sys Admin — and compete on the leaderboard.
-        </div>
-        <div class="wn-features">
-          <div class="wn-feat c-gold">
-            <div class="wn-feat-ico"><i class="ph-bold ph-star"></i></div>
-            <div class="wn-feat-name">EXP System <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">Earn EXP for every lab and quiz submission. Points stack up — keep submitting, keep climbing.</div>
-          </div>
-          <div class="wn-feat c-violet">
-            <div class="wn-feat-ico"><i class="ph-bold ph-crown"></i></div>
-            <div class="wn-feat-name">Rank Progression <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">15 ranks from Bronze to Sys Admin. Your rank badge shows on the dashboard and leaderboard.</div>
-          </div>
-          <div class="wn-feat c-green">
-            <div class="wn-feat-ico"><i class="ph-bold ph-trophy"></i></div>
-            <div class="wn-feat-name">Leaderboard <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">Anonymous EXP rankings with gold, silver, bronze tiers. Know where you stand without exposing names.</div>
-          </div>
-          <div class="wn-feat c-teal">
-            <div class="wn-feat-ico"><i class="ph-bold ph-chart-line-up"></i></div>
-            <div class="wn-feat-name">Rank Progress Bar <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">See exactly how close you are to your next rank — a live progress bar sits right on your dashboard hero.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- v1.0.0 — Foundation -->
-      <div class="wn-panel" id="panel-3">
-        <div class="wn-ver-hd">
-          <div class="wn-ver-tag">v1.0.0 · March 2026</div>
-          <div class="wn-ver-title">The Dungeon Opens</div>
-          <div class="wn-ver-date">Released March 2026</div>
-        </div>
-        <div class="wn-ver-desc">
-          First release. The classroom is open. Login, pick a lab, cast your code, and submit. Quizzes with instant feedback included. Everything is tracked — every keystroke, every submission.
-        </div>
-        <div class="wn-features">
-          <div class="wn-feat c-green">
-            <div class="wn-feat-ico"><i class="ph-bold ph-flask"></i></div>
-            <div class="wn-feat-name">Python Lab Editor <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">Full in-browser Python IDE with CodeMirror, test cases, hidden trials, and instant verdict on submission.</div>
-          </div>
-          <div class="wn-feat c-violet">
-            <div class="wn-feat-ico"><i class="ph-bold ph-exam"></i></div>
-            <div class="wn-feat-name">Quiz System <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">One-at-a-time quiz flow with multiple choice, true/false, code output, and fill-in-the-blank types.</div>
-          </div>
-          <div class="wn-feat c-gold">
-            <div class="wn-feat-ico"><i class="ph-bold ph-sliders"></i></div>
-            <div class="wn-feat-name">Quiz Settings <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">Set number of questions (15, 30, 50), toggle answer reveal mode, and enable question randomization.</div>
-          </div>
-          <div class="wn-feat c-red">
-            <div class="wn-feat-ico"><i class="ph-bold ph-lock-key"></i></div>
-            <div class="wn-feat-name">Auth & Access Control <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">Login with Gmail. Signup restricted to allowed usernames only. T&C acceptance required to proceed.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- v0.1.0 — SKELETON -->
-      <div class="wn-panel" id="panel-4">
-        <div class="wn-ver-hd">
-          <div class="wn-ver-tag">v0.1.0 · February 2026</div>
-          <div class="wn-ver-title">The Bare Bones</div>
-          <div class="wn-ver-date">February 2026 · Where it all began</div>
-        </div>
-        <div class="wn-ver-desc">
-          It started with nothing. Just a blank HTML file and a dream. No EXP. No quizzes. No WHY? button. Just the raw skeleton of what would become the Slytherin Classroom.
-        </div>
-        <div class="wn-features">
-          <div class="wn-feat c-green">
-            <div class="wn-feat-ico"><i class="ph-bold ph-sign-in"></i></div>
-            <div class="wn-feat-name">Basic Auth</div>
-            <div class="wn-feat-desc">Login and signup with Gmail. That's it. You could get in. That was the whole update.</div>
-          </div>
-          <div class="wn-feat c-gold">
-            <div class="wn-feat-ico"><i class="ph-bold ph-house-simple"></i></div>
-            <div class="wn-feat-name">Dashboard Shell</div>
-            <div class="wn-feat-desc">A mostly empty dashboard. The topbar existed. The breadcrumbs existed. Nothing else worked yet.</div>
-          </div>
-          <div class="wn-feat c-violet">
-            <div class="wn-feat-ico"><i class="ph-bold ph-terminal"></i></div>
-            <div class="wn-feat-name">Pyodide Loaded</div>
-            <div class="wn-feat-desc">Python ran in the browser for the first time. No test cases, no trials. Just a textarea and a run button.</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- FOOTER -->
-    <div class="wn-ft">
-      <div class="wn-ft-info">Slytherin Classroom <span style="color:var(--gold-dim)">v1.3.1</span> · BSCS Python Practice</div>
-      <button class="wn-got-it" onclick="closeWN()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Got it!
-      </button>
-    </div>
-
   </div>
 </div>
 
 <script>
-function switchTab(idx){
-  document.querySelectorAll('.wn-tab').forEach((t,i)=>t.classList.toggle('active',i===idx));
-  document.querySelectorAll('.wn-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));
-}
-function closeWN(){
-  const ov=document.getElementById('wn-overlay');
-  ov.style.transition='opacity .25s ease';
-  ov.style.opacity='0';
-  setTimeout(()=>ov.style.display='none',250);
-}
-document.getElementById('wn-overlay').addEventListener('click',function(e){
-  if(e.target===this)closeWN();
-});
-</script>
+const SUPABASE_URL='https://oikumdcokfhrzuvgmxku.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9pa3VtZGNva2Zocnp1dmdteGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzA2NTYsImV4cCI6MjA4ODQ0NjY1Nn0.X_PzXZswIFPKZddV24rcSql6PbVoR0vmuKdn3Xh_qAQ';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
+const RANKS=[{name:'Newbie II',exp:0},{name:'Newbie I',exp:200},{name:'Coder III',exp:500},{name:'Coder II',exp:1000},{name:'Coder I',exp:1800},{name:'Developer III',exp:2800},{name:'Developer II',exp:4000},{name:'Developer I',exp:5500},{name:'Legend IV',exp:6500},{name:'Legend III',exp:9000},{name:'Legend II',exp:13000},{name:'Legend I',exp:18000},{name:'Sys Architect',exp:25000}];
+function getRank(exp){let r=RANKS[0];for(const x of RANKS){if(exp>=x.exp)r=x;}return r;}
+function getNext(exp){for(const r of RANKS){if(exp<r.exp)return r;}return null;}
+function rankStyle(name){
+  if(name.includes('Sys'))return{bg:'var(--violet-lt)',bd:'var(--violet-bd)',tx:'var(--violet)'};
+  if(name.includes('Legend'))return{bg:'var(--amber-lt)',bd:'var(--amber-bd)',tx:'var(--amber)'};
+  if(name.includes('Dev'))return{bg:'var(--teal-lt)',bd:'var(--teal-bd)',tx:'var(--teal)'};
+  if(name.includes('Coder'))return{bg:'var(--blue-lt)',bd:'var(--blue-bd)',tx:'var(--blue)'};
+  return{bg:'var(--green-lt)',bd:'var(--green-bd)',tx:'var(--green)'};
+}
+
+let allSubs=[],allAttempts=[],allLabs=[],allQuizzes=[],allProfiles=[];
+let currentTab='overview';
+let labSort={col:'submitted_at',dir:'desc'},quizSort={col:'attempted_at',dir:'desc'};
+let labPage=1,quizPage=1;
+const PG=25;
+let labF={user:'',problem:'',status:'all'},quizF={user:'',quiz:'',status:'all'};
+let lbEnabled=true;
+let expModalProfile=null;
+
+async function init(){
+  const{data:{session}}=await sb.auth.getSession();
+  if(
+    
+    !session){showGateErr('Not logged in. Please log in via the main app first.');return;}
+const{data:a,error:aErr}=await sb.from('admins').select('user_id').eq('user_id',session.user.id).maybeSingle();
+if(aErr||!a||a.user_id!==session.user.id){showGateErr('Access denied — your account is not an admin.');return;}
+  document.getElementById('tb-user').textContent=session.user.user_metadata?.full_name||session.user.email;
+document.getElementById('gate').style.display='none';
+document.getElementById('shell').style.display='flex';
+  await loadAll();
+}
+function showGateErr(m){document.getElementById('gate-err').textContent=m;}
+async function doLogout(){await sb.auth.signOut();window.location.href='index.html';}
+
+async function loadAll(){
+  document.getElementById('content').innerHTML='<div class="loading"><div class="spin"></div><div class="loading-txt">Fetching records…</div></div>';
+  const[{data:s},{data:a},{data:l},{data:q},{data:p}]=await Promise.all([
+    sb.from('lab_submissions').select('*').order('submitted_at',{ascending:false}),
+    sb.from('quiz_attempts').select('*').order('attempted_at',{ascending:false}),
+    sb.from('labs').select('*').order('created_at',{ascending:false}),
+    sb.from('quizzes').select('*').order('created_at',{ascending:false}),
+    sb.from('profiles').select('*').order('exp',{ascending:false})
+  ]);
+  allSubs=s||[];allAttempts=a||[];allLabs=l||[];allQuizzes=q||[];allProfiles=p||[];
+    const{data:lbSetting}=await sb.from('settings').select('value').eq('key','lb_enabled').single();
+    if(lbSetting)lbEnabled=lbSetting.value;
+  labPage=1;quizPage=1;
+  document.getElementById('last-updated').textContent='Updated '+new Date().toLocaleTimeString();
+  render();
+}
+
+function render(){
+  const uU=new Set([...allProfiles.map(p=>p.username),...allSubs.map(s=>s.username),...allAttempts.map(a=>a.username)]);  const pS=allSubs.filter(s=>s.passed).length,pA=allAttempts.filter(a=>a.passed).length;
+  const lRate=allSubs.length?Math.round(pS/allSubs.length*100):0;
+  const qRate=allAttempts.length?Math.round(pA/allAttempts.length*100):0;
+  const totalPts=allSubs.reduce((acc,s)=>acc+(s.score||0),0);
+  const tabs=[
+    ['overview','Overview','<path d="M3 3h7v7H3z"/><path d="M14 3h7v7h-7z"/><path d="M14 14h7v7h-7z"/><path d="M3 14h7v7H3z"/>'],
+    ['labs','Labs','<path d="M9 3v11.5a3.5 3.5 0 0 0 7 0V3"/><line x1="6" y1="3" x2="18" y2="3"/>'],
+    ['quizzes','Quizzes','<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>'],
+    ['students','Students','<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'],
+    ['leaderboard','Leaderboard','<polyline points="8 22 12 17 16 22"/><line x1="12" y1="17" x2="12" y2="11"/><path d="M18 5H6l1 7a5 5 0 0 0 10 0z"/>'],
+    ['exp','EXP Manager','<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>'],
+    ['activity','Activity','<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>'],
+    ['security','Security','<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'],
+    ['quizeditor','Quiz Editor','<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>'],
+    ['content','Content','<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>'],
+  ];
+  document.getElementById('content').innerHTML=`
+    <div class="stats-row">
+      <div class="stat-card c-green"><div class="sc-bar"></div><div class="stat-n cn-green">${uU.size}</div><div class="stat-l">Students</div><div class="stat-sub">enrolled</div></div>
+      <div class="stat-card c-blue"><div class="sc-bar"></div><div class="stat-n cn-blue">${allSubs.length}</div><div class="stat-l">Lab Submissions</div><div class="stat-sub">${lRate}% pass rate</div></div>
+      <div class="stat-card c-teal"><div class="sc-bar"></div><div class="stat-n cn-teal">${pS}</div><div class="stat-l">Labs Passed</div><div class="stat-sub">of ${allSubs.length}</div></div>
+      <div class="stat-card c-violet"><div class="sc-bar"></div><div class="stat-n cn-violet">${allAttempts.length}</div><div class="stat-l">Quiz Attempts</div><div class="stat-sub">${qRate}% pass rate</div></div>
+      <div class="stat-card c-teal"><div class="sc-bar"></div><div class="stat-n cn-teal">${pA}</div><div class="stat-l">Quizzes Passed</div><div class="stat-sub">of ${allAttempts.length}</div></div>
+      <div class="stat-card c-amber"><div class="sc-bar"></div><div class="stat-n cn-amber">${totalPts}</div><div class="stat-l">Total Points</div><div class="stat-sub">lab score sum</div></div>
+    </div>
+    <div class="tabs-wrap">${tabs.map(([t,l,ic])=>`<button class="tab ${currentTab===t?'active':''}" onclick="sTab('${t}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${ic}</svg>${l}</button>`).join('')}</div>
+    <div id="tc">${rTab()}</div>`;
+}
+
+function sTab(t){currentTab=t;labPage=1;quizPage=1;render();}
+function rTab(){
+  if(currentTab==='overview')return rOverview();
+  if(currentTab==='labs')return rLabs();
+  if(currentTab==='quizzes')return rQuizzes();
+  if(currentTab==='students')return rStudents();
+  if(currentTab==='leaderboard')return rLeaderboard();
+  if(currentTab==='exp')return rExp();
+  if(currentTab==='activity')return rActivity();
+  if(currentTab==='security')return rSecurity();
+  if(currentTab==='quizeditor')return rQuizEditor();
+  return rContent();
+}
+function rT(){document.getElementById('tc').innerHTML=rTab();}
+
+function rOverview(){
+  const pc={};allSubs.forEach(s=>{const k=s.problem_title||'?';if(!pc[k])pc[k]={t:0,p:0,pts:0};pc[k].t++;if(s.passed)pc[k].p++;pc[k].pts+=(s.score||0);});
+  const qc={};allAttempts.forEach(a=>{const k=a.quiz_title||'?';if(!qc[k])qc[k]={t:0,p:0};qc[k].t++;if(a.passed)qc[k].p++;});
+  const recent=[...allSubs.slice(0,8).map(s=>({type:'lab',name:s.username,item:s.problem_title,passed:s.passed,time:s.submitted_at})),...allAttempts.slice(0,8).map(a=>({type:'quiz',name:a.username,item:a.quiz_title,passed:a.passed,time:a.attempted_at}))].sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,12);
+  const pRows=Object.entries(pc).sort((a,b)=>b[1].t-a[1].t).slice(0,10).map(([n,d])=>{const r=d.t>0?Math.round(d.p/d.t*100):0,bc=r>=70?'fg':r>=40?'fo':'fr';return`<tr><td class="ttr" title="${esc(n)}">${esc(n)}</td><td><span class="badge b-violet">${d.t}</span></td><td><span class="badge b-pass">${d.p}</span></td><td class="tm">${d.pts}</td><td><div class="sw"><div class="sb"><div class="sbf ${bc}" style="width:${r}%"></div></div><span class="badge b-pct">${r}%</span></div></td></tr>`;}).join('');
+  const qRows=Object.entries(qc).sort((a,b)=>b[1].t-a[1].t).map(([n,d])=>{const r=d.t>0?Math.round(d.p/d.t*100):0,bc=r>=70?'fg':r>=40?'fo':'fr';return`<tr><td class="ttr" title="${esc(n)}">${esc(n)}</td><td><span class="badge b-violet">${d.t}</span></td><td><span class="badge b-pass">${d.p}</span></td><td><div class="sw"><div class="sb"><div class="sbf ${bc}" style="width:${r}%"></div></div><span class="badge b-pct">${r}%</span></div></td></tr>`;}).join('');
+  const actRows=recent.map(r=>`<tr><td><span class="user-pill"><span class="uav">${r.name.charAt(0).toUpperCase()}</span>${esc(r.name)}</span></td><td><span class="badge ${r.type==='lab'?'b-blue':'b-violet'}">${r.type==='lab'?'Lab':'Quiz'}</span></td><td class="ttr" title="${esc(r.item)}">${esc(r.item)}</td><td><span class="badge ${r.passed?'b-pass':'b-fail'}">${r.passed?'Pass':'Fail'}</span></td><td class="td-dim tnw">${fmtDate(r.time)}</td></tr>`).join('');
+  return`<div class="two-col"><div class="section-card"><div class="section-hd"><div class="section-title">Lab Problems</div></div><div class="tbl-wrap"><table><thead><tr><th>Problem</th><th>Attempts</th><th>Passed</th><th>Pts</th><th>Rate</th></tr></thead><tbody>${pRows||`<tr><td colspan="5"><div class="tbl-empty"><div class="tei">📋</div>No lab data</div></td></tr>`}</tbody></table></div></div><div class="section-card"><div class="section-hd"><div class="section-title">Quiz Overview</div></div><div class="tbl-wrap"><table><thead><tr><th>Quiz</th><th>Attempts</th><th>Passed</th><th>Rate</th></tr></thead><tbody>${qRows||`<tr><td colspan="4"><div class="tbl-empty"><div class="tei">📋</div>No quiz data</div></td></tr>`}</tbody></table></div></div></div>
+  <div class="section-card"><div class="section-hd"><div class="section-title">Recent Activity</div></div><div class="tbl-wrap"><table><thead><tr><th>Student</th><th>Type</th><th>Item</th><th>Result</th><th>Time</th></tr></thead><tbody>${actRows||`<tr><td colspan="5"><div class="tbl-empty"><div class="tei">📋</div>No activity</div></td></tr>`}</tbody></table></div></div>`;
+}
+
+function rLabs(){
+  let rows=[...allSubs];
+  if(labF.user)rows=rows.filter(r=>r.username.toLowerCase().includes(labF.user.toLowerCase()));
+  if(labF.problem)rows=rows.filter(r=>(r.problem_title||'').toLowerCase().includes(labF.problem.toLowerCase())||(r.lab_title||'').toLowerCase().includes(labF.problem.toLowerCase()));
+  if(labF.status!=='all')rows=rows.filter(r=>labF.status==='pass'?r.passed:!r.passed);
+  rows.sort((a,b)=>{let av=a[labSort.col]??'',bv=b[labSort.col]??'';if(typeof av==='string'){av=av.toLowerCase();bv=bv.toLowerCase();}return labSort.dir==='asc'?(av<bv?-1:av>bv?1:0):(av>bv?-1:av<bv?1:0);});
+  const tot=rows.length,tp=Math.max(1,Math.ceil(tot/PG));labPage=Math.min(labPage,tp);
+  const pg=rows.slice((labPage-1)*PG,labPage*PG);
+  const ths=[['username','Student'],['lab_title','Lab'],['problem_title','Problem'],['score','Score'],['tc_passed','Trials'],['passed','Status'],['submitted_at','Submitted']];
+  return`<div class="section-card"><div class="section-hd"><div class="section-hd-left"><div class="section-title">Lab Submissions</div><span class="section-count">${tot}</span></div><button class="btn btn-green" onclick="exportCSV('labs')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button></div>
+  <div class="filters"><input class="filter-input" placeholder="Search student…" value="${labF.user}" oninput="labF.user=this.value;labPage=1;rT()"/><input class="filter-input" placeholder="Search problem / lab…" value="${labF.problem}" oninput="labF.problem=this.value;labPage=1;rT()"/><select class="filter-select" onchange="labF.status=this.value;labPage=1;rT()"><option value="all" ${labF.status==='all'?'selected':''}>All</option><option value="pass" ${labF.status==='pass'?'selected':''}>Passed</option><option value="fail" ${labF.status==='fail'?'selected':''}>Failed</option></select></div>
+  <div class="tbl-wrap"><table><thead><tr>${ths.map(([c,l])=>`<th onclick="sLab('${c}')" class="${labSort.col===c?'sort-on':''}">${l}<span class="sa">${labSort.col===c?(labSort.dir==='asc'?'↑':'↓'):'↕'}</span></th>`).join('')}</tr></thead><tbody>${pg.length===0?`<tr><td colspan="7"><div class="tbl-empty"><div class="tei">🔍</div>No records match</div></td></tr>`:pg.map(r=>{const p=r.max_score>0?Math.round(r.score/r.max_score*100):0,bc=p>=70?'fg':p>=40?'fo':'fr';return`<tr><td><span class="user-pill"><span class="uav">${(r.username||'?').charAt(0).toUpperCase()}</span>${esc(r.username)}</span></td><td class="ttr" title="${esc(r.lab_title)}">${esc(r.lab_title)}</td><td class="ttr" title="${esc(r.problem_title)}">${esc(r.problem_title)}</td><td><div class="sw"><span class="tm">${r.score}/${r.max_score}</span><div class="sb"><div class="sbf ${bc}" style="width:${p}%"></div></div><span class="badge b-pct">${p}%</span></div></td><td class="tm">${r.tc_passed}/${r.tc_total}</td><td><span class="badge ${r.passed?'b-pass':'b-fail'}">${r.passed?'Pass':'Fail'}</span></td><td class="td-dim tnw">${fmtDate(r.submitted_at)}</td></tr>`;}).join('')}</tbody></table></div>${rPg(labPage,tp,tot,'labPage')}</div>`;
+}
+function sLab(c){labSort=labSort.col===c?{col:c,dir:labSort.dir==='asc'?'desc':'asc'}:{col:c,dir:'desc'};rT();}
+
+function rQuizzes(){
+  let rows=[...allAttempts];
+  if(quizF.user)rows=rows.filter(r=>r.username.toLowerCase().includes(quizF.user.toLowerCase()));
+  if(quizF.quiz)rows=rows.filter(r=>(r.quiz_title||'').toLowerCase().includes(quizF.quiz.toLowerCase()));
+  if(quizF.status!=='all')rows=rows.filter(r=>quizF.status==='pass'?r.passed:!r.passed);
+  rows.sort((a,b)=>{let av=a[quizSort.col]??'',bv=b[quizSort.col]??'';if(typeof av==='string'){av=av.toLowerCase();bv=bv.toLowerCase();}return quizSort.dir==='asc'?(av<bv?-1:av>bv?1:0):(av>bv?-1:av<bv?1:0);});
+  const tot=rows.length,tp=Math.max(1,Math.ceil(tot/PG));quizPage=Math.min(quizPage,tp);
+  const pg=rows.slice((quizPage-1)*PG,quizPage*PG);
+  const ths=[['username','Student'],['quiz_title','Quiz'],['score','Score'],['passed','Status'],['attempted_at','Attempted']];
+  return`<div class="section-card"><div class="section-hd"><div class="section-hd-left"><div class="section-title">Quiz Attempts</div><span class="section-count">${tot}</span></div><button class="btn btn-green" onclick="exportCSV('quizzes')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button></div>
+  <div class="filters"><input class="filter-input" placeholder="Search student…" value="${quizF.user}" oninput="quizF.user=this.value;quizPage=1;rT()"/><input class="filter-input" placeholder="Search quiz…" value="${quizF.quiz}" oninput="quizF.quiz=this.value;quizPage=1;rT()"/><select class="filter-select" onchange="quizF.status=this.value;quizPage=1;rT()"><option value="all" ${quizF.status==='all'?'selected':''}>All</option><option value="pass" ${quizF.status==='pass'?'selected':''}>Passed</option><option value="fail" ${quizF.status==='fail'?'selected':''}>Failed</option></select></div>
+  <div class="tbl-wrap"><table><thead><tr>${ths.map(([c,l])=>`<th onclick="sQuiz('${c}')" class="${quizSort.col===c?'sort-on':''}">${l}<span class="sa">${quizSort.col===c?(quizSort.dir==='asc'?'↑':'↓'):'↕'}</span></th>`).join('')}</tr></thead><tbody>${pg.length===0?`<tr><td colspan="5"><div class="tbl-empty"><div class="tei">🔍</div>No records match</div></td></tr>`:pg.map(r=>{const p=r.total>0?Math.round(r.score/r.total*100):0,bc=p>=70?'fg':p>=40?'fo':'fr';return`<tr><td><span class="user-pill"><span class="uav">${(r.username||'?').charAt(0).toUpperCase()}</span>${esc(r.username)}</span></td><td class="ttr" title="${esc(r.quiz_title)}">${esc(r.quiz_title)}</td><td><div class="sw"><span class="tm">${r.score}/${r.total}</span><div class="sb"><div class="sbf ${bc}" style="width:${p}%"></div></div><span class="badge b-pct">${p}%</span></div></td><td><span class="badge ${r.passed?'b-pass':'b-fail'}">${r.passed?'Pass':'Fail'}</span></td><td class="td-dim tnw">${fmtDate(r.attempted_at)}</td></tr>`;}).join('')}</tbody></table></div>${rPg(quizPage,tp,tot,'quizPage')}</div>`;
+}
+function sQuiz(c){quizSort=quizSort.col===c?{col:c,dir:quizSort.dir==='asc'?'desc':'asc'}:{col:c,dir:'desc'};rT();}
+
+function rStudents(){
+  const u={};
+  allSubs.forEach(s=>{if(!u[s.username])u[s.username]={labs:[],quizzes:[]};u[s.username].labs.push(s);});
+  allAttempts.forEach(a=>{if(!u[a.username])u[a.username]={labs:[],quizzes:[]};u[a.username].quizzes.push(a);});
+  allProfiles.forEach(p=>{if(!u[p.username])u[p.username]={labs:[],quizzes:[]};});  
+  if(!Object.keys(u).length)return`<div class="section-card"><div class="tbl-empty"><div class="tei">👥</div>No student data yet</div></div>`;
+  const cards=Object.entries(u).sort((a,b)=>a[0].localeCompare(b[0])).map(([name,d])=>{
+    const lt=d.labs.length,lp=d.labs.filter(l=>l.passed).length;
+    const lpts=d.labs.reduce((a,l)=>a+(l.score||0),0),lmax=d.labs.reduce((a,l)=>a+(l.max_score||0),0);
+    const lpct=lmax>0?Math.round(lpts/lmax*100):0;
+    const qt=d.quizzes.length,qp=d.quizzes.filter(q=>q.passed).length;
+    const qpct=qt>0?Math.round(qp/qt*100):0;
+    const uProbs=new Set(d.labs.map(l=>l.problem_id)).size;
+    const uQuiz=new Set(d.quizzes.map(q=>q.quiz_id)).size;
+    const last=[...d.labs.map(l=>l.submitted_at),...d.quizzes.map(q=>q.attempted_at)].filter(Boolean).sort().pop();
+    const prof=allProfiles.find(p=>p.username===name);
+    const exp=prof?.exp||0;const rank=getRank(exp);const rs=rankStyle(rank.name);
+    return`<div class="user-card"><div class="uc-hd"><div class="uc-av">${name.charAt(0).toUpperCase()}</div><div style="flex:1;min-width:0"><div class="uc-name">${esc(name)}</div><div class="uc-sub">${lt+qt} activities</div></div><span class="rank-chip" style="background:${rs.bg};border-color:${rs.bd};color:${rs.tx}">${rank.name}</span></div><div class="uc-row"><span>EXP</span><span class="uc-val" style="color:var(--green)">${exp.toLocaleString()}</span></div><div class="uc-sec">Labs</div><div class="uc-row"><span>Submissions</span><span class="uc-val">${lt}</span></div><div class="uc-row"><span>Unique problems</span><span class="uc-val">${uProbs}</span></div><div class="uc-row"><span>Passed</span><span class="uc-val" style="color:var(--green)">${lp} / ${lt}</span></div><div class="uc-row"><span>Points</span><span class="uc-val">${lpts} / ${lmax}</span></div><div class="uc-bar"><div class="uc-bar-fill" style="width:${lpct}%"></div></div><div class="uc-sec">Quizzes</div><div class="uc-row"><span>Attempts</span><span class="uc-val">${qt}</span></div><div class="uc-row"><span>Unique quizzes</span><span class="uc-val">${uQuiz}</span></div><div class="uc-row"><span>Passed</span><span class="uc-val" style="color:var(--violet)">${qp} / ${qt}</span></div><div class="uc-bar"><div class="uc-bar-fill quiz" style="width:${qpct}%"></div></div><div class="uc-last">Last active: ${last?fmtDate(last):'Never'}</div></div>`;
+  }).join('');
+  return`<div class="user-grid">${cards}</div>`;
+}
+
+function rLeaderboard(){
+  const u={};
+  allSubs.forEach(s=>{if(!u[s.username])u[s.username]={lpts:0,lmax:0,lpassed:0,ltotal:0,qtotal:0,qpassed:0,qpts:0,qmax:0};u[s.username].lpts+=(s.score||0);u[s.username].lmax+=(s.max_score||0);u[s.username].ltotal++;if(s.passed)u[s.username].lpassed++;});
+  allAttempts.forEach(a=>{if(!u[a.username])u[a.username]={lpts:0,lmax:0,lpassed:0,ltotal:0,qtotal:0,qpassed:0,qpts:0,qmax:0};u[a.username].qtotal++;u[a.username].qpts+=(a.score||0);u[a.username].qmax+=(a.total||0);if(a.passed)u[a.username].qpassed++;});
+  if(!Object.keys(u).length)return`<div class="section-card"><div class="tbl-empty"><div class="tei">🏆</div>No data yet</div></div>`;
+  const labR=Object.entries(u).filter(([,d])=>d.ltotal>0).map(([n,d])=>({n,...d,lpct:d.lmax>0?Math.round(d.lpts/d.lmax*100):0})).sort((a,b)=>b.lpts-a.lpts||b.lpassed-a.lpassed);
+  const quizR=Object.entries(u).filter(([,d])=>d.qtotal>0).map(([n,d])=>({n,...d,qpct:d.qmax>0?Math.round(d.qpts/d.qmax*100):0})).sort((a,b)=>b.qpassed-a.qpassed||b.qpct-a.qpct);
+  const comboR=Object.entries(u).map(([n,d])=>({n,...d,lpct:d.lmax>0?Math.round(d.lpts/d.lmax*100):0,qpct:d.qmax>0?Math.round(d.qpts/d.qmax*100):0,combo:d.lpts+(d.qpassed*10)})).sort((a,b)=>b.combo-a.combo);
+  const medal=i=>i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}`;
+  const rc=i=>i===0?'r1':i===1?'r2':i===2?'r3':'rn';
+  const cl=i=>i===0?'top1':i===1?'top2':i===2?'top3':'';
+  const labRows=labR.map((u,i)=>`<div class="lb-row ${cl(i)}"><div class="lb-rank ${rc(i)}">${medal(i)}</div><div class="uav">${u.n.charAt(0).toUpperCase()}</div><div class="lb-info"><div class="lb-name">${esc(u.n)}</div><div class="lb-mini"><span class="badge b-pass">${u.lpassed} passed</span><span class="badge b-pct">${u.lpct}%</span><span class="badge b-muted">${u.ltotal} tries</span></div></div><div class="lb-score"><div class="lb-score-main lab">${u.lpts}</div><div class="lb-score-sub">pts</div></div></div>`).join('');
+  const quizRows=quizR.map((u,i)=>`<div class="lb-row ${cl(i)}"><div class="lb-rank ${rc(i)}">${medal(i)}</div><div class="uav" style="background:var(--violet-lt);color:var(--violet);border-color:var(--violet-bd)">${u.n.charAt(0).toUpperCase()}</div><div class="lb-info"><div class="lb-name">${esc(u.n)}</div><div class="lb-mini"><span class="badge b-violet">${u.qtotal} attempts</span><span class="badge b-pct">${u.qpct}%</span></div></div><div class="lb-score"><div class="lb-score-main quiz">${u.qpassed}</div><div class="lb-score-sub">passed</div></div></div>`).join('');
+  const comboRows=comboR.map((u,i)=>`<div class="combo-row ${cl(i)}"><div class="lb-rank ${rc(i)}">${medal(i)}</div><div class="uav">${u.n.charAt(0).toUpperCase()}</div><div style="font-family:var(--font-b);font-size:13px;font-weight:600;color:var(--text);min-width:100px">${esc(u.n)}</div><div class="combo-stats"><span class="badge b-pct">${u.lpts} pts</span><span class="badge b-pass">${u.lpct}%</span><span class="badge b-violet">${u.qpassed}/${u.qtotal}</span><span class="badge b-blue">${u.qpct}%</span></div><div style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--green);flex-shrink:0">${u.combo}</div></div>`).join('');
+  const statusColor=lbEnabled?'var(--green)':'var(--red)';
+  const statusText=lbEnabled?'● Visible to students':'● Hidden from students';
+  const btnClass=lbEnabled?'btn-red':'btn-green';
+  const btnLabel=lbEnabled?'Disable Leaderboard':'✓ Enable Leaderboard';
+  return`<div style="display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-bottom:12px;"><span style="font-family:var(--font-m);font-size:10px;color:${statusColor};">${statusText}</span><button class="btn ${btnClass}" onclick="toggleLB()">${btnLabel}</button></div><div class="lb-split"><div class="lb-card"><div class="lb-card-hd"><div class="lb-card-title">Lab Leaderboard</div><div class="lb-card-sub">Ranked by total lab points</div></div><div class="lb-list">${labRows||'<div class="tbl-empty">No lab data</div>'}</div></div><div class="lb-card"><div class="lb-card-hd"><div class="lb-card-title">Quiz Leaderboard</div><div class="lb-card-sub">Ranked by quizzes passed</div></div><div class="lb-list">${quizRows||'<div class="tbl-empty">No quiz data</div>'}</div></div></div><div class="section-card"><div class="section-hd"><div class="section-hd-left"><div class="section-title">Combined Ranking</div><span class="section-count">${comboR.length} students</span></div><span style="font-family:var(--font-m);font-size:9px;color:var(--muted)">lab pts + (quiz passes × 10)</span></div><div class="combo-lb">${comboRows||'<div class="tbl-empty">No data</div>'}</div></div>`;
+}
+
+/* ── NEW: EXP MANAGER ── */
+function rExp(){
+  if(!allProfiles.length)return`<div class="section-card"><div class="tbl-empty"><div class="tei">⭐</div>No profiles found</div></div>`;
+  const cards=allProfiles.map((p,i)=>{
+    const exp=p.exp||0;const rank=getRank(exp);const next=getNext(exp);
+    const rs=rankStyle(rank.name);
+    const pct=next?Math.round((exp-rank.exp)/(next.exp-rank.exp)*100):100;
+    const medal=i===0?'🥇 ':i===1?'🥈 ':i===2?'🥉 ':'';
+    return`<div class="exp-card"><div class="exp-card-hd"><div class="exp-av">${(p.username||'?').charAt(0).toUpperCase()}</div><div style="flex:1;min-width:0"><div class="exp-name">${medal}${esc(p.username||'Unknown')}</div><span class="rank-chip" style="background:${rs.bg};border-color:${rs.bd};color:${rs.tx};font-size:9px;margin-top:3px;display:inline-flex">${rank.name}</span></div><button class="btn btn-green" style="font-size:10px;padding:5px 10px" onclick="openExpModal('${p.id}')">Edit</button></div><div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px"><div class="exp-num">${exp.toLocaleString()}</div><span style="font-family:var(--font-m);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">EXP</span></div><div class="exp-progress"><div class="exp-progress-fill" style="width:${pct}%"></div></div><div class="exp-next">${next?`${pct}% to ${next.name} (${next.exp.toLocaleString()} EXP)`:'Max rank achieved'}</div></div>`;
+  }).join('');
+  return`<div class="section-card"><div class="section-hd"><div class="section-hd-left"><div class="section-title">EXP & Rank Manager</div><span class="section-count">${allProfiles.length} students</span></div><span style="font-family:var(--font-m);font-size:10px;color:var(--muted)">Direct override — bypasses add_exp rate limit</span></div><div class="exp-grid">${cards}</div></div>`;
+}
+function openExpModal(id){
+  const p=allProfiles.find(x=>x.id===id);if(!p)return;
+  expModalProfile=p;
+  const exp=p.exp||0;const rank=getRank(exp);
+  document.getElementById('exp-modal-title').textContent='Edit EXP — '+esc(p.username||'?');
+  document.getElementById('exp-modal-name').textContent=p.username||'Unknown';
+  document.getElementById('exp-modal-cur').textContent=exp.toLocaleString()+' EXP';
+  document.getElementById('exp-modal-val').value=exp;
+  document.getElementById('exp-modal-rank').value=p.rank||rank.name;
+  document.getElementById('exp-modal-msg').textContent='';
+  document.getElementById('exp-modal').classList.add('open');
+}
+function closeExpModal(){document.getElementById('exp-modal').classList.remove('open');expModalProfile=null;}
+async function saveExp(){
+  if(!expModalProfile)return;
+  const newExp=parseInt(document.getElementById('exp-modal-val').value)||0;
+  if(newExp<0||newExp>999999){
+    document.getElementById('exp-modal-msg').style.color='var(--red)';
+    document.getElementById('exp-modal-msg').textContent='⚠ EXP must be between 0 and 999,999.';
+    return;
+  }
+  const cur=expModalProfile.exp||0;
+  if(Math.abs(newExp-cur)>5000&&!confirm(`You're changing EXP by ${Math.abs(newExp-cur).toLocaleString()} points. Are you sure?`))return;
+  const rankOverride=document.getElementById('exp-modal-rank').value.trim()||getRank(newExp).name;
+  const msg=document.getElementById('exp-modal-msg');
+  msg.style.color='var(--muted)';msg.textContent='Saving…';
+  const{error}=await sb.from('profiles').update({exp:newExp,rank:rankOverride}).eq('id',expModalProfile.id);
+  if(error){msg.style.color='var(--red)';msg.textContent='⚠ Error: '+error.message;}
+  else{msg.style.color='var(--green)';msg.textContent='✓ Saved!';const{data:p}=await sb.from('profiles').select('*').order('exp',{ascending:false});allProfiles=p||[];setTimeout(()=>{closeExpModal();rT();},700);}
+}
+
+async function toggleLB(){
+  lbEnabled=!lbEnabled;
+  await sb.from('settings').upsert({key:'lb_enabled',value:lbEnabled});
+  rT();
+}
+/* ── NEW: ACTIVITY TIMELINE ── */
+function rActivity(){
+  const all=[...allSubs.map(s=>({type:'lab',name:s.username,item:s.problem_title,sub:s.lab_title,passed:s.passed,score:s.score,max:s.max_score,time:s.submitted_at})),...allAttempts.map(a=>({type:'quiz',name:a.username,item:a.quiz_title,sub:null,passed:a.passed,score:a.score,max:a.total,time:a.attempted_at}))].sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,80);
+  if(!all.length)return`<div class="section-card"><div class="tbl-empty"><div class="tei">📊</div>No activity yet</div></div>`;
+  const rows=all.map(r=>{const pct=r.max>0?Math.round(r.score/r.max*100):0;return`<div class="tl-item"><div class="tl-left"><div class="tl-dot ${r.type}"></div><div class="tl-line"></div></div><div class="tl-body"><div class="tl-name">${esc(r.name)}</div><div class="tl-detail">${r.type==='lab'?'Lab':'Quiz'}: ${esc(r.item)}${r.sub?' · '+esc(r.sub):''}</div><div class="tl-badges"><span class="badge ${r.type==='lab'?'b-blue':'b-violet'}">${r.type==='lab'?'Lab':'Quiz'}</span><span class="badge ${r.passed?'b-pass':'b-fail'}">${r.passed?'Pass':'Fail'}</span><span class="badge b-pct">${r.score}/${r.max} · ${pct}%</span></div><div class="tl-time">${fmtDate(r.time)}</div></div></div>`;}).join('');
+  return`<div class="section-card"><div class="section-hd"><div class="section-hd-left"><div class="section-title">Student Activity Timeline</div><span class="section-count">Last 80 events</span></div></div><div class="timeline">${rows}</div></div>`;
+}
+
+/* ── NEW: SECURITY LOG ── */
+function rSecurity(){
+  const events=[];
+  const actMap={};
+  allSubs.forEach(s=>{if(!actMap[s.username])actMap[s.username]={subs:0};actMap[s.username].subs++;});
+  allAttempts.forEach(a=>{if(!actMap[a.username])actMap[a.username]={subs:0};actMap[a.username].subs++;});
+  allProfiles.forEach(p=>{
+    const exp=p.exp||0,act=actMap[p.username]||{subs:0},maxExp=act.subs*10;
+    if(exp>maxExp&&act.subs>0&&exp>50)events.push({level:'amber',title:`Suspicious EXP — ${esc(p.username)}`,sub:`${exp.toLocaleString()} EXP with only ${act.subs} submissions (max expected ~${maxExp})`,time:new Date().toISOString()});
+  });
+  const byUser={};
+  [...allSubs,...allAttempts].forEach(s=>{const n=s.username,t=new Date(s.submitted_at||s.attempted_at).getTime();if(!byUser[n])byUser[n]=[];byUser[n].push(t);});
+  Object.entries(byUser).forEach(([name,times])=>{times.sort();for(let i=1;i<times.length;i++){if(times[i]-times[i-1]<2000){events.push({level:'red',title:`Rapid submissions — ${esc(name)}`,sub:'Multiple submissions < 2s apart (possible scripted attempt)',time:new Date(times[i]).toISOString()});break;}}});
+  allAttempts.filter(a=>a.score===a.total&&a.total>=8&&a.passed).forEach(a=>events.push({level:'green',title:`Perfect score — ${esc(a.username)}`,sub:`${a.quiz_title}: ${a.score}/${a.total} (100%)`,time:a.attempted_at}));
+  if(!events.length)events.push({level:'green',title:'No anomalies detected',sub:'All EXP and submission activity looks normal',time:new Date().toISOString()});
+  const dotCls={red:'dot-red',amber:'dot-amber',green:'dot-green'};
+  const lblCls={red:'b-fail',amber:'b-pct',green:'b-pass'};
+  const lblTxt={red:'High Risk',amber:'Warning',green:'Normal'};
+  const sorted=events.sort((a,b)=>({red:0,amber:1,green:2}[a.level]-{red:0,amber:1,green:2}[b.level]));
+  const redN=events.filter(e=>e.level==='red').length,amberN=events.filter(e=>e.level==='amber').length;
+  return`<div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px"><div class="stat-card c-red"><div class="sc-bar"></div><div class="stat-n cn-red">${redN}</div><div class="stat-l">High Risk</div></div><div class="stat-card c-amber"><div class="sc-bar"></div><div class="stat-n cn-amber">${amberN}</div><div class="stat-l">Warnings</div></div><div class="stat-card c-green"><div class="sc-bar"></div><div class="stat-n cn-green">${events.filter(e=>e.level==='green').length}</div><div class="stat-l">Normal</div></div></div>
+  <div class="section-card"><div class="section-hd"><div class="section-hd-left"><div class="section-title">Security Log</div><span class="section-count">${events.length} events</span></div><span style="font-family:var(--font-m);font-size:10px;color:var(--muted)">Auto-detected from submission patterns</span></div>${sorted.map(e=>`<div class="sec-row"><div class="sec-dot ${dotCls[e.level]}"></div><div class="sec-body"><div class="sec-title">${e.title}</div><div class="sec-sub">${e.sub}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="badge ${lblCls[e.level]}">${lblTxt[e.level]}</span><span class="sec-meta">${fmtDate(e.time)}</span></div></div>`).join('')}</div>`;
+}
+
+/* ── NEW: QUIZ EDITOR ── */
+function rQuizEditor(){
+  if(!allQuizzes.length)return`<div class="section-card"><div class="tbl-empty"><div class="tei">📝</div>No quizzes found</div></div>`;
+  const items=allQuizzes.map(q=>{
+    const questions=(q.data?.questions||[]);
+    const qRows=questions.map((question,qi)=>{
+      let qText=question.question||'',qCode='';
+      const cm=qText.match(/^([\s\S]*?)```[\w]*\n?([\s\S]*?)```([\s\S]*)$/);
+      if(cm){qText=(cm[1]+cm[3]).trim();qCode=cm[2].trim();}
+      const choiceHtml=(question.choices||[]).map((c,ci)=>`<div class="q-choice"><span class="q-choice-lbl">${String.fromCharCode(65+ci)}.</span><span>${esc(String(c))}</span>${String(c).toLowerCase()===String(question.answer||'').toLowerCase()?'<span class="badge b-pass" style="margin-left:auto">✓ correct</span>':''}</div>`).join('');
+      return`<div class="q-row"><div class="q-num">Q${qi+1} · ${question.type||'multiple_choice'}</div><div class="q-text">${esc(qText)}</div>${qCode?`<div class="q-code">${esc(qCode)}</div>`:''}${choiceHtml?`<div class="q-choices">${choiceHtml}</div>`:''}<div class="q-fields"><div class="q-field"><label>Correct Answer</label><input class="q-input" id="ans-${q.id}-${qi}" value="${esc(String(question.answer||''))}"/></div><div class="q-field"><label>Explanation</label><input class="q-input" id="exp-${q.id}-${qi}" value="${esc(String(question.explanation||''))}"/></div></div><div class="q-save-row"><button class="btn btn-green" style="font-size:10px;padding:5px 12px" onclick="saveAnswer('${q.id}',${qi})">Save</button><span class="q-save-msg" id="msg-${q.id}-${qi}"></span></div></div>`;
+    }).join('');
+    return`<div class="qi-wrap" id="qe-${q.id}"><div class="qi-hd" onclick="toggleQI('${q.id}')"><div class="qi-hd-title">${esc(q.title)}</div><span class="qi-hd-count">${questions.length} questions</span><span class="qi-hd-chev">›</span></div><div class="qi-body">${qRows}</div></div>`;
+  }).join('');
+  return`<div class="section-card"><div class="section-hd"><div class="section-hd-left"><div class="section-title">Quiz Answer Editor</div><span class="section-count">${allQuizzes.length} quizzes</span></div><span style="font-family:var(--font-m);font-size:10px;color:var(--muted)">Changes save directly to database</span></div><div class="quiz-editor-wrap">${items}</div></div>`;
+}
+function toggleQI(id){const el=document.getElementById('qe-'+id);if(el)el.classList.toggle('open');}
+async function saveAnswer(quizId,qIdx){
+  const ansEl=document.getElementById(`ans-${quizId}-${qIdx}`);
+  const expEl=document.getElementById(`exp-${quizId}-${qIdx}`);
+  const msgEl=document.getElementById(`msg-${quizId}-${qIdx}`);
+  const quiz=allQuizzes.find(q=>q.id===quizId);
+  if(!quiz||!ansEl)return;
+  msgEl.style.color='var(--muted)';msgEl.textContent='Saving…';
+  const newData=JSON.parse(JSON.stringify(quiz.data));
+  newData.questions[qIdx].answer=ansEl.value.trim();
+  if(expEl)newData.questions[qIdx].explanation=expEl.value.trim();
+  const{error}=await sb.from('quizzes').update({data:newData}).eq('id',quizId);
+  if(error){msgEl.style.color='var(--red)';msgEl.textContent='⚠ '+error.message;}
+  else{msgEl.style.color='var(--green)';msgEl.textContent='✓ Saved!';quiz.data=newData;setTimeout(()=>{msgEl.textContent='';},2000);}
+}
+
+function rContent(){
+  const labRows=allLabs.map(l=>`<tr><td class="ttr">${esc(l.title)}</td><td class="td-dim">${esc(l.filename||'—')}</td><td><span class="badge ${l.active?'b-pass':'b-fail'}">${l.active?'Active':'Hidden'}</span></td><td class="td-dim tnw">${fmtDate(l.created_at)}</td><td><div style="display:flex;gap:6px"><button class="btn btn-ghost" style="font-size:10px;padding:5px 10px" onclick="toggleActive('labs','${l.id}',${l.active})">${l.active?'Hide':'Show'}</button><button class="btn btn-red" style="font-size:10px;padding:5px 10px" onclick="deleteContent('labs','${l.id}')">Delete</button></div></td></tr>`).join('');
+  const quizRows=allQuizzes.map(q=>`<tr><td class="ttr">${esc(q.title)}</td><td class="td-dim">${esc(q.filename||'—')}</td><td><span class="badge ${q.active?'b-pass':'b-fail'}">${q.active?'Active':'Hidden'}</span></td><td class="td-dim tnw">${fmtDate(q.created_at)}</td><td><div style="display:flex;gap:6px"><button class="btn btn-ghost" style="font-size:10px;padding:5px 10px" onclick="toggleActive('quizzes','${q.id}',${q.active})">${q.active?'Hide':'Show'}</button><button class="btn btn-red" style="font-size:10px;padding:5px 10px" onclick="deleteContent('quizzes','${q.id}')">Delete</button></div></td></tr>`).join('');
+  return`<div class="section-card" style="margin-bottom:16px"><div class="section-hd"><div class="section-title">Upload Content</div></div><div style="padding:20px;display:flex;flex-direction:column;gap:14px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><select class="filter-select" id="upload-type"><option value="labs">Lab</option><option value="quizzes">Quiz</option></select><label style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--rs);padding:7px 14px;cursor:pointer;font-family:var(--font-b);font-size:12px;color:var(--text2)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Choose JSON File<input type="file" accept=".json" id="upload-file" style="display:none" onchange="handleFileSelect(this)"/></label><span id="upload-filename" style="font-family:var(--font-m);font-size:11px;color:var(--muted)">No file chosen</span></div><div id="upload-preview" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:12px;font-family:var(--font-m);font-size:11px;color:var(--text2)"></div><button class="btn btn-green" id="upload-btn" onclick="uploadContent()" style="display:none;align-self:flex-start"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload to Database</button><div id="upload-msg" style="font-family:var(--font-m);font-size:11px;min-height:16px"></div></div></div>
+  <div class="section-card" style="margin-bottom:16px"><div class="section-hd"><div class="section-hd-left"><div class="section-title">Labs</div><span class="section-count">${allLabs.length}</span></div></div><div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Filename</th><th>Status</th><th>Uploaded</th><th>Actions</th></tr></thead><tbody>${labRows||`<tr><td colspan="5"><div class="tbl-empty"><div class="tei">📋</div>No labs uploaded yet</div></td></tr>`}</tbody></table></div></div>
+  <div class="section-card"><div class="section-hd"><div class="section-hd-left"><div class="section-title">Quizzes</div><span class="section-count">${allQuizzes.length}</span></div></div><div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Filename</th><th>Status</th><th>Uploaded</th><th>Actions</th></tr></thead><tbody>${quizRows||`<tr><td colspan="5"><div class="tbl-empty"><div class="tei">📋</div>No quizzes uploaded yet</div></td></tr>`}</tbody></table></div></div>`;
+}
+
+let uploadedJSON=null;
+function handleFileSelect(input){
+  const file=input.files[0];if(!file)return;
+  document.getElementById('upload-filename').textContent=file.name;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      uploadedJSON=JSON.parse(e.target.result);
+      const type=document.getElementById('upload-type').value;
+      const preview=document.getElementById('upload-preview');
+      preview.style.display='block';
+      preview.innerHTML=`<div style="color:var(--green);margin-bottom:6px;font-weight:600">✓ Valid JSON</div><div>Title: <strong>${esc(uploadedJSON.title||'—')}</strong></div><div>Type: <strong>${type==='labs'?'Lab ('+(uploadedJSON.problems?.length||0)+' problems)':'Quiz ('+(uploadedJSON.questions?.length||0)+' questions)'}</strong></div>`;
+      document.getElementById('upload-btn').style.display='flex';
+      document.getElementById('upload-msg').textContent='';
+    }catch(err){
+      uploadedJSON=null;
+      document.getElementById('upload-preview').style.display='none';
+      document.getElementById('upload-btn').style.display='none';
+      document.getElementById('upload-msg').style.color='var(--red)';
+      document.getElementById('upload-msg').textContent='⚠ Invalid JSON file';
+    }
+  };
+  reader.readAsText(file);
+}
+async function uploadContent(){
+  if(!uploadedJSON)return;
+  const type=document.getElementById('upload-type').value;
+  const file=document.getElementById('upload-file');
+  const filename=file.files[0]?.name||'unknown.json';
+  const msg=document.getElementById('upload-msg');
+  msg.style.color='var(--muted)';msg.textContent='Uploading…';
+  const{error}=await sb.from(type).insert({title:uploadedJSON.title||filename,filename,data:uploadedJSON,active:true});
+  if(error){msg.style.color='var(--red)';msg.textContent='⚠ Error: '+error.message;}
+  else{msg.style.color='var(--green)';msg.textContent='✓ Uploaded!';uploadedJSON=null;document.getElementById('upload-file').value='';document.getElementById('upload-filename').textContent='No file chosen';document.getElementById('upload-preview').style.display='none';document.getElementById('upload-btn').style.display='none';await loadAll();}
+}
+async function toggleActive(table,id,current){await sb.from(table).update({active:!current}).eq('id',id);await loadAll();}
+async function deleteContent(table,id){
+  const title=event?.target?.closest('tr')?.querySelector('td')?.textContent||'this entry';
+if(!window.confirm(`Permanently delete "${title}"? This cannot be undone.`))return;
+  await sb.from(table).delete().eq('id',id);
+  await loadAll();
+}
+function rPg(page,tp,tot,vn){
+  const s=(page-1)*PG+1,e=Math.min(page*PG,tot);
+  const nums=[];for(let i=Math.max(1,page-2);i<=Math.min(tp,page+2);i++)nums.push(`<button class="pg-btn${i===page?' active':''}" onclick="${vn}=${i};rT()">${i}</button>`);
+  return`<div class="pagination"><span class="pg-info">Showing ${tot===0?0:s}–${e} of ${tot}</span><div class="pg-btns"><button class="pg-btn" onclick="${vn}=Math.max(1,${vn}-1);rT()" ${page<=1?'disabled':''}>‹</button>${nums.join('')}<button class="pg-btn" onclick="${vn}=Math.min(${tp},${vn}+1);rT()" ${page>=tp?'disabled':''}>›</button></div></div>`;
+}
+function exportCSV(type){
+  let h,r;
+  if(type==='labs'){h=['username','lab_title','problem_title','score','max_score','tc_passed','tc_total','passed','submitted_at'];r=allSubs;}
+  else{h=['username','quiz_title','score','total','passed','attempted_at'];r=allAttempts;}
+  const csv=[h.join(','),...r.map(row=>h.map(k=>JSON.stringify(row[k]??'')).join(','))].join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`${type}_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtDate(iso){if(!iso)return'—';const d=new Date(iso);return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});}
+
+document.getElementById('exp-modal').addEventListener('click',e=>{if(e.target===document.getElementById('exp-modal'))closeExpModal();});
+
+function setupRealtime() {
+  sb.channel('admin-lab-subs')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'lab_submissions' }, (payload) => {
+      if (payload.eventType === 'INSERT') allSubs.unshift(payload.new);
+      else if (payload.eventType === 'UPDATE') { const i = allSubs.findIndex(r => r.id === payload.new.id); if (i !== -1) allSubs[i] = payload.new; }
+      else if (payload.eventType === 'DELETE') allSubs = allSubs.filter(r => r.id !== payload.old.id);
+      document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString() + ' ● live';
+      render();
+    }).subscribe();
+
+  sb.channel('admin-quiz-attempts')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'quiz_attempts' }, (payload) => {
+      if (payload.eventType === 'INSERT') allAttempts.unshift(payload.new);
+      else if (payload.eventType === 'UPDATE') { const i = allAttempts.findIndex(r => r.id === payload.new.id); if (i !== -1) allAttempts[i] = payload.new; }
+      else if (payload.eventType === 'DELETE') allAttempts = allAttempts.filter(r => r.id !== payload.old.id);
+      document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString() + ' ● live';
+      render();
+    }).subscribe();
+
+  sb.channel('admin-profiles')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, (payload) => {
+      if (payload.eventType === 'INSERT') allProfiles.push(payload.new);
+      else if (payload.eventType === 'UPDATE') { const i = allProfiles.findIndex(r => r.id === payload.new.id); if (i !== -1) allProfiles[i] = payload.new; }
+      else if (payload.eventType === 'DELETE') allProfiles = allProfiles.filter(r => r.id !== payload.old.id);
+      allProfiles.sort((a, b) => (b.exp || 0) - (a.exp || 0));
+      document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString() + ' ● live';
+      render();
+    }).subscribe();
+}
+setupRealtime();
+init();
+</script>
 </body>
 </html>
