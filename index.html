@@ -279,8 +279,8 @@ All original content created and published on this platform by the platform crea
       <div class="user-dropdown-menu" id="user-dropdown-menu">
         <div class="dd-email" id="user-email-display"></div>
         <div style="padding:8px 14px;border-bottom:1px solid var(--iron);display:flex;flex-direction:column;gap:3px;">
-          <div style="font-family:var(--font-m);font-size:10px;color:var(--gold);letter-spacing:.05em;" id="user-rank-display">Newbie II</div>
-          <div style="font-family:var(--font-m);font-size:9px;color:var(--mist);" id="user-exp-display">0 / 200 EXP</div>
+          <div style="font-family:var(--font-m);font-size:10px;color:var(--gold);letter-spacing:.05em;" id="user-rank-display">Bronze</div>
+          <div style="font-family:var(--font-m);font-size:9px;color:var(--mist);" id="user-exp-display">0 / 30 EXP</div>
         </div>
         <button onclick="openLbModal()" style="color:var(--gold)!important;">⬡ Leaderboard</button>
         <button onclick="handleLogout()">↩ Log out</button>
@@ -294,7 +294,7 @@ All original content created and published on this platform by the platform crea
   <div class="dash-hero">
     <div class="hero-rank-wrap">
       <div class="hero-rank-icon" id="hero-rank-icon">✕</div>
-      <div class="hero-rank-name" id="hero-rank-name">NEWBIE II</div>
+      <div class="hero-rank-name" id="hero-rank-name">BRONZE</div>
       <div class="hero-rank-bar-wrap"><div class="hero-rank-bar" id="hero-rank-bar"></div></div>
     </div>
     <div class="hero-tag">Active Term</div>
@@ -467,13 +467,11 @@ All original content created and published on this platform by the platform crea
   function closeTCModal() {
     document.getElementById('tc-modal-overlay').classList.remove('open');
   }
-  /* "I Understand & Accept" button inside modal — checks box + closes */
   function acceptAndClose() {
     document.getElementById('tc-checkbox').checked = true;
     onTCCheck();
     closeTCModal();
   }
-  /* Sync button opacity with checkbox state */
   function onTCCheck() {
     const checked = document.getElementById('tc-checkbox').checked;
     document.getElementById('auth-submit-btn').style.opacity = checked ? '1' : '0.45';
@@ -482,7 +480,6 @@ All original content created and published on this platform by the platform crea
       if (err.textContent.toLowerCase().includes('terms')) err.textContent = '';
     }
   }
-  /* Gate the submit behind T&C acceptance */
   function handleAuthSubmit() {
     const cb = document.getElementById('tc-checkbox');
     if (!cb.checked) {
@@ -491,14 +488,13 @@ All original content created and published on this platform by the platform crea
       err.textContent = 'Please accept the Terms & Conditions to continue.';
       const row = document.getElementById('tc-checkbox-row');
       row.style.animation = 'none';
-      void row.offsetHeight; // reflow
+      void row.offsetHeight;
       row.style.animation = 'tcShake .35s ease';
       return;
     }
     const isLogin = document.getElementById('auth-username-row').style.display === 'none';
     if (isLogin) { handleLogin(); } else { handleSignup(); }
   }
-  /* Close on backdrop click */
   document.getElementById('tc-modal-overlay').addEventListener('click', function(e) {
     if (e.target === this) closeTCModal();
   });
@@ -555,7 +551,7 @@ All original content created and published on this platform by the platform crea
     <!-- BODY -->
     <div class="wn-body">
 
-      <!-- v0.0.4 — HUMOR -->
+      <!-- v1.3.1 — HUMOR -->
       <div class="wn-panel active" id="panel-0">
         <div class="wn-humor">
           <div class="humor-sigil">🫥</div>
@@ -573,7 +569,7 @@ All original content created and published on this platform by the platform crea
         </div>
       </div>
 
-      <!-- v0.0.3 — WHY Button + Quiz improvements -->
+      <!-- v1.3.0 — WHY Button + Quiz improvements -->
       <div class="wn-panel" id="panel-1">
         <div class="wn-ver-hd">
           <div class="wn-ver-tag">v1.3.0 · March 2026</div>
@@ -607,7 +603,7 @@ All original content created and published on this platform by the platform crea
         </div>
       </div>
 
-      <!-- v0.0.2 — EXP + Leaderboard -->
+      <!-- v1.1.5 — EXP + Leaderboard -->
       <div class="wn-panel" id="panel-2">
         <div class="wn-ver-hd">
           <div class="wn-ver-tag">v1.1.5 · March 2026</div>
@@ -615,7 +611,7 @@ All original content created and published on this platform by the platform crea
           <div class="wn-ver-date">Released March 2026</div>
         </div>
         <div class="wn-ver-desc">
-          The grind is now <strong>rewarded</strong>. Every lab submission and quiz attempt earns you EXP. Climb the ranks from Newbie all the way to Sys Architect — and compete on the leaderboard.
+          The grind is now <strong>rewarded</strong>. Every lab submission and quiz attempt earns you EXP. Climb the ranks from Bronze all the way to Sys Architect — and compete on the leaderboard.
         </div>
         <div class="wn-features">
           <div class="wn-feat c-gold">
@@ -626,7 +622,7 @@ All original content created and published on this platform by the platform crea
           <div class="wn-feat c-violet">
             <div class="wn-feat-ico"><i class="ph-bold ph-crown"></i></div>
             <div class="wn-feat-name">Rank Progression <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">13 ranks from Newbie II to Sys Architect. Your rank badge shows on the dashboard and leaderboard.</div>
+            <div class="wn-feat-desc">15 ranks from Bronze to Sys Architect. Your rank badge shows on the dashboard and leaderboard.</div>
           </div>
           <div class="wn-feat c-green">
             <div class="wn-feat-ico"><i class="ph-bold ph-trophy"></i></div>
@@ -641,7 +637,7 @@ All original content created and published on this platform by the platform crea
         </div>
       </div>
 
-      <!-- v0.0.1 — Foundation -->
+      <!-- v1.0.0 — Foundation -->
       <div class="wn-panel" id="panel-3">
         <div class="wn-ver-hd">
           <div class="wn-ver-tag">v1.0.0 · March 2026</div>
@@ -675,7 +671,7 @@ All original content created and published on this platform by the platform crea
         </div>
       </div>
 
-      <!-- v0.0.0 — SKELETON -->
+      <!-- v0.1.0 — SKELETON -->
       <div class="wn-panel" id="panel-4">
         <div class="wn-ver-hd">
           <div class="wn-ver-tag">v0.1.0 · February 2026</div>
