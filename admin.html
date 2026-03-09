@@ -719,7 +719,39 @@ function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 function fmtDate(iso){if(!iso)return'—';const d=new Date(iso);return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});}
 
 document.getElementById('exp-modal').addEventListener('click',e=>{if(e.target===document.getElementById('exp-modal'))closeExpModal();});
+
+function setupRealtime() {
+  sb.channel('admin-lab-subs')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'lab_submissions' }, (payload) => {
+      if (payload.eventType === 'INSERT') allSubs.unshift(payload.new);
+      else if (payload.eventType === 'UPDATE') { const i = allSubs.findIndex(r => r.id === payload.new.id); if (i !== -1) allSubs[i] = payload.new; }
+      else if (payload.eventType === 'DELETE') allSubs = allSubs.filter(r => r.id !== payload.old.id);
+      document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString() + ' ● live';
+      render();
+    }).subscribe();
+
+  sb.channel('admin-quiz-attempts')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'quiz_attempts' }, (payload) => {
+      if (payload.eventType === 'INSERT') allAttempts.unshift(payload.new);
+      else if (payload.eventType === 'UPDATE') { const i = allAttempts.findIndex(r => r.id === payload.new.id); if (i !== -1) allAttempts[i] = payload.new; }
+      else if (payload.eventType === 'DELETE') allAttempts = allAttempts.filter(r => r.id !== payload.old.id);
+      document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString() + ' ● live';
+      render();
+    }).subscribe();
+
+  sb.channel('admin-profiles')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, (payload) => {
+      if (payload.eventType === 'INSERT') allProfiles.push(payload.new);
+      else if (payload.eventType === 'UPDATE') { const i = allProfiles.findIndex(r => r.id === payload.new.id); if (i !== -1) allProfiles[i] = payload.new; }
+      else if (payload.eventType === 'DELETE') allProfiles = allProfiles.filter(r => r.id !== payload.old.id);
+      allProfiles.sort((a, b) => (b.exp || 0) - (a.exp || 0));
+      document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString() + ' ● live';
+      render();
+    }).subscribe();
+}
+
 init();
+setupRealtime();
 </script>
 </body>
 </html>
