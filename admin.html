@@ -360,14 +360,16 @@ const SUPABASE_URL='https://oikumdcokfhrzuvgmxku.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9pa3VtZGNva2Zocnp1dmdteGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NzA2NTYsImV4cCI6MjA4ODQ0NjY1Nn0.X_PzXZswIFPKZddV24rcSql6PbVoR0vmuKdn3Xh_qAQ';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
-const RANKS=[{name:'Newbie II',exp:0},{name:'Newbie I',exp:200},{name:'Coder III',exp:500},{name:'Coder II',exp:1000},{name:'Coder I',exp:1800},{name:'Developer III',exp:2800},{name:'Developer II',exp:4000},{name:'Developer I',exp:5500},{name:'Legend IV',exp:6500},{name:'Legend III',exp:9000},{name:'Legend II',exp:13000},{name:'Legend I',exp:18000},{name:'Sys Architect',exp:25000}];
-function getRank(exp){let r=RANKS[0];for(const x of RANKS){if(exp>=x.exp)r=x;}return r;}
+const RANKS=[{name:'Bronze',exp:0},{name:'Silver',exp:30},{name:'Gold',exp:80},{name:'Platinum II',exp:200},{name:'Platinum I',exp:310},{name:'Diamond III',exp:430},{name:'Diamond II',exp:560},{name:'Diamond I',exp:700},{name:'Crimson III',exp:860},{name:'Crimson II',exp:1040},{name:'Crimson I',exp:1230},{name:'Astral III',exp:1430},{name:'Astral II',exp:1620},{name:'Astral I',exp:1760},{name:'Sys Architect',exp:1900}];
 function getNext(exp){for(const r of RANKS){if(exp<r.exp)return r;}return null;}
 function rankStyle(name){
   if(name.includes('Sys'))return{bg:'var(--violet-lt)',bd:'var(--violet-bd)',tx:'var(--violet)'};
-  if(name.includes('Legend'))return{bg:'var(--amber-lt)',bd:'var(--amber-bd)',tx:'var(--amber)'};
-  if(name.includes('Dev'))return{bg:'var(--teal-lt)',bd:'var(--teal-bd)',tx:'var(--teal)'};
-  if(name.includes('Coder'))return{bg:'var(--blue-lt)',bd:'var(--blue-bd)',tx:'var(--blue)'};
+  if(name.includes('Astral'))return{bg:'var(--violet-lt)',bd:'var(--violet-bd)',tx:'var(--violet)'};
+  if(name.includes('Crimson'))return{bg:'var(--red-lt)',bd:'var(--red-bd)',tx:'var(--red)'};
+  if(name.includes('Diamond'))return{bg:'var(--blue-lt)',bd:'var(--blue-bd)',tx:'var(--blue)'};
+  if(name.includes('Platinum'))return{bg:'var(--teal-lt)',bd:'var(--teal-bd)',tx:'var(--teal)'};
+  if(name.includes('Gold'))return{bg:'var(--amber-lt)',bd:'var(--amber-bd)',tx:'var(--amber)'};
+  if(name.includes('Silver'))return{bg:'var(--green-lt)',bd:'var(--green-bd)',tx:'var(--green)'};
   return{bg:'var(--green-lt)',bd:'var(--green-bd)',tx:'var(--green)'};
 }
 
