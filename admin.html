@@ -361,6 +361,7 @@ const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
 const RANKS=[{name:'Bronze',exp:0},{name:'Silver',exp:30},{name:'Gold',exp:80},{name:'Platinum II',exp:200},{name:'Platinum I',exp:310},{name:'Diamond III',exp:430},{name:'Diamond II',exp:560},{name:'Diamond I',exp:700},{name:'Crimson III',exp:860},{name:'Crimson II',exp:1040},{name:'Crimson I',exp:1230},{name:'Astral III',exp:1430},{name:'Astral II',exp:1620},{name:'Astral I',exp:1760},{name:'Sys Architect',exp:1900}];
+function getRank(exp){let r=RANKS[0];for(const x of RANKS){if(exp>=x.exp)r=x;}return r;}
 function getNext(exp){for(const r of RANKS){if(exp<r.exp)return r;}return null;}
 function rankStyle(name){
   if(name.includes('Sys'))return{bg:'var(--violet-lt)',bd:'var(--violet-bd)',tx:'var(--violet)'};
