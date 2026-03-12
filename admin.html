@@ -605,9 +605,14 @@ function rSecurity(){
   const actMap={};
   allSubs.forEach(s=>{if(!actMap[s.username])actMap[s.username]={subs:0};actMap[s.username].subs++;});
   allAttempts.forEach(a=>{if(!actMap[a.username])actMap[a.username]={subs:0};actMap[a.username].subs++;});
-  allProfiles.forEach(p=>{
-    const exp=p.exp||0,act=actMap[p.username]||{subs:0},maxExp=act.subs*10;
-    if(exp>maxExp&&act.subs>0&&exp>50)events.push({level:'amber',title:`Suspicious EXP — ${esc(p.username)}`,sub:`${exp.toLocaleString()} EXP with only ${act.subs} submissions (max expected ~${maxExp})`,time:new Date().toISOString()});
+allProfiles.forEach(p=>{
+    const exp=p.exp||0;
+    const labExp=allSubs.filter(s=>s.username===p.username).reduce((a,s)=>a+(s.score||0),0);
+    const quizExp=allAttempts.filter(a=>a.username===p.username).reduce((a,q)=>a+(q.score||0),0);
+    const maxPossible=labExp+quizExp;
+    if(exp>0&&maxPossible>0&&exp>Math.round(maxPossible*1.2)){
+      events.push({level:'amber',title:`Suspicious EXP — ${esc(p.username)}`,sub:`${exp.toLocaleString()} EXP but submissions only account for ~${maxPossible} EXP`,time:new Date().toISOString()});
+    }
   });
   const byUser={};
   [...allSubs,...allAttempts].forEach(s=>{const n=s.username,t=new Date(s.submitted_at||s.attempted_at).getTime();if(!byUser[n])byUser[n]=[];byUser[n].push(t);});
