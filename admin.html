@@ -705,7 +705,11 @@ async function uploadContent(){
   const filename=file.files[0]?.name||'unknown.json';
   const msg=document.getElementById('upload-msg');
   msg.style.color='var(--muted)';msg.textContent='Uploading…';
-  const{error}=await sb.from(type).insert({title:uploadedJSON.title||filename,filename,data:uploadedJSON,active:true});
+  const cleanData=JSON.parse(JSON.stringify(uploadedJSON));
+    delete cleanData._instructions;
+    delete cleanData._notes;
+    delete cleanData._meta;
+    const{error}=await sb.from(type).insert({title:cleanData.title||filename,filename,data:cleanData,active:true});
   if(error){msg.style.color='var(--red)';msg.textContent='⚠ Error: '+error.message;}
   else{msg.style.color='var(--green)';msg.textContent='✓ Uploaded!';uploadedJSON=null;document.getElementById('upload-file').value='';document.getElementById('upload-filename').textContent='No file chosen';document.getElementById('upload-preview').style.display='none';document.getElementById('upload-btn').style.display='none';await loadAll();}
 }
