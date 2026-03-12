@@ -301,10 +301,10 @@ tr:hover td{background:var(--surface2)}
 <body>
 
 <div id="gate" style="text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:10px;">
-  <div style="font-family:var(--font-d);font-size:48px;font-weight:900;color:var(--green);letter-spacing:.1em;">404</div>
-  <div style="font-family:var(--font-m);font-size:10px;letter-spacing:.2em;color:var(--muted);margin-top:8px;">PAGE NOT FOUND</div>
+  <div class="spin" id="gate-spin"></div>
+  <div style="font-family:var(--font-m);font-size:10px;letter-spacing:.2em;color:var(--muted);" id="gate-status">Checking access…</div>
   <div style="font-family:var(--font-m);font-size:11px;color:var(--red);margin-top:10px;" id="gate-err"></div>
-  <a href="https://youtu.be/8Fey680pHCk?si=9ewSnI4eD__CACPY" target="_blank" style="font-family:var(--font-m);font-size:11px;color:var(--blue);margin-top:16px;display:inline-block;letter-spacing:.06em;text-decoration:underline;text-underline-offset:3px;">Request Admin Access</a>
+  <a href="https://youtu.be/8Fey680pHCk?si=9ewSnI4eD__CACPY" target="_blank" id="gate-link" style="display:none;font-family:var(--font-m);font-size:11px;color:var(--blue);margin-top:16px;letter-spacing:.06em;text-decoration:underline;text-underline-offset:3px;">Request Admin Access</a>
 </div>
 
 <div id="shell">
@@ -395,7 +395,12 @@ document.getElementById('gate').style.display='none';
 document.getElementById('shell').style.display='flex';
   await loadAll();
 }
-function showGateErr(m){document.getElementById('gate-err').textContent=m;}
+function showGateErr(m){
+  document.getElementById('gate-spin').style.display='none';
+  document.getElementById('gate-status').style.display='none';
+  document.getElementById('gate-err').textContent=m;
+  document.getElementById('gate-link').style.display='inline-block';
+}
 async function doLogout(){await sb.auth.signOut();window.location.href='index.html';}
 
 async function loadAll(){
