@@ -113,6 +113,68 @@
 
 @keyframes tcShake{0%,100%{transform:translateX(0);}20%{transform:translateX(-6px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
 .tc-modal-body::selection,.tc-modal-body *::selection{background:transparent;}
+
+/* ═══════════════════════════════════════════
+   MOBILE KEYBOARD FIXES
+   ─────────────────────────────────────────
+   iOS has two known bugs that prevent the
+   keyboard from appearing:
+
+   1. inputs inside position:fixed +
+      backdrop-filter containers get their
+      touch events eaten on some iOS versions.
+
+   2. Programmatic .focus() outside a user
+      gesture does not open the keyboard.
+
+   Fixes below address both issues.
+═══════════════════════════════════════════ */
+
+/* All inputs: force text selection allowed
+   and disable double-tap zoom which can
+   interfere with keyboard appearance       */
+input, textarea, .fill-input {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  touch-action: manipulation;
+}
+
+/* iOS refuses to show keyboard for font-size
+   under 16px (triggers auto-zoom which
+   fights the keyboard). Force 16px on mobile */
+@media (max-width: 700px) {
+  #auth-email,
+  #auth-password,
+  #auth-username,
+  .fill-input {
+    font-size: 16px !important;
+  }
+
+  /* backdrop-filter on a position:fixed
+     overlay is the #1 cause of iOS not
+     showing the keyboard — remove it on
+     mobile and use a solid fallback        */
+  #auth-overlay {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(10, 7, 3, 0.92) !important;
+  }
+
+  /* Promote auth inputs out of any stacking
+     context that could block touch events  */
+  #auth-overlay input {
+    position: relative;
+    z-index: 1;
+    -webkit-appearance: none;
+  }
+
+  /* Same fix for the T&C modal overlay    */
+  #tc-modal-overlay {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(10, 8, 4, 0.92) !important;
+  }
+}
 </style>
 <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
@@ -129,19 +191,28 @@
     <div id="auth-username-row" style="display:none;flex-direction:column;gap:5px;margin-bottom:12px;">
       <label style="font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:var(--mist);">USERNAME</label>
       <input id="auth-username" type="text" placeholder="e.g. alex or maryjane"
-        style="background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:10px 12px;font-family:var(--font-m);font-size:12px;color:var(--parchment);outline:none;"
+        autocomplete="username"
+        autocorrect="off"
+        autocapitalize="none"
+        spellcheck="false"
+        style="background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:10px 12px;font-family:var(--font-m);font-size:16px;color:var(--parchment);outline:none;-webkit-user-select:text;user-select:text;touch-action:manipulation;"
         oninput="this.value=this.value.toLowerCase().replace(/[^a-z]/g,'')"/>
       <div style="font-family:var(--font-m);font-size:10px;color:var(--mist);margin-top:2px;">Your first name only — lowercase, no spaces</div>
     </div>
     <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">
       <label style="font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:var(--mist);">EMAIL</label>
       <input id="auth-email" type="email" placeholder="you@gmail.com"
-        style="background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:10px 12px;font-family:var(--font-m);font-size:12px;color:var(--parchment);outline:none;"/>
+        autocomplete="email"
+        autocorrect="off"
+        autocapitalize="none"
+        spellcheck="false"
+        style="background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:10px 12px;font-family:var(--font-m);font-size:16px;color:var(--parchment);outline:none;-webkit-user-select:text;user-select:text;touch-action:manipulation;"/>
     </div>
     <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:18px;">
       <label style="font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:var(--mist);">PASSWORD</label>
       <input id="auth-password" type="password" placeholder="••••••••"
-        style="background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:10px 12px;font-family:var(--font-m);font-size:12px;color:var(--parchment);outline:none;"/>
+        autocomplete="current-password"
+        style="background:var(--stone);border:1px solid var(--iron);border-radius:2px;padding:10px 12px;font-family:var(--font-m);font-size:16px;color:var(--parchment);outline:none;-webkit-user-select:text;user-select:text;touch-action:manipulation;"/>
     </div>
 
     <!-- ── T&C CHECKBOX ── -->
@@ -158,7 +229,7 @@
 
     <div id="auth-error" style="font-family:var(--font-m);font-size:11px;color:var(--crimson);margin-bottom:12px;min-height:16px;"></div>
     <button id="auth-submit-btn" onclick="handleAuthSubmit()"
-      style="width:100%;padding:11px;border-radius:2px;border:1px solid var(--gold-dim);background:var(--gold-glow);color:var(--gold);font-family:var(--font-d);font-size:12px;font-weight:600;letter-spacing:.1em;cursor:pointer;opacity:.45;transition:opacity .15s;">
+      style="width:100%;padding:11px;border-radius:2px;border:1px solid var(--gold-dim);background:var(--gold-glow);color:var(--gold);font-family:var(--font-d);font-size:12px;font-weight:600;letter-spacing:.1em;cursor:pointer;opacity:.45;transition:opacity .15s;touch-action:manipulation;">
       Log In
     </button>
     <div id="auth-switch-text" style="text-align:center;font-family:var(--font-m);font-size:11px;color:var(--mist);margin-top:16px;">
@@ -479,7 +550,7 @@ All original content created and published on this platform by the platform crea
   function closeTCModal() {
     document.getElementById('tc-modal-overlay').classList.remove('open');
   }
-function acceptAndClose() {
+  function acceptAndClose() {
     document.getElementById('tc-checkbox').checked = true;
     onTCCheck();
     closeTCModal();
@@ -491,7 +562,7 @@ function acceptAndClose() {
       if(cb){ cb.checked = true; onTCCheck(); }
     }
   })();
-function onTCCheck() {
+  function onTCCheck() {
     const checked = document.getElementById('tc-checkbox').checked;
     document.getElementById('auth-submit-btn').style.opacity = checked ? '1' : '0.45';
     localStorage.setItem('tc_accepted', checked ? '1' : '');
@@ -546,17 +617,14 @@ function onTCCheck() {
 </style>
 <div id="lb-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(44,34,24,.6);z-index:9998;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:16px;">
   <div id="lb-modal" style="background:var(--dungeon);border:1px solid var(--gold-dim);border-radius:4px;width:580px;max-width:100%;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 0 40px var(--gold-glow),0 20px 60px rgba(0,0,0,.4);animation:ma .2s ease;overflow:hidden;">
-    <!-- HEADER -->
     <div style="padding:14px 18px;border-bottom:1px solid var(--iron);background:var(--stone);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
       <div style="font-family:var(--font-d);font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.1em;">⬡ LEADERBOARD</div>
       <button onclick="closeLbModal()" style="width:28px;height:28px;border-radius:2px;border:1px solid var(--iron);background:transparent;color:var(--mist);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .12s;" onmouseover="this.style.borderColor='var(--blood)';this.style.color='var(--crimson)'" onmouseout="this.style.borderColor='var(--iron)';this.style.color='var(--mist)'">✕</button>
     </div>
-    <!-- TABS -->
     <div style="display:flex;gap:4px;padding:8px 14px;border-bottom:1px solid var(--iron);background:var(--stone);flex-shrink:0;">
       <button class="lb-tab-btn lb-active" id="lb-tab-rankings" onclick="switchLbTab('rankings')">⬡ Rankings</button>
       <button class="lb-tab-btn" id="lb-tab-progression" onclick="switchLbTab('progression')">✦ Rank Progression</button>
     </div>
-    <!-- RANKINGS PANEL -->
     <div class="lb-panel lb-panel-active" id="lb-panel-rankings">
       <div style="display:grid;grid-template-columns:40px 70px 1fr 90px;gap:0;padding:8px 16px;border-bottom:1px solid var(--iron);background:var(--stone);flex-shrink:0;">
         <div style="font-family:var(--font-m);font-size:8px;letter-spacing:.1em;color:var(--mist);text-transform:uppercase;">#</div>
@@ -568,7 +636,6 @@ function onTCCheck() {
         <div style="font-family:var(--font-m);font-size:10px;color:var(--mist);padding:20px;text-align:center;">Loading…</div>
       </div>
     </div>
-    <!-- RANK PROGRESSION PANEL -->
     <div class="lb-panel" id="lb-panel-progression">
       <div style="overflow-y:auto;flex:1;">
         <div style="padding:12px 14px 4px;font-family:var(--font-m);font-size:9px;color:var(--mist);letter-spacing:.06em;border-bottom:1px solid var(--iron);background:var(--stone);flex-shrink:0;">15 ranks · Bronze → Sys Architect · Max 1,900 EXP</div>
@@ -580,8 +647,6 @@ function onTCCheck() {
 
 <div id="wn-overlay">
   <div id="wn-modal">
-
-    <!-- HEADER -->
     <div class="wn-hd">
       <div class="wn-hd-top">
         <div class="wn-hd-left">
@@ -593,24 +658,55 @@ function onTCCheck() {
         </div>
         <button class="wn-close" onclick="closeWN()">✕</button>
       </div>
-
-      <!-- VERSION TABS -->
       <div class="wn-tabs">
-        <button class="wn-tab active" onclick="switchTab(0)">v1.3.6 · Latest</button>
-        <button class="wn-tab" onclick="switchTab(1)">v1.3.0</button>
-        <button class="wn-tab" onclick="switchTab(2)">v1.1.5</button>
-        <button class="wn-tab" onclick="switchTab(3)">v1.0.0</button>
-        <button class="wn-tab" onclick="switchTab(4)">v0.1.0</button>
+        <button class="wn-tab active" onclick="switchTab(0)">v1.3.7 · Latest</button>
+        <button class="wn-tab" onclick="switchTab(1)">v1.3.6</button>
+        <button class="wn-tab" onclick="switchTab(2)">v1.3.0</button>
+        <button class="wn-tab" onclick="switchTab(3)">v1.1.5</button>
+        <button class="wn-tab" onclick="switchTab(4)">v1.0.0</button>
+        <button class="wn-tab" onclick="switchTab(5)">v0.1.0</button>
       </div>
     </div>
-
-    <!-- BODY -->
     <div class="wn-body">
 
-      <!-- v1.3.1 — HUMOR -->
+      <!-- v1.3.7 — Mobile keyboard fixes -->
       <div class="wn-panel active" id="panel-0">
+        <div class="wn-ver-hd">
+          <div class="wn-ver-tag">v1.3.7 · Latest Release · March 2026</div>
+          <div class="wn-ver-title">Mobile Keyboard Fixes</div>
+          <div class="wn-ver-date">Released March 2026</div>
+        </div>
+        <div class="wn-ver-desc">
+          Fixed the mobile keyboard not appearing on login/signup and fill-in-the-blank quiz questions. Two separate iOS bugs were causing this — both squashed.
+        </div>
+        <div class="wn-features">
+          <div class="wn-feat c-green">
+            <div class="wn-feat-ico"><i class="ph-bold ph-device-mobile"></i></div>
+            <div class="wn-feat-name">Auth Keyboard Fixed <span class="new-badge">Fixed</span></div>
+            <div class="wn-feat-desc">iOS was blocking keyboard on login/signup inputs due to backdrop-filter on the overlay. Removed on mobile, solid fallback applied.</div>
+          </div>
+          <div class="wn-feat c-violet">
+            <div class="wn-feat-ico"><i class="ph-bold ph-keyboard"></i></div>
+            <div class="wn-feat-name">Quiz Input Fixed <span class="new-badge">Fixed</span></div>
+            <div class="wn-feat-desc">Fill-in-the-blank keyboard now appears reliably on mobile. Removed programmatic focus() that iOS ignores outside user gestures.</div>
+          </div>
+          <div class="wn-feat c-gold">
+            <div class="wn-feat-ico"><i class="ph-bold ph-text-aa"></i></div>
+            <div class="wn-feat-name">Font Size 16px</div>
+            <div class="wn-feat-desc">All auth and quiz inputs now use 16px on mobile, preventing iOS auto-zoom which was fighting the keyboard.</div>
+          </div>
+          <div class="wn-feat c-teal">
+            <div class="wn-feat-ico"><i class="ph-bold ph-hand-tap"></i></div>
+            <div class="wn-feat-name">Touch Action Fix</div>
+            <div class="wn-feat-desc">Added touch-action:manipulation to all inputs — eliminates 300ms tap delay and double-tap zoom conflicts.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- v1.3.6 -->
+      <div class="wn-panel" id="panel-1">
           <div class="wn-ver-hd">
-            <div class="wn-ver-tag">v1.3.6 · Latest Release · March 2026</div>
+            <div class="wn-ver-tag">v1.3.6 · March 2026</div>
             <div class="wn-ver-title">The Fixes Drop</div>
             <div class="wn-ver-date">Released March 2026</div>
           </div>
@@ -641,147 +737,77 @@ function onTCCheck() {
           </div>
         </div>
 
-      <!-- v1.3.0 — WHY Button + Quiz improvements -->
-      <div class="wn-panel" id="panel-1">
+      <!-- v1.3.0 -->
+      <div class="wn-panel" id="panel-2">
         <div class="wn-ver-hd">
           <div class="wn-ver-tag">v1.3.0 · March 2026</div>
           <div class="wn-ver-title">AI Explanations & Quiz Polish</div>
-          <div class="wn-ver-date">Released March 2026 · Latest Update</div>
+          <div class="wn-ver-date">Released March 2026</div>
         </div>
-        <div class="wn-ver-desc">
-          Introducing the <strong>WHY? Button</strong> — powered by AI. Every answer now comes with a real explanation so you actually learn, not just retry blindly. Plus quality-of-life improvements across the quiz experience.
-        </div>
+        <div class="wn-ver-desc">Introducing the <strong>WHY? Button</strong> — powered by AI. Every answer now comes with a real explanation so you actually learn, not just retry blindly.</div>
         <div class="wn-features">
-          <div class="wn-feat c-violet">
-            <div class="wn-feat-ico"><i class="ph-bold ph-sparkle"></i></div>
-            <div class="wn-feat-name">WHY? Button <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">Get an AI-powered explanation after every quiz answer — correct or wrong. Powered by Claude.</div>
-          </div>
-          <div class="wn-feat c-red">
-            <div class="wn-feat-ico"><i class="ph-bold ph-book-open"></i></div>
-            <div class="wn-feat-name">Answer Review <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">After finishing a quiz, expand any question to see what you answered vs. what was correct — side by side.</div>
-          </div>
-          <div class="wn-feat c-teal">
-            <div class="wn-feat-ico"><i class="ph-bold ph-brain"></i></div>
-            <div class="wn-feat-name">Smarter Feedback <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">Wrong answers now pulse red with a WHY? prompt — so you never walk away without understanding the concept.</div>
-          </div>
-          <div class="wn-feat c-amber">
-            <div class="wn-feat-ico"><i class="ph-bold ph-pencil-line"></i></div>
-            <div class="wn-feat-name">Fill in the Blank <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">New question type added — type your answer directly and confirm. Press Enter to submit fast.</div>
-          </div>
+          <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-sparkle"></i></div><div class="wn-feat-name">WHY? Button <span class="new-badge">New</span></div><div class="wn-feat-desc">Get an AI-powered explanation after every quiz answer — correct or wrong. Powered by Claude.</div></div>
+          <div class="wn-feat c-red"><div class="wn-feat-ico"><i class="ph-bold ph-book-open"></i></div><div class="wn-feat-name">Answer Review <span class="new-badge">New</span></div><div class="wn-feat-desc">After finishing a quiz, expand any question to see what you answered vs. what was correct — side by side.</div></div>
+          <div class="wn-feat c-teal"><div class="wn-feat-ico"><i class="ph-bold ph-brain"></i></div><div class="wn-feat-name">Smarter Feedback <span class="new-badge">New</span></div><div class="wn-feat-desc">Wrong answers now pulse red with a WHY? prompt — so you never walk away without understanding the concept.</div></div>
+          <div class="wn-feat c-amber"><div class="wn-feat-ico"><i class="ph-bold ph-pencil-line"></i></div><div class="wn-feat-name">Fill in the Blank <span class="new-badge">New</span></div><div class="wn-feat-desc">New question type added — type your answer directly and confirm. Press Enter to submit fast.</div></div>
         </div>
       </div>
 
-      <!-- v1.1.5 — EXP + Leaderboard -->
-      <div class="wn-panel" id="panel-2">
+      <!-- v1.1.5 -->
+      <div class="wn-panel" id="panel-3">
         <div class="wn-ver-hd">
           <div class="wn-ver-tag">v1.1.5 · March 2026</div>
           <div class="wn-ver-title">EXP, Ranks & Leaderboard</div>
           <div class="wn-ver-date">Released March 2026</div>
         </div>
-        <div class="wn-ver-desc">
-          The grind is now <strong>rewarded</strong>. Every lab submission and quiz attempt earns you EXP. Climb the ranks from Bronze all the way to Sys Architect — and compete on the leaderboard.
-        </div>
+        <div class="wn-ver-desc">The grind is now <strong>rewarded</strong>. Every lab submission and quiz attempt earns you EXP. Climb the ranks from Bronze all the way to Sys Architect.</div>
         <div class="wn-features">
-          <div class="wn-feat c-gold">
-            <div class="wn-feat-ico"><i class="ph-bold ph-star"></i></div>
-            <div class="wn-feat-name">EXP System <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">Earn EXP for every lab and quiz submission. Points stack up — keep submitting, keep climbing.</div>
-          </div>
-          <div class="wn-feat c-violet">
-            <div class="wn-feat-ico"><i class="ph-bold ph-crown"></i></div>
-            <div class="wn-feat-name">Rank Progression <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">15 ranks from Bronze to Sys Architect. Your rank badge shows on the dashboard and leaderboard.</div>
-          </div>
-          <div class="wn-feat c-green">
-            <div class="wn-feat-ico"><i class="ph-bold ph-trophy"></i></div>
-            <div class="wn-feat-name">Leaderboard <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">Anonymous EXP rankings with gold, silver, bronze tiers. Know where you stand without exposing names.</div>
-          </div>
-          <div class="wn-feat c-teal">
-            <div class="wn-feat-ico"><i class="ph-bold ph-chart-line-up"></i></div>
-            <div class="wn-feat-name">Rank Progress Bar <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">See exactly how close you are to your next rank — a live progress bar sits right on your dashboard hero.</div>
-          </div>
+          <div class="wn-feat c-gold"><div class="wn-feat-ico"><i class="ph-bold ph-star"></i></div><div class="wn-feat-name">EXP System <span class="new-badge">New</span></div><div class="wn-feat-desc">Earn EXP for every lab and quiz submission.</div></div>
+          <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-crown"></i></div><div class="wn-feat-name">Rank Progression <span class="new-badge">New</span></div><div class="wn-feat-desc">15 ranks from Bronze to Sys Architect.</div></div>
+          <div class="wn-feat c-green"><div class="wn-feat-ico"><i class="ph-bold ph-trophy"></i></div><div class="wn-feat-name">Leaderboard <span class="new-badge">New</span></div><div class="wn-feat-desc">Anonymous EXP rankings with gold, silver, bronze tiers.</div></div>
+          <div class="wn-feat c-teal"><div class="wn-feat-ico"><i class="ph-bold ph-chart-line-up"></i></div><div class="wn-feat-name">Rank Progress Bar <span class="new-badge">New</span></div><div class="wn-feat-desc">Live progress bar shows how close you are to your next rank.</div></div>
         </div>
       </div>
 
-      <!-- v1.0.0 — Foundation -->
-      <div class="wn-panel" id="panel-3">
+      <!-- v1.0.0 -->
+      <div class="wn-panel" id="panel-4">
         <div class="wn-ver-hd">
           <div class="wn-ver-tag">v1.0.0 · March 2026</div>
           <div class="wn-ver-title">The Dungeon Opens</div>
           <div class="wn-ver-date">Released March 2026</div>
         </div>
-        <div class="wn-ver-desc">
-          First release. The classroom is open. Login, pick a lab, cast your code, and submit. Quizzes with instant feedback included. Everything is tracked — every keystroke, every submission.
-        </div>
+        <div class="wn-ver-desc">First release. Login, pick a lab, cast your code, and submit. Quizzes with instant feedback included.</div>
         <div class="wn-features">
-          <div class="wn-feat c-green">
-            <div class="wn-feat-ico"><i class="ph-bold ph-flask"></i></div>
-            <div class="wn-feat-name">Python Lab Editor <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">Full in-browser Python IDE with CodeMirror, test cases, hidden trials, and instant verdict on submission.</div>
-          </div>
-          <div class="wn-feat c-violet">
-            <div class="wn-feat-ico"><i class="ph-bold ph-exam"></i></div>
-            <div class="wn-feat-name">Quiz System <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">One-at-a-time quiz flow with multiple choice, true/false, code output, and fill-in-the-blank types.</div>
-          </div>
-          <div class="wn-feat c-gold">
-            <div class="wn-feat-ico"><i class="ph-bold ph-sliders"></i></div>
-            <div class="wn-feat-name">Quiz Settings <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">Set number of questions (15, 30, 50), toggle answer reveal mode, and enable question randomization.</div>
-          </div>
-          <div class="wn-feat c-red">
-            <div class="wn-feat-ico"><i class="ph-bold ph-lock-key"></i></div>
-            <div class="wn-feat-name">Auth & Access Control <span class="new-badge">New</span></div>
-            <div class="wn-feat-desc">Login with Gmail. Signup restricted to allowed usernames only. T&C acceptance required to proceed.</div>
-          </div>
+          <div class="wn-feat c-green"><div class="wn-feat-ico"><i class="ph-bold ph-flask"></i></div><div class="wn-feat-name">Python Lab Editor <span class="new-badge">New</span></div><div class="wn-feat-desc">Full in-browser Python IDE with CodeMirror and test cases.</div></div>
+          <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-exam"></i></div><div class="wn-feat-name">Quiz System <span class="new-badge">New</span></div><div class="wn-feat-desc">One-at-a-time quiz flow with multiple choice, true/false, and code output types.</div></div>
+          <div class="wn-feat c-gold"><div class="wn-feat-ico"><i class="ph-bold ph-sliders"></i></div><div class="wn-feat-name">Quiz Settings <span class="new-badge">New</span></div><div class="wn-feat-desc">Set number of questions, toggle reveal mode, and enable randomization.</div></div>
+          <div class="wn-feat c-red"><div class="wn-feat-ico"><i class="ph-bold ph-lock-key"></i></div><div class="wn-feat-name">Auth & Access Control <span class="new-badge">New</span></div><div class="wn-feat-desc">Login with Gmail. Signup restricted to allowed usernames only.</div></div>
         </div>
       </div>
 
-      <!-- v0.1.0 — SKELETON -->
-      <div class="wn-panel" id="panel-4">
+      <!-- v0.1.0 -->
+      <div class="wn-panel" id="panel-5">
         <div class="wn-ver-hd">
           <div class="wn-ver-tag">v0.1.0 · February 2026</div>
           <div class="wn-ver-title">The Bare Bones</div>
           <div class="wn-ver-date">February 2026 · Where it all began</div>
         </div>
-        <div class="wn-ver-desc">
-          It started with nothing. Just a blank HTML file and a dream. No EXP. No quizzes. No WHY? button. Just the raw skeleton of what would become the Slytherin Classroom.
-        </div>
+        <div class="wn-ver-desc">It started with nothing. Just a blank HTML file and a dream.</div>
         <div class="wn-features">
-          <div class="wn-feat c-green">
-            <div class="wn-feat-ico"><i class="ph-bold ph-sign-in"></i></div>
-            <div class="wn-feat-name">Basic Auth</div>
-            <div class="wn-feat-desc">Login and signup with Gmail. That's it. You could get in. That was the whole update.</div>
-          </div>
-          <div class="wn-feat c-gold">
-            <div class="wn-feat-ico"><i class="ph-bold ph-house-simple"></i></div>
-            <div class="wn-feat-name">Dashboard Shell</div>
-            <div class="wn-feat-desc">A mostly empty dashboard. The topbar existed. The breadcrumbs existed. Nothing else worked yet.</div>
-          </div>
-          <div class="wn-feat c-violet">
-            <div class="wn-feat-ico"><i class="ph-bold ph-terminal"></i></div>
-            <div class="wn-feat-name">Pyodide Loaded</div>
-            <div class="wn-feat-desc">Python ran in the browser for the first time. No test cases, no trials. Just a textarea and a run button.</div>
-          </div>
+          <div class="wn-feat c-green"><div class="wn-feat-ico"><i class="ph-bold ph-sign-in"></i></div><div class="wn-feat-name">Basic Auth</div><div class="wn-feat-desc">Login and signup with Gmail. That's it.</div></div>
+          <div class="wn-feat c-gold"><div class="wn-feat-ico"><i class="ph-bold ph-house-simple"></i></div><div class="wn-feat-name">Dashboard Shell</div><div class="wn-feat-desc">A mostly empty dashboard. The topbar existed. Nothing else worked yet.</div></div>
+          <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-terminal"></i></div><div class="wn-feat-name">Pyodide Loaded</div><div class="wn-feat-desc">Python ran in the browser for the first time.</div></div>
         </div>
       </div>
 
     </div>
-    <!-- FOOTER -->
     <div class="wn-ft">
-      <div class="wn-ft-info">Slytherin Classroom <span style="color:var(--gold-dim)">v1.3.6</span> · BSCS Python Practice</div>
+      <div class="wn-ft-info">Slytherin Classroom <span style="color:var(--gold-dim)">v1.3.7</span> · BSCS Python Practice</div>
       <button class="wn-got-it" onclick="closeWN()">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         Got it!
       </button>
     </div>
-
   </div>
 </div>
 
