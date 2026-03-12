@@ -42,8 +42,8 @@ export default async function handler(req, res) {
   // Only allow requests from your own domain
   const origin = req.headers['origin'] || '';
   const allowedOrigins = [
-    'https://slytherin-classroom.vercel.app', // replace with your actual domain
-    'http://localhost:3000',                   // for local dev
+    'https://slytherinclassroomstudy-practice-pa.vercel.app',
+    'http://localhost:3000',
   ];
   if (!allowedOrigins.includes(origin)) {
     return res.status(403).json({ error: 'Forbidden' });
