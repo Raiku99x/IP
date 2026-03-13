@@ -667,160 +667,130 @@ All original content created and published on this platform by the platform crea
   <button class="wn-tab" onclick="switchTab(5)">v1.0.0</button>
   <button class="wn-tab" onclick="switchTab(6)">v0.1.0</button>
 </div>
+    </div><div class="wn-body">
+
+  <!-- v1.4.1 -->
+  <div class="wn-panel active" id="panel-0">
+    <div class="wn-ver-hd">
+      <div class="wn-ver-tag">v1.4.1 · Latest Release · March 2026</div>
+      <div class="wn-ver-title">Quiz Badge Overhaul & Progress Persistence</div>
+      <div class="wn-ver-date">Released March 2026</div>
     </div>
-    <div class="wn-body">
-       
-<!-- v1.4.1 — Quiz Badge Overhaul -->
-<div class="wn-panel active" id="panel-0">
-  <div class="wn-ver-hd">
-    <div class="wn-ver-tag">v1.4.1 · Latest Release · March 2026</div>
-    <div class="wn-ver-title">Quiz Badge Overhaul & Progress Persistence</div>
-    <div class="wn-ver-date">Released March 2026</div>
+    <div class="wn-ver-desc">
+      Quiz score badges now show richer stats — last score, scaled average out of 50, and attempt count. Your progress is restored automatically on login. EXP is now only awarded when all test cases pass.
+    </div>
+    <div class="wn-features">
+      <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-exam"></i></div><div class="wn-feat-name">Richer quiz badges <span class="new-badge">New</span></div><div class="wn-feat-desc">Shows last score, avg/50 (one decimal), attempt count, and pass/fail — all on the card without opening the quiz.</div></div>
+      <div class="wn-feat c-gold"><div class="wn-feat-ico"><i class="ph-bold ph-arrow-counter-clockwise"></i></div><div class="wn-feat-name">Progress restored on login <span class="new-badge">New</span></div><div class="wn-feat-desc">Labs restore your last submitted code and pass state. Quiz cards restore avg score and attempt count on every login.</div></div>
+      <div class="wn-feat c-green"><div class="wn-feat-ico"><i class="ph-bold ph-shield-check"></i></div><div class="wn-feat-name">EXP on full pass only <span class="new-badge">Fixed</span></div><div class="wn-feat-desc">EXP was being awarded on every lab submit regardless of result. Now only awarded when all test cases pass.</div></div>
+      <div class="wn-feat c-teal"><div class="wn-feat-ico"><i class="ph-bold ph-lightning"></i></div><div class="wn-feat-name">Instant badge update <span class="new-badge">New</span></div><div class="wn-feat-desc">Quiz card badge updates immediately when you return to the Hall after finishing — no reload required.</div></div>
+      <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-chart-bar"></i></div><div class="wn-feat-name">Scaled avg score <span class="new-badge">New</span></div><div class="wn-feat-desc">Average shown as X/50 scaled from your raw score, with one decimal — e.g. 31.5/50.</div></div>
+      <div class="wn-feat c-gold"><div class="wn-feat-ico"><i class="ph-bold ph-repeat"></i></div><div class="wn-feat-name">Multi-attempt tracking <span class="new-badge">New</span></div><div class="wn-feat-desc">All attempts counted and averaged correctly across retakes — cumulative avg updates in real time.</div></div>
+    </div>
   </div>
-  <div class="wn-ver-desc">
-    Quiz score badges now show richer stats — last score, scaled average out of 50, and attempt count. Your progress is restored automatically on login. EXP is now only awarded when all test cases pass.
+
+  <!-- v1.3.7 -->
+  <div class="wn-panel" id="panel-1">
+    <div class="wn-ver-hd">
+      <div class="wn-ver-tag">v1.3.7 · March 2026</div>
+      <div class="wn-ver-title">Mobile Keyboard Fixes</div>
+      <div class="wn-ver-date">Released March 2026</div>
+    </div>
+    <div class="wn-ver-desc">
+      Fixed the mobile keyboard not appearing on login/signup and fill-in-the-blank quiz questions. Two separate iOS bugs were causing this — both squashed.
+    </div>
+    <div class="wn-features">
+      <div class="wn-feat c-green"><div class="wn-feat-ico"><i class="ph-bold ph-device-mobile"></i></div><div class="wn-feat-name">Auth Keyboard Fixed <span class="new-badge">Fixed</span></div><div class="wn-feat-desc">iOS was blocking keyboard on login/signup inputs due to backdrop-filter on the overlay. Removed on mobile, solid fallback applied.</div></div>
+      <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-keyboard"></i></div><div class="wn-feat-name">Quiz Input Fixed <span class="new-badge">Fixed</span></div><div class="wn-feat-desc">Fill-in-the-blank keyboard now appears reliably on mobile. Removed programmatic focus() that iOS ignores outside user gestures.</div></div>
+      <div class="wn-feat c-gold"><div class="wn-feat-ico"><i class="ph-bold ph-text-aa"></i></div><div class="wn-feat-name">Font Size 16px</div><div class="wn-feat-desc">All auth and quiz inputs now use 16px on mobile, preventing iOS auto-zoom which was fighting the keyboard.</div></div>
+      <div class="wn-feat c-teal"><div class="wn-feat-ico"><i class="ph-bold ph-hand-tap"></i></div><div class="wn-feat-name">Touch Action Fix</div><div class="wn-feat-desc">Added touch-action:manipulation to all inputs — eliminates 300ms tap delay and double-tap zoom conflicts.</div></div>
+    </div>
   </div>
-  <div class="wn-features">
-    <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-exam"></i></div><div class="wn-feat-name">Richer quiz badges <span class="new-badge">New</span></div><div class="wn-feat-desc">Shows last score, avg/50 (one decimal), attempt count, and pass/fail — all on the card without opening the quiz.</div></div>
-    <div class="wn-feat c-gold"><div class="wn-feat-ico"><i class="ph-bold ph-arrow-counter-clockwise"></i></div><div class="wn-feat-name">Progress restored on login <span class="new-badge">New</span></div><div class="wn-feat-desc">Labs restore your last submitted code and pass state. Quiz cards restore avg score and attempt count on every login.</div></div>
-    <div class="wn-feat c-green"><div class="wn-feat-ico"><i class="ph-bold ph-shield-check"></i></div><div class="wn-feat-name">EXP on full pass only <span class="new-badge">Fixed</span></div><div class="wn-feat-desc">EXP was being awarded on every lab submit regardless of result. Now only awarded when all test cases pass.</div></div>
-    <div class="wn-feat c-teal"><div class="wn-feat-ico"><i class="ph-bold ph-lightning"></i></div><div class="wn-feat-name">Instant badge update <span class="new-badge">New</span></div><div class="wn-feat-desc">Quiz card badge updates immediately when you return to the Hall after finishing — no reload required.</div></div>
-    <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-chart-bar"></i></div><div class="wn-feat-name">Scaled avg score <span class="new-badge">New</span></div><div class="wn-feat-desc">Average shown as X/50 scaled from your raw score, with one decimal — e.g. 31.5/50.</div></div>
-    <div class="wn-feat c-gold"><div class="wn-feat-ico"><i class="ph-bold ph-repeat"></i></div><div class="wn-feat-name">Multi-attempt tracking <span class="new-badge">New</span></div><div class="wn-feat-desc">All attempts counted and averaged correctly across retakes — cumulative avg updates in real time.</div></div>
+
+  <!-- v1.3.6 -->
+  <div class="wn-panel" id="panel-2">
+    <div class="wn-ver-hd">
+      <div class="wn-ver-tag">v1.3.6 · March 2026</div>
+      <div class="wn-ver-title">The Fixes Drop</div>
+      <div class="wn-ver-date">Released March 2026</div>
+    </div>
+    <div class="wn-ver-desc">
+      Bug fixes across the board. The <strong>WHY? button finally works properly</strong> — real explanations.
+    </div>
+    <div class="wn-features">
+      <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-sparkle"></i></div><div class="wn-feat-name">WHY? Button Fixed <span class="new-badge">Fixed</span></div><div class="wn-feat-desc">Was showing "undefined" or nothing. Now pulls the real explanation correctly.</div></div>
+      <div class="wn-feat c-gold"><div class="wn-feat-ico"><i class="ph-bold ph-crown"></i></div><div class="wn-feat-name">Rank-Up Popup Fixed</div><div class="wn-feat-desc">Rank-up celebration now fires correctly even when you ranked up between sessions.</div></div>
+      <div class="wn-feat c-green"><div class="wn-feat-ico"><i class="ph-bold ph-star"></i></div><div class="wn-feat-name">EXP & Rank Sync</div><div class="wn-feat-desc">Rank updates instantly when you earn EXP — no more waiting for the next page load.</div></div>
+      <div class="wn-feat c-teal"><div class="wn-feat-ico"><i class="ph-bold ph-wrench"></i></div><div class="wn-feat-name">Bug Fixes</div><div class="wn-feat-desc">Quiz question count, T&C persistence, lab performance improvements, and various stability fixes.</div></div>
+    </div>
   </div>
+
+  <!-- v1.3.0 -->
+  <div class="wn-panel" id="panel-3">
+    <div class="wn-ver-hd">
+      <div class="wn-ver-tag">v1.3.0 · March 2026</div>
+      <div class="wn-ver-title">AI Explanations & Quiz Polish</div>
+      <div class="wn-ver-date">Released March 2026</div>
+    </div>
+    <div class="wn-ver-desc">Introducing the <strong>WHY? Button</strong> — powered by AI. Every answer now comes with a real explanation so you actually learn, not just retry blindly.</div>
+    <div class="wn-features">
+      <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-sparkle"></i></div><div class="wn-feat-name">WHY? Button <span class="new-badge">New</span></div><div class="wn-feat-desc">Get an AI-powered explanation after every quiz answer — correct or wrong. Powered by Claude.</div></div>
+      <div class="wn-feat c-red"><div class="wn-feat-ico"><i class="ph-bold ph-book-open"></i></div><div class="wn-feat-name">Answer Review <span class="new-badge">New</span></div><div class="wn-feat-desc">After finishing a quiz, expand any question to see what you answered vs. what was correct — side by side.</div></div>
+      <div class="wn-feat c-teal"><div class="wn-feat-ico"><i class="ph-bold ph-brain"></i></div><div class="wn-feat-name">Smarter Feedback <span class="new-badge">New</span></div><div class="wn-feat-desc">Wrong answers now pulse red with a WHY? prompt — so you never walk away without understanding the concept.</div></div>
+      <div class="wn-feat c-amber"><div class="wn-feat-ico"><i class="ph-bold ph-pencil-line"></i></div><div class="wn-feat-name">Fill in the Blank <span class="new-badge">New</span></div><div class="wn-feat-desc">New question type added — type your answer directly and confirm. Press Enter to submit fast.</div></div>
+    </div>
+  </div>
+
+  <!-- v1.1.5 -->
+  <div class="wn-panel" id="panel-4">
+    <div class="wn-ver-hd">
+      <div class="wn-ver-tag">v1.1.5 · March 2026</div>
+      <div class="wn-ver-title">EXP, Ranks & Leaderboard</div>
+      <div class="wn-ver-date">Released March 2026</div>
+    </div>
+    <div class="wn-ver-desc">The grind is now <strong>rewarded</strong>. Every lab submission and quiz attempt earns you EXP. Climb the ranks from Bronze all the way to Sys Architect.</div>
+    <div class="wn-features">
+      <div class="wn-feat c-gold"><div class="wn-feat-ico"><i class="ph-bold ph-star"></i></div><div class="wn-feat-name">EXP System <span class="new-badge">New</span></div><div class="wn-feat-desc">Earn EXP for every lab and quiz submission.</div></div>
+      <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-crown"></i></div><div class="wn-feat-name">Rank Progression <span class="new-badge">New</span></div><div class="wn-feat-desc">15 ranks from Bronze to Sys Architect.</div></div>
+      <div class="wn-feat c-green"><div class="wn-feat-ico"><i class="ph-bold ph-trophy"></i></div><div class="wn-feat-name">Leaderboard <span class="new-badge">New</span></div><div class="wn-feat-desc">Anonymous EXP rankings with gold, silver, bronze tiers.</div></div>
+      <div class="wn-feat c-teal"><div class="wn-feat-ico"><i class="ph-bold ph-chart-line-up"></i></div><div class="wn-feat-name">Rank Progress Bar <span class="new-badge">New</span></div><div class="wn-feat-desc">Live progress bar shows how close you are to your next rank.</div></div>
+    </div>
+  </div>
+
+  <!-- v1.0.0 -->
+  <div class="wn-panel" id="panel-5">
+    <div class="wn-ver-hd">
+      <div class="wn-ver-tag">v1.0.0 · March 2026</div>
+      <div class="wn-ver-title">The Dungeon Opens</div>
+      <div class="wn-ver-date">Released March 2026</div>
+    </div>
+    <div class="wn-ver-desc">First release. Login, pick a lab, cast your code, and submit. Quizzes with instant feedback included.</div>
+    <div class="wn-features">
+      <div class="wn-feat c-green"><div class="wn-feat-ico"><i class="ph-bold ph-flask"></i></div><div class="wn-feat-name">Python Lab Editor <span class="new-badge">New</span></div><div class="wn-feat-desc">Full in-browser Python IDE with CodeMirror and test cases.</div></div>
+      <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-exam"></i></div><div class="wn-feat-name">Quiz System <span class="new-badge">New</span></div><div class="wn-feat-desc">One-at-a-time quiz flow with multiple choice, true/false, and code output types.</div></div>
+      <div class="wn-feat c-gold"><div class="wn-feat-ico"><i class="ph-bold ph-sliders"></i></div><div class="wn-feat-name">Quiz Settings <span class="new-badge">New</span></div><div class="wn-feat-desc">Set number of questions, toggle reveal mode, and enable randomization.</div></div>
+      <div class="wn-feat c-red"><div class="wn-feat-ico"><i class="ph-bold ph-lock-key"></i></div><div class="wn-feat-name">Auth & Access Control <span class="new-badge">New</span></div><div class="wn-feat-desc">Login with Gmail. Signup restricted to allowed usernames only.</div></div>
+    </div>
+  </div>
+
+  <!-- v0.1.0 -->
+  <div class="wn-panel" id="panel-6">
+    <div class="wn-ver-hd">
+      <div class="wn-ver-tag">v0.1.0 · February 2026</div>
+      <div class="wn-ver-title">The Bare Bones</div>
+      <div class="wn-ver-date">February 2026 · Where it all began</div>
+    </div>
+    <div class="wn-ver-desc">It started with nothing. Just a blank HTML file and a dream.</div>
+    <div class="wn-features">
+      <div class="wn-feat c-green"><div class="wn-feat-ico"><i class="ph-bold ph-sign-in"></i></div><div class="wn-feat-name">Basic Auth</div><div class="wn-feat-desc">Login and signup with Gmail. That's it.</div></div>
+      <div class="wn-feat c-gold"><div class="wn-feat-ico"><i class="ph-bold ph-house-simple"></i></div><div class="wn-feat-name">Dashboard Shell</div><div class="wn-feat-desc">A mostly empty dashboard. The topbar existed. Nothing else worked yet.</div></div>
+      <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-terminal"></i></div><div class="wn-feat-name">Pyodide Loaded</div><div class="wn-feat-desc">Python ran in the browser for the first time.</div></div>
+    </div>
+  </div>
+
 </div>
-        <div class="wn-ver-hd">
-          <div class="wn-ver-tag">v1.3.7 · Latest Release · March 2026</div>
-          <div class="wn-ver-title">Mobile Keyboard Fixes</div>
-          <div class="wn-ver-date">Released March 2026</div>
-        </div>
-        <div class="wn-ver-desc">
-          Fixed the mobile keyboard not appearing on login/signup and fill-in-the-blank quiz questions. Two separate iOS bugs were causing this — both squashed.
-        </div>
-        <div class="wn-features">
-          <div class="wn-feat c-green">
-            <div class="wn-feat-ico"><i class="ph-bold ph-device-mobile"></i></div>
-            <div class="wn-feat-name">Auth Keyboard Fixed <span class="new-badge">Fixed</span></div>
-            <div class="wn-feat-desc">iOS was blocking keyboard on login/signup inputs due to backdrop-filter on the overlay. Removed on mobile, solid fallback applied.</div>
-          </div>
-          <div class="wn-feat c-violet">
-            <div class="wn-feat-ico"><i class="ph-bold ph-keyboard"></i></div>
-            <div class="wn-feat-name">Quiz Input Fixed <span class="new-badge">Fixed</span></div>
-            <div class="wn-feat-desc">Fill-in-the-blank keyboard now appears reliably on mobile. Removed programmatic focus() that iOS ignores outside user gestures.</div>
-          </div>
-          <div class="wn-feat c-gold">
-            <div class="wn-feat-ico"><i class="ph-bold ph-text-aa"></i></div>
-            <div class="wn-feat-name">Font Size 16px</div>
-            <div class="wn-feat-desc">All auth and quiz inputs now use 16px on mobile, preventing iOS auto-zoom which was fighting the keyboard.</div>
-          </div>
-          <div class="wn-feat c-teal">
-            <div class="wn-feat-ico"><i class="ph-bold ph-hand-tap"></i></div>
-            <div class="wn-feat-name">Touch Action Fix</div>
-            <div class="wn-feat-desc">Added touch-action:manipulation to all inputs — eliminates 300ms tap delay and double-tap zoom conflicts.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- v1.3.6 -->
-      <div class="wn-panel" id="panel-1">
-          <div class="wn-ver-hd">
-            <div class="wn-ver-tag">v1.3.6 · March 2026</div>
-            <div class="wn-ver-title">The Fixes Drop</div>
-            <div class="wn-ver-date">Released March 2026</div>
-          </div>
-          <div class="wn-ver-desc">
-            Bug fixes across the board. The <strong>WHY? button finally works properly</strong> — real explanations.
-          </div>
-          <div class="wn-features">
-            <div class="wn-feat c-violet">
-              <div class="wn-feat-ico"><i class="ph-bold ph-sparkle"></i></div>
-              <div class="wn-feat-name">WHY? Button Fixed <span class="new-badge">Fixed</span></div>
-              <div class="wn-feat-desc">Was showing "undefined" or nothing. Now pulls the real explanation correctly.</div>
-            </div>
-            <div class="wn-feat c-gold">
-              <div class="wn-feat-ico"><i class="ph-bold ph-crown"></i></div>
-              <div class="wn-feat-name">Rank-Up Popup Fixed</div>
-              <div class="wn-feat-desc">Rank-up celebration now fires correctly even when you ranked up between sessions.</div>
-            </div>
-            <div class="wn-feat c-green">
-              <div class="wn-feat-ico"><i class="ph-bold ph-star"></i></div>
-              <div class="wn-feat-name">EXP & Rank Sync</div>
-              <div class="wn-feat-desc">Rank updates instantly when you earn EXP — no more waiting for the next page load.</div>
-            </div>
-            <div class="wn-feat c-teal">
-              <div class="wn-feat-ico"><i class="ph-bold ph-wrench"></i></div>
-              <div class="wn-feat-name">Bug Fixes</div>
-              <div class="wn-feat-desc">Quiz question count, T&C persistence, lab performance improvements, and various stability fixes.</div>
-            </div>
-          </div>
-        </div>
-
-      <!-- v1.3.0 -->
-      <div class="wn-panel" id="panel-2">
-        <div class="wn-ver-hd">
-          <div class="wn-ver-tag">v1.3.0 · March 2026</div>
-          <div class="wn-ver-title">AI Explanations & Quiz Polish</div>
-          <div class="wn-ver-date">Released March 2026</div>
-        </div>
-        <div class="wn-ver-desc">Introducing the <strong>WHY? Button</strong> — powered by AI. Every answer now comes with a real explanation so you actually learn, not just retry blindly.</div>
-        <div class="wn-features">
-          <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-sparkle"></i></div><div class="wn-feat-name">WHY? Button <span class="new-badge">New</span></div><div class="wn-feat-desc">Get an AI-powered explanation after every quiz answer — correct or wrong. Powered by Claude.</div></div>
-          <div class="wn-feat c-red"><div class="wn-feat-ico"><i class="ph-bold ph-book-open"></i></div><div class="wn-feat-name">Answer Review <span class="new-badge">New</span></div><div class="wn-feat-desc">After finishing a quiz, expand any question to see what you answered vs. what was correct — side by side.</div></div>
-          <div class="wn-feat c-teal"><div class="wn-feat-ico"><i class="ph-bold ph-brain"></i></div><div class="wn-feat-name">Smarter Feedback <span class="new-badge">New</span></div><div class="wn-feat-desc">Wrong answers now pulse red with a WHY? prompt — so you never walk away without understanding the concept.</div></div>
-          <div class="wn-feat c-amber"><div class="wn-feat-ico"><i class="ph-bold ph-pencil-line"></i></div><div class="wn-feat-name">Fill in the Blank <span class="new-badge">New</span></div><div class="wn-feat-desc">New question type added — type your answer directly and confirm. Press Enter to submit fast.</div></div>
-        </div>
-      </div>
-
-      <!-- v1.1.5 -->
-      <div class="wn-panel" id="panel-3">
-        <div class="wn-ver-hd">
-          <div class="wn-ver-tag">v1.1.5 · March 2026</div>
-          <div class="wn-ver-title">EXP, Ranks & Leaderboard</div>
-          <div class="wn-ver-date">Released March 2026</div>
-        </div>
-        <div class="wn-ver-desc">The grind is now <strong>rewarded</strong>. Every lab submission and quiz attempt earns you EXP. Climb the ranks from Bronze all the way to Sys Architect.</div>
-        <div class="wn-features">
-          <div class="wn-feat c-gold"><div class="wn-feat-ico"><i class="ph-bold ph-star"></i></div><div class="wn-feat-name">EXP System <span class="new-badge">New</span></div><div class="wn-feat-desc">Earn EXP for every lab and quiz submission.</div></div>
-          <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-crown"></i></div><div class="wn-feat-name">Rank Progression <span class="new-badge">New</span></div><div class="wn-feat-desc">15 ranks from Bronze to Sys Architect.</div></div>
-          <div class="wn-feat c-green"><div class="wn-feat-ico"><i class="ph-bold ph-trophy"></i></div><div class="wn-feat-name">Leaderboard <span class="new-badge">New</span></div><div class="wn-feat-desc">Anonymous EXP rankings with gold, silver, bronze tiers.</div></div>
-          <div class="wn-feat c-teal"><div class="wn-feat-ico"><i class="ph-bold ph-chart-line-up"></i></div><div class="wn-feat-name">Rank Progress Bar <span class="new-badge">New</span></div><div class="wn-feat-desc">Live progress bar shows how close you are to your next rank.</div></div>
-        </div>
-      </div>
-
-      <!-- v1.0.0 -->
-      <div class="wn-panel" id="panel-4">
-        <div class="wn-ver-hd">
-          <div class="wn-ver-tag">v1.0.0 · March 2026</div>
-          <div class="wn-ver-title">The Dungeon Opens</div>
-          <div class="wn-ver-date">Released March 2026</div>
-        </div>
-        <div class="wn-ver-desc">First release. Login, pick a lab, cast your code, and submit. Quizzes with instant feedback included.</div>
-        <div class="wn-features">
-          <div class="wn-feat c-green"><div class="wn-feat-ico"><i class="ph-bold ph-flask"></i></div><div class="wn-feat-name">Python Lab Editor <span class="new-badge">New</span></div><div class="wn-feat-desc">Full in-browser Python IDE with CodeMirror and test cases.</div></div>
-          <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-exam"></i></div><div class="wn-feat-name">Quiz System <span class="new-badge">New</span></div><div class="wn-feat-desc">One-at-a-time quiz flow with multiple choice, true/false, and code output types.</div></div>
-          <div class="wn-feat c-gold"><div class="wn-feat-ico"><i class="ph-bold ph-sliders"></i></div><div class="wn-feat-name">Quiz Settings <span class="new-badge">New</span></div><div class="wn-feat-desc">Set number of questions, toggle reveal mode, and enable randomization.</div></div>
-          <div class="wn-feat c-red"><div class="wn-feat-ico"><i class="ph-bold ph-lock-key"></i></div><div class="wn-feat-name">Auth & Access Control <span class="new-badge">New</span></div><div class="wn-feat-desc">Login with Gmail. Signup restricted to allowed usernames only.</div></div>
-        </div>
-      </div>
-
-      <!-- v0.1.0 -->
-      <div class="wn-panel" id="panel-5">
-        <div class="wn-ver-hd">
-          <div class="wn-ver-tag">v0.1.0 · February 2026</div>
-          <div class="wn-ver-title">The Bare Bones</div>
-          <div class="wn-ver-date">February 2026 · Where it all began</div>
-        </div>
-        <div class="wn-ver-desc">It started with nothing. Just a blank HTML file and a dream.</div>
-        <div class="wn-features">
-          <div class="wn-feat c-green"><div class="wn-feat-ico"><i class="ph-bold ph-sign-in"></i></div><div class="wn-feat-name">Basic Auth</div><div class="wn-feat-desc">Login and signup with Gmail. That's it.</div></div>
-          <div class="wn-feat c-gold"><div class="wn-feat-ico"><i class="ph-bold ph-house-simple"></i></div><div class="wn-feat-name">Dashboard Shell</div><div class="wn-feat-desc">A mostly empty dashboard. The topbar existed. Nothing else worked yet.</div></div>
-          <div class="wn-feat c-violet"><div class="wn-feat-ico"><i class="ph-bold ph-terminal"></i></div><div class="wn-feat-name">Pyodide Loaded</div><div class="wn-feat-desc">Python ran in the browser for the first time.</div></div>
-        </div>
-      </div>
-
-    </div>
     <div class="wn-ft">
-      <div class="wn-ft-info">Slytherin Classroom <span style="color:var(--gold-dim)">v1.3.7</span> · BSCS Python Practice</div>
+    <div class="wn-ft-info">Slytherin Classroom <span style="color:var(--gold-dim)">v1.4.1</span> · BSCS Python Practice</div>
       <button class="wn-got-it" onclick="closeWN()">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         Got it!
