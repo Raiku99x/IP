@@ -5,6 +5,7 @@ document.addEventListener("contextmenu",(e=>e.preventDefault()),!0);const SVG_LA
     quizSettings[e]={numQ:defaultN,reveal:!0,randomize:!0};
   }
   return quizSettings[e];
+}
 function initCM(){cm=CodeMirror($("cm-mount"),{mode:"python",theme:"sly",lineNumbers:!0,indentUnit:4,tabSize:4,indentWithTabs:!1,autoCloseBrackets:!0,matchBrackets:!0,placeholder:"# Scribe your code here…",extraKeys:{Tab:e=>{e.somethingSelected()?e.indentSelection("add"):e.replaceSelection("    ","end","*")},"Shift-Tab":e=>e.indentSelection("subtract"),"Ctrl-Enter":()=>$("btn-run").click(),"Cmd-Enter":()=>$("btn-run").click()}}),cm.on("change",(()=>{activeProblem&&(gs(activeProblem.id).code=cm.getValue()),hideErr()}))}function switchLbTab(tab){
   ["rankings","progression"].forEach(t=>{
     document.getElementById("lb-tab-"+t)?.classList.toggle("lb-active",t===tab);
